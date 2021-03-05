@@ -17,12 +17,12 @@ namespace XOPE_UI.Forms.Component
         public CaptureTabPage()
         {
             InitializeComponent();
-            packetEditor = new PacketEditor();
+            //packetEditor = new PacketEditor();
         }
 
         private void captureListView_DoubleClick(object sender, EventArgs e)
         {
-            packetEditor.ShowDialog();
+            //packetEditor.ShowDialog();
         }
     }
 }

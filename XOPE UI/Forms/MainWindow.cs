@@ -34,6 +34,12 @@ namespace XOPE_UI
 
             InitializeComponent();
 
+            //Using reflection to modify the protected DoubleBuffered property for ListView. DoubleBuffered is used to prevent flickering
+            livePacketListView
+                .GetType()
+                .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(livePacketListView, true, null);
+
             if (!File.Exists("XOPESpy32.dll"))
                 System.Windows.Forms.MessageBox.Show("Canont find XOPESpy32.dll\nMake sure it is in the current directory\nWithout it, you cannot attach to 32-bit processes", "Missing DLL",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -58,7 +64,7 @@ namespace XOPE_UI
 
         private void AttachToProcess()
         {
-            DialogResult result = processDialog.ShowDialog();
+            DialogResult result = processDialog.ShowDialog(); //Maybe make processDialog a local var and dispose of dialog here
             if (result == DialogResult.OK)
             {
                 //Console.WriteLine($"Successfully written int: {NativeMethods.WPM(processDialog.SelectedProcess.Handle, (IntPtr)0x008FFD34, 5000)}");
@@ -242,7 +248,25 @@ namespace XOPE_UI
 
         private void livePacketListView_DoubleClick(object sender, EventArgs e)
         {
-            
+            var selectedItems = livePacketListView.SelectedItems;
+
+            if (selectedItems.Count > 0)
+            {
+                using (PacketEditor packetEditor = new PacketEditor((byte[])selectedItems[0].Tag, false))
+                {
+                    DialogResult result = packetEditor.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+
+                    }
+                }
+            }
+        }
+
+        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (attachedProcess != null)
+                DetachFromProcess();
         }
     }
 }

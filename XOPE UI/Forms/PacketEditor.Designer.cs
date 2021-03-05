@@ -36,6 +36,9 @@
             // 
             // elementHost1
             // 
+            this.elementHost1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.elementHost1.Location = new System.Drawing.Point(12, 12);
             this.elementHost1.Name = "elementHost1";
             this.elementHost1.Size = new System.Drawing.Size(632, 301);
@@ -53,6 +56,7 @@
             this.confirmButton.TabIndex = 7;
             this.confirmButton.Text = "Confirm";
             this.confirmButton.UseVisualStyleBackColor = true;
+            this.confirmButton.Click += new System.EventHandler(this.confirmButton_Click);
             // 
             // cancelButton
             // 
@@ -63,6 +67,7 @@
             this.cancelButton.TabIndex = 6;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // PacketEditor
             // 
@@ -74,6 +79,7 @@
             this.Controls.Add(this.elementHost1);
             this.Name = "PacketEditor";
             this.Text = "PacketEditor";
+            this.Load += new System.EventHandler(this.PacketEditor_Load);
             this.ResumeLayout(false);
 
         }

@@ -23,6 +23,7 @@ namespace XOPE_UI.Core
             if (type == HookedFuncType.SEND || type == HookedFuncType.RECV || type == HookedFuncType.WSASEND || type == HookedFuncType.WSARECV)
             {
                 ListViewItem listViewItem = new ListViewItem(packetCounter.ToString());
+                listViewItem.Tag = packet;
                 listViewItem.SubItems.Add(type.ToString());
                 listViewItem.SubItems.Add(packet.Length.ToString());
                 listViewItem.SubItems.Add(BitConverter.ToString(packet).Replace("-", " "));
