@@ -1,19 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SqlTypes;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.IO.Pipes;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
-using XOPE_UI.Definitions;
+using XOPE_UI.Core;
 using XOPE_UI.Forms;
 using XOPE_UI.Forms.Component;
 using XOPE_UI.Injection;
@@ -49,7 +38,7 @@ namespace XOPE_UI
                 System.Windows.Forms.MessageBox.Show("Canont find XOPESpy32.dll\nMake sure it is in the current directory\nWithout it, you cannot attach to 32-bit processes", "Missing DLL",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-            if (!File.Exists("XOPESpy64.dll"))
+            if (!File.Exists("XOPESpy64.dll") && Environment.Is64BitProcess)
                 System.Windows.Forms.MessageBox.Show("Canont find XOPESpy64.dll\nMake sure it is in the current directory\nWithout it, you cannot attach to 64-bit processes", "Missing DLL",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -62,7 +51,7 @@ namespace XOPE_UI
             processDialog = new ProcessDialog();
             activeConnectionsDialog = new ActiveConnectionsDialog(spyData);
 
-            server = new Spy.Server(liveViewOutput, spyData);
+            server = new Spy.Server(new PacketList(this.livePacketListView), liveViewOutput, spyData);
             server.runASync();
             captureTabControl.MouseClick += captureTabControl_MouseClick;
         }
@@ -176,10 +165,11 @@ namespace XOPE_UI
                 {
                     if (captureTabControl.GetTabRect(i).Contains(e.Location))
                     {
-                        if (i == 0)
+                        if (i == 0 || i == 1)
                             return;
 
                         tabContextMenu.Tag = captureTabControl.TabPages[i];
+                        break;
                     }
                 }
                 tabContextMenu.Show(this.captureTabControl, e.Location);
@@ -248,6 +238,11 @@ namespace XOPE_UI
         {
             activeConnectionsDialog.UpdateActiveList();
             activeConnectionsDialog.ShowDialog();
+        }
+
+        private void livePacketListView_DoubleClick(object sender, EventArgs e)
+        {
+            
         }
     }
 }

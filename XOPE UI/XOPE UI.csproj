@@ -86,6 +86,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\Config.cs" />
+    <Compile Include="Core\PacketList.cs" />
     <Compile Include="Definitions\Comms.cs" />
     <Compile Include="Forms\Component\CaptureTabPage.cs">
       <SubType>UserControl</SubType>
@@ -125,6 +127,7 @@
     <Compile Include="Spy\Type\Connection.cs" />
     <Compile Include="Spy\Server.cs" />
     <Compile Include="Spy\SpyData.cs" />
+    <Compile Include="Spy\Type\GenericHookedSpyFunc.cs" />
     <Compile Include="Spy\Type\Packet.cs" />
     <EmbeddedResource Include="Forms\Component\CaptureTabPage.resx">
       <DependentUpon>CaptureTabPage.cs</DependentUpon>

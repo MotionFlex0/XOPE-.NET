@@ -30,6 +30,18 @@ namespace XOPE_UI.Spy
             LastStatusChangeTime = DateTime.Now;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj != null || this.GetType().Equals(obj.GetType()))
+                return false;
+            return ((Connection)obj).SocketId == this.SocketId;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.SocketId;
+        }
+
         public enum Status
         {
             CONNECTING,

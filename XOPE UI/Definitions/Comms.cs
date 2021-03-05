@@ -8,7 +8,7 @@ namespace XOPE_UI.Definitions
 {
     enum ClientPacketType
     {
-        HOOKED_FUNCTION_CALL,
+        HOOKED_FUNCTION_CALL
     }
 
     enum HookedFuncType

@@ -29,8 +29,8 @@ public:
 		void* wsarecv;
 	};
 
-	HookManager() 
-	{ }
+	//TODO: Possibly move HookFuncArgs here and keep "init" as some sort of "initHooks" method
+	HookManager() { }
 
 	~HookManager()
 	{
@@ -45,17 +45,17 @@ public:
 			return;
 		}
 
-		//connectdetour = new DETOUR(hf.connect, GetProcAddress(hWs2, "connect"), SENDPATCHSIZE);
-		//senddetour = new DETOUR(hf.send, GetProcAddress(hWs2, "send"), SENDPATCHSIZE);
-		//recvdetour = new DETOUR(hf.recv, GetProcAddress(hWs2, "recv"), SENDPATCHSIZE);
+		connectdetour = new DETOUR(hf.connect, GetProcAddress(hWs2, "connect"), SENDPATCHSIZE);
+		senddetour = new DETOUR(hf.send, GetProcAddress(hWs2, "send"), SENDPATCHSIZE);
+		recvdetour = new DETOUR(hf.recv, GetProcAddress(hWs2, "recv"), SENDPATCHSIZE);
 		closedetour = new DETOUR(hf.close, GetProcAddress(hWs2, "closesocket"), CLOSEPATCHSIZE);
 		wsaconnectdetour = new DETOUR(hf.wsaconnect, GetProcAddress(hWs2, "WSAConnect"), SENDPATCHSIZE);
 		wsasenddetour = new DETOUR(hf.wsasend, GetProcAddress(hWs2, "WSASend"), SENDPATCHSIZE);
 		wsarecvdetour = new DETOUR(hf.wsarecv, GetProcAddress(hWs2, "WSARecv"), SENDPATCHSIZE);
 
-		//_oConnect = (ConnectPtr_t)connectdetour->patch();
-		//_oSend = (SendPtr_t)senddetour->patch();
-		//_oRecv = (RecvPtr_t)recvdetour->patch();
+		_oConnect = (ConnectPtr_t)connectdetour->patch();
+		_oSend = (SendPtr_t)senddetour->patch();
+		_oRecv = (RecvPtr_t)recvdetour->patch();
 		_oClose = (CloseSocketPtr_t)closedetour->patch();
 		_oWSAConnect = (WSAConnectPtr_t)wsaconnectdetour->patch();
 		_oWSASend = (WSASendPtr_t)wsasenddetour->patch();

@@ -33,29 +33,37 @@
             this.captureTabControl = new System.Windows.Forms.TabControl();
             this.liveView = new System.Windows.Forms.TabPage();
             this.liveViewOutput = new System.Windows.Forms.TextBox();
+            this.liveCapture = new System.Windows.Forms.TabPage();
+            this.livePacketListView = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.processToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.attachToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.detachToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.connectionsListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton5 = new System.Windows.Forms.ToolStripSeparator();
-            this.tabContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.closeTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.attachToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.detachToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton5 = new System.Windows.Forms.ToolStripSeparator();
             this.recordToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.pauseRecToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.stopRecToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.connectionsListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.closeTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.captureTabControl.SuspendLayout();
             this.liveView.SuspendLayout();
+            this.liveCapture.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -67,10 +75,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.captureTabControl.Controls.Add(this.liveView);
+            this.captureTabControl.Controls.Add(this.liveCapture);
             this.captureTabControl.Location = new System.Drawing.Point(12, 52);
             this.captureTabControl.Name = "captureTabControl";
             this.captureTabControl.SelectedIndex = 0;
-            this.captureTabControl.Size = new System.Drawing.Size(586, 386);
+            this.captureTabControl.Size = new System.Drawing.Size(776, 386);
             this.captureTabControl.TabIndex = 0;
             // 
             // liveView
@@ -79,7 +88,7 @@
             this.liveView.Location = new System.Drawing.Point(4, 22);
             this.liveView.Name = "liveView";
             this.liveView.Padding = new System.Windows.Forms.Padding(3);
-            this.liveView.Size = new System.Drawing.Size(578, 360);
+            this.liveView.Size = new System.Drawing.Size(768, 360);
             this.liveView.TabIndex = 0;
             this.liveView.Text = "Log";
             this.liveView.UseVisualStyleBackColor = true;
@@ -98,6 +107,62 @@
             this.liveViewOutput.Size = new System.Drawing.Size(569, 355);
             this.liveViewOutput.TabIndex = 0;
             this.liveViewOutput.TabStop = false;
+            // 
+            // liveCapture
+            // 
+            this.liveCapture.Controls.Add(this.livePacketListView);
+            this.liveCapture.Location = new System.Drawing.Point(4, 22);
+            this.liveCapture.Name = "liveCapture";
+            this.liveCapture.Padding = new System.Windows.Forms.Padding(3);
+            this.liveCapture.Size = new System.Drawing.Size(768, 360);
+            this.liveCapture.TabIndex = 1;
+            this.liveCapture.Text = "Live Capture";
+            this.liveCapture.UseVisualStyleBackColor = true;
+            // 
+            // livePacketListView
+            // 
+            this.livePacketListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.livePacketListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader5,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4});
+            this.livePacketListView.FullRowSelect = true;
+            this.livePacketListView.HideSelection = false;
+            this.livePacketListView.Location = new System.Drawing.Point(3, 3);
+            this.livePacketListView.MultiSelect = false;
+            this.livePacketListView.Name = "livePacketListView";
+            this.livePacketListView.Size = new System.Drawing.Size(762, 354);
+            this.livePacketListView.TabIndex = 0;
+            this.livePacketListView.UseCompatibleStateImageBehavior = false;
+            this.livePacketListView.View = System.Windows.Forms.View.Details;
+            this.livePacketListView.DoubleClick += new System.EventHandler(this.livePacketListView_DoubleClick);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "#";
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Type";
+            this.columnHeader5.Width = 80;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Length";
+            this.columnHeader2.Width = 59;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Data";
+            this.columnHeader3.Width = 432;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "SocketID";
             // 
             // menuStrip1
             // 
@@ -138,7 +203,7 @@
             // attachToToolStripMenuItem
             // 
             this.attachToToolStripMenuItem.Name = "attachToToolStripMenuItem";
-            this.attachToToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.attachToToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.attachToToolStripMenuItem.Text = "Attach to...";
             this.attachToToolStripMenuItem.Click += new System.EventHandler(this.attachToToolStripMenuItem_Click);
             // 
@@ -146,9 +211,21 @@
             // 
             this.detachToolStripMenuItem.Enabled = false;
             this.detachToolStripMenuItem.Name = "detachToolStripMenuItem";
-            this.detachToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.detachToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.detachToolStripMenuItem.Text = "Detach";
             this.detachToolStripMenuItem.Click += new System.EventHandler(this.detachToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(156, 6);
+            // 
+            // connectionsListToolStripMenuItem
+            // 
+            this.connectionsListToolStripMenuItem.Name = "connectionsListToolStripMenuItem";
+            this.connectionsListToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.connectionsListToolStripMenuItem.Text = "Connections list";
+            this.connectionsListToolStripMenuItem.Click += new System.EventHandler(this.connectionsListToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -186,30 +263,6 @@
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripButton5
-            // 
-            this.toolStripButton5.Name = "toolStripButton5";
-            this.toolStripButton5.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tabContextMenu
-            // 
-            this.tabContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.closeTabToolStripMenuItem});
-            this.tabContextMenu.Name = "tabContextMenu";
-            this.tabContextMenu.Size = new System.Drawing.Size(125, 26);
-            // 
-            // closeTabToolStripMenuItem
-            // 
-            this.closeTabToolStripMenuItem.Name = "closeTabToolStripMenuItem";
-            this.closeTabToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.closeTabToolStripMenuItem.Text = "Close Tab";
-            this.closeTabToolStripMenuItem.Click += new System.EventHandler(this.closeTabToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
-            // 
             // attachToolStripButton
             // 
             this.attachToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -231,6 +284,11 @@
             this.detachToolStripButton.Text = "toolStripButton6";
             this.detachToolStripButton.ToolTipText = "Detach from process";
             this.detachToolStripButton.Click += new System.EventHandler(this.detachToolStripButton_Click);
+            // 
+            // toolStripButton5
+            // 
+            this.toolStripButton5.Name = "toolStripButton5";
+            this.toolStripButton5.Size = new System.Drawing.Size(6, 25);
             // 
             // recordToolStripButton
             // 
@@ -266,12 +324,19 @@
             this.stopRecToolStripButton.Text = "toolStripButton4";
             this.stopRecToolStripButton.Click += new System.EventHandler(this.stopRecToolStripButton_Click);
             // 
-            // connectionsListToolStripMenuItem
+            // tabContextMenu
             // 
-            this.connectionsListToolStripMenuItem.Name = "connectionsListToolStripMenuItem";
-            this.connectionsListToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.connectionsListToolStripMenuItem.Text = "Connections list";
-            this.connectionsListToolStripMenuItem.Click += new System.EventHandler(this.connectionsListToolStripMenuItem_Click);
+            this.tabContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.closeTabToolStripMenuItem});
+            this.tabContextMenu.Name = "tabContextMenu";
+            this.tabContextMenu.Size = new System.Drawing.Size(125, 26);
+            // 
+            // closeTabToolStripMenuItem
+            // 
+            this.closeTabToolStripMenuItem.Name = "closeTabToolStripMenuItem";
+            this.closeTabToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.closeTabToolStripMenuItem.Text = "Close Tab";
+            this.closeTabToolStripMenuItem.Click += new System.EventHandler(this.closeTabToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -288,6 +353,7 @@
             this.captureTabControl.ResumeLayout(false);
             this.liveView.ResumeLayout(false);
             this.liveView.PerformLayout();
+            this.liveCapture.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
@@ -323,6 +389,13 @@
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem connectionsListToolStripMenuItem;
+        private System.Windows.Forms.TabPage liveCapture;
+        private System.Windows.Forms.ListView livePacketListView;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
     }
 }
 

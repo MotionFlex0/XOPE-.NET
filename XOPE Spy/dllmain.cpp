@@ -54,9 +54,15 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
 void initHooks() 
 {
     AllocConsole();
-    freopen("conin$", "r+t", stdin);
-    freopen("conout$", "w+t", stdout);
-    freopen("conout$", "w+t", stderr);
+
+    FILE* fpstdin = stdin;
+    FILE* fpstdout = stdout;
+    FILE* fpstderr = stderr;
+
+    freopen_s(&fpstdin, "conin$", "r", stdin);
+    freopen_s(&fpstdout, "conout$", "w", stdout);
+    freopen_s(&fpstderr, "conout$", "w", stderr);
+
     std::cout << "Redirected" << std::endl;
 
     HookManager::HookedFuncArgs hmargs;
@@ -80,7 +86,7 @@ void initHooks()
         std::cout << "failed to find pipe." << std::endl;
 }
 
-void unhookAll() 
+void unhookAll()
 {
     std::cout << "Freeing from processes..." << std::endl;
     namedPipe->close();
@@ -89,7 +95,9 @@ void unhookAll()
     fclose(stdin);
     fclose(stdout);
     fclose(stderr);
-    FreeConsole();
+    
+    if (FreeConsole() == 0)
+        MessageBoxA(NULL, "Failed to free console!", "ERROR", MB_OK);
 }
 
 int WINAPI Hooked_Connect(SOCKET s, const sockaddr* name, int namelen)
@@ -121,13 +129,18 @@ int WINAPI Hooked_Send(SOCKET s, const char* buf, int len, int flags)
 
 int WINAPI Hooked_Recv(SOCKET s, char* buf, int len, int flags)
 {
-    client::HookedFunctionCallPacketMessage hfcm;
-    hfcm.functionName = HookedFunction::RECV;
-    hfcm.socket = s;
-    hfcm.packetData = buf;
-    hfcm.packetLen = len;
-    namedPipe->send(hfcm);
-    return hookmgr->oRecv(s, buf, len, flags);
+    int bytesRead = hookmgr->oRecv(s, buf, len, flags);
+    if (bytesRead != SOCKET_ERROR) 
+    {
+        std::cout << "SIZE IN BYTES OF RECV: " << bytesRead << " | buf size: " << len << std::endl;
+        client::HookedFunctionCallPacketMessage hfcm;
+        hfcm.functionName = HookedFunction::RECV;
+        hfcm.socket = s;
+        hfcm.packetData = buf;
+        hfcm.packetLen = bytesRead;
+        namedPipe->send(hfcm);
+    }
+    return bytesRead;
 }
 
 int WINAPI Hooked_CloseSocket(SOCKET s)
