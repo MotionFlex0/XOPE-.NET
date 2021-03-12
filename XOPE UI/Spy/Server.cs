@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using XOPE_UI.Core;
 using XOPE_UI.Definitions;
+using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI.Spy
 {
@@ -18,6 +19,10 @@ namespace XOPE_UI.Spy
     //thoough, all some sort of translation class for incomming data
     class Server
     {
+        public event EventHandler<Packet> OnNewPacket;
+        public event EventHandler<Connection> OnNewConnection;
+        public event EventHandler<Connection> OnCloseConnection;
+
         PacketList livePacketList = null;
         NamedPipeServerStream serverStream = null;
         TextBox outputBox;
@@ -30,6 +35,17 @@ namespace XOPE_UI.Spy
             livePacketList = pl;
             outputBox = logOutputBox;
             spyData = sd;
+        }
+
+        
+        public void sendPacket<T1, T2, T3, T4>(SpyPacketType type, T1 arg1)
+        {
+
+        }
+
+        public void fakeRecv()
+        {
+
         }
 
         public void runASync()
@@ -51,12 +67,14 @@ namespace XOPE_UI.Spy
                                 HookedFuncType type = (HookedFuncType)o.Value<Int64>("functionName");
                                 if (type == HookedFuncType.CONNECT || type == HookedFuncType.WSACONNECT)
                                 {
-                                    spyData.Connections.Add(new Connection(o.Value<Int32>("socket"), 
+                                    Connection connection = new Connection(o.Value<Int32>("socket"),
                                         o.Value<Int32>("protocol"),
                                         o.Value<Int32>("addrFamily"),
                                         new IPAddress(o.Value<Int32>("addr")),
                                         o.Value<Int32>("port"),
-                                        Connection.Status.ESTABLISHED));
+                                        Connection.Status.ESTABLISHED);
+                                    spyData.Connections.Add(connection);
+                                    OnNewConnection?.Invoke(this, connection);
                                     Console.WriteLine("new connection");
                                 }
                                 else if (type == HookedFuncType.CLOSE)
@@ -69,22 +87,28 @@ namespace XOPE_UI.Spy
                                         matchingConnection.LastStatusChangeTime = DateTime.Now;
 
                                         Timer t = new Timer();
-                                        t.Tick += new EventHandler((object sender, EventArgs e) =>
+                                        t.Tick += (object sender, EventArgs e) =>
                                         {
                                             bool exists = spyData.Connections.Contains(matchingConnection);
                                             if (exists)
                                                 spyData.Connections.Remove(matchingConnection);
-                                        });
+                                        };
 
                                         t.Interval = 7000;
                                         t.Start();
+                                        OnCloseConnection?.Invoke(this, matchingConnection);
                                     } 
                                 }
                                 else
                                 {
-                                    int socketId = o.Value<Int32>("socket");
                                     byte[] data = Convert.FromBase64String(o.Value<String>("packetData"));
-                                    livePacketList.add(type, socketId, data);
+                                    Packet packet = new Packet
+                                    {
+                                        Data = data,
+                                        Length = data.Length,
+                                        Socket = o.Value<int>("socket")
+                                    };
+                                    OnNewPacket?.Invoke(this, packet);
                                 }
 
                                 //spyData.Packets

@@ -26,6 +26,8 @@ namespace XOPE_UI
         Spy.Server server;
         Spy.SpyData spyData;
 
+        ViewTabHandler viewTabHandler;
+
         public MainWindow()
         {
             //hexEditor = new WpfHexaEditor.HexEditor();
@@ -57,7 +59,11 @@ namespace XOPE_UI
             processDialog = new ProcessDialog();
             activeConnectionsDialog = new ActiveConnectionsDialog(spyData);
 
-            server = new Spy.Server(new PacketList(this.livePacketListView), liveViewOutput, spyData);
+            viewTabHandler = new ViewTabHandler(viewTab);
+            viewTabHandler.AddView(captureViewButton, captureViewTabPage);
+            viewTabHandler.AddView(replayViewButton, replayViewTabPage);
+
+            server = new Spy.Server(new PacketList(this.livePacketListView), logOutput, spyData);
             server.runASync();
             captureTabControl.MouseClick += captureTabControl_MouseClick;
         }
@@ -252,7 +258,7 @@ namespace XOPE_UI
 
             if (selectedItems.Count > 0)
             {
-                using (PacketEditor packetEditor = new PacketEditor((byte[])selectedItems[0].Tag, false))
+                using (PacketEditorDialog packetEditor = new PacketEditorDialog((byte[])selectedItems[0].Tag, false))
                 {
                     DialogResult result = packetEditor.ShowDialog();
                     if (result == DialogResult.OK)
@@ -267,6 +273,21 @@ namespace XOPE_UI
         {
             if (attachedProcess != null)
                 DetachFromProcess();
+        }
+
+        private void newPacketToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void logToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void livePacketListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

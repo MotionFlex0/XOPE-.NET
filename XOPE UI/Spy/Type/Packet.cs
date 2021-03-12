@@ -8,7 +8,7 @@ namespace XOPE_UI.Spy.Type
 {
     public class Packet
     {
-        public Connection Socket { get; set; }
+        public int Socket { get; set; }
         public byte[] Data { get; set; }
         public int Length { get; set; }
     }

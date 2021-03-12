@@ -12,11 +12,11 @@ using System.Windows.Forms;
 
 namespace XOPE_UI.Forms
 {
-    public partial class PacketEditor : Form
+    public partial class PacketEditorDialog : Form
     {
         private byte[] packetData = null;
 
-        public PacketEditor(byte[] vs, bool editible)
+        public PacketEditorDialog(byte[] vs, bool editible)
         {
             InitializeComponent();
 

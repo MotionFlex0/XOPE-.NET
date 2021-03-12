@@ -21,4 +21,21 @@ namespace XOPE_UI.Definitions
         WSASEND,
         WSARECV
     }
+
+    //Maybe pass a struct to the spy like this
+    /*
+     * json = {
+     *    type: 3
+     *    args: [
+     *      "test",
+     *      1,
+     *      2,
+     *      3
+     *    ]
+     * 
+     */
+    enum SpyPacketType
+    {
+
+    }
 }

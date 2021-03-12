@@ -12,7 +12,7 @@ namespace XOPE_UI.Forms.Component
 {
     public partial class CaptureTabPage : UserControl
     {
-        PacketEditor packetEditor = null;
+        PacketEditorDialog packetEditor = null;
 
         public CaptureTabPage()
         {

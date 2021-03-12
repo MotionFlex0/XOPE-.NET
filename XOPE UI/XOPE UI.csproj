@@ -88,6 +88,7 @@
   <ItemGroup>
     <Compile Include="Config\Config.cs" />
     <Compile Include="Core\PacketList.cs" />
+    <Compile Include="Core\ViewTabHandler.cs" />
     <Compile Include="Definitions\Comms.cs" />
     <Compile Include="Forms\Component\CaptureTabPage.cs">
       <SubType>UserControl</SubType>
@@ -101,17 +102,23 @@
     <Compile Include="Forms\ActiveConnectionsDialog.Designer.cs">
       <DependentUpon>ActiveConnectionsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\LogDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LogDialog.Designer.cs">
+      <DependentUpon>LogDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\PacketEditor.cs">
+    <Compile Include="Forms\PacketEditorDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\PacketEditor.Designer.cs">
-      <DependentUpon>PacketEditor.cs</DependentUpon>
+    <Compile Include="Forms\PacketEditorDialog.Designer.cs">
+      <DependentUpon>PacketEditorDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ProcessDialog.cs">
       <SubType>Form</SubType>
@@ -124,6 +131,7 @@
     <Compile Include="Native\Win32API.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Spy\IMessage.cs" />
     <Compile Include="Spy\Type\Connection.cs" />
     <Compile Include="Spy\Server.cs" />
     <Compile Include="Spy\SpyData.cs" />
@@ -135,11 +143,14 @@
     <EmbeddedResource Include="Forms\ActiveConnectionsDialog.resx">
       <DependentUpon>ActiveConnectionsDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LogDialog.resx">
+      <DependentUpon>LogDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PacketEditor.resx">
-      <DependentUpon>PacketEditor.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\PacketEditorDialog.resx">
+      <DependentUpon>PacketEditorDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ProcessDialog.resx">
       <DependentUpon>ProcessDialog.cs</DependentUpon>

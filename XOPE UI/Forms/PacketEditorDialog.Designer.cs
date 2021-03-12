@@ -1,6 +1,6 @@
 ﻿namespace XOPE_UI.Forms
 {
-    partial class PacketEditor
+    partial class PacketEditorDialog
     {
         /// <summary>
         /// Required designer variable.
