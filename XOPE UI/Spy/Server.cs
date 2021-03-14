@@ -23,16 +23,14 @@ namespace XOPE_UI.Spy
         public event EventHandler<Connection> OnNewConnection;
         public event EventHandler<Connection> OnCloseConnection;
 
-        PacketList livePacketList = null;
         NamedPipeServerStream serverStream = null;
         TextBox outputBox;
 
         SpyData spyData;
 
 
-        public Server(PacketList pl, TextBox logOutputBox, SpyData sd)
+        public Server(TextBox logOutputBox, SpyData sd)
         {
-            livePacketList = pl;
             outputBox = logOutputBox;
             spyData = sd;
         }
@@ -104,9 +102,10 @@ namespace XOPE_UI.Spy
                                     byte[] data = Convert.FromBase64String(o.Value<String>("packetData"));
                                     Packet packet = new Packet
                                     {
+                                        Type = type,
                                         Data = data,
                                         Length = data.Length,
-                                        Socket = o.Value<int>("socket")
+                                        Socket = o.Value<int>("socket"),
                                     };
                                     OnNewPacket?.Invoke(this, packet);
                                 }

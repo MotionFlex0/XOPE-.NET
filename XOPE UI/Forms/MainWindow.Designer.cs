@@ -42,35 +42,35 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.processToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.attachToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.detachToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.connectionsListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.packetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newPacketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton5 = new System.Windows.Forms.ToolStripSeparator();
-            this.tabContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.closeTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.packetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newPacketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
-            this.hexEditor1 = new WpfHexaEditor.HexEditor();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.attachToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.detachToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton5 = new System.Windows.Forms.ToolStripSeparator();
             this.recordToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.pauseRecToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.stopRecToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.closeTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
+            this.packetCaptureHexPreview = new WpfHexaEditor.HexEditor();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.captureViewButton = new System.Windows.Forms.Button();
             this.replayViewButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -99,7 +99,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.captureTabControl.Controls.Add(this.liveView);
             this.captureTabControl.Controls.Add(this.liveCapture);
-            this.captureTabControl.Location = new System.Drawing.Point(3, 0);
+            this.captureTabControl.Location = new System.Drawing.Point(4, 0);
             this.captureTabControl.Name = "captureTabControl";
             this.captureTabControl.SelectedIndex = 0;
             this.captureTabControl.Size = new System.Drawing.Size(674, 298);
@@ -212,6 +212,24 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // logToolStripMenuItem
+            // 
+            this.logToolStripMenuItem.Name = "logToolStripMenuItem";
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(94, 22);
+            this.logToolStripMenuItem.Text = "Log";
+            this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(91, 6);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(94, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
@@ -256,6 +274,21 @@
             this.connectionsListToolStripMenuItem.Text = "Connections list";
             this.connectionsListToolStripMenuItem.Click += new System.EventHandler(this.connectionsListToolStripMenuItem_Click);
             // 
+            // packetToolStripMenuItem
+            // 
+            this.packetToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newPacketToolStripMenuItem});
+            this.packetToolStripMenuItem.Name = "packetToolStripMenuItem";
+            this.packetToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
+            this.packetToolStripMenuItem.Text = "Packet";
+            // 
+            // newPacketToolStripMenuItem
+            // 
+            this.newPacketToolStripMenuItem.Name = "newPacketToolStripMenuItem";
+            this.newPacketToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.newPacketToolStripMenuItem.Text = "New Packet";
+            this.newPacketToolStripMenuItem.Click += new System.EventHandler(this.newPacketToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -267,7 +300,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.aboutToolStripMenuItem.Text = "Credits";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.CreditsToolStripMenuItem_Click);
             // 
@@ -292,85 +325,6 @@
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripButton5
-            // 
-            this.toolStripButton5.Name = "toolStripButton5";
-            this.toolStripButton5.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tabContextMenu
-            // 
-            this.tabContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.closeTabToolStripMenuItem});
-            this.tabContextMenu.Name = "tabContextMenu";
-            this.tabContextMenu.Size = new System.Drawing.Size(125, 26);
-            // 
-            // closeTabToolStripMenuItem
-            // 
-            this.closeTabToolStripMenuItem.Name = "closeTabToolStripMenuItem";
-            this.closeTabToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.closeTabToolStripMenuItem.Text = "Close Tab";
-            this.closeTabToolStripMenuItem.Click += new System.EventHandler(this.closeTabToolStripMenuItem_Click);
-            // 
-            // packetToolStripMenuItem
-            // 
-            this.packetToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newPacketToolStripMenuItem});
-            this.packetToolStripMenuItem.Name = "packetToolStripMenuItem";
-            this.packetToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
-            this.packetToolStripMenuItem.Text = "Packet";
-            // 
-            // newPacketToolStripMenuItem
-            // 
-            this.newPacketToolStripMenuItem.Name = "newPacketToolStripMenuItem";
-            this.newPacketToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
-            this.newPacketToolStripMenuItem.Text = "New Packet";
-            this.newPacketToolStripMenuItem.Click += new System.EventHandler(this.newPacketToolStripMenuItem_Click);
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.captureTabControl);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.elementHost1);
-            this.splitContainer1.Size = new System.Drawing.Size(677, 390);
-            this.splitContainer1.SplitterDistance = 297;
-            this.splitContainer1.TabIndex = 3;
-            // 
-            // elementHost1
-            // 
-            this.elementHost1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.elementHost1.Location = new System.Drawing.Point(3, 3);
-            this.elementHost1.Name = "elementHost1";
-            this.elementHost1.Size = new System.Drawing.Size(674, 81);
-            this.elementHost1.TabIndex = 5;
-            this.elementHost1.Text = "elementHost1";
-            this.elementHost1.Child = this.hexEditor1;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 452);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(808, 22);
-            this.statusStrip1.TabIndex = 4;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
-            // 
             // attachToolStripButton
             // 
             this.attachToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -392,6 +346,11 @@
             this.detachToolStripButton.Text = "toolStripButton6";
             this.detachToolStripButton.ToolTipText = "Detach from process";
             this.detachToolStripButton.Click += new System.EventHandler(this.detachToolStripButton_Click);
+            // 
+            // toolStripButton5
+            // 
+            this.toolStripButton5.Name = "toolStripButton5";
+            this.toolStripButton5.Size = new System.Drawing.Size(6, 25);
             // 
             // recordToolStripButton
             // 
@@ -427,23 +386,63 @@
             this.stopRecToolStripButton.Text = "toolStripButton4";
             this.stopRecToolStripButton.Click += new System.EventHandler(this.stopRecToolStripButton_Click);
             // 
-            // logToolStripMenuItem
+            // tabContextMenu
             // 
-            this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-            this.logToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.logToolStripMenuItem.Text = "Log";
-            this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
+            this.tabContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.closeTabToolStripMenuItem});
+            this.tabContextMenu.Name = "tabContextMenu";
+            this.tabContextMenu.Size = new System.Drawing.Size(125, 26);
             // 
-            // toolStripSeparator2
+            // closeTabToolStripMenuItem
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.closeTabToolStripMenuItem.Name = "closeTabToolStripMenuItem";
+            this.closeTabToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.closeTabToolStripMenuItem.Text = "Close Tab";
+            this.closeTabToolStripMenuItem.Click += new System.EventHandler(this.closeTabToolStripMenuItem_Click);
             // 
-            // exitToolStripMenuItem
+            // splitContainer1
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.captureTabControl);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.elementHost1);
+            this.splitContainer1.Size = new System.Drawing.Size(677, 390);
+            this.splitContainer1.SplitterDistance = 297;
+            this.splitContainer1.TabIndex = 3;
+            // 
+            // elementHost1
+            // 
+            this.elementHost1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.elementHost1.Location = new System.Drawing.Point(3, 3);
+            this.elementHost1.Name = "elementHost1";
+            this.elementHost1.Size = new System.Drawing.Size(674, 81);
+            this.elementHost1.TabIndex = 5;
+            this.elementHost1.Child = this.packetCaptureHexPreview;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Location = new System.Drawing.Point(0, 452);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(808, 22);
+            this.statusStrip1.TabIndex = 4;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
             // captureViewButton
             // 
@@ -586,8 +585,6 @@
         private System.Windows.Forms.ToolStripMenuItem packetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newPacketToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Integration.ElementHost elementHost1;
-        private WpfHexaEditor.HexEditor hexEditor1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
@@ -599,6 +596,8 @@
         private System.Windows.Forms.TabControl viewTab;
         private System.Windows.Forms.TabPage captureViewTabPage;
         private System.Windows.Forms.TabPage replayViewTabPage;
+        private WpfHexaEditor.HexEditor packetCaptureHexPreview;
+        private System.Windows.Forms.Integration.ElementHost elementHost1;
     }
 }
 

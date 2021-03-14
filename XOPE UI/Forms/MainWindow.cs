@@ -63,8 +63,16 @@ namespace XOPE_UI
             viewTabHandler.AddView(captureViewButton, captureViewTabPage);
             viewTabHandler.AddView(replayViewButton, replayViewTabPage);
 
-            server = new Spy.Server(new PacketList(this.livePacketListView), logOutput, spyData);
+            packetCaptureHexPreview.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
+            packetCaptureHexPreview.StatusBarVisibility = System.Windows.Visibility.Hidden;
+
+
+            server = new Spy.Server(logOutput, spyData);
             server.runASync();
+
+            PacketList packetList = new PacketList(this.livePacketListView);
+            server.OnNewPacket += (object sender, Spy.Type.Packet e) => packetList.Add(e);
+
             captureTabControl.MouseClick += captureTabControl_MouseClick;
         }
 
@@ -287,7 +295,14 @@ namespace XOPE_UI
 
         private void livePacketListView_SelectedIndexChanged(object sender, EventArgs e)
         {
+            ListView.SelectedListViewItemCollection selectedItems = livePacketListView.SelectedItems;
+            if (selectedItems.Count > 0)
+            {
 
+                packetCaptureHexPreview.Stream = new MemoryStream((byte[])selectedItems[0].Tag);
+                packetCaptureHexPreview.ReadOnlyMode = true;
+                packetCaptureHexPreview.StatusBarVisibility = System.Windows.Visibility.Hidden;
+            }
         }
     }
 }

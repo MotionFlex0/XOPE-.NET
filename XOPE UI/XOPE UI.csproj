@@ -80,9 +80,9 @@
     <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="WPFHexaEditor, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="WPFHexaEditor, Version=2.1.6.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Documents\GitHub clones\WpfHexEditorControl\Sources\WPFHexaEditor\bin\Debug\net48\WPFHexaEditor.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\WpfHexEditorControl-2.1.5\Sources\WPFHexaEditor\bin\Release\net48\WPFHexaEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace XOPE_UI.Definitions
 {
-    enum ClientPacketType
+    public enum ClientPacketType
     {
         HOOKED_FUNCTION_CALL
     }
 
-    enum HookedFuncType
+    public enum HookedFuncType
     {
         CONNECT,
         SEND,
@@ -34,7 +34,7 @@ namespace XOPE_UI.Definitions
      *    ]
      * 
      */
-    enum SpyPacketType
+    public enum SpyPacketType
     {
 
     }
