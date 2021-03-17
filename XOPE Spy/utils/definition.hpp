@@ -2,7 +2,7 @@
 	#define DETOUR Detour64
 	#define MESSAGEBOXAPATCHSIZE 14
 	#define SENDPATCHSIZE 15
-#define CLOSEPATCHSIZE 15
+    #define CLOSEPATCHSIZE 15
 #else
 	#define DETOUR Detour32
 	#define MESSAGEBOXAPATCHSIZE 5

@@ -14,25 +14,20 @@ namespace XOPE_UI.Forms
 {
     public partial class PacketEditorDialog : Form
     {
-        private byte[] packetData = null;
+        public byte[] Data { get; set; } = null;
+        public bool Editible { get; set; } = false;
 
-        public PacketEditorDialog(byte[] vs, bool editible)
+        public PacketEditorDialog()
         {
             InitializeComponent();
 
             hexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
             hexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
 
-            hexEditor.ReadOnlyMode = !editible;
-            packetData = vs;
+            
             //hexEditor.Stream = new MemoryStream(new byte[] { 0x10, 0x20, 0x30, 0x40 });
             //hexEditor.HeaderVisibility = Visibility.Hidden;
             //hexEditor.LineInfoVisibility = Visibility.Hidden;
-        }
-
-        private void PacketEditor_Load(object sender, EventArgs e)
-        {
-            hexEditor.Stream = new MemoryStream(packetData);
         }
 
         private void confirmButton_Click(object sender, EventArgs e)
@@ -44,6 +39,17 @@ namespace XOPE_UI.Forms
         private void cancelButton_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
+        }
+
+        private void PacketEditorDialog_VisibleChanged(object sender, EventArgs e)
+        {
+            if (this.Visible)
+            {
+                if (Data != null)
+                    hexEditor.Stream = new MemoryStream(Data);
+                else
+                    hexEditor.Stream = new MemoryStream(Encoding.ASCII.GetBytes("___NO DATA___"));
+            }
         }
     }
 }

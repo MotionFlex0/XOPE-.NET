@@ -136,6 +136,7 @@
     <Compile Include="Spy\SpyData.cs" />
     <Compile Include="Spy\Type\GenericHookedSpyFunc.cs" />
     <Compile Include="Spy\Type\Packet.cs" />
+    <Compile Include="Util\Logger.cs" />
     <EmbeddedResource Include="Forms\Component\CaptureTabPage.resx">
       <DependentUpon>CaptureTabPage.cs</DependentUpon>
     </EmbeddedResource>

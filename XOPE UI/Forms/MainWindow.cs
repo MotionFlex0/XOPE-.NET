@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using XOPE_UI.Core;
 using XOPE_UI.Forms;
@@ -8,6 +9,7 @@ using XOPE_UI.Forms.Component;
 using XOPE_UI.Injection;
 using XOPE_UI.Native;
 using XOPE_UI.Spy;
+using XOPE_UI.Util;
 
 namespace XOPE_UI
 {
@@ -20,12 +22,18 @@ namespace XOPE_UI
 
         ProcessDialog processDialog;
         ActiveConnectionsDialog activeConnectionsDialog;
+        /*
+         * Not a big fan of this. Unfortunately, due to performance issues with WPFHexaEditor,
+         * this is required. TODO: Fix in the future
+         */
+        PacketEditorDialog packetEditorDialog; 
 
         Process attachedProcess = null;
 
         Spy.Server server;
         Spy.SpyData spyData;
 
+        LogDialog logDialog;
         ViewTabHandler viewTabHandler;
 
         public MainWindow()
@@ -58,6 +66,11 @@ namespace XOPE_UI
 
             processDialog = new ProcessDialog();
             activeConnectionsDialog = new ActiveConnectionsDialog(spyData);
+            packetEditorDialog = new PacketEditorDialog();
+
+            logDialog = new LogDialog(new Logger());
+            Console.WriteLine($"Program started at: {DateTime.Now.ToString()}");
+            Console.WriteLine(5);
 
             viewTabHandler = new ViewTabHandler(viewTab);
             viewTabHandler.AddView(captureViewButton, captureViewTabPage);
@@ -65,6 +78,7 @@ namespace XOPE_UI
 
             packetCaptureHexPreview.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
             packetCaptureHexPreview.StatusBarVisibility = System.Windows.Visibility.Hidden;
+            packetCaptureHexPreview.Focusable = false;
 
 
             server = new Spy.Server(logOutput, spyData);
@@ -266,13 +280,12 @@ namespace XOPE_UI
 
             if (selectedItems.Count > 0)
             {
-                using (PacketEditorDialog packetEditor = new PacketEditorDialog((byte[])selectedItems[0].Tag, false))
+                packetEditorDialog.Data = (byte[])selectedItems[0].Tag;
+                packetEditorDialog.Editible = false;
+                DialogResult result = packetEditorDialog.ShowDialog();
+                if (result == DialogResult.OK)
                 {
-                    DialogResult result = packetEditor.ShowDialog();
-                    if (result == DialogResult.OK)
-                    {
 
-                    }
                 }
             }
         }
@@ -290,7 +303,7 @@ namespace XOPE_UI
 
         private void logToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            logDialog.Show();
         }
 
         private void livePacketListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -298,10 +311,9 @@ namespace XOPE_UI
             ListView.SelectedListViewItemCollection selectedItems = livePacketListView.SelectedItems;
             if (selectedItems.Count > 0)
             {
-
                 packetCaptureHexPreview.Stream = new MemoryStream((byte[])selectedItems[0].Tag);
                 packetCaptureHexPreview.ReadOnlyMode = true;
-                packetCaptureHexPreview.StatusBarVisibility = System.Windows.Visibility.Hidden;
+                Console.WriteLine("inside task.run");
             }
         }
     }

@@ -38,6 +38,7 @@ namespace XOPE_UI.Forms
             this.logTextbox.Location = new System.Drawing.Point(13, 13);
             this.logTextbox.Multiline = true;
             this.logTextbox.Name = "logTextbox";
+            this.logTextbox.ReadOnly = true;
             this.logTextbox.Size = new System.Drawing.Size(391, 428);
             this.logTextbox.TabIndex = 0;
             // 
@@ -49,6 +50,7 @@ namespace XOPE_UI.Forms
             this.closeButton.TabIndex = 1;
             this.closeButton.Text = "Close";
             this.closeButton.UseVisualStyleBackColor = true;
+            this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
             // 
             // LogDialog
             // 
@@ -59,6 +61,7 @@ namespace XOPE_UI.Forms
             this.Controls.Add(this.logTextbox);
             this.Name = "LogDialog";
             this.Text = "Log";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LogDialog_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

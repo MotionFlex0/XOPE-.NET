@@ -112,8 +112,8 @@ namespace XOPE_UI.Spy
 
                                 //spyData.Packets
 
-                                outputBox.AppendText($"\r\n{(ClientPacketType)o.Value<Int32>("messageType")} | {(HookedFuncType)o.Value<Int32>("functionName")}\r\n");
-                                outputBox.AppendText(o.ToString() + "\r\n");
+                                //outputBox.AppendText($"\r\n{(ClientPacketType)o.Value<Int32>("messageType")} | {(HookedFuncType)o.Value<Int32>("functionName")}\r\n");
+                                //outputBox.AppendText(o.ToString() + "\r\n");
 
                             
 

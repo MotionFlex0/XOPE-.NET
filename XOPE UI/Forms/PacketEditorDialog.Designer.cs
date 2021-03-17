@@ -69,7 +69,7 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
-            // PacketEditor
+            // PacketEditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -77,9 +77,9 @@
             this.Controls.Add(this.confirmButton);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.elementHost1);
-            this.Name = "PacketEditor";
+            this.Name = "PacketEditorDialog";
             this.Text = "PacketEditor";
-            this.Load += new System.EventHandler(this.PacketEditor_Load);
+            this.VisibleChanged += new System.EventHandler(this.PacketEditorDialog_VisibleChanged);
             this.ResumeLayout(false);
 
         }
