@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel.Design;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -35,6 +37,8 @@ namespace XOPE_UI
 
         LogDialog logDialog;
         ViewTabHandler viewTabHandler;
+
+        ByteViewer packetCaptureHexPreview;
 
         public MainWindow()
         {
@@ -76,9 +80,16 @@ namespace XOPE_UI
             viewTabHandler.AddView(captureViewButton, captureViewTabPage);
             viewTabHandler.AddView(replayViewButton, replayViewTabPage);
 
-            packetCaptureHexPreview.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
-            packetCaptureHexPreview.StatusBarVisibility = System.Windows.Visibility.Hidden;
-            packetCaptureHexPreview.Focusable = false;
+            // For WpfHexaEditor
+            //packetCaptureHexPreview.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
+            //packetCaptureHexPreview.StatusBarVisibility = System.Windows.Visibility.Hidden;
+            //packetCaptureHexPreview.Focusable = false;
+
+            packetCaptureHexPreview = new ByteViewer();
+            packetCaptureHexPreview.Size = new Size(hexPreviewPanel.Width, hexPreviewPanel.Height);
+            packetCaptureHexPreview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            
+            hexPreviewPanel.Controls.Add(packetCaptureHexPreview);
 
 
             server = new Spy.Server(logOutput, spyData);
@@ -313,8 +324,12 @@ namespace XOPE_UI
             ListView.SelectedListViewItemCollection selectedItems = livePacketListView.SelectedItems;
             if (selectedItems.Count > 0)
             {
-                packetCaptureHexPreview.Stream = new MemoryStream((byte[])selectedItems[0].Tag);
-                packetCaptureHexPreview.ReadOnlyMode = true;
+                // Code for WpfHexAEditor
+                //packetCaptureHexPreview.Stream = new MemoryStream((byte[])selectedItems[0].Tag);
+                //packetCaptureHexPreview.ReadOnlyMode = true;
+
+                packetCaptureHexPreview.SetBytes((byte[])selectedItems[0].Tag);
+                packetCaptureHexPreview.SetDisplayMode(DisplayMode.Hexdump);
                 Console.WriteLine("inside task.run");
             }
         }
