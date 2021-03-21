@@ -26,7 +26,7 @@ namespace XOPE_UI
          * Not a big fan of this. Unfortunately, due to performance issues with WPFHexaEditor,
          * this is required. TODO: Fix in the future
          */
-        PacketEditorDialog packetEditorDialog; 
+        PacketEditorReplayDialog packetEditorReplayDialog; 
 
         Process attachedProcess = null;
 
@@ -66,7 +66,7 @@ namespace XOPE_UI
 
             processDialog = new ProcessDialog();
             activeConnectionsDialog = new ActiveConnectionsDialog(spyData);
-            packetEditorDialog = new PacketEditorDialog();
+            packetEditorReplayDialog = new PacketEditorReplayDialog();
 
             logDialog = new LogDialog(new Logger());
             Console.WriteLine($"Program started at: {DateTime.Now.ToString()}");
@@ -280,9 +280,11 @@ namespace XOPE_UI
 
             if (selectedItems.Count > 0)
             {
-                packetEditorDialog.Data = (byte[])selectedItems[0].Tag;
-                packetEditorDialog.Editible = false;
-                DialogResult result = packetEditorDialog.ShowDialog();
+                //[4] is the socket id. TODO: Store info about a packet in a proper structure
+                packetEditorReplayDialog.SocketId = Convert.ToInt32(selectedItems[0].SubItems[4].Text);
+                packetEditorReplayDialog.Data = (byte[])selectedItems[0].Tag;
+                packetEditorReplayDialog.Editible = true;
+                DialogResult result = packetEditorReplayDialog.ShowDialog();
                 if (result == DialogResult.OK)
                 {
 
