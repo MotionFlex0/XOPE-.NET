@@ -36,6 +36,7 @@ namespace client
 	{
 		HookedFunctionCallPacketMessage() : IMessage(MessageType::HOOKED_FUNCTION_CALL) { };
 
+		//TODO: Maybe use __FUNCTION__ instead of enums
 		HookedFunction functionName;
 		SOCKET socket;
 		int packetLen;

@@ -25,9 +25,9 @@ public:
 	void unpatch();
 
 private:
-	int8_t* m_targetFunc = nullptr; //original function start
-	int8_t* m_detourFunc = nullptr;
-	int8_t* m_trampoline = nullptr; //bridge between the old function's first few bytes and the rest of the function
+	uint8_t* m_targetFunc = nullptr; //original function start
+	uint8_t* m_detourFunc = nullptr;
+	uint8_t* m_trampoline = nullptr; //bridge between the old function's first few bytes and the rest of the function
 	int m_bytesToPatch = 0;
 	
 	bool m_patched = false;
@@ -43,9 +43,9 @@ public:
 
 
 private:
-	int8_t* m_targetFunc = nullptr; //original function start
-	int8_t* m_detourFunc = nullptr;
-	int8_t* m_trampoline = nullptr; //bridge between the old function's first few bytes and the rest of the function
+	uint8_t* m_targetFunc = nullptr; //original function start
+	uint8_t* m_detourFunc = nullptr;
+	uint8_t* m_trampoline = nullptr; //bridge between the old function's first few bytes and the rest of the function
 	int m_bytesToPatch = 0;
 
 	bool m_patched = false;

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,7 +23,7 @@ namespace XOPE_UI.Spy
         public event EventHandler<Packet> OnNewPacket;
         public event EventHandler<Connection> OnNewConnection;
         public event EventHandler<Connection> OnCloseConnection;
-
+        
         NamedPipeServerStream serverStream = null;
         TextBox outputBox;
 

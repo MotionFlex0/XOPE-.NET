@@ -34,12 +34,6 @@
             this.liveView = new System.Windows.Forms.TabPage();
             this.logOutput = new System.Windows.Forms.TextBox();
             this.liveCapture = new System.Windows.Forms.TabPage();
-            this.livePacketListView = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,15 +61,15 @@
             this.closeTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.hexPreviewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.captureViewButton = new System.Windows.Forms.Button();
             this.replayViewButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.viewTab = new System.Windows.Forms.TabControl();
             this.captureViewTabPage = new System.Windows.Forms.TabPage();
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
-            this.hexPreviewPanel = new System.Windows.Forms.Panel();
+            this.livePacketListView = new XOPE_UI.Forms.Component.PacketListView();
             this.captureTabControl.SuspendLayout();
             this.liveView.SuspendLayout();
             this.liveCapture.SuspendLayout();
@@ -140,52 +134,6 @@
             this.liveCapture.TabIndex = 1;
             this.liveCapture.Text = "Live Capture";
             this.liveCapture.UseVisualStyleBackColor = true;
-            // 
-            // livePacketListView
-            // 
-            this.livePacketListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.livePacketListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader5,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4});
-            this.livePacketListView.FullRowSelect = true;
-            this.livePacketListView.HideSelection = false;
-            this.livePacketListView.Location = new System.Drawing.Point(0, 0);
-            this.livePacketListView.MultiSelect = false;
-            this.livePacketListView.Name = "livePacketListView";
-            this.livePacketListView.Size = new System.Drawing.Size(666, 272);
-            this.livePacketListView.TabIndex = 0;
-            this.livePacketListView.UseCompatibleStateImageBehavior = false;
-            this.livePacketListView.View = System.Windows.Forms.View.Details;
-            this.livePacketListView.SelectedIndexChanged += new System.EventHandler(this.livePacketListView_SelectedIndexChanged);
-            this.livePacketListView.DoubleClick += new System.EventHandler(this.livePacketListView_DoubleClick);
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "#";
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Type";
-            this.columnHeader5.Width = 80;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Length";
-            this.columnHeader2.Width = 59;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Data";
-            this.columnHeader3.Width = 278;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "SocketID";
             // 
             // menuStrip1
             // 
@@ -419,6 +367,16 @@
             this.splitContainer1.SplitterDistance = 297;
             this.splitContainer1.TabIndex = 3;
             // 
+            // hexPreviewPanel
+            // 
+            this.hexPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.hexPreviewPanel.Location = new System.Drawing.Point(3, 3);
+            this.hexPreviewPanel.Name = "hexPreviewPanel";
+            this.hexPreviewPanel.Size = new System.Drawing.Size(674, 81);
+            this.hexPreviewPanel.TabIndex = 6;
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Location = new System.Drawing.Point(0, 452);
@@ -426,11 +384,6 @@
             this.statusStrip1.Size = new System.Drawing.Size(808, 22);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
             // captureViewButton
             // 
@@ -502,15 +455,12 @@
             this.replayViewTabPage.Text = "tabPage2";
             this.replayViewTabPage.UseVisualStyleBackColor = true;
             // 
-            // hexPreviewPanel
+            // livePacketListView
             // 
-            this.hexPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hexPreviewPanel.Location = new System.Drawing.Point(3, 3);
-            this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(674, 81);
-            this.hexPreviewPanel.TabIndex = 6;
+            this.livePacketListView.Location = new System.Drawing.Point(0, 0);
+            this.livePacketListView.Name = "livePacketListView";
+            this.livePacketListView.Size = new System.Drawing.Size(666, 272);
+            this.livePacketListView.TabIndex = 0;
             // 
             // MainWindow
             // 
@@ -574,17 +524,10 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem connectionsListToolStripMenuItem;
         private System.Windows.Forms.TabPage liveCapture;
-        private System.Windows.Forms.ListView livePacketListView;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.ToolStripMenuItem packetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newPacketToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
@@ -595,6 +538,7 @@
         private System.Windows.Forms.TabPage captureViewTabPage;
         private System.Windows.Forms.TabPage replayViewTabPage;
         private System.Windows.Forms.Panel hexPreviewPanel;
+        private Forms.Component.PacketListView livePacketListView;
     }
 }
 

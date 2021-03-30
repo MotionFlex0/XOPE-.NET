@@ -58,6 +58,9 @@
     <Prefer32Bit>true</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>XOPE_UI.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -90,17 +93,23 @@
     <Compile Include="Core\PacketList.cs" />
     <Compile Include="Core\ViewTabHandler.cs" />
     <Compile Include="Definitions\Comms.cs" />
-    <Compile Include="Forms\Component\CaptureTabPage.cs">
+    <Compile Include="Forms\Component\PacketListView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Component\CaptureTabPage.Designer.cs">
-      <DependentUpon>CaptureTabPage.cs</DependentUpon>
+    <Compile Include="Forms\Component\PacketListView.Designer.cs">
+      <DependentUpon>PacketListView.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ActiveConnectionsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\ActiveConnectionsDialog.Designer.cs">
       <DependentUpon>ActiveConnectionsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Component\HexEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Component\HexEditor.Designer.cs">
+      <DependentUpon>HexEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\LogDialog.cs">
       <SubType>Form</SubType>
@@ -143,12 +152,22 @@
     <Compile Include="Spy\SpyData.cs" />
     <Compile Include="Spy\Type\GenericHookedSpyFunc.cs" />
     <Compile Include="Spy\Type\Packet.cs" />
+    <Compile Include="Test\UI\HexEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Test\UI\HexEditorForm.Designer.cs">
+      <DependentUpon>HexEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Test\UI\HexEditorFormTest.cs" />
     <Compile Include="Util\Logger.cs" />
-    <EmbeddedResource Include="Forms\Component\CaptureTabPage.resx">
-      <DependentUpon>CaptureTabPage.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Component\PacketListView.resx">
+      <DependentUpon>PacketListView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ActiveConnectionsDialog.resx">
       <DependentUpon>ActiveConnectionsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Component\HexEditor.resx">
+      <DependentUpon>HexEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\LogDialog.resx">
       <DependentUpon>LogDialog.cs</DependentUpon>
@@ -175,6 +194,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Test\UI\HexEditorForm.resx">
+      <DependentUpon>HexEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\XOPE_UI.Forms.ProcessDialog.datasource" />
     <None Include="Properties\Settings.settings">

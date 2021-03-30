@@ -43,16 +43,13 @@ namespace XOPE_UI
         public MainWindow()
         {
             //hexEditor = new WpfHexaEditor.HexEditor();
-           //hexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
+            //hexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
             //elementHost1.Child = hexEditor;
 
             InitializeComponent();
 
             //Using reflection to modify the protected DoubleBuffered property for ListView. DoubleBuffered is used to prevent flickering
-            livePacketListView
-                .GetType()
-                .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-                .SetValue(livePacketListView, true, null);
+
 
             if (!File.Exists("XOPESpy32.dll"))
                 System.Windows.Forms.MessageBox.Show("Canont find XOPESpy32.dll\nMake sure it is in the current directory\nWithout it, you cannot attach to 32-bit processes", "Missing DLL",
@@ -88,15 +85,16 @@ namespace XOPE_UI
             packetCaptureHexPreview = new ByteViewer();
             packetCaptureHexPreview.Size = new Size(hexPreviewPanel.Width, hexPreviewPanel.Height);
             packetCaptureHexPreview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            
             hexPreviewPanel.Controls.Add(packetCaptureHexPreview);
 
 
             server = new Spy.Server(logOutput, spyData);
             server.runASync();
 
-            PacketList packetList = new PacketList(this.livePacketListView);
-            server.OnNewPacket += (object sender, Spy.Type.Packet e) => packetList.Add(e);
+            livePacketListView.OnItemDoubleClick += LivePacketListView_OnItemDoubleClick;
+            livePacketListView.OnItemSelectedChanged += LivePacketListView_OnItemSelectedChanged;
+
+            server.OnNewPacket += (object sender, Spy.Type.Packet e) => livePacketListView.Add(e);
 
             captureTabControl.MouseClick += captureTabControl_MouseClick;
         }
@@ -187,7 +185,7 @@ namespace XOPE_UI
 
         private void attachedProcess_Exited(object sender, EventArgs e)
         {
-            this.Text = $"XOPE";
+            this.Text = "XOPE";
             attachedProcess = null;
             detachToolStripButton.Enabled = false;
             detachToolStripMenuItem.Enabled = false;
@@ -233,9 +231,9 @@ namespace XOPE_UI
                 TabPage tabPage = new TabPage(newCaptureKey + " [Capturing]");
                 captureTabControl.TabPages.Add(tabPage);
                 tabPage.Name = newCaptureKey;
-                tabPage.Controls.Add(new CaptureTabPage());
+                tabPage.Controls.Add(new PacketListView());
                 tabPage.Controls[0].Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-                tabPage.Controls[0].Size = tabPage.Size - new System.Drawing.Size(2, 0);
+                tabPage.Controls[0].Size = tabPage.Size;// - new System.Drawing.Size(2, 0);
                 Console.WriteLine($"before: {tabPage.Size}");;
                 
                 //tabPage.Controls[0].Size = new System.Drawing.Size(150, 100);
@@ -244,7 +242,7 @@ namespace XOPE_UI
 
                 //Creates a new tabpage, based on the default tab page
                 //captureTabControl.TabPages.Add(tabPage);
-                ((System.Windows.Forms.ListView)tabPage.Controls[0].Controls["captureListView"]).Items.Add("abc123");
+                ((ListView)tabPage.Controls[0].Controls["captureListView"]).Items.Add("abc123");
                 captureTabControl.SelectedTab = captureTabControl.TabPages[newCaptureKey];
                 recordToolStripButton.Tag = newCaptureKey;
             }
@@ -285,22 +283,23 @@ namespace XOPE_UI
             activeConnectionsDialog.ShowDialog();
         }
 
-        private void livePacketListView_DoubleClick(object sender, EventArgs e)
+        private void LivePacketListView_OnItemDoubleClick(object sender, ListViewItem e)
         {
-            var selectedItems = livePacketListView.SelectedItems;
-
-            if (selectedItems.Count > 0)
+            //[4] is the socket id. TODO: Store info about a packet in a proper structure
+            packetEditorReplayDialog.SocketId = Convert.ToInt32(e.SubItems[4].Text);
+            packetEditorReplayDialog.Data = (byte[])e.Tag;
+            packetEditorReplayDialog.Editible = true;
+            DialogResult result = packetEditorReplayDialog.ShowDialog();
+            if (result == DialogResult.OK)
             {
-                //[4] is the socket id. TODO: Store info about a packet in a proper structure
-                packetEditorReplayDialog.SocketId = Convert.ToInt32(selectedItems[0].SubItems[4].Text);
-                packetEditorReplayDialog.Data = (byte[])selectedItems[0].Tag;
-                packetEditorReplayDialog.Editible = true;
-                DialogResult result = packetEditorReplayDialog.ShowDialog();
-                if (result == DialogResult.OK)
-                {
 
-                }
             }
+        }
+
+        private void LivePacketListView_OnItemSelectedChanged(object sender, ListViewItem e)
+        {
+            packetCaptureHexPreview.SetBytes((byte[])e.Tag);
+            packetCaptureHexPreview.SetDisplayMode(DisplayMode.Hexdump);
         }
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
@@ -319,19 +318,5 @@ namespace XOPE_UI
             logDialog.Show();
         }
 
-        private void livePacketListView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ListView.SelectedListViewItemCollection selectedItems = livePacketListView.SelectedItems;
-            if (selectedItems.Count > 0)
-            {
-                // Code for WpfHexAEditor
-                //packetCaptureHexPreview.Stream = new MemoryStream((byte[])selectedItems[0].Tag);
-                //packetCaptureHexPreview.ReadOnlyMode = true;
-
-                packetCaptureHexPreview.SetBytes((byte[])selectedItems[0].Tag);
-                packetCaptureHexPreview.SetDisplayMode(DisplayMode.Hexdump);
-                Console.WriteLine("inside task.run");
-            }
-        }
     }
 }

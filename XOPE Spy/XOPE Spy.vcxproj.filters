@@ -74,14 +74,14 @@
     <ClInclude Include="utils\memory.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="nlohmann\json.hpp">
-      <Filter>Source Files\nlohmann</Filter>
-    </ClInclude>
     <ClInclude Include="utils\base64.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="comms\definitions.hpp">
       <Filter>Source Files\pipe</Filter>
+    </ClInclude>
+    <ClInclude Include="nlohmann\json.hpp">
+      <Filter>Source Files\nlohmann</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
