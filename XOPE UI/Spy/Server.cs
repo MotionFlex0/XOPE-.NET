@@ -36,8 +36,8 @@ namespace XOPE_UI.Spy
             spyData = sd;
         }
 
-        
-        public void sendPacket<T1, T2, T3, T4>(SpyPacketType type, T1 arg1)
+
+        public void sendPacket<T1, T2, T3>(string packetType, T1 arg1, T2 arg2, T3 arg3)
         {
 
         }
@@ -60,9 +60,9 @@ namespace XOPE_UI.Spy
                     if (len > 0)
                     {
                         JObject o = JObject.Parse(System.Text.Encoding.UTF8.GetString(buffer, 0, len));
-                        switch ((ClientPacketType)o.Value<Int64>("messageType"))
+                        switch ((SpyPacketType)o.Value<Int64>("messageType"))
                         {
-                            case ClientPacketType.HOOKED_FUNCTION_CALL:
+                            case SpyPacketType.HOOKED_FUNCTION_CALL:
                                 HookedFuncType type = (HookedFuncType)o.Value<Int64>("functionName");
                                 if (type == HookedFuncType.CONNECT || type == HookedFuncType.WSACONNECT)
                                 {
@@ -113,7 +113,7 @@ namespace XOPE_UI.Spy
 
                                 //spyData.Packets
 
-                                //outputBox.AppendText($"\r\n{(ClientPacketType)o.Value<Int32>("messageType")} | {(HookedFuncType)o.Value<Int32>("functionName")}\r\n");
+                                //outputBox.AppendText($"\r\n{(SpyPacketType)o.Value<Int32>("messageType")} | {(HookedFuncType)o.Value<Int32>("functionName")}\r\n");
                                 //outputBox.AppendText(o.ToString() + "\r\n");
 
                             

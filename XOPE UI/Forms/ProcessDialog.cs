@@ -37,7 +37,7 @@ namespace XOPE_UI.Forms
             this.processesView.SmallImageList = new ImageList();
             this.processesView.SmallImageList.ColorDepth = ColorDepth.Depth32Bit;
 
-            Processes = Processes.OrderBy(p => p.Id).Where(p => p.ProcessName.Contains("PacketSender") || p.ProcessName.Contains("RuneLite")).ToArray();
+            Processes = Processes.OrderBy(p => p.Id).Where(p => p.ProcessName.Contains("PacketSender") || p.ProcessName.Contains("RuneLite") || p.ProcessName.Contains("SimpleClient")).ToArray();
 
             var context = TaskScheduler.FromCurrentSynchronizationContext();
 
