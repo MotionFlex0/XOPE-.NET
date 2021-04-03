@@ -55,13 +55,15 @@ void initHooks()
 {
     AllocConsole();
 
-    FILE* fpstdin = stdin;
-    FILE* fpstdout = stdout;
-    FILE* fpstderr = stderr;
+    //FILE* fpstdin = stdin;
+    //FILE* fpstdout = stdout;
+    //FILE* fpstderr = stderr;
 
-    freopen_s(&fpstdin, "conin$", "r", stdin);
-    freopen_s(&fpstdout, "conout$", "w", stdout);
-    freopen_s(&fpstderr, "conout$", "w", stderr);
+    //freopen_s(&fpstdin, "conin$", "r", stdin);
+    //freopen_s(&fpstdout, "conout$", "w", stdout);
+    //freopen_s(&fpstderr, "conout$", "w", stderr);
+
+    std::cout.rdbuf(nullptr);
 
     std::cout << "Redirected" << std::endl;
 
@@ -92,9 +94,9 @@ void unhookAll()
     namedPipe->close();
     hookmgr->destroy();
     delete hookmgr;
-    fclose(stdin);
-    fclose(stdout);
-    fclose(stderr);
+    //fclose(stdin);
+    //fclose(stdout);
+    //fclose(stderr);
     
     if (FreeConsole() == 0)
         MessageBoxA(NULL, "Failed to free console!", "ERROR", MB_OK);
