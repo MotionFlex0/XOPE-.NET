@@ -18,7 +18,7 @@ namespace XOPE_UI.Spy
 {
     //TODO: this is kinda weird so maybe just remove it and put it back into the mainWindow class;
     //thoough, all some sort of translation class for incomming data
-    class Server
+    class NamedPipeServer : IServer
     {
         public event EventHandler<Packet> OnNewPacket;
         public event EventHandler<Connection> OnNewConnection;
@@ -30,24 +30,19 @@ namespace XOPE_UI.Spy
         SpyData spyData;
 
 
-        public Server(TextBox logOutputBox, SpyData sd)
+        public NamedPipeServer(TextBox logOutputBox, SpyData sd)
         {
             outputBox = logOutputBox;
             spyData = sd;
         }
 
 
-        public void sendPacket<T1, T2, T3>(string packetType, T1 arg1, T2 arg2, T3 arg3)
+        public void Send<>()
         {
 
         }
 
-        public void fakeRecv()
-        {
-
-        }
-
-        public void runASync()
+        public void RunAsync()
         {
             serverStream = new NamedPipeServerStream("xopespy");
             
@@ -60,7 +55,7 @@ namespace XOPE_UI.Spy
                     if (len > 0)
                     {
                         JObject o = JObject.Parse(System.Text.Encoding.UTF8.GetString(buffer, 0, len));
-                        switch ((SpyPacketType)o.Value<Int64>("messageType"))
+                        switch (o.Value<SpyPacketType>("messageType"))
                         {
                             case SpyPacketType.HOOKED_FUNCTION_CALL:
                                 HookedFuncType type = (HookedFuncType)o.Value<Int64>("functionName");

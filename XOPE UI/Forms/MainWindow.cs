@@ -32,7 +32,7 @@ namespace XOPE_UI
 
         Process attachedProcess = null;
 
-        Spy.Server server;
+        Spy.NamedPipeServer server;
         Spy.SpyData spyData;
 
         LogDialog logDialog;
@@ -88,8 +88,8 @@ namespace XOPE_UI
             hexPreviewPanel.Controls.Add(packetCaptureHexPreview);
 
 
-            server = new Spy.Server(logOutput, spyData);
-            server.runASync();
+            server = new Spy.NamedPipeServer(logOutput, spyData);
+            server.RunAsync();
 
             livePacketListView.OnItemDoubleClick += LivePacketListView_OnItemDoubleClick;
             livePacketListView.OnItemSelectedChanged += LivePacketListView_OnItemSelectedChanged;
