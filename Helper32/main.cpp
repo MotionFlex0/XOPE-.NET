@@ -4,24 +4,27 @@
 #include <Windows.h>
 #include <unordered_map>
 
-const std::unordered_map<std::string, const char*> modules = {
+const std::unordered_map<const char* , const char*> modules = {
 	{"LoadLibraryA", "kernel32.dll"},
 	{"FreeLibrary", "kernel32.dll"}
 };
 
 int main(int argc, char* argv[])
 {	
-	bool found = false;
+	void* funcAddr = 0;
 	if (argc >= 2)
 	{
-		auto search = modules.find(argv[1]);
+		auto findModule = [](std::pair<const char*, const char*> m) { return strcmp(m.first, m.second) == 0; };
+		auto search = std::find_if(modules.begin(), modules.end(), findModule);
 		if (search != modules.end())
-			std::cout << (int)GetProcAddress(GetModuleHandleA(search->second), search->first.c_str());
-		else
-			std::cout << 0;
+		{
+			HMODULE module = GetModuleHandleA(search->second);
+			if (module != NULL)
+				funcAddr = GetProcAddress(module, search->first);
+		}
 	}
-	else
-		std::cout << 0; // so ya don't crash.
+
+	std::cout << (int)funcAddr;
 	
 	return 0;
 }
