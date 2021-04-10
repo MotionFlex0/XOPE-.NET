@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 	void* funcAddr = 0;
 	if (argc >= 2)
 	{
-		auto findModule = [](std::pair<const char*, const char*> m) { return strcmp(m.first, m.second) == 0; };
+		auto findModule = [=](std::pair<const char*, const char*> m) { return strcmp(m.first, argv[1]) == 0; };
 		auto search = std::find_if(modules.begin(), modules.end(), findModule);
 		if (search != modules.end())
 		{
