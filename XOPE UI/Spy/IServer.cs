@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace XOPE_UI.Spy
 {
-    interface IServer
+    public interface IServer
     {
         void RunAsync();
-        void Send();
+        void Send(IMessage message);
     }
 }
