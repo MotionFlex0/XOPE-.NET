@@ -65,13 +65,8 @@ namespace XOPE_UI
 
             spyData = new SpyData();
 
-            processDialog = new ProcessDialog();
-            activeConnectionsDialog = new ActiveConnectionsDialog(spyData);
-            packetEditorReplayDialog = new PacketEditorReplayDialog();
-
             logDialog = new LogDialog(new Logger());
             Console.WriteLine($"Program started at: {DateTime.Now.ToString()}");
-            Console.WriteLine(5);
 
             viewTabHandler = new ViewTabHandler(viewTab);
             viewTabHandler.AddView(captureViewButton, captureViewTabPage);
@@ -90,6 +85,10 @@ namespace XOPE_UI
 
             server = new Spy.NamedPipeServer(logOutput, spyData);
             server.RunAsync();
+
+            processDialog = new ProcessDialog();
+            activeConnectionsDialog = new ActiveConnectionsDialog(spyData);
+            packetEditorReplayDialog = new PacketEditorReplayDialog(server);
 
             livePacketListView.OnItemDoubleClick += LivePacketListView_OnItemDoubleClick;
             livePacketListView.OnItemSelectedChanged += LivePacketListView_OnItemSelectedChanged;
@@ -126,6 +125,8 @@ namespace XOPE_UI
                     attachedProcess.Exited += attachedProcess_Exited;
                     recordToolStripButton.Enabled = true;
                 }
+                else
+                    MessageBox.Show($"Error when AttachToProcess");
                 //int val = NativeMethods.RPM<int>(processDialog.SelectedProcess.Handle, (IntPtr)0x0133F934);
                 //string strVal = NativeMethods.RPM(processDialog.SelectedProcess.Handle, (IntPtr)0x009861C0, 10);
                 
