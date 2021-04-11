@@ -6,14 +6,22 @@ using System.Threading.Tasks;
 
 namespace XOPE_UI.Definitions
 {
-    public enum SpyPacketType
+    namespace Comms
     {
-        HOOKED_FUNCTION_CALL
+
     }
 
     public enum ServerPacketType
     {
-       
+        CONNECTED_SUCCESS,
+        HOOKED_FUNCTION_CALL
+    }
+
+    public enum SpyPacketType
+    {
+       INJECT_SEND,
+       INJECT_RECV,
+       SHUTDOWN_RECV_THREAD
     }
 
     public enum HookedFuncType

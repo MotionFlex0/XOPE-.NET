@@ -6,11 +6,19 @@
 
 using nlohmann::json;
 
-enum MessageType
+enum ServerMessageType
 {
+	CONNECTED_SUCCESS,
 	HOOKED_FUNCTION_CALL,
 	REQUEST_SOCKET_INFO,
 	PING
+};
+
+enum SpyMessageType
+{
+	INJECT_SEND,
+	INJECT_RECV,
+	SHUTDOWN_RECV_THREAD
 };
 
 enum HookedFunction
@@ -28,13 +36,13 @@ namespace client
 {
 	struct IMessage
 	{
-		IMessage(MessageType m) { messageType = m; }
-		MessageType messageType;
+		IMessage(ServerMessageType m) { messageType = m; }
+		ServerMessageType messageType;
 	};
 
 	struct HookedFunctionCallPacketMessage : IMessage
 	{
-		HookedFunctionCallPacketMessage() : IMessage(MessageType::HOOKED_FUNCTION_CALL) { };
+		HookedFunctionCallPacketMessage() : IMessage(ServerMessageType::HOOKED_FUNCTION_CALL) { };
 
 		//TODO: Maybe use __FUNCTION__ instead of enums
 		HookedFunction functionName;
@@ -45,11 +53,16 @@ namespace client
 
 	struct HookedFunctionCallSocketMessage : IMessage
 	{
-		HookedFunctionCallSocketMessage() : IMessage(MessageType::HOOKED_FUNCTION_CALL) { };
+		HookedFunctionCallSocketMessage() : IMessage(ServerMessageType::HOOKED_FUNCTION_CALL) { };
 
 		HookedFunction functionName;
 		SOCKET socket;
 		sockaddr_in* addr;
+	};
+
+	struct ConnectedSuccessMessage : IMessage
+	{
+		ConnectedSuccessMessage() : IMessage(ServerMessageType::CONNECTED_SUCCESS) { }
 	};
 
 	inline void from_json(const json& j, IMessage& hfcm)
