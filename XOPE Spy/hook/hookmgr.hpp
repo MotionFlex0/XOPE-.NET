@@ -15,21 +15,23 @@ typedef int (WINAPI* WSASendPtr_t)(SOCKET, LPWSABUF, DWORD, LPDWORD, DWORD, LPWS
 typedef int (WINAPI* WSARecvPtr_t)(SOCKET, LPWSABUF, DWORD, LPDWORD, LPDWORD, LPWSAOVERLAPPED, LPWSAOVERLAPPED_COMPLETION_ROUTINE);
 //CloseSocketPtr_t closes both 1.x and 2.x
 
+
+//TODO: Fix up this class. It is very messy
 class HookManager
 {
 public: 
 	struct HookedFuncArgs
 	{
-		void* connect;
-		void* send;
-		void* recv;
-		void* close;
-		void* wsaconnect;
-		void* wsasend;
-		void* wsarecv;
+		void* connect = nullptr;
+		void* send = nullptr;
+		void* recv = nullptr;
+		void* close = nullptr;
+		void* wsaconnect = nullptr;
+		void* wsasend = nullptr;
+		void* wsarecv = nullptr;
 	};
 
-	//TODO: Possibly move HookFuncArgs here and keep "init" as some sort of "initHooks" method
+	//TODO: Possibly move HookFuncArgs here and keep "init" as some sort of "InitHooks" method
 	HookManager() { }
 
 	~HookManager()
@@ -45,40 +47,40 @@ public:
 			return;
 		}
 
-		connectdetour = new DETOUR(hf.connect, GetProcAddress(hWs2, "connect"), SENDPATCHSIZE);
-		senddetour = new DETOUR(hf.send, GetProcAddress(hWs2, "send"), SENDPATCHSIZE);
-		recvdetour = new DETOUR(hf.recv, GetProcAddress(hWs2, "recv"), SENDPATCHSIZE);
-		closedetour = new DETOUR(hf.close, GetProcAddress(hWs2, "closesocket"), CLOSEPATCHSIZE);
-		wsaconnectdetour = new DETOUR(hf.wsaconnect, GetProcAddress(hWs2, "WSAConnect"), SENDPATCHSIZE);
-		wsasenddetour = new DETOUR(hf.wsasend, GetProcAddress(hWs2, "WSASend"), SENDPATCHSIZE);
-		wsarecvdetour = new DETOUR(hf.wsarecv, GetProcAddress(hWs2, "WSARecv"), SENDPATCHSIZE);
+		if (hf.connect) connectdetour = new DETOUR(hf.connect, GetProcAddress(hWs2, "connect"), SENDPATCHSIZE);
+		if (hf.send) senddetour = new DETOUR(hf.send, GetProcAddress(hWs2, "send"), SENDPATCHSIZE);
+		if (hf.recv) recvdetour = new DETOUR(hf.recv, GetProcAddress(hWs2, "recv"), SENDPATCHSIZE);
+		if (hf.close) closedetour = new DETOUR(hf.close, GetProcAddress(hWs2, "closesocket"), CLOSEPATCHSIZE);
+		if (hf.wsaconnect) wsaconnectdetour = new DETOUR(hf.wsaconnect, GetProcAddress(hWs2, "WSAConnect"), SENDPATCHSIZE);
+		if (hf.wsasend) wsasenddetour = new DETOUR(hf.wsasend, GetProcAddress(hWs2, "WSASend"), SENDPATCHSIZE);
+		if (hf.wsarecv) wsarecvdetour = new DETOUR(hf.wsarecv, GetProcAddress(hWs2, "WSARecv"), SENDPATCHSIZE);
 
-		_oConnect = (ConnectPtr_t)connectdetour->patch();
-		_oSend = (SendPtr_t)senddetour->patch();
-		_oRecv = (RecvPtr_t)recvdetour->patch();
-		_oClose = (CloseSocketPtr_t)closedetour->patch();
-		_oWSAConnect = (WSAConnectPtr_t)wsaconnectdetour->patch();
-		_oWSASend = (WSASendPtr_t)wsasenddetour->patch();
-		_oWSARecv = (WSARecvPtr_t)wsarecvdetour->patch();
+		if (hf.connect) _oConnect = (ConnectPtr_t)connectdetour->patch();
+		if (hf.send) _oSend = (SendPtr_t)senddetour->patch();
+		if (hf.recv) _oRecv = (RecvPtr_t)recvdetour->patch();
+		if (hf.close) _oClose = (CloseSocketPtr_t)closedetour->patch();
+		if (hf.wsaconnect) _oWSAConnect = (WSAConnectPtr_t)wsaconnectdetour->patch();
+		if (hf.wsasend) _oWSASend = (WSASendPtr_t)wsasenddetour->patch();
+		if (hf.wsarecv) _oWSARecv = (WSARecvPtr_t)wsarecvdetour->patch();
 	}
 
 	void destroy() {
 		if (!destroyed)
 		{
-			connectdetour->unpatch();
-			senddetour->unpatch();
-			recvdetour->unpatch();
-			closedetour->unpatch();
-			wsaconnectdetour->unpatch();
-			wsasenddetour->unpatch();
-			wsarecvdetour->unpatch();
-			delete connectdetour;
-			delete senddetour;
-			delete recvdetour;
-			delete closedetour;
-			delete wsaconnectdetour;
-			delete wsasenddetour;
-			delete wsarecvdetour;
+			if (connectdetour) connectdetour->unpatch();
+			if (senddetour) senddetour->unpatch();
+			if (recvdetour) recvdetour->unpatch();
+			if (closedetour) closedetour->unpatch();
+			if (wsaconnectdetour) wsaconnectdetour->unpatch();
+			if (wsasenddetour) wsasenddetour->unpatch();
+			if (wsarecvdetour) wsarecvdetour->unpatch();
+			if (connectdetour) delete connectdetour;
+			if (senddetour) delete senddetour;
+			if (recvdetour) delete recvdetour;
+			if (closedetour) delete closedetour;
+			if (wsaconnectdetour) delete wsaconnectdetour;
+			if (wsasenddetour) delete wsasenddetour;
+			if (wsarecvdetour) delete wsarecvdetour;
 			destroyed = true;
 		}
 	}
@@ -129,11 +131,11 @@ private:
 	WSASendPtr_t _oWSASend;
 	WSARecvPtr_t _oWSARecv;
 
-	DETOUR* connectdetour;
-	DETOUR* senddetour;
-	DETOUR* recvdetour;
-	DETOUR* closedetour;
-	DETOUR* wsaconnectdetour;
-	DETOUR* wsasenddetour;
-	DETOUR* wsarecvdetour;
+	DETOUR* connectdetour = nullptr;
+	DETOUR* senddetour = nullptr;
+	DETOUR* recvdetour = nullptr;
+	DETOUR* closedetour = nullptr;
+	DETOUR* wsaconnectdetour = nullptr;
+	DETOUR* wsasenddetour = nullptr;
+	DETOUR* wsarecvdetour = nullptr;
 };
