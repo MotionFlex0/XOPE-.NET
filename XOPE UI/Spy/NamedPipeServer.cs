@@ -37,9 +37,10 @@ namespace XOPE_UI.Spy
         }
 
 
-        public void Send<>()
+        public void Send(IMessage message)
         {
-
+            byte[] messageAsBytes = Encoding.ASCII.GetBytes(message.ToJson());
+            serverStream.Write(messageAsBytes, 0, messageAsBytes.Length);
         }
 
         public void RunAsync()
@@ -51,13 +52,16 @@ namespace XOPE_UI.Spy
                 byte[] buffer = new byte[65536];
                 while (serverStream.IsConnected)
                 {
+                    Console.WriteLine("Server connected to Spy");
                     int len = serverStream.Read(buffer, 0, 65536);
+                    Console.WriteLine($"serverStream.Read returned: {len}");
                     if (len > 0)
                     {
                         JObject o = JObject.Parse(System.Text.Encoding.UTF8.GetString(buffer, 0, len));
-                        switch (o.Value<SpyPacketType>("messageType"))
+                        Console.WriteLine(o.ToString());
+                        switch ((ServerPacketType)o.Value<Int64>("messageType"))
                         {
-                            case SpyPacketType.HOOKED_FUNCTION_CALL:
+                            case ServerPacketType.HOOKED_FUNCTION_CALL:
                                 HookedFuncType type = (HookedFuncType)o.Value<Int64>("functionName");
                                 if (type == HookedFuncType.CONNECT || type == HookedFuncType.WSACONNECT)
                                 {
@@ -108,8 +112,8 @@ namespace XOPE_UI.Spy
 
                                 //spyData.Packets
 
-                                //outputBox.AppendText($"\r\n{(SpyPacketType)o.Value<Int32>("messageType")} | {(HookedFuncType)o.Value<Int32>("functionName")}\r\n");
-                                //outputBox.AppendText(o.ToString() + "\r\n");
+                                outputBox.Invoke((MethodInvoker)(() => outputBox.AppendText($"\r\n{(SpyPacketType)o.Value<Int32>("messageType")} | {(HookedFuncType)o.Value<Int32>("functionName")}\r\n")));
+                                outputBox.Invoke((MethodInvoker)(() => outputBox.AppendText(o.ToString() + "\r\n")));
 
                             
 
@@ -118,6 +122,7 @@ namespace XOPE_UI.Spy
                     }
                     
                 }
+                Console.WriteLine("Closing server...");
             }, System.Threading.CancellationToken.None, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
     }
