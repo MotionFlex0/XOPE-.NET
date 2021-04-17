@@ -1,4 +1,5 @@
 #pragma once
+#include <any>
 #include <sstream>
 #include <unordered_map>
 #include <typeindex>
@@ -55,13 +56,13 @@ public:
 			return;
 		}
 
-		if (hf.connect) connectdetour = new DETOUR(hf.connect, GetProcAddress(hWs2, "connect"), SENDPATCHSIZE);
-		if (hf.send) senddetour = new DETOUR(hf.send, GetProcAddress(hWs2, "send"), SENDPATCHSIZE);
-		if (hf.recv) recvdetour = new DETOUR(hf.recv, GetProcAddress(hWs2, "recv"), SENDPATCHSIZE);
-		if (hf.close) closedetour = new DETOUR(hf.close, GetProcAddress(hWs2, "closesocket"), CLOSEPATCHSIZE);
-		if (hf.wsaconnect) wsaconnectdetour = new DETOUR(hf.wsaconnect, GetProcAddress(hWs2, "WSAConnect"), SENDPATCHSIZE);
-		if (hf.wsasend) wsasenddetour = new DETOUR(hf.wsasend, GetProcAddress(hWs2, "WSASend"), SENDPATCHSIZE);
-		if (hf.wsarecv) wsarecvdetour = new DETOUR(hf.wsarecv, GetProcAddress(hWs2, "WSARecv"), SENDPATCHSIZE);
+		if (hf.connect) connectdetour = new Detour(hf.connect, GetProcAddress(hWs2, "connect"), SENDPATCHSIZE);
+		if (hf.send) senddetour = new Detour(hf.send, GetProcAddress(hWs2, "send"), SENDPATCHSIZE);
+		if (hf.recv) recvdetour = new Detour(hf.recv, GetProcAddress(hWs2, "recv"), SENDPATCHSIZE);
+		if (hf.close) closedetour = new Detour(hf.close, GetProcAddress(hWs2, "closesocket"), CLOSEPATCHSIZE);
+		if (hf.wsaconnect) wsaconnectdetour = new Detour(hf.wsaconnect, GetProcAddress(hWs2, "WSAConnect"), SENDPATCHSIZE);
+		if (hf.wsasend) wsasenddetour = new Detour(hf.wsasend, GetProcAddress(hWs2, "WSASend"), SENDPATCHSIZE);
+		if (hf.wsarecv) wsarecvdetour = new Detour(hf.wsarecv, GetProcAddress(hWs2, "WSARecv"), SENDPATCHSIZE);
 
 		if (hf.connect) _oConnect = (ConnectPtr_t)connectdetour->patch();
 		if (hf.send) _oSend = (SendPtr_t)senddetour->patch();
@@ -107,25 +108,22 @@ public:
 	bool hookNewFunction(T* func, void* hookedFunc, int patchSize)
 	{
 		HookFuncData hookFuncData;
-		hookFuncData.detour = new DETOUR(hookedFunc, func, patchSize);
-		hookFuncData.oFunc = hookFuncData.detour->patch();
+		hookFuncData.detour = new Detour(hookedFunc, func, patchSize);
+		hookFuncData.oFunc = static_cast<T*>(hookFuncData.detour->patch());
 
-		_hooks.insert({ typeid(decltype(func)), hookFuncData });
-		return true;
+		return (_hooks.insert({ (uintmax_t)func, hookFuncData })).second;
 	}
 
 	template<auto Func, typename... Ts>
 	auto oFunction(Ts&&... args)
 	{
-		static_assert(Ts )
-
 		using Func_t = decltype(&Func);
-		auto search = _hooks.find(typeid(Func_t));
+		auto search = _hooks.find((uintmax_t)&Func);
 
 		if (search == _hooks.end())
 			return NULL;
 		
-		return ((Func_t)((*search).second).oFunc)(std::forward<Ts>(args)...);
+		return (std::any_cast<Func_t>(((*search).second).oFunc)(std::forward<Ts>(args)...));
 	}
 
 	template<typename... Ts>
@@ -167,13 +165,13 @@ private:
 
 	struct HookFuncData
 	{
-		void* oFunc;
-		DETOUR* detour;
+		Detour* detour;
+		std::any oFunc;
 	};
 
 	bool destroyed = false;
 
-	std::unordered_map<std::type_index, HookFuncData> _hooks;
+	std::unordered_map<uintmax_t, HookFuncData> _hooks;
 
 	ConnectPtr_t _oConnect;
 	SendPtr_t _oSend;
@@ -183,12 +181,12 @@ private:
 	WSASendPtr_t _oWSASend;
 	WSARecvPtr_t _oWSARecv;
 
-	DETOUR* connectdetour = nullptr;
-	DETOUR* senddetour = nullptr;
-	DETOUR* recvdetour = nullptr;
-	DETOUR* closedetour = nullptr;
-	DETOUR* wsaconnectdetour = nullptr;
-	DETOUR* wsasenddetour = nullptr;
-	DETOUR* wsarecvdetour = nullptr;
+	Detour* connectdetour = nullptr;
+	Detour* senddetour = nullptr;
+	Detour* recvdetour = nullptr;
+	Detour* closedetour = nullptr;
+	Detour* wsaconnectdetour = nullptr;
+	Detour* wsasenddetour = nullptr;
+	Detour* wsarecvdetour = nullptr;
 
 };
