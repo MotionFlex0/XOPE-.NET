@@ -74,43 +74,40 @@ void InitHooks()
     std::cout << "Redirected" << std::endl;
     
 
-    HookManager::HookedFuncArgs hmargs;
-    hmargs.connect = Hooked_Connect;
-    //hmargs.send = Hooked_Send;
-    hmargs.recv = Hooked_Recv;
-    hmargs.close = Hooked_CloseSocket;
-    hmargs.wsaconnect = Hooked_WSAConnect;
-    hmargs.wsasend = Hooked_WSASend;
-    hmargs.wsarecv = Hooked_WSARecv;
-
     hookmgr = new HookManager();
-    hookmgr->init(hmargs);
 
-    hookmgr->hookNewFunction(&send, Hooked_Send, SENDPATCHSIZE);
+    hookmgr->hookNewFunction(&connect, Hooked_Connect, DEFAULTPATCHSIZE);
+    hookmgr->hookNewFunction(&send, Hooked_Send, DEFAULTPATCHSIZE);
+    hookmgr->hookNewFunction(&recv, Hooked_Recv, DEFAULTPATCHSIZE);
+    hookmgr->hookNewFunction(&closesocket, Hooked_CloseSocket, CLOSEPATCHSIZE);
+    hookmgr->hookNewFunction(&WSAConnect, Hooked_WSAConnect, DEFAULTPATCHSIZE);
+    hookmgr->hookNewFunction(&WSASend, Hooked_WSASend, DEFAULTPATCHSIZE);
+    hookmgr->hookNewFunction(&WSARecv, Hooked_WSARecv, DEFAULTPATCHSIZE);
 
     const char* pipePath = "\\\\.\\pipe\\xopespy";
-    //pipePath += std::to_string(GetCurrentProcessId());
+
     namedPipe = new NamedPipe(pipePath);
     if (namedPipe->isValid())
     {
-        std::cout << "successfully connected to pipe: " << pipePath << std::endl;
+        std::cout << "successfully connected to pipe: " << pipePath << '\n';
         namedPipe->send(client::ConnectedSuccessMessage());
     }
     else
-        std::cout << "failed to find pipe." << std::endl;
+        std::cout << "failed to find pipe." << '\n';
 
     childThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)PipeRecvThread, NULL, 0, NULL);
 }
 
 void UnhookAll()
 {
-    std::cout << "Waiting for child thread to exit." << std::endl;
+    std::cout << "Waiting for child thread to exit." << '\n';
     shouldChildThreadExit = true;
     WaitForSingleObject(childThread, 10000);
-    std::cout << "Freeing from processes..." << std::endl;
+    std::cout << "Freeing from processes..." << '\n';
     namedPipe->close();
     hookmgr->destroy();
     delete hookmgr;
+    delete namedPipe;
     //fclose(stdin);
     //fclose(stdout);
     //fclose(stderr);
@@ -135,8 +132,7 @@ void PipeRecvThread(LPVOID param)
 
 int WINAPI Hooked_Connect(SOCKET s, const sockaddr* name, int namelen)
 {
-    int res = hookmgr->oConnect(s, name, namelen);
-    std::cout << "res: " << res << std::endl;
+    int res = hookmgr->oFunction<connect>(s, name, namelen);
     if (res == 0)
     {
         client::HookedFunctionCallSocketMessage hfcm;
@@ -162,10 +158,9 @@ int WINAPI Hooked_Send(SOCKET s, const char* buf, int len, int flags)
 
 int WINAPI Hooked_Recv(SOCKET s, char* buf, int len, int flags)
 {
-    int bytesRead = hookmgr->oRecv(s, buf, len, flags);
+    int bytesRead = hookmgr->oFunction<recv>(s, buf, len, flags);
     if (bytesRead != SOCKET_ERROR) 
     {
-        std::cout << "SIZE IN BYTES OF RECV: " << bytesRead << " | buf size: " << len << std::endl;
         client::HookedFunctionCallPacketMessage hfcm;
         hfcm.functionName = HookedFunction::RECV;
         hfcm.socket = s;
@@ -182,12 +177,12 @@ int WINAPI Hooked_CloseSocket(SOCKET s)
     hfcm.functionName = HookedFunction::CLOSE;
     hfcm.socket = s;
     namedPipe->send(hfcm);
-    return hookmgr->oClose(s);
+    return hookmgr->oFunction<closesocket>(s);
 }
 
 int WINAPI Hooked_WSAConnect(SOCKET s, const sockaddr* name, int namelen, LPWSABUF lpCallerData, LPWSABUF lpCalleeData, LPQOS lpSQOS, LPQOS lpGQOS)
 {
-    int res = hookmgr->oWSAConnect(s, name, namelen, lpCallerData, lpCalleeData, lpSQOS, lpGQOS);
+    int res = hookmgr->oFunction<WSAConnect>(s, name, namelen, lpCallerData, lpCalleeData, lpSQOS, lpGQOS);
     
     //10035 returns as this would be blocking.
     //https://docs.microsoft.com/en-gb/windows/win32/api/mswsock/nc-mswsock-lpfn_connectex?redirectedfrom=MSDN
@@ -211,10 +206,7 @@ int WINAPI Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPD
     hfcm.packetDataB64 = client::IMessage::convertBytesToB64String(lpBuffers[0].buf, lpBuffers[0].len);
     hfcm.packetLen = lpBuffers[0].len;
     namedPipe->send(hfcm);
-    //namedPipe->send(ServerMessageType::HOOKED_FUNCTION_CALL, lpBuffers[0].len);
-    //for (unsigned int i = 0; i < dwBufferCount; i++)
-        //std::cout << "[Hooked_WSASend] buffer[" << i << "] buf = " << lpBuffers[i].buf << " | len = " << lpBuffers[i].len << std::endl;
-    return hookmgr->oWSASend(s, lpBuffers, dwBufferCount, lpNumberOfBytesSent, dwFlags, lpOverlapped, lpCompletionRoutine);
+    return hookmgr->oFunction<WSASend>(s, lpBuffers, dwBufferCount, lpNumberOfBytesSent, dwFlags, lpOverlapped, lpCompletionRoutine);
 }
 
 int WINAPI Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesRecvd, LPDWORD lpFlags, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine)
@@ -225,5 +217,5 @@ int WINAPI Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPD
     hfcm.packetDataB64 = client::IMessage::convertBytesToB64String(lpBuffers[0].buf, lpBuffers[0].len);
     hfcm.packetLen = lpBuffers[0].len;
     namedPipe->send(hfcm);
-    return hookmgr->oWSARecv(s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpOverlapped, lpCompletionRoutine);;
+    return hookmgr->oFunction<WSARecv>(s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpOverlapped, lpCompletionRoutine);;
 }
