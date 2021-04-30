@@ -1,29 +1,13 @@
 #pragma once
 #include <any>
+#include <functional>
 #include <sstream>
 #include <unordered_map>
 #include <typeindex>
 #include <Winsock2.h>
 #include <windows.h>
 #include "../utils/definition.hpp"
-
-//Winsock 1.x
-//typedef int (WINAPI* ConnectPtr_t)(SOCKET, const sockaddr*, int);
-//typedef int (WINAPI* SendPtr_t)(SOCKET, const char*, int, int);
-//typedef int (WINAPI* RecvPtr_t)(SOCKET, char*, int, int);
-//typedef int (WINAPI* CloseSocketPtr_t)(SOCKET);
-
-using ConnectPtr_t = decltype(&connect);
-using SendPtr_t = decltype(&send);
-using RecvPtr_t = decltype(&recv);
-using CloseSocketPtr_t = decltype(&closesocket);
-
-//Winsock 2.x
-typedef int(WINAPI* WSAConnectPtr_t)(SOCKET, const sockaddr*, int, LPWSABUF, LPWSABUF, LPQOS, LPQOS);
-typedef int (WINAPI* WSASendPtr_t)(SOCKET, LPWSABUF, DWORD, LPDWORD, DWORD, LPWSAOVERLAPPED, LPWSAOVERLAPPED_COMPLETION_ROUTINE);
-typedef int (WINAPI* WSARecvPtr_t)(SOCKET, LPWSABUF, DWORD, LPDWORD, LPDWORD, LPWSAOVERLAPPED, LPWSAOVERLAPPED_COMPLETION_ROUTINE);
-//CloseSocketPtr_t closes both 1.x and 2.x
-
+#include "../utils/util.h"
 
 class HookManager
 {
@@ -51,30 +35,67 @@ public:
 		}
 	}
 
-	template <typename T>
-	bool hookNewFunction(T* func, void* hookedFunc, int patchSize)
+	template <class T>
+	bool hookNewFunction(T* func, T* hookedFunc, int patchSize)
 	{
 		HookFuncData hookFuncData;
 		hookFuncData.detour = new Detour(hookedFunc, func, patchSize);
 		hookFuncData.oFunc = static_cast<T*>(hookFuncData.detour->patch());
 
-		return (_hooks.insert({ (uintmax_t)func, hookFuncData })).second;
+		return (_hooks.insert({ (uintptr_t)func, hookFuncData })).second;
 	}
 
-	template<auto Func, typename... Ts>
-	auto oFunction(Ts&&... args)
+
+	//Returns original function _F with the correct type
+	template<auto _F>
+	auto get_ofunction()
 	{
-		using Func_t = decltype(&Func);
-		auto search = _hooks.find((uintmax_t)&Func);
+		auto func = _F;
+		using _F_t = decltype(func);
+
+		auto search = _hooks.find((uintptr_t)_F);
 
 		if (search == _hooks.end())
-			return NULL;
+		{
+			char msg[1024];
+			sprintf_s(msg, sizeof(msg), "Could not find hook for this function - Calling _F\nFunction Address: %p\nFunction Type: %s", _F, typeid(_F).name());
+			MessageBoxA(NULL, msg, "Hook Missing - get_ofunction", MB_OK);
+			return _F;
+		}
+
+		std::stringstream ss;
+		ss << "call_ofunction _F did not match type of stored original function\n";
+		ss << "\n_F_t type: " << typeid(_F_t).name() << "\n\nsearch->second.oFunc type: " << search->second.oFunc.type().name();
+		x_assert(typeid(_F_t) == search->second.oFunc.type(), ss.str().c_str());
+
+		return std::any_cast<_F_t>(search->second.oFunc);
+	}
+
+	//Forwards passed arguments to the original function _F
+	template<auto _F, typename... Ts>
+	auto call_ofunction(Ts&&... args)   //, class... Ts>
+	{
+		auto func = _F;
+		using _F_t = decltype(func);
+		auto search = _hooks.find((uintptr_t)_F);
 		
-		return (std::any_cast<Func_t>(((*search).second).oFunc)(std::forward<Ts>(args)...));
+		if (search == _hooks.end())
+		{
+			char msg[1024];
+			sprintf_s(msg, sizeof(msg), "Could not find hook for this function - Calling _F\nFunction Address: %p\nFunction Type: %s", _F, typeid(_F).name());
+			MessageBoxA(NULL, msg, "Hook Missing - call_ofunction", MB_OK);
+			return _F(std::forward<Ts>(args)...);
+		}
+		
+		std::stringstream ss;
+		ss << "call_ofunction _F did not match type of stored original function\n";
+		ss << "_F_t type: " << typeid(_F_t).name() << " | search->second.oFunc type: " << search->second.oFunc.type().name();
+		x_assert(typeid(_F_t) == search->second.oFunc.type(), ss.str().c_str());
+
+		return (std::any_cast<_F_t>(((*search).second).oFunc)(std::forward<Ts>(args)...));
 	}
 
 private:
-
 	struct HookFuncData
 	{
 		Detour* detour;
@@ -83,5 +104,5 @@ private:
 
 	bool destroyed = false;
 
-	std::unordered_map<uintmax_t, HookFuncData> _hooks;
+	std::unordered_map<uintptr_t, HookFuncData> _hooks;
 };
