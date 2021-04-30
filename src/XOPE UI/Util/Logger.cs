@@ -23,7 +23,7 @@ namespace XOPE_UI.Util
             //Console.F
             base.Dispose(disposing);
         }
-
+        
         public override void Flush()
         {
             MessageBox.Show(this.ToString());
@@ -35,25 +35,13 @@ namespace XOPE_UI.Util
             return Task.Run(() => Flush());
         }
 
-        public void Write<T>(T value) where T : unmanaged
+        public void Write<T>(T value)
         {
             base.Write(value);
             OnFlush?.Invoke(this, value.ToString());
         }
 
-        public override void Write(string value) 
-        {
-            base.Write(value);
-            OnFlush?.Invoke(this, value);
-        }
-
-        public void WriteLine<T>(T value) where T : unmanaged
-        {
-            base.WriteLine(value);
-            OnFlush?.Invoke(this, value + "\r\n");
-        }
-
-        public override void WriteLine(string value)
+        public void WriteLine<T>(T value)
         {
             base.WriteLine(value);
             OnFlush?.Invoke(this, value + "\r\n");
