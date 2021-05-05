@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	std::cout << (int)funcAddr;
+	std::cout << (intptr_t)funcAddr;
 	
 	return 0;
 }
