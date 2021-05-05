@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using PeterO.Cbor;
 using System;
 using System.Collections.Generic;
@@ -11,11 +13,14 @@ namespace XOPE_UI.Spy
 {
     public class IMessage
     {
-        protected SpyPacketType Type { get; set; }
-        public string ToJson()
+        [JsonProperty]
+        protected SpyMessageType Type { get; set; }
+
+        public virtual JObject ToJson()
         {
-            //CBORObject.FromObject(this).EncodeToBytes();
-            return JsonConvert.SerializeObject(this);
+            //CBORObject.FromObject(this).EncodeToBytes
+            
+            return JObject.FromObject(this);
         }
     }
 }
