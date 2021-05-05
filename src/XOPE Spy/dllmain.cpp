@@ -1,10 +1,12 @@
 //#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #include <iostream>
+#include <queue>
 #include <string>
 #include <Winsock2.h>
 #include <windows.h>
 #include "hook/detour.h"
 #include "hook/hookmgr.hpp"
+#include "nlohmann/json.hpp"
 #include "utils/base64.h"
 #include "utils/definition.hpp" //TODO: Improve how this works
 #include "pipe/namedpipe.h"
@@ -13,7 +15,7 @@
 
 void InitHooks();
 void UnhookAll();
-void PipeRecvThread(LPVOID param);
+void PipeThread(LPVOID param);
 
 int WINAPI Hooked_Connect(SOCKET, const sockaddr*, int);
 int WINAPI Hooked_Send(SOCKET, const char*, int, int);
@@ -23,13 +25,6 @@ int WINAPI Hooked_CloseSocket(SOCKET);
 int WINAPI Hooked_WSAConnect(SOCKET, const sockaddr*, int, LPWSABUF, LPWSABUF, LPQOS, LPQOS);
 int WINAPI Hooked_WSASend(SOCKET, LPWSABUF, DWORD, LPDWORD, DWORD, LPWSAOVERLAPPED, LPWSAOVERLAPPED_COMPLETION_ROUTINE);
 int WINAPI Hooked_WSARecv(SOCKET, LPWSABUF, DWORD, LPDWORD, LPDWORD, LPWSAOVERLAPPED, LPWSAOVERLAPPED_COMPLETION_ROUTINE);
-
-//MidFunctionDetour connectmfd;
-//MidFunctionDetour sendmfd;
-//MidFunctionDetour recvmfd;
-//MidFunctionDetour closesocketmfd;
-
-//Detour32* procaddressbt;
 
 HANDLE childThread;
 std::atomic<bool> shouldChildThreadExit = false;
@@ -94,7 +89,7 @@ void InitHooks()
     else
         std::cout << "failed to find pipe." << '\n';
 
-    childThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)PipeRecvThread, NULL, 0, NULL);
+    childThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)PipeThread, NULL, 0, NULL);
 }
 
 void UnhookAll()
@@ -115,14 +110,49 @@ void UnhookAll()
         MessageBoxA(NULL, "Failed to free console!", "ERROR", MB_OK);*/
 }
 
-void PipeRecvThread(LPVOID param)
+void PipeThread(LPVOID param)
 {
     json message;
     while (!shouldChildThreadExit)
     {    
         bool res = namedPipe->recv(message);
         if (res)
-            MessageBoxA(NULL, message.dump(2).c_str(), "message dump", MB_OK);
+        {
+            SpyMessageType type = message["Type"].get<SpyMessageType>();
+           
+            if (type == SpyMessageType::INJECT_SEND)
+            {
+                SOCKET socket = message["SocketId"].get<SOCKET>();
+                std::string data = base64_decode(message["Data"].get<std::string>());
+
+                if (data.length() == message["Length"].get<int>())
+                {
+                    hookmgr->get_ofunction<send>()(socket, data.c_str(), data.length(), NULL);
+                }
+                else
+                {
+                    namedPipe->send(client::ErrorMessage("INJECT_SEND packet size mismatch"));
+                }
+            }
+            else if (type == SpyMessageType::INJECT_RECV)
+            {
+                SOCKET socket = message["SocketId"].get<SOCKET>();
+                std::string data = base64_decode(message["Data"].get<std::string>());
+
+                if (data.length() == message["Length"].get<int>())
+                {
+                    //hookmgr->get_ofunction<send>()(socket, data.c_str(), data.length(), NULL);
+                }
+                else
+                {
+                    namedPipe->send(client::ErrorMessage("INJECT_RECV packet size mismatch"));
+                }
+            }
+            else if (type == SpyMessageType::SHUTDOWN_RECV_THREAD)
+            {
+                shouldChildThreadExit = true;
+            }
+        }
 
         namedPipe->flushOutBuffer();
         Sleep(100);
