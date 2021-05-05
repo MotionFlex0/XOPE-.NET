@@ -12,22 +12,27 @@
 
 using nlohmann::json;
 
-enum ServerMessageType
+enum class ServerMessageType
 {
+	PING,
+	PONG,
+	ERROR_MESSAGE,
 	CONNECTED_SUCCESS,
 	HOOKED_FUNCTION_CALL,
 	REQUEST_SOCKET_INFO,
-	PING
 };
 
-enum SpyMessageType
+enum class SpyMessageType
 {
+	PING,
+	PONG,
+	ERROR_MESSAGE,
 	INJECT_SEND,
 	INJECT_RECV,
 	SHUTDOWN_RECV_THREAD
 };
 
-enum HookedFunction
+enum class HookedFunction
 {
 	CONNECT,
 	SEND,
@@ -74,22 +79,15 @@ namespace client
 			socket, 
 			packetLen, 
 			packetDataB64);
+	};
 
-	//	inline void toJson(json& j) override
-	//	{
-	//		IMessage::toJson(j);
-	//		j +=
-	//		{
-	//			KV(functionName),
-	//			KV(socket),
-	//			KV(packetLen),
-	//			KNV(packetData, )
-	//		};
-
-	//		/*j.at("functionName").get_to(functionName);
-	//		j.at("socket").get_to(socket);
-	//		j.at("packetLen").get_to(packetLen);*/
-	//	}
+	struct ErrorMessage : IMessage
+	{
+		ErrorMessage(std::string errMsg) : IMessage(ServerMessageType::ERROR_MESSAGE), errorMessage(errMsg) { }
+		
+		std::string errorMessage;
+		
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ErrorMessage, messageType, errorMessage);
 	};
 
 	struct HookedFunctionCallSocketMessage : IMessage

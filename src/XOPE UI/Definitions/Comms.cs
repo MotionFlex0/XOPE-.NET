@@ -11,19 +11,30 @@ namespace XOPE_UI.Definitions
 
     }
 
-    public enum ServerPacketType
+    public enum ServerMessageType
     {
+        PING,
+        PONG,
+        ERROR_MESSAGE,
         CONNECTED_SUCCESS,
         HOOKED_FUNCTION_CALL,
         REQUEST_SOCKET_INFO,
-        PING
     }
 
-    public enum SpyPacketType
+#if NETFRAMEWORK
+#warning INSIDE NETFRAMEWORK
+    public enum SpyMessageType
+#else
+#warning Another_ONE
+    public enum SpyMessageType
+#endif
     {
-       INJECT_SEND,
-       INJECT_RECV,
-       SHUTDOWN_RECV_THREAD
+        PING,
+        PONG,
+        ERROR_MESSAGE,
+        INJECT_SEND,
+        INJECT_RECV,
+        SHUTDOWN_RECV_THREAD
     }
 
     public enum HookedFuncType
@@ -49,7 +60,7 @@ namespace XOPE_UI.Definitions
      *    ]
      * 
      */
-    //public enum SpyPacketType
+    //public enum SpyMessageType
     //{
 
     //}
