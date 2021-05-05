@@ -30,15 +30,13 @@ namespace XOPE_UI.Spy
         public event EventHandler<Connection> OnCloseConnection;
         
         NamedPipeServerStream serverStream = null;
-        TextBox outputBox;
 
         SpyData spyData;
 
         ConcurrentQueue<byte[]> outBuffer;
 
-        public NamedPipeServer(TextBox logOutputBox, SpyData sd)
+        public NamedPipeServer(SpyData sd)
         {
-            outputBox = logOutputBox;
             spyData = sd;
             outBuffer = new ConcurrentQueue<byte[]>();
         }
@@ -133,9 +131,6 @@ namespace XOPE_UI.Spy
                             {
                                 Console.WriteLine($"[Error] {json.Value<String>("errorMessage")}");
                             }
-
-                            //outputBox.Invoke((MethodInvoker)(() => outputBox.AppendText($"\r\n{(ServerMessageType)json.Value<Int32>("messageType")}\r\n")));
-                            //outputBox.Invoke((MethodInvoker)(() => outputBox.AppendText(json.ToString() + "\r\n")));
                         }
                     }
 

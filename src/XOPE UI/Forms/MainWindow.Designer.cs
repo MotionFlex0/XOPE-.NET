@@ -31,9 +31,8 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.captureTabControl = new System.Windows.Forms.TabControl();
-            this.liveView = new System.Windows.Forms.TabPage();
-            this.logOutput = new System.Windows.Forms.TextBox();
             this.liveCapture = new System.Windows.Forms.TabPage();
+            this.livePacketListView = new XOPE_UI.Forms.Component.PacketListView();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,9 +68,7 @@
             this.viewTab = new System.Windows.Forms.TabControl();
             this.captureViewTabPage = new System.Windows.Forms.TabPage();
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
-            this.livePacketListView = new XOPE_UI.Forms.Component.PacketListView();
             this.captureTabControl.SuspendLayout();
-            this.liveView.SuspendLayout();
             this.liveCapture.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -90,39 +87,12 @@
             this.captureTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.captureTabControl.Controls.Add(this.liveView);
             this.captureTabControl.Controls.Add(this.liveCapture);
             this.captureTabControl.Location = new System.Drawing.Point(4, 0);
             this.captureTabControl.Name = "captureTabControl";
             this.captureTabControl.SelectedIndex = 0;
             this.captureTabControl.Size = new System.Drawing.Size(674, 298);
             this.captureTabControl.TabIndex = 0;
-            // 
-            // liveView
-            // 
-            this.liveView.Controls.Add(this.logOutput);
-            this.liveView.Location = new System.Drawing.Point(4, 22);
-            this.liveView.Name = "liveView";
-            this.liveView.Padding = new System.Windows.Forms.Padding(3);
-            this.liveView.Size = new System.Drawing.Size(666, 272);
-            this.liveView.TabIndex = 0;
-            this.liveView.Text = "Log";
-            this.liveView.UseVisualStyleBackColor = true;
-            // 
-            // logOutput
-            // 
-            this.logOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.logOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.logOutput.Location = new System.Drawing.Point(3, 2);
-            this.logOutput.Multiline = true;
-            this.logOutput.Name = "logOutput";
-            this.logOutput.ReadOnly = true;
-            this.logOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.logOutput.Size = new System.Drawing.Size(452, 267);
-            this.logOutput.TabIndex = 0;
-            this.logOutput.TabStop = false;
             // 
             // liveCapture
             // 
@@ -134,6 +104,14 @@
             this.liveCapture.TabIndex = 1;
             this.liveCapture.Text = "Live Capture";
             this.liveCapture.UseVisualStyleBackColor = true;
+            // 
+            // livePacketListView
+            // 
+            this.livePacketListView.Location = new System.Drawing.Point(0, 0);
+            this.livePacketListView.Margin = new System.Windows.Forms.Padding(0);
+            this.livePacketListView.Name = "livePacketListView";
+            this.livePacketListView.Size = new System.Drawing.Size(666, 272);
+            this.livePacketListView.TabIndex = 0;
             // 
             // menuStrip1
             // 
@@ -455,13 +433,6 @@
             this.replayViewTabPage.Text = "tabPage2";
             this.replayViewTabPage.UseVisualStyleBackColor = true;
             // 
-            // livePacketListView
-            // 
-            this.livePacketListView.Location = new System.Drawing.Point(0, 0);
-            this.livePacketListView.Name = "livePacketListView";
-            this.livePacketListView.Size = new System.Drawing.Size(666, 272);
-            this.livePacketListView.TabIndex = 0;
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -478,8 +449,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.captureTabControl.ResumeLayout(false);
-            this.liveView.ResumeLayout(false);
-            this.liveView.PerformLayout();
             this.liveCapture.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -500,7 +469,6 @@
 
         #endregion
         private System.Windows.Forms.TabControl captureTabControl;
-        private System.Windows.Forms.TabPage liveView;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
@@ -517,7 +485,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripButton5;
         private System.Windows.Forms.ToolStripButton attachToolStripButton;
         private System.Windows.Forms.ToolStripButton detachToolStripButton;
-        private System.Windows.Forms.TextBox logOutput;
         private System.Windows.Forms.ContextMenuStrip tabContextMenu;
         private System.Windows.Forms.ToolStripMenuItem closeTabToolStripMenuItem;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;

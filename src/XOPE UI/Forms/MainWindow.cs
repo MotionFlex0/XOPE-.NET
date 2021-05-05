@@ -83,7 +83,7 @@ namespace XOPE_UI
             hexPreviewPanel.Controls.Add(packetCaptureHexPreview);
 
 
-            server = new Spy.NamedPipeServer(logOutput, spyData);
+            server = new Spy.NamedPipeServer(spyData);
             server.RunAsync();
 
             processDialog = new ProcessDialog();
