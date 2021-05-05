@@ -22,7 +22,7 @@ using XOPE_UI.Spy.Type;
 namespace XOPE_UI.Spy
 {
     //TODO: this is kinda weird so maybe just remove it and put it back into the mainWindow class;
-    //thoough, all some sort of translation class for incomming data
+    //though, all some sort of translation class for incomming data
     class NamedPipeServer : IServer
     {
         public event EventHandler<Packet> OnNewPacket;
@@ -46,7 +46,7 @@ namespace XOPE_UI.Spy
 
         public void Send(IMessage message)
         {
-            outBuffer.Enqueue(Encoding.ASCII.GetBytes(message.ToJson())); //TODO: Convert to bson
+            outBuffer.Enqueue(Encoding.ASCII.GetBytes(message.ToJson().ToString())); //TODO: Convert to bson
         }
 
         public void RunAsync()
@@ -72,68 +72,70 @@ namespace XOPE_UI.Spy
                         if (len > 0)
                         {
                             CBORObject cbor = CBORObject.DecodeFromBytes((new ArraySegment<byte>(buffer, 0, len)).ToArray());
-                            //JObject o = JObject.Parse(Encoding.ASCII.GetString(buffer, 0, len));
-                            JObject o = JObject.Parse(cbor.ToString());
-                            Console.WriteLine($"Incoming message: {(ServerPacketType)o.Value<Int32>("messageType")}");
-                            Console.WriteLine($"Entire message len: {len}");
-                            Console.WriteLine(o.ToString());
-                            switch ((ServerPacketType)o.Value<Int64>("messageType"))
+                            //JObject json = JObject.Parse(Encoding.ASCII.GetString(buffer, 0, len));
+                            JObject json = JObject.Parse(cbor.ToString());
+                            Console.WriteLine($"Incoming message: {(ServerMessageType)json.Value<Int32>("messageType")}");
+
+                            ServerMessageType messageType = (ServerMessageType)json.Value<Int64>("messageType");
+
+                            if (messageType == ServerMessageType.HOOKED_FUNCTION_CALL)
                             {
-                                case ServerPacketType.HOOKED_FUNCTION_CALL:
-                                    HookedFuncType type = (HookedFuncType)o.Value<Int64>("functionName");
-                                    if (type == HookedFuncType.CONNECT || type == HookedFuncType.WSACONNECT)
+                                HookedFuncType hookedFuncType = (HookedFuncType)json.Value<Int64>("functionName");
+                                if (hookedFuncType == HookedFuncType.CONNECT || hookedFuncType == HookedFuncType.WSACONNECT)
+                                {
+                                    Connection connection = new Connection(json.Value<Int32>("socket"),
+                                        json.Value<Int32>("protocol"),
+                                        json.Value<Int32>("addrFamily"),
+                                        new IPAddress(json.Value<Int32>("addr")),
+                                        json.Value<Int32>("port"),
+                                        Connection.Status.ESTABLISHED);
+                                    spyData.Connections.Add(connection);
+                                    OnNewConnection?.Invoke(this, connection);
+                                    Console.WriteLine("new connection");
+                                }
+                                else if (hookedFuncType == HookedFuncType.CLOSE)
+                                {
+                                    int socketId = json.Value<Int32>("socket");
+                                    Connection matchingConnection = spyData.Connections.FirstOrDefault((Connection c) => c.SocketId == socketId);
+                                    if (matchingConnection != null && matchingConnection.SocketStatus != Connection.Status.CLOSED)
                                     {
-                                        Connection connection = new Connection(o.Value<Int32>("socket"),
-                                            o.Value<Int32>("protocol"),
-                                            o.Value<Int32>("addrFamily"),
-                                            new IPAddress(o.Value<Int32>("addr")),
-                                            o.Value<Int32>("port"),
-                                            Connection.Status.ESTABLISHED);
-                                        spyData.Connections.Add(connection);
-                                        OnNewConnection?.Invoke(this, connection);
-                                        Console.WriteLine("new connection");
-                                    }
-                                    else if (type == HookedFuncType.CLOSE)
-                                    {
-                                        int socketId = o.Value<Int32>("socket");
-                                        Connection matchingConnection = spyData.Connections.FirstOrDefault((Connection c) => c.SocketId == socketId);
-                                        if (matchingConnection != null && matchingConnection.SocketStatus != Connection.Status.CLOSED)
-                                        {
-                                            matchingConnection.SocketStatus = Connection.Status.CLOSED;
-                                            matchingConnection.LastStatusChangeTime = DateTime.Now;
+                                        matchingConnection.SocketStatus = Connection.Status.CLOSED;
+                                        matchingConnection.LastStatusChangeTime = DateTime.Now;
 
-                                            System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
-                                            t.Tick += (object sender, EventArgs e) =>
-                                            {
-                                                bool exists = spyData.Connections.Contains(matchingConnection);
-                                                if (exists)
-                                                    spyData.Connections.Remove(matchingConnection);
-                                            };
-
-                                            t.Interval = 7000;
-                                            t.Start();
-                                            OnCloseConnection?.Invoke(this, matchingConnection);
-                                        } 
-                                    }
-                                    else
-                                    {
-                                        byte[] data = Convert.FromBase64String(o.Value<String>("packetDataB64"));
-                                        Packet packet = new Packet
+                                        System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
+                                        t.Tick += (object sender, EventArgs e) =>
                                         {
-                                            Type = type,
-                                            Data = data,
-                                            Length = data.Length,
-                                            Socket = o.Value<int>("socket"),
+                                            bool exists = spyData.Connections.Contains(matchingConnection);
+                                            if (exists)
+                                                spyData.Connections.Remove(matchingConnection);
                                         };
-                                        OnNewPacket?.Invoke(this, packet);
-                                    }
 
-                                    //spyData.
-                                    break;
+                                        t.Interval = 7000;
+                                        t.Start();
+                                        OnCloseConnection?.Invoke(this, matchingConnection);
+                                    }
+                                }
+                                else
+                                {
+                                    byte[] data = Convert.FromBase64String(json.Value<String>("packetDataB64"));
+                                    Packet packet = new Packet
+                                    {
+                                        Type = hookedFuncType,
+                                        Data = data,
+                                        Length = data.Length,
+                                        Socket = json.Value<int>("socket"),
+                                    };
+                                    OnNewPacket?.Invoke(this, packet);
+                                }
+
+                            }
+                            else if (messageType == ServerMessageType.ERROR_MESSAGE)
+                            {
+                                Console.WriteLine($"[Error] {json.Value<String>("errorMessage")}");
                             }
 
-                            //outputBox.Invoke((MethodInvoker)(() => outputBox.AppendText($"\r\n{(ServerPacketType)o.Value<Int32>("messageType")}\r\n")));
-                            //outputBox.Invoke((MethodInvoker)(() => outputBox.AppendText(o.ToString() + "\r\n")));
+                            //outputBox.Invoke((MethodInvoker)(() => outputBox.AppendText($"\r\n{(ServerMessageType)json.Value<Int32>("messageType")}\r\n")));
+                            //outputBox.Invoke((MethodInvoker)(() => outputBox.AppendText(json.ToString() + "\r\n")));
                         }
                     }
 
