@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,15 @@ namespace XOPE_UI.Spy.ServerType
 
         public InjectSendPacket()
         {
-            Type = Definitions.SpyPacketType.INJECT_SEND;
+            Type = Definitions.SpyMessageType.INJECT_SEND;
+        }
+
+        public override JObject ToJson()
+        {
+            JObject json = base.ToJson();
+            json["Data"] = Convert.ToBase64String(Data);
+            json["Length"] = Data.Length;
+            return json;
         }
     }
 }
