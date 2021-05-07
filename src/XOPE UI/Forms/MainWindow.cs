@@ -21,7 +21,7 @@ namespace XOPE_UI
         const string XOPE_SPY_64 = "XOPESpy64.dll";
 
         int captureIndex = 0;
-
+        
         ProcessDialog processDialog;
         ActiveConnectionsDialog activeConnectionsDialog;
         /*
@@ -49,7 +49,7 @@ namespace XOPE_UI
             InitializeComponent();
 
             //Using reflection to modify the protected DoubleBuffered property for ListView. DoubleBuffered is used to prevent flickering
-
+            
 
             if (!File.Exists("XOPESpy32.dll"))
                 System.Windows.Forms.MessageBox.Show("Canont find XOPESpy32.dll\nMake sure it is in the current directory\nWithout it, you cannot attach to 32-bit processes", "Missing DLL",
