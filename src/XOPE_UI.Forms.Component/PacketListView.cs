@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using XOPE_UI.Spy.Type;
 using XOPE_UI.Definitions;
 
 namespace XOPE_UI.Forms.Component
@@ -23,7 +22,9 @@ namespace XOPE_UI.Forms.Component
         {
             InitializeComponent();
 
-            //TODO: change 'captureLiveView' to something else
+            // TODO: change 'captureLiveView' to something else
+            // Using reflection to modify the protected DoubleBuffered property for ListView.
+            //  DoubleBuffered is used to prevent flickering
             this.captureListView
                 .GetType()
                 .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
