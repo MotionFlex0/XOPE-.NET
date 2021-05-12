@@ -32,11 +32,11 @@
             this.closeButton = new System.Windows.Forms.Button();
             this.connectionListView = new System.Windows.Forms.ListView();
             this.socket = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ip = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.refreshButton = new System.Windows.Forms.Button();
-            this.port = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ipFamily = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ip = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.port = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.status = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.refreshButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // closeButton
@@ -77,10 +77,23 @@
             // 
             this.socket.Text = "Socket ID";
             // 
+            // ipFamily
+            // 
+            this.ipFamily.Text = "IP Family";
+            // 
             // ip
             // 
             this.ip.Text = "IP Address";
             this.ip.Width = 67;
+            // 
+            // port
+            // 
+            this.port.Text = "Port";
+            // 
+            // status
+            // 
+            this.status.Text = "Status";
+            this.status.Width = 120;
             // 
             // refreshButton
             // 
@@ -92,19 +105,6 @@
             this.refreshButton.Text = "Refresh";
             this.refreshButton.UseVisualStyleBackColor = true;
             this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
-            // 
-            // port
-            // 
-            this.port.Text = "Port";
-            // 
-            // ipFamily
-            // 
-            this.ipFamily.Text = "IP Family";
-            // 
-            // status
-            // 
-            this.status.Text = "Status";
-            this.status.Width = 120;
             // 
             // ActiveConnectionsDialog
             // 

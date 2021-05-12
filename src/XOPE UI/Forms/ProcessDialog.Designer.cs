@@ -75,20 +75,16 @@
             // is64bitText
             // 
             this.is64bitText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.is64bitText.Location = new System.Drawing.Point(95, 327);
+            this.is64bitText.Location = new System.Drawing.Point(95, 326);
             this.is64bitText.Name = "is64bitText";
             this.is64bitText.ReadOnly = true;
             this.is64bitText.Size = new System.Drawing.Size(77, 20);
             this.is64bitText.TabIndex = 3;
             // 
-            // processDialogBindingSource
-            // 
-            //this.processDialogBindingSource.DataSource = typeof(XOPE_UI.Forms.ProcessDialog);
-            // 
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(581, 324);
+            this.cancelButton.Location = new System.Drawing.Point(581, 325);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 4;
@@ -100,7 +96,7 @@
             // 
             this.confirmButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.confirmButton.Enabled = false;
-            this.confirmButton.Location = new System.Drawing.Point(500, 324);
+            this.confirmButton.Location = new System.Drawing.Point(500, 325);
             this.confirmButton.Name = "confirmButton";
             this.confirmButton.Size = new System.Drawing.Size(75, 23);
             this.confirmButton.TabIndex = 5;

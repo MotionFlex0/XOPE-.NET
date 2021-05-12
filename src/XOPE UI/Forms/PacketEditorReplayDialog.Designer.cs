@@ -39,6 +39,7 @@ namespace XOPE_UI.Forms
             this.waitTimerTextBox = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.socketIdTextBox = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.waitTimerTextBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).BeginInit();
             this.SuspendLayout();
@@ -109,6 +110,11 @@ namespace XOPE_UI.Forms
             // waitTimerTextBox
             // 
             this.waitTimerTextBox.Location = new System.Drawing.Point(231, 14);
+            this.waitTimerTextBox.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.waitTimerTextBox.Name = "waitTimerTextBox";
             this.waitTimerTextBox.Size = new System.Drawing.Size(62, 20);
             this.waitTimerTextBox.TabIndex = 16;
@@ -134,11 +140,21 @@ namespace XOPE_UI.Forms
             this.socketIdTextBox.Size = new System.Drawing.Size(79, 20);
             this.socketIdTextBox.TabIndex = 18;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(294, 18);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(20, 13);
+            this.label3.TabIndex = 19;
+            this.label3.Text = "ms";
+            // 
             // PacketEditorReplayDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(656, 354);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.socketIdTextBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.waitTimerTextBox);
@@ -170,5 +186,6 @@ namespace XOPE_UI.Forms
         private System.Windows.Forms.NumericUpDown waitTimerTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown socketIdTextBox;
+        private System.Windows.Forms.Label label3;
     }
 }
