@@ -18,7 +18,6 @@ namespace XOPE_UI.Core
 
         TabControl tabControl;
         Dictionary<Button, TabPage> viewTabs = new Dictionary<Button, TabPage>();
-        //List<ViewTabHandlerItem> viewTabs = new List<ViewTabHandlerItem>();
 
         public ViewTabHandler(TabControl tabControl) 
         { 
@@ -44,7 +43,8 @@ namespace XOPE_UI.Core
             foreach (KeyValuePair<Button, TabPage> entry in viewTabs)
             {
                 entry.Key.BackColor = entry.Value == tabControl.SelectedTab ?
-                    entry.Key.BackColor = System.Drawing.SystemColors.MenuHighlight : System.Drawing.SystemColors.Control;
+                    entry.Key.BackColor = System.Drawing.SystemColors.MenuHighlight 
+                    : System.Drawing.SystemColors.Control;
             }
         }
     }
