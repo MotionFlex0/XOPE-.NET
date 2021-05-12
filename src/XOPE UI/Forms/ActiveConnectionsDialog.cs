@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using XOPE_UI.Definitions;
 using XOPE_UI.Spy;
 
 namespace XOPE_UI.Forms
@@ -30,7 +31,7 @@ namespace XOPE_UI.Forms
                 item.SubItems.Add(c.IPFamily == AddressFamily.InterNetwork ? "IPv4" : "IPv6");
                 item.SubItems.Add(c.IP.ToString());
                 item.SubItems.Add(c.Port.ToString());
-                item.SubItems.Add("ESTABLISHED");
+                item.SubItems.Add(c.SocketStatus.ToString());
                 connectionListView.Items.Add(item);
             }
         }

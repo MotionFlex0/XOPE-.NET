@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using XOPE_UI.Definitions;
 
-namespace XOPE_UI.Spy
+namespace XOPE_UI.Spy.ServerType
 {
     public class IMessage
     {

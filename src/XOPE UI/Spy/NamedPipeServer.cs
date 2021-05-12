@@ -4,20 +4,15 @@ using Newtonsoft.Json.Schema;
 using PeterO.Cbor;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using XOPE_UI.Core;
 using XOPE_UI.Definitions;
 using XOPE_UI.Native;
-using XOPE_UI.Spy.Type;
+using XOPE_UI.Spy.ServerType;
 
 namespace XOPE_UI.Spy
 {
@@ -29,15 +24,14 @@ namespace XOPE_UI.Spy
         public event EventHandler<Connection> OnNewConnection;
         public event EventHandler<Connection> OnCloseConnection;
         
-        NamedPipeServerStream serverStream = null;
-
-        SpyData spyData;
-
+        public SpyData Data { get; private set; }
+        
         ConcurrentQueue<byte[]> outBuffer;
 
-        public NamedPipeServer(SpyData sd)
+        public NamedPipeServer()
         {
-            spyData = sd;
+            Data = new SpyData();
+
             outBuffer = new ConcurrentQueue<byte[]>();
         }
 
@@ -47,13 +41,13 @@ namespace XOPE_UI.Spy
             outBuffer.Enqueue(Encoding.ASCII.GetBytes(message.ToJson().ToString())); //TODO: Convert to bson
         }
 
-        public void RunAsync()
+        public void RunAsync() 
         {
-            serverStream = new NamedPipeServerStream("xopespy");
+            NamedPipeServerStream serverStream = new NamedPipeServerStream("xopespy");
 
             Task.Factory.StartNew(() => {
                 serverStream.WaitForConnection();
-                Console.WriteLine("Server connected to Spy");
+                Console.WriteLine("Server connected to Definitions");
 
 
                 byte[] buffer = new byte[65536];
@@ -87,14 +81,14 @@ namespace XOPE_UI.Spy
                                         new IPAddress(json.Value<Int32>("addr")),
                                         json.Value<Int32>("port"),
                                         Connection.Status.ESTABLISHED);
-                                    spyData.Connections.Add(connection);
+                                    Data.Connections.Add(connection);
                                     OnNewConnection?.Invoke(this, connection);
                                     Console.WriteLine("new connection");
                                 }
                                 else if (hookedFuncType == HookedFuncType.CLOSE)
                                 {
                                     int socketId = json.Value<Int32>("socket");
-                                    Connection matchingConnection = spyData.Connections.FirstOrDefault((Connection c) => c.SocketId == socketId);
+                                    Connection matchingConnection = Data.Connections.FirstOrDefault((Connection c) => c.SocketId == socketId);
                                     if (matchingConnection != null && matchingConnection.SocketStatus != Connection.Status.CLOSED)
                                     {
                                         matchingConnection.SocketStatus = Connection.Status.CLOSED;
@@ -103,9 +97,9 @@ namespace XOPE_UI.Spy
                                         System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
                                         t.Tick += (object sender, EventArgs e) =>
                                         {
-                                            bool exists = spyData.Connections.Contains(matchingConnection);
+                                            bool exists = Data.Connections.Contains(matchingConnection);
                                             if (exists)
-                                                spyData.Connections.Remove(matchingConnection);
+                                                Data.Connections.Remove(matchingConnection);
                                         };
 
                                         t.Interval = 7000;
@@ -134,7 +128,7 @@ namespace XOPE_UI.Spy
                         }
                     }
 
-                    FlushOutBuffer();
+                    FlushOutBuffer(serverStream);
                     Thread.Sleep(100);
                 }
                 Console.WriteLine("Closing server...");
@@ -142,7 +136,8 @@ namespace XOPE_UI.Spy
                 
             }, System.Threading.CancellationToken.None, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
-        private void FlushOutBuffer()
+
+        private void FlushOutBuffer(NamedPipeServerStream serverStream)
         {
             while (outBuffer.TryDequeue(out byte[] data))
             {
