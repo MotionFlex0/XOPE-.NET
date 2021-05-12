@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using XOPE_UI.Definitions;
 using XOPE_UI.Spy;
 using XOPE_UI.Spy.ServerType;
 
@@ -29,7 +30,7 @@ namespace XOPE_UI.Forms
 
             hexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
             hexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
-            
+            hexEditor.StringByteWidth = 8;
         }
 
         private void PacketEditorReplayDialog_VisibleChanged(object sender, EventArgs e)
@@ -61,9 +62,10 @@ namespace XOPE_UI.Forms
 
                 IMessage message = new InjectSendPacket
                 {
-                    Data = hexEditor.GetAllBytes(),
+                    Data = hexEditor.GetAllBytes(true),
                     SocketId = Convert.ToInt32(socketIdTextBox.Value)
                 };
+                //hexEditor.Stream.
                 Console.WriteLine("Sending data.. in replayButton_Click");
                 server.Send(message);
             };
