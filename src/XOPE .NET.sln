@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30104.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOPE UI", "XOPE UI\XOPE UI.csproj", "{3B3F2902-E528-4D39-975F-C7900B7AB7DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOPE_UI", "XOPE UI\XOPE_UI.csproj", "{3B3F2902-E528-4D39-975F-C7900B7AB7DE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XOPE Spy", "XOPE Spy\XOPE Spy.vcxproj", "{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XOPE_Spy", "XOPE Spy\XOPE Spy.vcxproj", "{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Helper32", "Helper32\Helper32.vcxproj", "{3DE5F825-C491-469C-967C-0769F6D0A1B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOPE_UI.Forms.Component", "XOPE_UI.Forms.Component\XOPE_UI.Forms.Component.csproj", "{9733E795-8047-4DC6-B5DF-40A5C81897D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOPE_UI.Definitions", "XOPE_UI.Definitions\XOPE_UI.Definitions.csproj", "{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +54,30 @@ Global
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x86 binding.ActiveCfg = Release|Win32
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x86 binding.Build.0 = Release|Win32
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x86 build.ActiveCfg = Release|Win32
+		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Debug|x64 binding.ActiveCfg = Debug|Any CPU
+		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Debug|x64 binding.Build.0 = Debug|Any CPU
+		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Debug|x86 binding.ActiveCfg = Debug|Any CPU
+		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Debug|x86 binding.Build.0 = Debug|Any CPU
+		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Debug|x86 build.ActiveCfg = Debug|Any CPU
+		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Debug|x86 build.Build.0 = Debug|Any CPU
+		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x64 binding.ActiveCfg = Release|Any CPU
+		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x64 binding.Build.0 = Release|Any CPU
+		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x86 binding.ActiveCfg = Release|Any CPU
+		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x86 binding.Build.0 = Release|Any CPU
+		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x86 build.ActiveCfg = Release|Any CPU
+		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x86 build.Build.0 = Release|Any CPU
+		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Debug|x64 binding.ActiveCfg = Debug|Any CPU
+		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Debug|x64 binding.Build.0 = Debug|Any CPU
+		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Debug|x86 binding.ActiveCfg = Debug|Any CPU
+		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Debug|x86 binding.Build.0 = Debug|Any CPU
+		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Debug|x86 build.ActiveCfg = Debug|Any CPU
+		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Debug|x86 build.Build.0 = Debug|Any CPU
+		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Release|x64 binding.ActiveCfg = Release|Any CPU
+		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Release|x64 binding.Build.0 = Release|Any CPU
+		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Release|x86 binding.ActiveCfg = Release|Any CPU
+		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Release|x86 binding.Build.0 = Release|Any CPU
+		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Release|x86 build.ActiveCfg = Release|Any CPU
+		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Release|x86 build.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
