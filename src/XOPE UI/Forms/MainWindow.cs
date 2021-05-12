@@ -10,8 +10,9 @@ using XOPE_UI.Forms;
 using XOPE_UI.Forms.Component;
 using XOPE_UI.Injection;
 using XOPE_UI.Native;
-using XOPE_UI.Spy;
+using XOPE_UI.Definitions;
 using XOPE_UI.Util;
+using XOPE_UI.Spy;
 
 namespace XOPE_UI
 {
@@ -32,41 +33,23 @@ namespace XOPE_UI
 
         Process attachedProcess = null;
 
-        Spy.NamedPipeServer server;
-        Spy.SpyData spyData;
+        IServer server;
 
         LogDialog logDialog;
         ViewTabHandler viewTabHandler;
 
         ByteViewer packetCaptureHexPreview;
 
-        public MainWindow()
+        public MainWindow(IServer server)
         {
-            //hexEditor = new WpfHexaEditor.HexEditor();
-            //hexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
-            //elementHost1.Child = hexEditor;
-
             InitializeComponent();
 
-            //Using reflection to modify the protected DoubleBuffered property for ListView. DoubleBuffered is used to prevent flickering
-            
+            this.server = server;
 
-            if (!File.Exists("XOPESpy32.dll"))
-                System.Windows.Forms.MessageBox.Show("Canont find XOPESpy32.dll\nMake sure it is in the current directory\nWithout it, you cannot attach to 32-bit processes", "Missing DLL",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-            if (!File.Exists("XOPESpy64.dll") && Environment.Is64BitProcess)
-                System.Windows.Forms.MessageBox.Show("Canont find XOPESpy64.dll\nMake sure it is in the current directory\nWithout it, you cannot attach to 64-bit processes", "Missing DLL",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-            if (!File.Exists("helper32.exe") && Environment.Is64BitProcess)
-                System.Windows.Forms.MessageBox.Show("Canont find helper32.exe\nMake sure it is in the current directory\nWithout it, you cannot attach to 32-bit processes", "Missing helper executable",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-            spyData = new SpyData();
+            //Using reflection to modify the protected DoubleBuffered property for ListView. DoubleBuffered is used to prevent 
 
             logDialog = new LogDialog(new Logger());
-            Console.WriteLine($"Program started at: {DateTime.Now.ToString()}");
+            Console.WriteLine($"Program started at: {DateTime.Now}");
 
             viewTabHandler = new ViewTabHandler(viewTab);
             viewTabHandler.AddView(captureViewButton, captureViewTabPage);
@@ -82,18 +65,15 @@ namespace XOPE_UI
             packetCaptureHexPreview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             hexPreviewPanel.Controls.Add(packetCaptureHexPreview);
 
-
-            server = new Spy.NamedPipeServer(spyData);
-            server.RunAsync();
-
             processDialog = new ProcessDialog();
-            activeConnectionsDialog = new ActiveConnectionsDialog(spyData);
+            activeConnectionsDialog = new ActiveConnectionsDialog(server.Data);
             packetEditorReplayDialog = new PacketEditorReplayDialog(server);
 
             livePacketListView.OnItemDoubleClick += LivePacketListView_OnItemDoubleClick;
             livePacketListView.OnItemSelectedChanged += LivePacketListView_OnItemSelectedChanged;
 
-            server.OnNewPacket += (object sender, Spy.Type.Packet e) => livePacketListView.Add(e);
+            server.OnNewPacket += (object sender, Definitions.Packet e) =>
+                livePacketListView.Invoke((MethodInvoker)(() => livePacketListView.Add(e)));
 
             captureTabControl.MouseClick += captureTabControl_MouseClick;
         }
