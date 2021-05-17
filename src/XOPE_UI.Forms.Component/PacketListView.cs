@@ -59,7 +59,7 @@ namespace XOPE_UI.Forms.Component
             if (selectedItems.Count > 0)
             {
                 Console.WriteLine("captureListView_DoubleClick");
-                OnItemDoubleClick.Invoke(this, selectedItems[0]);
+                OnItemDoubleClick?.Invoke(this, selectedItems[0]);
             }
         }
 
@@ -68,7 +68,7 @@ namespace XOPE_UI.Forms.Component
             if (e.IsSelected)
             {
                 Console.WriteLine("captureListView_ItemSelectionChanged");
-                OnItemSelectedChanged.Invoke(this, e.Item);
+                OnItemSelectedChanged?.Invoke(this, e.Item);
             }
         }
     }
