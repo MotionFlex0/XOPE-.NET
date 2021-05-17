@@ -42,6 +42,10 @@ public:
 		hookFuncData.detour = new Detour(hookedFunc, func, patchSize);
 		hookFuncData.oFunc = static_cast<T*>(hookFuncData.detour->patch());
 
+		std::stringstream ss;
+		ss << "Failed to hook function with type: " << typeid(func).name();
+		x_assert(std::any_cast<T*>(hookFuncData.oFunc) != 0x00, ss.str().c_str());
+		
 		return (_hooks.insert({ (uintptr_t)func, hookFuncData })).second;
 	}
 
