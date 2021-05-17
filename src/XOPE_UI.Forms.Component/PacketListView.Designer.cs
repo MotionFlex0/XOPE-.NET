@@ -41,6 +41,7 @@
             this.captureListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.captureListView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.captureListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader5,
@@ -48,6 +49,7 @@
             this.columnHeader3,
             this.columnHeader4});
             this.captureListView.FullRowSelect = true;
+            this.captureListView.GridLines = true;
             this.captureListView.HideSelection = false;
             this.captureListView.Location = new System.Drawing.Point(0, 0);
             this.captureListView.Margin = new System.Windows.Forms.Padding(0);
