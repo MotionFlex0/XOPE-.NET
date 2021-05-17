@@ -26,11 +26,7 @@ namespace XOPE_UI
                 System.Windows.Forms.MessageBox.Show("Canont find helper32.exe\nMake sure it is in the current directory\nWithout it, you cannot attach to 32-bit processes", "Missing helper executable",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-            
-            NativeMethods.CreateConsole();
-
             IServer server = new NamedPipeServer();
-            server.RunAsync();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

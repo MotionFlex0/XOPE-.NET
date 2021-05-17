@@ -88,6 +88,8 @@ namespace XOPE_UI
                 if (attachedProcess != null)
                     DetachFromProcess();
 
+                server.RunAsync();
+
                 bool res;
                 if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(processDialog.SelectedProcess.Handle))
                     res = CreateRemoteThread.Inject32(processDialog.SelectedProcess.Handle, $@"{Environment.CurrentDirectory}\XOPESpy32.dll");
@@ -136,12 +138,11 @@ namespace XOPE_UI
         private void CreditsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             System.Windows.Forms.MessageBox.Show("Icon(s) made by Google from www.flaticon.com", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Console.WriteLine(Environment.CurrentDirectory);
+            Console.WriteLine($"Current Directory: {Environment.CurrentDirectory}");
         }
 
         private void attachToToolStripMenuItem_Click(object sender, EventArgs e)
@@ -166,7 +167,7 @@ namespace XOPE_UI
 
         private void attachedProcess_Exited(object sender, EventArgs e)
         {
-            this.Invoke((MethodInvoker)(() => { this.Text = "XOPE"; }));
+            this.Invoke((MethodInvoker)(() => this.Text = "XOPE" ));
             attachedProcess = null;
             detachToolStripButton.Enabled = false;
             detachToolStripMenuItem.Enabled = false;
@@ -223,7 +224,7 @@ namespace XOPE_UI
 
                 //Creates a new tabpage, based on the default tab page
                 //captureTabControl.TabPages.Add(tabPage);
-                ((ListView)tabPage.Controls[0].Controls["captureListView"]).Items.Add("abc123");
+                //((ListView)tabPage.Controls[0].Controls["captureListView"]).Items.Add("abc123");
                 captureTabControl.SelectedTab = captureTabControl.TabPages[newCaptureKey];
                 recordToolStripButton.Tag = newCaptureKey;
             }
