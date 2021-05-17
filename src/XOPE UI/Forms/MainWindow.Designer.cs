@@ -30,9 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            this.captureTabControl = new System.Windows.Forms.TabControl();
-            this.liveCapture = new System.Windows.Forms.TabPage();
-            this.livePacketListView = new XOPE_UI.Forms.Component.PacketListView();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,59 +56,31 @@
             this.tabContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.closeTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.hexPreviewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.captureViewButton = new System.Windows.Forms.Button();
             this.replayViewButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.viewTab = new System.Windows.Forms.TabControl();
-            this.captureViewTabPage = new System.Windows.Forms.TabPage();
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
-            this.captureTabControl.SuspendLayout();
-            this.liveCapture.SuspendLayout();
+            this.captureViewTabPage = new System.Windows.Forms.TabPage();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.hexPreviewPanel = new System.Windows.Forms.Panel();
+            this.captureTabControl = new System.Windows.Forms.TabControl();
+            this.liveCapture = new System.Windows.Forms.TabPage();
+            this.livePacketListView = new XOPE_UI.Forms.Component.PacketListView();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.viewTab.SuspendLayout();
+            this.captureViewTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.panel1.SuspendLayout();
-            this.viewTab.SuspendLayout();
-            this.captureViewTabPage.SuspendLayout();
+            this.captureTabControl.SuspendLayout();
+            this.liveCapture.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // captureTabControl
-            // 
-            this.captureTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.captureTabControl.Controls.Add(this.liveCapture);
-            this.captureTabControl.Location = new System.Drawing.Point(4, 0);
-            this.captureTabControl.Name = "captureTabControl";
-            this.captureTabControl.SelectedIndex = 0;
-            this.captureTabControl.Size = new System.Drawing.Size(674, 298);
-            this.captureTabControl.TabIndex = 0;
-            // 
-            // liveCapture
-            // 
-            this.liveCapture.Controls.Add(this.livePacketListView);
-            this.liveCapture.Location = new System.Drawing.Point(4, 22);
-            this.liveCapture.Name = "liveCapture";
-            this.liveCapture.Padding = new System.Windows.Forms.Padding(3);
-            this.liveCapture.Size = new System.Drawing.Size(666, 272);
-            this.liveCapture.TabIndex = 1;
-            this.liveCapture.Text = "Live Capture";
-            this.liveCapture.UseVisualStyleBackColor = true;
-            // 
-            // livePacketListView
-            // 
-            this.livePacketListView.Location = new System.Drawing.Point(0, 0);
-            this.livePacketListView.Margin = new System.Windows.Forms.Padding(0);
-            this.livePacketListView.Name = "livePacketListView";
-            this.livePacketListView.Size = new System.Drawing.Size(666, 272);
-            this.livePacketListView.TabIndex = 0;
             // 
             // menuStrip1
             // 
@@ -325,6 +294,89 @@
             this.closeTabToolStripMenuItem.Text = "Close Tab";
             this.closeTabToolStripMenuItem.Click += new System.EventHandler(this.closeTabToolStripMenuItem_Click);
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Location = new System.Drawing.Point(0, 452);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(808, 22);
+            this.statusStrip1.TabIndex = 4;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // captureViewButton
+            // 
+            this.captureViewButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.captureViewButton.FlatAppearance.BorderSize = 0;
+            this.captureViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.captureViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.captureViewButton.Location = new System.Drawing.Point(1, 5);
+            this.captureViewButton.Name = "captureViewButton";
+            this.captureViewButton.Size = new System.Drawing.Size(111, 23);
+            this.captureViewButton.TabIndex = 6;
+            this.captureViewButton.Text = "Capture View";
+            this.captureViewButton.UseVisualStyleBackColor = false;
+            // 
+            // replayViewButton
+            // 
+            this.replayViewButton.BackColor = System.Drawing.SystemColors.Control;
+            this.replayViewButton.FlatAppearance.BorderSize = 0;
+            this.replayViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.replayViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.replayViewButton.Location = new System.Drawing.Point(1, 34);
+            this.replayViewButton.Name = "replayViewButton";
+            this.replayViewButton.Size = new System.Drawing.Size(111, 23);
+            this.replayViewButton.TabIndex = 7;
+            this.replayViewButton.Text = "Replay View";
+            this.replayViewButton.UseVisualStyleBackColor = false;
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.panel1.Controls.Add(this.captureViewButton);
+            this.panel1.Controls.Add(this.replayViewButton);
+            this.panel1.Location = new System.Drawing.Point(11, 52);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(111, 390);
+            this.panel1.TabIndex = 8;
+            // 
+            // viewTab
+            // 
+            this.viewTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.viewTab.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
+            this.viewTab.Controls.Add(this.captureViewTabPage);
+            this.viewTab.Controls.Add(this.replayViewTabPage);
+            this.viewTab.ItemSize = new System.Drawing.Size(0, 1);
+            this.viewTab.Location = new System.Drawing.Point(116, 52);
+            this.viewTab.Name = "viewTab";
+            this.viewTab.SelectedIndex = 0;
+            this.viewTab.Size = new System.Drawing.Size(679, 390);
+            this.viewTab.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+            this.viewTab.TabIndex = 9;
+            // 
+            // replayViewTabPage
+            // 
+            this.replayViewTabPage.Location = new System.Drawing.Point(4, 5);
+            this.replayViewTabPage.Name = "replayViewTabPage";
+            this.replayViewTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.replayViewTabPage.Size = new System.Drawing.Size(671, 381);
+            this.replayViewTabPage.TabIndex = 1;
+            this.replayViewTabPage.Text = "tabPage2";
+            this.replayViewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // captureViewTabPage
+            // 
+            this.captureViewTabPage.Controls.Add(this.splitContainer1);
+            this.captureViewTabPage.Location = new System.Drawing.Point(4, 5);
+            this.captureViewTabPage.Name = "captureViewTabPage";
+            this.captureViewTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.captureViewTabPage.Size = new System.Drawing.Size(671, 381);
+            this.captureViewTabPage.TabIndex = 0;
+            this.captureViewTabPage.Text = "tabPage1";
+            this.captureViewTabPage.UseVisualStyleBackColor = true;
+            // 
             // splitContainer1
             // 
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -341,8 +393,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.hexPreviewPanel);
-            this.splitContainer1.Size = new System.Drawing.Size(677, 390);
-            this.splitContainer1.SplitterDistance = 297;
+            this.splitContainer1.Size = new System.Drawing.Size(671, 383);
+            this.splitContainer1.SplitterDistance = 283;
             this.splitContainer1.TabIndex = 3;
             // 
             // hexPreviewPanel
@@ -350,89 +402,44 @@
             this.hexPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.hexPreviewPanel.Location = new System.Drawing.Point(3, 3);
+            this.hexPreviewPanel.Location = new System.Drawing.Point(6, 3);
             this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(674, 81);
+            this.hexPreviewPanel.Size = new System.Drawing.Size(659, 90);
             this.hexPreviewPanel.TabIndex = 6;
             // 
-            // statusStrip1
+            // captureTabControl
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 452);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(808, 22);
-            this.statusStrip1.TabIndex = 4;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // captureViewButton
-            // 
-            this.captureViewButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.captureViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.captureViewButton.Location = new System.Drawing.Point(3, 5);
-            this.captureViewButton.Name = "captureViewButton";
-            this.captureViewButton.Size = new System.Drawing.Size(104, 23);
-            this.captureViewButton.TabIndex = 6;
-            this.captureViewButton.Text = "Capture View";
-            this.captureViewButton.UseVisualStyleBackColor = false;
-            // 
-            // replayViewButton
-            // 
-            this.replayViewButton.BackColor = System.Drawing.SystemColors.Control;
-            this.replayViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.replayViewButton.Location = new System.Drawing.Point(3, 34);
-            this.replayViewButton.Name = "replayViewButton";
-            this.replayViewButton.Size = new System.Drawing.Size(104, 23);
-            this.replayViewButton.TabIndex = 7;
-            this.replayViewButton.Text = "Replay View";
-            this.replayViewButton.UseVisualStyleBackColor = false;
-            // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.panel1.Controls.Add(this.captureViewButton);
-            this.panel1.Controls.Add(this.replayViewButton);
-            this.panel1.Location = new System.Drawing.Point(0, 52);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(111, 390);
-            this.panel1.TabIndex = 8;
-            // 
-            // viewTab
-            // 
-            this.viewTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.captureTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.viewTab.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
-            this.viewTab.Controls.Add(this.captureViewTabPage);
-            this.viewTab.Controls.Add(this.replayViewTabPage);
-            this.viewTab.ItemSize = new System.Drawing.Size(0, 1);
-            this.viewTab.Location = new System.Drawing.Point(111, 52);
-            this.viewTab.Name = "viewTab";
-            this.viewTab.SelectedIndex = 0;
-            this.viewTab.Size = new System.Drawing.Size(685, 397);
-            this.viewTab.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
-            this.viewTab.TabIndex = 9;
+            this.captureTabControl.Controls.Add(this.liveCapture);
+            this.captureTabControl.Location = new System.Drawing.Point(4, 0);
+            this.captureTabControl.Name = "captureTabControl";
+            this.captureTabControl.SelectedIndex = 0;
+            this.captureTabControl.Size = new System.Drawing.Size(667, 287);
+            this.captureTabControl.TabIndex = 0;
             // 
-            // captureViewTabPage
+            // liveCapture
             // 
-            this.captureViewTabPage.Controls.Add(this.splitContainer1);
-            this.captureViewTabPage.Location = new System.Drawing.Point(4, 5);
-            this.captureViewTabPage.Name = "captureViewTabPage";
-            this.captureViewTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.captureViewTabPage.Size = new System.Drawing.Size(677, 388);
-            this.captureViewTabPage.TabIndex = 0;
-            this.captureViewTabPage.Text = "tabPage1";
-            this.captureViewTabPage.UseVisualStyleBackColor = true;
+            this.liveCapture.Controls.Add(this.livePacketListView);
+            this.liveCapture.Location = new System.Drawing.Point(4, 22);
+            this.liveCapture.Name = "liveCapture";
+            this.liveCapture.Padding = new System.Windows.Forms.Padding(3);
+            this.liveCapture.Size = new System.Drawing.Size(659, 261);
+            this.liveCapture.TabIndex = 1;
+            this.liveCapture.Text = "Live Capture";
+            this.liveCapture.UseVisualStyleBackColor = true;
             // 
-            // replayViewTabPage
+            // livePacketListView
             // 
-            this.replayViewTabPage.Location = new System.Drawing.Point(4, 5);
-            this.replayViewTabPage.Name = "replayViewTabPage";
-            this.replayViewTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.replayViewTabPage.Size = new System.Drawing.Size(677, 388);
-            this.replayViewTabPage.TabIndex = 1;
-            this.replayViewTabPage.Text = "tabPage2";
-            this.replayViewTabPage.UseVisualStyleBackColor = true;
+            this.livePacketListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.livePacketListView.Location = new System.Drawing.Point(0, 0);
+            this.livePacketListView.Margin = new System.Windows.Forms.Padding(0);
+            this.livePacketListView.Name = "livePacketListView";
+            this.livePacketListView.Size = new System.Drawing.Size(659, 261);
+            this.livePacketListView.TabIndex = 0;
             // 
             // MainWindow
             // 
@@ -449,27 +456,26 @@
             this.Text = "XOPE";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.captureTabControl.ResumeLayout(false);
-            this.liveCapture.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.tabContextMenu.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.viewTab.ResumeLayout(false);
+            this.captureViewTabPage.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.viewTab.ResumeLayout(false);
-            this.captureViewTabPage.ResumeLayout(false);
+            this.captureTabControl.ResumeLayout(false);
+            this.liveCapture.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.TabControl captureTabControl;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
@@ -491,10 +497,8 @@
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem connectionsListToolStripMenuItem;
-        private System.Windows.Forms.TabPage liveCapture;
         private System.Windows.Forms.ToolStripMenuItem packetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newPacketToolStripMenuItem;
-        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
@@ -504,9 +508,12 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TabControl viewTab;
         private System.Windows.Forms.TabPage captureViewTabPage;
-        private System.Windows.Forms.TabPage replayViewTabPage;
-        private System.Windows.Forms.Panel hexPreviewPanel;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.TabControl captureTabControl;
+        private System.Windows.Forms.TabPage liveCapture;
         private Forms.Component.PacketListView livePacketListView;
+        private System.Windows.Forms.Panel hexPreviewPanel;
+        private System.Windows.Forms.TabPage replayViewTabPage;
     }
 }
 
