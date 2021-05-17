@@ -73,7 +73,7 @@ void InitHooks()
     hookmgr->hookNewFunction(connect, Hooked_Connect, DEFAULTPATCHSIZE);
     hookmgr->hookNewFunction(send, Hooked_Send, DEFAULTPATCHSIZE);
     hookmgr->hookNewFunction(recv, Hooked_Recv, DEFAULTPATCHSIZE);
-    hookmgr->hookNewFunction(closesocket, Hooked_CloseSocket, CLOSEPATCHSIZE);
+    //hookmgr->hookNewFunction(closesocket, Hooked_CloseSocket, CLOSEPATCHSIZE);
     hookmgr->hookNewFunction(WSAConnect, Hooked_WSAConnect, DEFAULTPATCHSIZE);
     hookmgr->hookNewFunction(WSASend, Hooked_WSASend, DEFAULTPATCHSIZE);
     hookmgr->hookNewFunction(WSARecv, Hooked_WSARecv, DEFAULTPATCHSIZE);
@@ -94,10 +94,10 @@ void InitHooks()
 
 void UnhookAll()
 {
-    std::cout << "Waiting for child thread to exit." << '\n';
+    std::cout << "Waiting for child thread to exit.\n";
     shouldChildThreadExit = true;
     WaitForSingleObject(childThread, 10000);
-    std::cout << "Freeing from processes..." << '\n';
+    std::cout << "Freeing from processes...\n";
     namedPipe->close();
     hookmgr->destroy();
     delete hookmgr;
@@ -127,7 +127,7 @@ void PipeThread(LPVOID param)
 
                 if (data.length() == message["Length"].get<int>())
                 {
-                    hookmgr->get_ofunction<send>()(socket, data.c_str(), data.length(), NULL);
+                    hookmgr->get_ofunction<send>()(socket, data.c_str(), static_cast<int>(data.length()), NULL);
                 }
                 else
                 {
