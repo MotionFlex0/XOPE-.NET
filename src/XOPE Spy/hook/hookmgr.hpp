@@ -20,18 +20,18 @@ public:
 	}
 
 	void destroy() {
-		if (!destroyed)
+		if (!m_destroyed)
 		{
-			for (auto& [_, v] : _hooks)
+			for (auto& [_, v] : m_hooks)
 			{
 				v.detour->unpatch();
 				delete v.detour;
 				v.detour = nullptr;
 				v.oFunc = nullptr;
 			}
-			bool s = _hooks.empty();
+			bool s = m_hooks.empty();
 
-			destroyed = true;
+			m_destroyed = true;
 		}
 	}
 
@@ -46,9 +46,8 @@ public:
 		ss << "Failed to hook function with type: " << typeid(func).name();
 		x_assert(std::any_cast<T*>(hookFuncData.oFunc) != 0x00, ss.str().c_str());
 		
-		return (_hooks.insert({ (uintptr_t)func, hookFuncData })).second;
+		return (m_hooks.insert({ (uintptr_t)func, hookFuncData })).second;
 	}
-
 
 	//Returns original function _F with the correct type
 	template<auto _F>
@@ -57,9 +56,9 @@ public:
 		auto func = _F;
 		using _F_t = decltype(func);
 
-		auto search = _hooks.find((uintptr_t)_F);
+		auto search = m_hooks.find((uintptr_t)_F);
 
-		if (search == _hooks.end())
+		if (search == m_hooks.end())
 		{
 			char msg[1024];
 			sprintf_s(msg, sizeof(msg), "Could not find hook for this function - Calling _F\nFunction Address: %p\nFunction Type: %s", _F, typeid(_F).name());
@@ -81,9 +80,9 @@ public:
 	{
 		auto func = _F;
 		using _F_t = decltype(func);
-		auto search = _hooks.find((uintptr_t)_F);
+		auto search = m_hooks.find((uintptr_t)_F);
 		
-		if (search == _hooks.end())
+		if (search == m_hooks.end())
 		{
 			char msg[1024];
 			sprintf_s(msg, sizeof(msg), "Could not find hook for this function - Calling _F\nFunction Address: %p\nFunction Type: %s", _F, typeid(_F).name());
@@ -106,7 +105,7 @@ private:
 		std::any oFunc;
 	};
 
-	bool destroyed = false;
+	bool m_destroyed = false;
 
-	std::unordered_map<uintptr_t, HookFuncData> _hooks;
+	std::unordered_map<uintptr_t, HookFuncData> m_hooks;
 };
