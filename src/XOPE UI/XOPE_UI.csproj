@@ -145,6 +145,7 @@
     <Compile Include="Spy\ServerType\IMessage.cs" />
     <Compile Include="Spy\IServer.cs" />
     <Compile Include="Spy\NamedPipeServer.cs" />
+    <Compile Include="Spy\ServerType\InjectRecvPacket.cs" />
     <Compile Include="Spy\ServerType\InjectSendPacket.cs" />
     <Compile Include="Spy\SpyData.cs" />
     <Compile Include="Spy\Type\GenericHookedSpyFunc.cs" />
