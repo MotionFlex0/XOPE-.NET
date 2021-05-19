@@ -11,7 +11,8 @@ using XOPE_UI.Definitions;
 
 namespace XOPE_UI.Spy.ServerType
 {
-    public class IMessage
+    // TODO: Change this to an interface when C# version > 8.0
+    public abstract class IMessage
     {
         [JsonProperty]
         protected SpyMessageType Type { get; set; }
