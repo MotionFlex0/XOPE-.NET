@@ -16,5 +16,10 @@ namespace XOPE_UI.Forms.Component
         {
             InitializeComponent();
         }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }
