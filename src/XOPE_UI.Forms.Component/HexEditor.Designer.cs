@@ -29,7 +29,7 @@ namespace XOPE_UI.Forms.Component
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.byteGridView = new System.Windows.Forms.DataGridView();
             this.Column0 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -277,8 +277,8 @@ namespace XOPE_UI.Forms.Component
             this.textGridView.ReadOnly = true;
             this.textGridView.RowHeadersVisible = false;
             this.textGridView.RowHeadersWidth = 5;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.textGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.textGridView.Size = new System.Drawing.Size(260, 164);
             this.textGridView.TabIndex = 2;
@@ -426,7 +426,6 @@ namespace XOPE_UI.Forms.Component
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.textGridView);
-            this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
             this.splitContainer1.Size = new System.Drawing.Size(795, 164);
             this.splitContainer1.SplitterDistance = 530;
             this.splitContainer1.SplitterWidth = 2;
@@ -439,7 +438,6 @@ namespace XOPE_UI.Forms.Component
             this.Controls.Add(this.splitContainer1);
             this.Name = "HexEditor";
             this.Size = new System.Drawing.Size(795, 164);
-            this.Load += new System.EventHandler(this.HexEditor_Load);
             ((System.ComponentModel.ISupportInitialize)(this.byteGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.textGridView)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
