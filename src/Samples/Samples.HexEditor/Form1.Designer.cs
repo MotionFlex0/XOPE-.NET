@@ -37,16 +37,20 @@ namespace Samples.HexEditor
             this.hexEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.hexEditor.CellBackColor = System.Drawing.Color.White;
+            this.hexEditor.CellHoverBackColor = System.Drawing.Color.Cyan;
             this.hexEditor.Location = new System.Drawing.Point(12, 26);
             this.hexEditor.Name = "hexEditor";
-            this.hexEditor.Size = new System.Drawing.Size(953, 367);
+            this.hexEditor.SelectionBackColor = System.Drawing.Color.Blue;
+            this.hexEditor.SelectionForeColor = System.Drawing.Color.White;
+            this.hexEditor.Size = new System.Drawing.Size(804, 164);
             this.hexEditor.TabIndex = 0;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(977, 417);
+            this.ClientSize = new System.Drawing.Size(828, 214);
             this.Controls.Add(this.hexEditor);
             this.Name = "Form1";
             this.Text = "Form1";

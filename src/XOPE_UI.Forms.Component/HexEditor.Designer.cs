@@ -29,7 +29,8 @@ namespace XOPE_UI.Forms.Component
         /// </summary>
         private void InitializeComponent()
         {
-            this.dataGridView = new System.Windows.Forms.DataGridView();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.byteGridView = new System.Windows.Forms.DataGridView();
             this.Column0 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -63,19 +64,26 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn14 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn15 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn16 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            ((System.ComponentModel.ISupportInitialize)(this.byteGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.textGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // dataGridView
+            // byteGridView
             // 
-            this.dataGridView.AllowUserToAddRows = false;
-            this.dataGridView.AllowUserToDeleteRows = false;
-            this.dataGridView.AllowUserToResizeColumns = false;
-            this.dataGridView.AllowUserToResizeRows = false;
-            this.dataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleVertical;
-            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.byteGridView.AllowUserToAddRows = false;
+            this.byteGridView.AllowUserToDeleteRows = false;
+            this.byteGridView.AllowUserToResizeColumns = false;
+            this.byteGridView.AllowUserToResizeRows = false;
+            this.byteGridView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.byteGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleVertical;
+            this.byteGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.byteGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column0,
             this.Column1,
             this.Column2,
@@ -92,18 +100,18 @@ namespace XOPE_UI.Forms.Component
             this.Column13,
             this.Column14,
             this.Column15});
-            this.dataGridView.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView.MultiSelect = false;
-            this.dataGridView.Name = "dataGridView";
-            this.dataGridView.ReadOnly = true;
-            this.dataGridView.RowHeadersWidth = 90;
-            this.dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView.Size = new System.Drawing.Size(534, 302);
-            this.dataGridView.TabIndex = 1;
-            this.dataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellClick);
-            this.dataGridView.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellMouseEnter);
-            this.dataGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellMouseLeave);
-            this.dataGridView.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_RowLeave);
+            this.byteGridView.Location = new System.Drawing.Point(0, 0);
+            this.byteGridView.MultiSelect = false;
+            this.byteGridView.Name = "byteGridView";
+            this.byteGridView.ReadOnly = true;
+            this.byteGridView.RowHeadersWidth = 90;
+            this.byteGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            this.byteGridView.Size = new System.Drawing.Size(529, 164);
+            this.byteGridView.TabIndex = 1;
+            this.byteGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_CellClick);
+            this.byteGridView.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_CellMouseEnter);
+            this.byteGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_CellMouseLeave);
+            this.byteGridView.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_RowLeave);
             // 
             // Column0
             // 
@@ -240,6 +248,8 @@ namespace XOPE_UI.Forms.Component
             this.textGridView.AllowUserToDeleteRows = false;
             this.textGridView.AllowUserToResizeColumns = false;
             this.textGridView.AllowUserToResizeRows = false;
+            this.textGridView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.textGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.textGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.textGridView.ColumnHeadersHeight = 24;
@@ -261,14 +271,16 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn14,
             this.dataGridViewTextBoxColumn15,
             this.dataGridViewTextBoxColumn16});
-            this.textGridView.Location = new System.Drawing.Point(540, 0);
+            this.textGridView.Location = new System.Drawing.Point(0, 0);
             this.textGridView.MultiSelect = false;
             this.textGridView.Name = "textGridView";
             this.textGridView.ReadOnly = true;
             this.textGridView.RowHeadersVisible = false;
             this.textGridView.RowHeadersWidth = 5;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.textGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.textGridView.Size = new System.Drawing.Size(286, 302);
+            this.textGridView.Size = new System.Drawing.Size(260, 164);
             this.textGridView.TabIndex = 2;
             // 
             // dataGridViewTextBoxColumn1
@@ -400,23 +412,47 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn16.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.dataGridViewTextBoxColumn16.Width = 16;
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.byteGridView);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.textGridView);
+            this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
+            this.splitContainer1.Size = new System.Drawing.Size(795, 164);
+            this.splitContainer1.SplitterDistance = 530;
+            this.splitContainer1.SplitterWidth = 2;
+            this.splitContainer1.TabIndex = 3;
+            // 
             // HexEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.textGridView);
-            this.Controls.Add(this.dataGridView);
+            this.Controls.Add(this.splitContainer1);
             this.Name = "HexEditor";
-            this.Size = new System.Drawing.Size(858, 302);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
+            this.Size = new System.Drawing.Size(795, 164);
+            this.Load += new System.EventHandler(this.HexEditor_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.byteGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.textGridView)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.DataGridView dataGridView;
+        private System.Windows.Forms.DataGridView byteGridView;
         private System.Windows.Forms.DataGridView textGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column0;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
@@ -450,5 +486,6 @@ namespace XOPE_UI.Forms.Component
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn14;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn15;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn16;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }
