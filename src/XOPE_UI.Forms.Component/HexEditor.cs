@@ -27,6 +27,7 @@ namespace XOPE_UI.Forms.Component
             this.textGridView.CellClick += byteGridView_CellClick;
             this.textGridView.CellMouseEnter += byteGridView_CellMouseEnter;
             this.textGridView.CellMouseLeave += byteGridView_CellMouseLeave;
+            this.textGridView.CellPainting += byteGridView_CellPainting;
 
             foreach (DataGridViewColumn c in this.textGridView.Columns)
             {
@@ -76,7 +77,6 @@ namespace XOPE_UI.Forms.Component
                     else
                         textCell.Value = '.';
 
-                    
                     textGridViewRow.Cells.Add(textCell);
                 }
 
@@ -111,15 +111,7 @@ namespace XOPE_UI.Forms.Component
 
         private void byteGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex >= 0 && e.RowIndex >= 0)
-            {
-                this.byteGridView.Rows[e.RowIndex].HeaderCell.Value = $"0x{(e.ColumnIndex + (e.RowIndex * 16)).ToString(OFFSET_FORMAT)}";
 
-                if (sender == this.byteGridView)
-                    this.textGridView.CurrentCell = this.textGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                else if (sender == this.textGridView)
-                    this.byteGridView.CurrentCell = this.byteGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            }
         }
 
         private void byteGridView_RowLeave(object sender, DataGridViewCellEventArgs e)
@@ -132,11 +124,15 @@ namespace XOPE_UI.Forms.Component
         {
             if (e.ColumnIndex >= 0 && e.RowIndex >= 0)
             {
-                Debug.WriteLine($"dataGridView_CellMouseEnter {e.ColumnIndex}x{e.RowIndex}");
-                SuspendLayout();
-                this.byteGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = CellHoverBackColor;
-                this.textGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = CellHoverBackColor;
-                ResumeLayout();
+                object cellValue = this.byteGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                if (cellValue != null)
+                {
+                    this.byteGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = CellHoverBackColor;
+                    this.byteGridView.InvalidateCell(e.ColumnIndex, e.RowIndex);
+                    this.textGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = CellHoverBackColor;
+                    this.textGridView.InvalidateCell(e.ColumnIndex, e.RowIndex);
+                }
+               
             }
         }
 
@@ -144,12 +140,77 @@ namespace XOPE_UI.Forms.Component
         {
             if (e.ColumnIndex >= 0 && e.RowIndex >= 0)
             {
-                SuspendLayout();
-                this.byteGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = CellBackColor;
-                this.textGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = CellBackColor;
+                object cellValue = this.byteGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                if (cellValue != null)
+                {
+                    this.byteGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = null;
+                    this.textGridView.InvalidateCell(e.ColumnIndex, e.RowIndex);
+                    this.byteGridView.InvalidateCell(e.ColumnIndex, e.RowIndex);
+                    this.textGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = null;
+                }
 
-                ResumeLayout();
+            }
+        }
 
+        private void byteGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex == -1 || e.ColumnIndex == -1)
+                return;
+
+            DataGridViewSelectedCellCollection cellCollection = this.byteGridView.SelectedCells;
+            if (cellCollection.Count > 0)
+            {
+                int paintingCellValue, selectedCellValue;
+                DataGridViewCell selectedCell = cellCollection[0];
+
+                data.Position = e.ColumnIndex + (e.RowIndex * 16);
+                paintingCellValue = data.ReadByte();
+                data.Position = selectedCell.ColumnIndex + (selectedCell.RowIndex * 16);
+                selectedCellValue = data.ReadByte();
+                data.Position = 0;
+
+                if (paintingCellValue == selectedCellValue)
+                {
+                    e.CellStyle.BackColor = Color.Yellow; 
+                }
+            }
+
+            //DataGridView
+            //if (e.)
+            DataGridViewCell paintingCell = ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex];
+            if (paintingCell.Tag != null && paintingCell.Tag is Color)
+                e.CellStyle.BackColor = (Color)paintingCell.Tag;
+
+            Debug.WriteLine($"[{System.DateTime.Now}]CellPainting: (COLOR:{e.CellStyle.BackColor}){e.ColumnIndex}x{e.RowIndex}");
+        }
+
+        private void byteGridView_SelectionChanged(object sender, System.EventArgs e)
+        {
+            DataGridViewSelectedCellCollection cellCollection = this.byteGridView.SelectedCells;
+            if (cellCollection.Count > 0)
+            {
+                DataGridViewCell selectedCell = cellCollection[0];
+
+                if (selectedCell.Value == null)
+                {
+                    this.byteGridView.ClearSelection();
+                    this.textGridView.ClearSelection();
+                    this.byteGridView.Invalidate();
+                    this.textGridView.Invalidate();
+                }
+                else if (selectedCell.ColumnIndex >= 0 && selectedCell.RowIndex >= 0)
+                {
+                    this.byteGridView.Rows[selectedCell.RowIndex].HeaderCell.Value = $"0x{(selectedCell.ColumnIndex + (selectedCell.RowIndex * 16)).ToString(OFFSET_FORMAT)}";
+
+                    if (sender == this.byteGridView)
+                        this.textGridView.CurrentCell = this.textGridView.Rows[selectedCell.RowIndex].Cells[selectedCell.ColumnIndex];
+                    else if (sender == this.textGridView)
+                        this.byteGridView.CurrentCell = this.byteGridView.Rows[selectedCell.RowIndex].Cells[selectedCell.ColumnIndex];
+
+                    // Forces DataGridViews to repaint, showing matching bytes
+                    this.byteGridView.Invalidate();
+                    this.textGridView.Invalidate();
+                }
             }
         }
     }
