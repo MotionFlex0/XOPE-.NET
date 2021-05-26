@@ -29,7 +29,7 @@ namespace XOPE_UI.Forms.Component
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.byteGridView = new System.Windows.Forms.DataGridView();
             this.Column0 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -101,14 +101,12 @@ namespace XOPE_UI.Forms.Component
             this.Column14,
             this.Column15});
             this.byteGridView.Location = new System.Drawing.Point(0, 0);
-            this.byteGridView.MultiSelect = false;
             this.byteGridView.Name = "byteGridView";
             this.byteGridView.ReadOnly = true;
             this.byteGridView.RowHeadersWidth = 90;
             this.byteGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.byteGridView.Size = new System.Drawing.Size(529, 164);
             this.byteGridView.TabIndex = 1;
-            this.byteGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_CellClick);
             this.byteGridView.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_CellMouseEnter);
             this.byteGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_CellMouseLeave);
             this.byteGridView.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.byteGridView_CellPainting);
@@ -274,13 +272,12 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn15,
             this.dataGridViewTextBoxColumn16});
             this.textGridView.Location = new System.Drawing.Point(0, 0);
-            this.textGridView.MultiSelect = false;
             this.textGridView.Name = "textGridView";
             this.textGridView.ReadOnly = true;
             this.textGridView.RowHeadersVisible = false;
             this.textGridView.RowHeadersWidth = 5;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle6;
             this.textGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.textGridView.Size = new System.Drawing.Size(260, 164);
             this.textGridView.TabIndex = 2;
