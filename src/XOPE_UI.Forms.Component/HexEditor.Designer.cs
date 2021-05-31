@@ -29,7 +29,7 @@ namespace XOPE_UI.Forms.Component
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.byteGridView = new System.Windows.Forms.DataGridView();
             this.Column0 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -112,7 +112,6 @@ namespace XOPE_UI.Forms.Component
             this.byteGridView.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.byteGridView_CellPainting);
             this.byteGridView.CellStateChanged += new System.Windows.Forms.DataGridViewCellStateChangedEventHandler(this.byteGridView_CellStateChanged);
             this.byteGridView.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_RowLeave);
-            this.byteGridView.SelectionChanged += new System.EventHandler(this.byteGridView_SelectionChanged);
             // 
             // Column0
             // 
@@ -277,8 +276,8 @@ namespace XOPE_UI.Forms.Component
             this.textGridView.ReadOnly = true;
             this.textGridView.RowHeadersVisible = false;
             this.textGridView.RowHeadersWidth = 5;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.textGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.textGridView.Size = new System.Drawing.Size(260, 164);
             this.textGridView.TabIndex = 2;
