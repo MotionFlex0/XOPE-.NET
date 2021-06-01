@@ -61,13 +61,15 @@
             this.replayViewButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.viewTab = new System.Windows.Forms.TabControl();
-            this.replayViewTabPage = new System.Windows.Forms.TabPage();
             this.captureViewTabPage = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.hexPreviewPanel = new System.Windows.Forms.Panel();
             this.captureTabControl = new System.Windows.Forms.TabControl();
             this.liveCapture = new System.Windows.Forms.TabPage();
             this.livePacketListView = new XOPE_UI.Forms.Component.PacketListView();
+            this.hexPreviewPanel = new System.Windows.Forms.Panel();
+            this.replayViewTabPage = new System.Windows.Forms.TabPage();
+            this.scriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -89,6 +91,7 @@
             this.editToolStripMenuItem,
             this.processToolStripMenuItem,
             this.packetToolStripMenuItem,
+            this.scriptToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -356,16 +359,6 @@
             this.viewTab.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.viewTab.TabIndex = 9;
             // 
-            // replayViewTabPage
-            // 
-            this.replayViewTabPage.Location = new System.Drawing.Point(4, 5);
-            this.replayViewTabPage.Name = "replayViewTabPage";
-            this.replayViewTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.replayViewTabPage.Size = new System.Drawing.Size(671, 381);
-            this.replayViewTabPage.TabIndex = 1;
-            this.replayViewTabPage.Text = "tabPage2";
-            this.replayViewTabPage.UseVisualStyleBackColor = true;
-            // 
             // captureViewTabPage
             // 
             this.captureViewTabPage.Controls.Add(this.splitContainer1);
@@ -396,16 +389,6 @@
             this.splitContainer1.Size = new System.Drawing.Size(671, 383);
             this.splitContainer1.SplitterDistance = 283;
             this.splitContainer1.TabIndex = 3;
-            // 
-            // hexPreviewPanel
-            // 
-            this.hexPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hexPreviewPanel.Location = new System.Drawing.Point(6, 3);
-            this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(659, 90);
-            this.hexPreviewPanel.TabIndex = 6;
             // 
             // captureTabControl
             // 
@@ -440,6 +423,41 @@
             this.livePacketListView.Name = "livePacketListView";
             this.livePacketListView.Size = new System.Drawing.Size(659, 261);
             this.livePacketListView.TabIndex = 0;
+            // 
+            // hexPreviewPanel
+            // 
+            this.hexPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.hexPreviewPanel.Location = new System.Drawing.Point(6, 3);
+            this.hexPreviewPanel.Name = "hexPreviewPanel";
+            this.hexPreviewPanel.Size = new System.Drawing.Size(659, 90);
+            this.hexPreviewPanel.TabIndex = 6;
+            // 
+            // replayViewTabPage
+            // 
+            this.replayViewTabPage.Location = new System.Drawing.Point(4, 5);
+            this.replayViewTabPage.Name = "replayViewTabPage";
+            this.replayViewTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.replayViewTabPage.Size = new System.Drawing.Size(671, 381);
+            this.replayViewTabPage.TabIndex = 1;
+            this.replayViewTabPage.Text = "tabPage2";
+            this.replayViewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // scriptToolStripMenuItem
+            // 
+            this.scriptToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.runScriptToolStripMenuItem});
+            this.scriptToolStripMenuItem.Name = "scriptToolStripMenuItem";
+            this.scriptToolStripMenuItem.Size = new System.Drawing.Size(49, 20);
+            this.scriptToolStripMenuItem.Text = "Script";
+            // 
+            // runScriptToolStripMenuItem
+            // 
+            this.runScriptToolStripMenuItem.Name = "runScriptToolStripMenuItem";
+            this.runScriptToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.runScriptToolStripMenuItem.Text = "Run Script";
+            this.runScriptToolStripMenuItem.Click += new System.EventHandler(this.runScriptToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -514,6 +532,8 @@
         private Forms.Component.PacketListView livePacketListView;
         private System.Windows.Forms.Panel hexPreviewPanel;
         private System.Windows.Forms.TabPage replayViewTabPage;
+        private System.Windows.Forms.ToolStripMenuItem scriptToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem runScriptToolStripMenuItem;
     }
 }
 

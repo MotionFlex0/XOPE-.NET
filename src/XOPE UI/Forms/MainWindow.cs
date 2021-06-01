@@ -300,5 +300,16 @@ namespace XOPE_UI
             logDialog.Show();
         }
 
+        private void runScriptToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "C# File (*.cs)|*.cs";
+            DialogResult result = openFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                MessageBox.Show($"Selected file in Open Dialog: {openFileDialog.FileName}");
+                CS
+            }
+        }
     }
 }
