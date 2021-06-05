@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSScriptLib;
+using System;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Drawing;
@@ -13,6 +14,7 @@ using XOPE_UI.Native;
 using XOPE_UI.Definitions;
 using XOPE_UI.Util;
 using XOPE_UI.Spy;
+using System.Threading;
 
 namespace XOPE_UI
 {
@@ -305,10 +307,32 @@ namespace XOPE_UI
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "C# File (*.cs)|*.cs";
             DialogResult result = openFileDialog.ShowDialog();
-            if (result == DialogResult.OK)
+            if (result == DialogResult.OK) 
             {
-                MessageBox.Show($"Selected file in Open Dialog: {openFileDialog.FileName}");
-                CS
+                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                CancellationToken token = cancellationTokenSource.Token;
+                using (ScriptLoadingDialog scriptLoadingDialog = new ScriptLoadingDialog(cancellationTokenSource))
+                {
+                    Task task = Task.Run(() =>
+                    {
+                        try
+                        {
+                            SDK.IScript script = CSScript.Evaluator.LoadFile<SDK.IScript>(openFileDialog.FileName);
+                            token.ThrowIfCancellationRequested();
+                            scriptLoadingDialog.ScriptLoaded();
+                            script.Init();
+                        }
+                        catch (CSScriptLib.CompilerException ex)
+                        {
+                            MessageBox.Show($"Compiler error: {ex.Message}");
+                        }
+                        catch (OperationCanceledException ex)
+                        {
+                            Console.WriteLine($"The loading of script '{openFileDialog.SafeFileName}' has been cancelled");
+                        }
+                    }, token);
+                    scriptLoadingDialog.ShowDialog();
+                }
             }
         }
     }
