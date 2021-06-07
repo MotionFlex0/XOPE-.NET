@@ -14,6 +14,7 @@ using XOPE_UI.Native;
 using XOPE_UI.Definitions;
 using XOPE_UI.Util;
 using XOPE_UI.Spy;
+using XOPE_UI.Script;
 using System.Threading;
 
 namespace XOPE_UI
@@ -39,6 +40,7 @@ namespace XOPE_UI
 
         LogDialog logDialog;
         ViewTabHandler viewTabHandler;
+        ScriptManager scriptManager;
 
         ByteViewer packetCaptureHexPreview;
 
@@ -56,6 +58,8 @@ namespace XOPE_UI
             viewTabHandler = new ViewTabHandler(viewTab);
             viewTabHandler.AddView(captureViewButton, captureViewTabPage);
             viewTabHandler.AddView(replayViewButton, replayViewTabPage);
+
+            scriptManager = new ScriptManager();
 
             // For WpfHexaEditor
             //packetCaptureHexPreview.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
@@ -309,30 +313,8 @@ namespace XOPE_UI
             DialogResult result = openFileDialog.ShowDialog();
             if (result == DialogResult.OK) 
             {
-                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-                CancellationToken token = cancellationTokenSource.Token;
-                using (ScriptLoadingDialog scriptLoadingDialog = new ScriptLoadingDialog(cancellationTokenSource))
-                {
-                    Task task = Task.Run(() =>
-                    {
-                        try
-                        {
-                            SDK.IScript script = CSScript.Evaluator.LoadFile<SDK.IScript>(openFileDialog.FileName);
-                            token.ThrowIfCancellationRequested();
-                            scriptLoadingDialog.ScriptLoaded();
-                            script.Init();
-                        }
-                        catch (CSScriptLib.CompilerException ex)
-                        {
-                            MessageBox.Show($"Compiler error: {ex.Message}");
-                        }
-                        catch (OperationCanceledException ex)
-                        {
-                            Console.WriteLine($"The loading of script '{openFileDialog.SafeFileName}' has been cancelled");
-                        }
-                    }, token);
-                    scriptLoadingDialog.ShowDialog();
-                }
+                scriptManager.AddCSScript(openFileDialog.FileName);
+                
             }
         }
     }
