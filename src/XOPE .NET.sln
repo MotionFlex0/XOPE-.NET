@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.HexEditor", "Sample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDK", "SDK\SDK.csproj", "{275F1D60-7E19-4466-8624-00EC9EA768CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOPE_UI.Native", "XOPE_UI.Native\XOPE_UI.Native.csproj", "{0E0549F8-3B40-429F-B109-942B3E253047}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -134,6 +136,22 @@ Global
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Release|x86 binding.Build.0 = Release|Any CPU
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Release|x86 build.Build.0 = Release|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|x64 binding.ActiveCfg = Debug|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|x64 binding.Build.0 = Debug|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|x86 binding.ActiveCfg = Debug|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|x86 binding.Build.0 = Debug|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|x86 build.ActiveCfg = Debug|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|x86 build.Build.0 = Debug|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x64 binding.ActiveCfg = Release|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x64 binding.Build.0 = Release|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 binding.ActiveCfg = Release|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 binding.Build.0 = Release|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 build.ActiveCfg = Release|Any CPU
+		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 build.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

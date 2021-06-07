@@ -65,7 +65,7 @@ namespace XOPE_UI.Native
             return wow64Process;
         }
 
-        public unsafe static string RPM(IntPtr hProcess, IntPtr lpBaseAddress, int strLen)
+        unsafe public static string RPM(IntPtr hProcess, IntPtr lpBaseAddress, int strLen)
         {
             int lpNumberOfBytesRead;
             byte[] buffer = new byte[strLen];
@@ -73,7 +73,7 @@ namespace XOPE_UI.Native
             return Encoding.ASCII.GetString(buffer);
         }
 
-        public unsafe static T RPM<T>(IntPtr hProcess, IntPtr lpBaseAddress) where T : unmanaged
+        unsafe public static T RPM<T>(IntPtr hProcess, IntPtr lpBaseAddress) where T : unmanaged
         {
             int lpNumberOfBytesRead;
             byte[] buffer = new byte[Marshal.SizeOf<T>()];
