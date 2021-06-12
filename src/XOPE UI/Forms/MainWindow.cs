@@ -24,6 +24,9 @@ namespace XOPE_UI
         const string XOPE_SPY_32 = "XOPESpy32.dll";
         const string XOPE_SPY_64 = "XOPESpy64.dll";
 
+        public event EventHandler<IntPtr> OnProcessAttached;
+        public event EventHandler<IntPtr> OnProcessDetached;
+
         int captureIndex = 0;
         
         ProcessDialog processDialog;
@@ -84,7 +87,7 @@ namespace XOPE_UI
             captureTabControl.MouseClick += captureTabControl_MouseClick;
         }
 
-        private void AttachToProcess()
+        public void AttachToProcess()
         {
             DialogResult result = processDialog.ShowDialog(); //Maybe make processDialog a local var and dispose of dialog here
             if (result == DialogResult.OK)
@@ -121,7 +124,7 @@ namespace XOPE_UI
             }
         }
 
-        private void DetachFromProcess()
+        public void DetachFromProcess()
         {
             if (attachedProcess == null)
                 return;
