@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDK", "SDK\SDK.csproj", "{2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOPE_UI.Native", "XOPE_UI.Native\XOPE_UI.Native.csproj", "{0E0549F8-3B40-429F-B109-942B3E253047}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOPE_UI.Spy", "XOPE_UI.Spy\XOPE_UI.Spy.csproj", "{EBE6B541-68AA-4A86-B56E-DF562244C6EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -152,6 +154,22 @@ Global
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 binding.Build.0 = Release|Any CPU
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 build.Build.0 = Release|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|x64 binding.ActiveCfg = Debug|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|x64 binding.Build.0 = Debug|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|x86 binding.ActiveCfg = Debug|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|x86 binding.Build.0 = Debug|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|x86 build.ActiveCfg = Debug|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|x86 build.Build.0 = Debug|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x64 binding.ActiveCfg = Release|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x64 binding.Build.0 = Release|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x86 binding.ActiveCfg = Release|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x86 binding.Build.0 = Release|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x86 build.ActiveCfg = Release|Any CPU
+		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x86 build.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
