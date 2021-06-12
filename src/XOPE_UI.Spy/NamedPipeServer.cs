@@ -18,7 +18,7 @@ namespace XOPE_UI.Spy
 {
     //TODO: this is kinda weird so maybe just remove it and put it back into the mainWindow class;
     //though, all some sort of translation class for incomming data
-    class NamedPipeServer : IServer
+    public class NamedPipeServer : IServer
     {
         public event EventHandler<Packet> OnNewPacket;
         public event EventHandler<Connection> OnNewConnection;

@@ -209,16 +209,16 @@
     <Compile Include="Forms\ScriptLoadingDialog.Designer.cs">
       <DependentUpon>ScriptLoadingDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ScriptManagerDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ScriptManagerDialog.Designer.cs">
+      <DependentUpon>ScriptManagerDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Injection\CreateRemoteThread.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Spy\ServerType\IMessage.cs" />
-    <Compile Include="Spy\IServer.cs" />
-    <Compile Include="Spy\NamedPipeServer.cs" />
-    <Compile Include="Spy\ServerType\InjectRecvPacket.cs" />
-    <Compile Include="Spy\ServerType\InjectSendPacket.cs" />
-    <Compile Include="Spy\SpyData.cs" />
-    <Compile Include="Spy\Type\GenericHookedSpyFunc.cs" />
+    <Compile Include="Script\ScriptManager.cs" />
     <Compile Include="Test\UI\HexEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -247,6 +247,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ScriptLoadingDialog.resx">
       <DependentUpon>ScriptLoadingDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ScriptManagerDialog.resx">
+      <DependentUpon>ScriptManagerDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -303,6 +306,10 @@
     <ProjectReference Include="..\XOPE_UI.Native\XOPE_UI.Native.csproj">
       <Project>{0e0549f8-3b40-429f-b109-942b3e253047}</Project>
       <Name>XOPE_UI.Native</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XOPE_UI.Spy\XOPE_UI.Spy.csproj">
+      <Project>{ebe6b541-68aa-4a86-b56e-df562244c6ec}</Project>
+      <Name>XOPE_UI.Spy</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
