@@ -28,9 +28,14 @@ namespace XOPE_UI
 
             IServer server = new NamedPipeServer();
 
+            MainWindow mainWindow = new MainWindow(server);
+
+            SDK.Environment environment = SDK.Environment.GetEnvironment();
+            environment.Server = server;
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainWindow(server));
+            Application.Run(mainWindow);
             //Application.Run(new ProcessDialog());
         }
     }
