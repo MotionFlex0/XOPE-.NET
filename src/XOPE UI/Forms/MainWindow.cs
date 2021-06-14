@@ -47,6 +47,8 @@ namespace XOPE_UI
 
         ByteViewer packetCaptureHexPreview;
 
+        SDK.Environment environment;
+
         public MainWindow(IServer server)
         {
             InitializeComponent();
@@ -85,6 +87,10 @@ namespace XOPE_UI
                 livePacketListView.Invoke((MethodInvoker)(() => livePacketListView.Add(e)));
 
             captureTabControl.MouseClick += captureTabControl_MouseClick;
+
+            environment = SDK.Environment.GetEnvironment();
+            server.OnNewPacket += (object sender, Definitions.Packet e) =>
+                environment.EmitNewPacket(e.Data);
         }
 
         public void AttachToProcess()
@@ -110,11 +116,12 @@ namespace XOPE_UI
                     this.Text = $"XOPE - [{processDialog.SelectedProcess.Id}] {processDialog.SelectedProcessName}";
                     detachToolStripButton.Enabled = true;
                     detachToolStripMenuItem.Enabled = true;
+                    recordToolStripButton.Enabled = true;
 
                     attachedProcess = processDialog.SelectedProcess;
                     attachedProcess.EnableRaisingEvents = true;
                     attachedProcess.Exited += attachedProcess_Exited;
-                    recordToolStripButton.Enabled = true;
+                    environment.EmitProcessAttached(attachedProcess);
                 }
                 else
                     MessageBox.Show($"Error when AttachToProcess");
@@ -136,12 +143,13 @@ namespace XOPE_UI
                 res = CreateRemoteThread.Free64(attachedProcess.Handle, "XOPESpy64.dll");
 
             this.Text = "XOPE";
-            attachedProcess = null;
             detachToolStripButton.Enabled = false;
             detachToolStripMenuItem.Enabled = false;
             recordToolStripButton.Enabled = false;
             pauseRecToolStripButton.Enabled = false;
             stopRecToolStripButton.Enabled = false;
+            environment.EmitProcessDetached(attachedProcess);
+            attachedProcess = null;
         }
 
         private void CreditsToolStripMenuItem_Click(object sender, EventArgs e)

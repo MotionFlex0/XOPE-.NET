@@ -16,9 +16,9 @@ namespace SDK
         public event EventHandler<byte[]> OnNewPacket;
         public event EventHandler<byte[]> OnNewPacketModify;
 
-
+        // TODO: May cause a race condition. Watch out for this.
         public Process AttachedProcess { get; private set; }
-        public IServer Server { get; private set; }
+        public IServer Server { get; set; }
 
         private static Environment environment;
 
@@ -32,7 +32,7 @@ namespace SDK
 
         public void EmitProcessAttached(Process process)
         {
-            Process = process;
+            AttachedProcess = process;
             OnProcessAttached?.Invoke(this, process);
         }
         
