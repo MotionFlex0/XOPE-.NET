@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using XOPE_UI.Native;
 using XOPE_UI.Spy;
 
 namespace XOPE_UI
@@ -28,14 +27,12 @@ namespace XOPE_UI
 
             IServer server = new NamedPipeServer();
 
-            MainWindow mainWindow = new MainWindow(server);
-
             SDK.Environment environment = SDK.Environment.GetEnvironment();
             environment.Server = server;
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(mainWindow);
+            Application.Run(new MainWindow(server));
             //Application.Run(new ProcessDialog());
         }
     }
