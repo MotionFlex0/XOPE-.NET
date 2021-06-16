@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -63,15 +62,15 @@ namespace XOPE_UI.Script
                         });
 
                         
-                        script.Init();
+                        script.OnInit();
 
                         while (!token.IsCancellationRequested)
                         {
-                            script.Tick();
+                            script.OnTick();
                             Thread.Sleep(100);
                         }
 
-                        script.Exit();
+                        script.OnExit();
                     }
                     catch (CSScriptLib.CompilerException ex)
                     {

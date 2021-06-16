@@ -1,21 +1,16 @@
-﻿using CSScriptLib;
-using System;
+﻿using System;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using XOPE_UI.Core;
 using XOPE_UI.Forms;
 using XOPE_UI.Forms.Component;
 using XOPE_UI.Injection;
 using XOPE_UI.Native;
-using XOPE_UI.Definitions;
 using XOPE_UI.Util;
 using XOPE_UI.Spy;
 using XOPE_UI.Script;
-using System.Threading;
 
 namespace XOPE_UI
 {
