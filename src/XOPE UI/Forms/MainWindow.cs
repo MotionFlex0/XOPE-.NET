@@ -55,8 +55,6 @@ namespace XOPE_UI
 
             this.server = server;
 
-            //Using reflection to modify the protected DoubleBuffered property for ListView. DoubleBuffered is used to prevent 
-
             logDialog = new LogDialog(new Logger());
             Console.WriteLine($"Program started at: {DateTime.Now}");
 
@@ -326,6 +324,15 @@ namespace XOPE_UI
             {
                 scriptManager.AddCSScript(openFileDialog.FileName);
                 
+            }
+        }
+
+        private void scriptManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (ScriptManagerDialog scriptManagerDialog = new ScriptManagerDialog(scriptManager))
+            {
+                scriptManagerDialog.ShowDialog();
+
             }
         }
     }
