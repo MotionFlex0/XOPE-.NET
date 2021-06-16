@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace XOPE_UI.Spy.ServerType
 {
-    class InjectSendPacket : IMessage
+    public class InjectSendPacket : IMessage
     {
         public byte[] Data { get; set; }
         public int SocketId { get; set; }

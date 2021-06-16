@@ -8,7 +8,11 @@ namespace SDK
 {
     public interface IScript
     {
+        //Guid Id { get; set; }
+
         void Init();
+        void Tick();
+        void Exit();
         //void Tick();
     }
 }

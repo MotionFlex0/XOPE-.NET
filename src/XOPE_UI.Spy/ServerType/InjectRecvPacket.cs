@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace XOPE_UI.Spy.ServerType
 {
     //NOT IMPLEMENTED IN SPY
-    class InjectRecvPacket : IMessage
+    public class InjectRecvPacket : IMessage
     {
         public byte[] Data { get; set; }
         public int SocketId { get; set; }
