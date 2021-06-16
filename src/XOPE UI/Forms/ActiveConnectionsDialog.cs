@@ -25,8 +25,10 @@ namespace XOPE_UI.Forms
         public void UpdateActiveList()
         {
             connectionListView.Items.Clear();
-            foreach (Connection c in spyData.Connections)
+            foreach (KeyValuePair<int, Connection> kvp in spyData.Connections)
             {
+                Connection c = kvp.Value;
+
                 ListViewItem item = new ListViewItem(c.SocketId.ToString());
                 item.SubItems.Add(c.IPFamily == AddressFamily.InterNetwork ? "IPv4" : "IPv6");
                 item.SubItems.Add(c.IP.ToString());

@@ -81,14 +81,15 @@ namespace XOPE_UI.Spy
                                         new IPAddress(json.Value<Int32>("addr")),
                                         json.Value<Int32>("port"),
                                         Connection.Status.ESTABLISHED);
-                                    Data.Connections.Add(connection);
+                                    Data.Connections.TryAdd(json.Value<Int32>("socket"), connection);
                                     OnNewConnection?.Invoke(this, connection);
                                     Console.WriteLine("new connection");
                                 }
                                 else if (hookedFuncType == HookedFuncType.CLOSE)
                                 {
                                     int socketId = json.Value<Int32>("socket");
-                                    Connection matchingConnection = Data.Connections.FirstOrDefault((Connection c) => c.SocketId == socketId);
+                                    Connection matchingConnection = Data.Connections[socketId]; //Data.Connections.FirstOrDefault((Connection c) => c.SocketId == socketId);
+
                                     if (matchingConnection != null && matchingConnection.SocketStatus != Connection.Status.CLOSED)
                                     {
                                         matchingConnection.SocketStatus = Connection.Status.CLOSED;
@@ -97,9 +98,8 @@ namespace XOPE_UI.Spy
                                         System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
                                         t.Tick += (object sender, EventArgs e) =>
                                         {
-                                            bool exists = Data.Connections.Contains(matchingConnection);
-                                            if (exists)
-                                                Data.Connections.Remove(matchingConnection);
+                                            Data.Connections.TryRemove(matchingConnection.SocketId, out Connection v);
+                                            t.Stop();
                                         };
 
                                         t.Interval = 7000;
@@ -112,6 +112,7 @@ namespace XOPE_UI.Spy
                                     byte[] data = Convert.FromBase64String(json.Value<String>("packetDataB64"));
                                     Packet packet = new Packet
                                     {
+                                        Id = Guid.NewGuid(),
                                         Type = hookedFuncType,
                                         Data = data,
                                         Length = data.Length,
