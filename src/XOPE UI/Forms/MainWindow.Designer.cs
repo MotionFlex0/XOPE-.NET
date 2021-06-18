@@ -45,6 +45,8 @@
             this.newPacketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.scriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.scriptManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -70,8 +72,6 @@
             this.livePacketListView = new XOPE_UI.Forms.Component.PacketListView();
             this.hexPreviewPanel = new System.Windows.Forms.Panel();
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.scriptManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -201,9 +201,21 @@
             // runScriptToolStripMenuItem
             // 
             this.runScriptToolStripMenuItem.Name = "runScriptToolStripMenuItem";
-            this.runScriptToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.runScriptToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.runScriptToolStripMenuItem.Text = "Run Script";
             this.runScriptToolStripMenuItem.Click += new System.EventHandler(this.runScriptToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(151, 6);
+            // 
+            // scriptManagerToolStripMenuItem
+            // 
+            this.scriptManagerToolStripMenuItem.Name = "scriptManagerToolStripMenuItem";
+            this.scriptManagerToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.scriptManagerToolStripMenuItem.Text = "Script Manager";
+            this.scriptManagerToolStripMenuItem.Click += new System.EventHandler(this.scriptManagerToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -462,18 +474,6 @@
             this.replayViewTabPage.TabIndex = 1;
             this.replayViewTabPage.Text = "tabPage2";
             this.replayViewTabPage.UseVisualStyleBackColor = true;
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
-            // 
-            // scriptManagerToolStripMenuItem
-            // 
-            this.scriptManagerToolStripMenuItem.Name = "scriptManagerToolStripMenuItem";
-            this.scriptManagerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.scriptManagerToolStripMenuItem.Text = "Script Manager";
-            this.scriptManagerToolStripMenuItem.Click += new System.EventHandler(this.scriptManagerToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
