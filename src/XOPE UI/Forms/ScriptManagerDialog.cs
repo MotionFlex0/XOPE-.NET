@@ -40,7 +40,10 @@ namespace XOPE_UI.Forms
                 {
                     ScriptData scriptData = scriptManager.GetScript(guid);
 
-                    TimeSpan runningTime = DateTime.Now - scriptData.StartedAt;
+                    TimeSpan runningTime = scriptData.Status == ScriptStatus.RUNNING
+                                            ? DateTime.Now - scriptData.StartedAt
+                                            : scriptData.StoppedAt - scriptData.StartedAt;
+
                     scriptInfoListView.Items["running_time"].SubItems[1].Text = runningTime.ToString(@"hh\:mm\:ss");
                 }
             };
@@ -65,6 +68,16 @@ namespace XOPE_UI.Forms
                     this.stoppedScriptListView.Items.Add(scriptData.Name).Tag = g;
                 }
             }
+        }
+
+        private ListViewItem getSelectedItem()
+        {
+            if (runningScriptListView.SelectedItems.Count > 0)
+                return runningScriptListView.SelectedItems[0];
+            else if (stoppedScriptListView.SelectedItems.Count > 0)
+                return stoppedScriptListView.SelectedItems[0];
+            else
+                return null;
         }
 
         private void ScriptManagerDialog_Load(object sender, EventArgs e)
@@ -101,6 +114,27 @@ namespace XOPE_UI.Forms
             //scriptInfoListView.SelectedItems[]
         }
 
+        private void startButton_Click(object sender, EventArgs e)
+        {
 
+        }
+
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            ListViewItem listViewItem = getSelectedItem();
+
+            if (listViewItem == null)
+                return;
+
+            Guid guid = (Guid)listViewItem.Tag;
+            scriptManager.StopScript(guid);
+            Reload();
+        }
+
+        private void ScriptManagerDialog_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            infoRefreshTimer.Stop();
+            infoRefreshTimer.Dispose();
+        }
     }
 }

@@ -29,15 +29,15 @@ namespace XOPE_UI.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Name");
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Status");
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Running Time");
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Started At");
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("File Location");
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Name");
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Status");
+            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Running Time");
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("Started At");
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("File Location");
             this.runningScriptListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.button1 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.stopButton = new System.Windows.Forms.Button();
+            this.startButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.stoppedScriptListView = new System.Windows.Forms.ListView();
@@ -69,23 +69,25 @@ namespace XOPE_UI.Forms
             this.columnHeader1.Text = "Scripts";
             this.columnHeader1.Width = 277;
             // 
-            // button1
+            // stopButton
             // 
-            this.button1.Location = new System.Drawing.Point(533, 118);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Stop";
-            this.button1.UseVisualStyleBackColor = true;
+            this.stopButton.Location = new System.Drawing.Point(533, 118);
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Size = new System.Drawing.Size(75, 23);
+            this.stopButton.TabIndex = 1;
+            this.stopButton.Text = "Stop";
+            this.stopButton.UseVisualStyleBackColor = true;
+            this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
             // 
-            // button3
+            // startButton
             // 
-            this.button3.Location = new System.Drawing.Point(384, 118);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 3;
-            this.button3.Text = "Start";
-            this.button3.UseVisualStyleBackColor = true;
+            this.startButton.Location = new System.Drawing.Point(384, 118);
+            this.startButton.Name = "startButton";
+            this.startButton.Size = new System.Drawing.Size(75, 23);
+            this.startButton.TabIndex = 3;
+            this.startButton.Text = "Start";
+            this.startButton.UseVisualStyleBackColor = true;
+            this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
             // groupBox1
             // 
@@ -142,11 +144,11 @@ namespace XOPE_UI.Forms
             this.columnHeader4});
             this.scriptInfoListView.HideSelection = false;
             this.scriptInfoListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4,
-            listViewItem5});
+            listViewItem11,
+            listViewItem12,
+            listViewItem13,
+            listViewItem14,
+            listViewItem15});
             this.scriptInfoListView.Location = new System.Drawing.Point(6, 19);
             this.scriptInfoListView.Name = "scriptInfoListView";
             this.scriptInfoListView.Size = new System.Drawing.Size(332, 172);
@@ -172,10 +174,11 @@ namespace XOPE_UI.Forms
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.startButton);
+            this.Controls.Add(this.stopButton);
             this.Name = "ScriptManagerDialog";
             this.Text = "ScriptManagerDialog";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ScriptManagerDialog_FormClosed);
             this.Load += new System.EventHandler(this.ScriptManagerDialog_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
@@ -188,8 +191,8 @@ namespace XOPE_UI.Forms
 
         private System.Windows.Forms.ListView runningScriptListView;
         private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button stopButton;
+        private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ListView stoppedScriptListView;
