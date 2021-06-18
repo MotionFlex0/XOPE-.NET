@@ -29,7 +29,7 @@ namespace XOPE_UI.Forms.Component
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.byteGridView = new System.Windows.Forms.DataGridView();
             this.Column0 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -105,13 +105,14 @@ namespace XOPE_UI.Forms.Component
             this.byteGridView.ReadOnly = true;
             this.byteGridView.RowHeadersWidth = 90;
             this.byteGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.byteGridView.Size = new System.Drawing.Size(529, 164);
+            this.byteGridView.Size = new System.Drawing.Size(529, 88);
             this.byteGridView.TabIndex = 1;
             this.byteGridView.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_CellMouseEnter);
             this.byteGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_CellMouseLeave);
             this.byteGridView.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.byteGridView_CellPainting);
             this.byteGridView.CellStateChanged += new System.Windows.Forms.DataGridViewCellStateChangedEventHandler(this.byteGridView_CellStateChanged);
             this.byteGridView.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_RowLeave);
+            this.byteGridView.Scroll += new System.Windows.Forms.ScrollEventHandler(this.byteGridView_Scroll);
             // 
             // Column0
             // 
@@ -252,7 +253,7 @@ namespace XOPE_UI.Forms.Component
             | System.Windows.Forms.AnchorStyles.Left)));
             this.textGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.textGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            this.textGridView.ColumnHeadersHeight = 24;
+            this.textGridView.ColumnHeadersHeight = 21;
             this.textGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.textGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn1,
@@ -276,10 +277,10 @@ namespace XOPE_UI.Forms.Component
             this.textGridView.ReadOnly = true;
             this.textGridView.RowHeadersVisible = false;
             this.textGridView.RowHeadersWidth = 5;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle5;
             this.textGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.textGridView.Size = new System.Drawing.Size(260, 164);
+            this.textGridView.Size = new System.Drawing.Size(260, 88);
             this.textGridView.TabIndex = 2;
             // 
             // dataGridViewTextBoxColumn1
@@ -425,7 +426,7 @@ namespace XOPE_UI.Forms.Component
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.textGridView);
-            this.splitContainer1.Size = new System.Drawing.Size(795, 164);
+            this.splitContainer1.Size = new System.Drawing.Size(795, 88);
             this.splitContainer1.SplitterDistance = 530;
             this.splitContainer1.SplitterWidth = 2;
             this.splitContainer1.TabIndex = 3;
@@ -436,7 +437,7 @@ namespace XOPE_UI.Forms.Component
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Name = "HexEditor";
-            this.Size = new System.Drawing.Size(795, 164);
+            this.Size = new System.Drawing.Size(795, 88);
             ((System.ComponentModel.ISupportInitialize)(this.byteGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.textGridView)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);

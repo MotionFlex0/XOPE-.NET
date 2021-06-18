@@ -26,9 +26,12 @@ namespace XOPE_UI.Forms.Component
             this.byteGridView.ColumnHeadersHeightChanged += (object sender, System.EventArgs e) => 
                 this.textGridView.ColumnHeadersHeight = this.byteGridView.ColumnHeadersHeight;
 
+            this.textGridView.Scroll += byteGridView_Scroll;
+
             this.textGridView.CellMouseEnter += byteGridView_CellMouseEnter;
             this.textGridView.CellMouseLeave += byteGridView_CellMouseLeave;
             this.textGridView.CellPainting += byteGridView_CellPainting;
+            this.textGridView.CellStateChanged += byteGridView_CellStateChanged;
 
             //foreach (DataGridViewColumn c in this.byteGridView.Columns)
             //{
@@ -215,6 +218,18 @@ namespace XOPE_UI.Forms.Component
                 }
             }
             
+        }
+
+        private void byteGridView_Scroll(object sender, ScrollEventArgs e)
+        {
+            DataGridView otherGridView = sender == this.byteGridView ? this.textGridView : this.byteGridView;
+
+            if (e.ScrollOrientation == ScrollOrientation.HorizontalScroll)
+                otherGridView.HorizontalScrollingOffset = e.NewValue;
+            else if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
+            {
+                otherGridView.FirstDisplayedScrollingRowIndex = e.NewValue;
+            }
         }
     }
 }
