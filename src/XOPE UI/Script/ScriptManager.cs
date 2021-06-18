@@ -19,11 +19,13 @@ namespace XOPE_UI.Script
     public class ScriptData
     {
         public DateTime StartedAt { get; set; }
+        public DateTime StoppedAt { get; set; }
         public ScriptStatus Status { get; set; }
         public string FileLocation { get; set; }
         public string Name { get; set; }
         public bool SingleInstance { get; set; }
         public SDK.IScript LoadedScript { get; set; }
+        public CancellationTokenSource CancellationTokenSource { get; set; }
     }
 
     public class ScriptManager
@@ -54,16 +56,18 @@ namespace XOPE_UI.Script
                         scripts.Add(guid, new ScriptData
                         {
                             StartedAt = DateTime.Now,
+                            StoppedAt = DateTime.MinValue,
                             Status = ScriptStatus.RUNNING,
                             Name = Path.GetFileName(csFileName),
                             FileLocation = csFileName,
                             SingleInstance = false,
-                            LoadedScript = script
+                            LoadedScript = script,
+                            CancellationTokenSource = cancellationTokenSource
                         });
 
                         
                         script.OnInit();
-
+                        
                         while (!token.IsCancellationRequested)
                         {
                             script.OnTick();
@@ -71,6 +75,9 @@ namespace XOPE_UI.Script
                         }
 
                         script.OnExit();
+
+                        scripts[guid].Status = ScriptStatus.STOPPED;
+
                     }
                     catch (CSScriptLib.CompilerException ex)
                     {
@@ -97,5 +104,15 @@ namespace XOPE_UI.Script
             return res ? script : null;
         }
 
+        public void StopScript(Guid guid)
+        {
+            ScriptData scriptData = GetScript(guid);
+            if (scriptData == null)
+                return;
+
+            scriptData.CancellationTokenSource.Cancel();
+            scriptData.Status = ScriptStatus.STOPPED;
+            scriptData.StoppedAt = DateTime.Now;
+        }
     }
 }
