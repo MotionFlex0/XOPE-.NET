@@ -60,8 +60,18 @@ namespace XOPE_UI.Forms.Component
 
         public void SetBytes(byte[] bytes)
         {
+            Stopwatch stopwatch = new Stopwatch();
+
+            stopwatch.Start();
+
             data = new MemoryStream(bytes);
-            
+
+            this.byteGridView.ClearSelection();
+            this.textGridView.ClearSelection();
+            this.byteGridView.Rows.Clear();
+            this.textGridView.Rows.Clear();
+
+
             byte[] bytesInRow = new byte[16];
             for (int i = 0; i < data.Length; i += 16)
             {
@@ -107,7 +117,10 @@ namespace XOPE_UI.Forms.Component
 
             }
             data.Position = 0;
-            Debug.WriteLine($"cell DefaultCellStyle: {this.byteGridView.Rows[0].DefaultCellStyle}");
+
+            stopwatch.Stop();
+
+            Debug.WriteLine($"HexEditor.SetBytes(..) Refresh time: {stopwatch.ElapsedMilliseconds}ms");
         }
 
         public byte[] GetBytes()
@@ -205,6 +218,11 @@ namespace XOPE_UI.Forms.Component
                         this.byteGridView.Rows[e.Cell.RowIndex].HeaderCell.Value = $"0x{(e.Cell.ColumnIndex + (e.Cell.RowIndex * 16)).ToString(OFFSET_FORMAT)}";
 
                     DataGridView otherGridView = sender == this.byteGridView ? this.textGridView : this.byteGridView;
+
+                    // otherGridView has not loaded the data in yet
+                    if (otherGridView.Columns.Count <= e.Cell.ColumnIndex || otherGridView.Rows.Count <= e.Cell.RowIndex)
+                        return;
+
                     DataGridViewCell otherCell = otherGridView.Rows[e.Cell.RowIndex].Cells[e.Cell.ColumnIndex];
                     if (otherCell.Selected != e.Cell.Selected)
                     {
@@ -227,9 +245,7 @@ namespace XOPE_UI.Forms.Component
             if (e.ScrollOrientation == ScrollOrientation.HorizontalScroll)
                 otherGridView.HorizontalScrollingOffset = e.NewValue;
             else if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
-            {
                 otherGridView.FirstDisplayedScrollingRowIndex = e.NewValue;
-            }
         }
     }
 }
