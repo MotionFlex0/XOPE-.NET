@@ -40,7 +40,7 @@ namespace XOPE_UI
         ViewTabHandler viewTabHandler;
         ScriptManager scriptManager;
 
-        ByteViewer packetCaptureHexPreview;
+        //ByteViewer packetCaptureHexPreview;
 
         SDK.Environment environment;
 
@@ -58,16 +58,6 @@ namespace XOPE_UI
             viewTabHandler.AddView(replayViewButton, replayViewTabPage);
 
             scriptManager = new ScriptManager();
-
-            // For WpfHexaEditor
-            //packetCaptureHexPreview.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
-            //packetCaptureHexPreview.StatusBarVisibility = System.Windows.Visibility.Hidden;
-            //packetCaptureHexPreview.Focusable = false;
-
-            packetCaptureHexPreview = new ByteViewer();
-            packetCaptureHexPreview.Size = new Size(hexPreviewPanel.Width, hexPreviewPanel.Height);
-            packetCaptureHexPreview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            hexPreviewPanel.Controls.Add(packetCaptureHexPreview);
 
             processDialog = new ProcessDialog();
             activeConnectionsDialog = new ActiveConnectionsDialog(server.Data);
@@ -290,8 +280,7 @@ namespace XOPE_UI
 
         private void LivePacketListView_OnItemSelectedChanged(object sender, ListViewItem e)
         {
-            packetCaptureHexPreview.SetBytes((byte[])e.Tag);
-            packetCaptureHexPreview.SetDisplayMode(DisplayMode.Hexdump);
+            this.packetCaptureHexPreview.SetBytes((byte[])e.Tag);
         }
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
