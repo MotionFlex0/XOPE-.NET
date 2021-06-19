@@ -79,7 +79,7 @@
             // columnHeader3
             // 
             this.columnHeader3.Text = "Data";
-            this.columnHeader3.Width = 278;
+            this.columnHeader3.Width = 400;
             // 
             // columnHeader4
             // 
