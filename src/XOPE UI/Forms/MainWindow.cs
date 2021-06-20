@@ -167,13 +167,16 @@ namespace XOPE_UI
 
         private void attachedProcess_Exited(object sender, EventArgs e)
         {
-            this.Invoke((MethodInvoker)(() => this.Text = "XOPE" ));
             attachedProcess = null;
-            detachToolStripButton.Enabled = false;
-            detachToolStripMenuItem.Enabled = false;
-            recordToolStripButton.Enabled = false;
-            pauseRecToolStripButton.Enabled = false;
-            stopRecToolStripButton.Enabled = false;
+            this.Invoke((MethodInvoker)(() =>
+            {
+                this.Text = "XOPE"; 
+                detachToolStripButton.Enabled = false;
+                detachToolStripMenuItem.Enabled = false;
+                recordToolStripButton.Enabled = false;
+                pauseRecToolStripButton.Enabled = false;
+                stopRecToolStripButton.Enabled = false;
+            }));
         }
 
         private void closeTabToolStripMenuItem_Click(object sender, EventArgs e)
