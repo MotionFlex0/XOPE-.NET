@@ -22,7 +22,7 @@ namespace XOPE_UI.Forms.Component
         {
             InitializeComponent();
 
-
+            // Events
             this.byteGridView.ColumnHeadersHeightChanged += (object sender, System.EventArgs e) => 
                 this.textGridView.ColumnHeadersHeight = this.byteGridView.ColumnHeadersHeight;
 
@@ -41,11 +41,11 @@ namespace XOPE_UI.Forms.Component
             //        c.Width = 23;
             //}
 
+            // Fix columns' width
             foreach (DataGridViewColumn c in this.textGridView.Columns)
-            {
                 c.Width = 18;
-            }
 
+            // Enable Double Buffering to prevent flickering on redraw
             this.byteGridView
                 .GetType()
                 .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
@@ -56,6 +56,14 @@ namespace XOPE_UI.Forms.Component
                 .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
                 .SetValue(byteGridView, true, null);
 
+            // Set default Row Styles
+            DataGridViewCellStyle defaultCellStyle = new DataGridViewCellStyle();
+            defaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            defaultCellStyle.SelectionBackColor = SelectionBackColor;
+            defaultCellStyle.SelectionForeColor = SelectionForeColor;
+            defaultCellStyle.BackColor = CellBackColor;
+            this.byteGridView.DefaultCellStyle = defaultCellStyle;
+            this.textGridView.DefaultCellStyle = defaultCellStyle;
         }
 
         public void SetBytes(byte[] bytes)
@@ -71,10 +79,14 @@ namespace XOPE_UI.Forms.Component
             this.byteGridView.Rows.Clear();
             this.textGridView.Rows.Clear();
 
+            Debug.WriteLine("------------------------------------");
+            Debug.WriteLine($"Time taken to clear Gridviews: {stopwatch.ElapsedMilliseconds}ms");
 
             byte[] bytesInRow = new byte[16];
             for (int i = 0; i < data.Length; i += 16)
             {
+                Debug.WriteLine($"Beginning of for-loop {i.ToString(OFFSET_FORMAT)}: {stopwatch.ElapsedMilliseconds}ms");
+
                 int bytesRead = data.Read(bytesInRow, 0, 16);
                 DataGridViewRow dataGridViewRow = new DataGridViewRow();// 
                 dataGridViewRow.HeaderCell.Value = $"0x{i.ToString(OFFSET_FORMAT)}";
@@ -97,30 +109,25 @@ namespace XOPE_UI.Forms.Component
                     textGridViewRow.Cells.Add(textCell);
                 }
 
-                //TODO: Make RowDefaultCellStyle the dataStyle so it only has to be set once in Ctor
-                int byteRowIndex = this.byteGridView.Rows.Add(dataGridViewRow);
-                DataGridViewCellStyle byteStyle = new DataGridViewCellStyle();
-                byteStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                byteStyle.SelectionBackColor = SelectionBackColor;
-                byteStyle.SelectionForeColor = SelectionForeColor;
-                byteStyle.BackColor = CellBackColor;
+                Debug.WriteLine($"Time to add cell to row {i.ToString(OFFSET_FORMAT)}: {stopwatch.ElapsedMilliseconds}ms");
 
-                this.byteGridView.Rows[byteRowIndex].DefaultCellStyle = byteStyle;
+                this.byteGridView.Rows.Add(dataGridViewRow);
+                
+                Debug.WriteLine($"Time to add style and row to byteGridView {i.ToString(OFFSET_FORMAT)}: {stopwatch.ElapsedMilliseconds}ms");
 
-                int textRowIndex = this.textGridView.Rows.Add(textGridViewRow);
-                DataGridViewCellStyle textStyle = new DataGridViewCellStyle();
-                textStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                textStyle.SelectionBackColor = SelectionBackColor;
-                textStyle.SelectionForeColor = SelectionForeColor;
-                textStyle.BackColor = CellBackColor;
-                this.textGridView.Rows[textRowIndex].DefaultCellStyle = textStyle;
+                this.textGridView.Rows.Add(textGridViewRow);
+
+                Debug.WriteLine($"Time to add style and row to textStyle {i.ToString(OFFSET_FORMAT)}: {stopwatch.ElapsedMilliseconds}ms");
+                Debug.WriteLine("------------------------------------");
+
 
             }
             data.Position = 0;
 
             stopwatch.Stop();
+            Debug.WriteLine($"HexEditor.SetBytes(..) Total Refresh time: {stopwatch.ElapsedMilliseconds}ms");
+            Debug.WriteLine("------------------------------------");
 
-            Debug.WriteLine($"HexEditor.SetBytes(..) Refresh time: {stopwatch.ElapsedMilliseconds}ms");
         }
 
         public byte[] GetBytes()
