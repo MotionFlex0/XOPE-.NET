@@ -25,6 +25,8 @@ namespace XOPE_UI.Spy
         public SpyData Data { get; private set; }
         
         ConcurrentQueue<byte[]> outBuffer;
+        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        Task serverThread; // Change this to something easier to follow
 
         public NamedPipeServer()
         {
@@ -32,6 +34,7 @@ namespace XOPE_UI.Spy
 
             outBuffer = new ConcurrentQueue<byte[]>();
         }
+
 
 
         public void Send(IMessage message)
@@ -43,13 +46,19 @@ namespace XOPE_UI.Spy
         {
             NamedPipeServerStream serverStream = new NamedPipeServerStream("xopespy");
 
-            Task.Factory.StartNew(() => {
+            if (serverThread != null)
+            {
+                Console.WriteLine("Cannot start new server thread, as one already exists");
+                return;
+            }
+
+            serverThread = Task.Factory.StartNew(() => {
                 serverStream.WaitForConnection();
                 Console.WriteLine("Server connected to Definitions");
 
 
                 byte[] buffer = new byte[65536];
-                while (serverStream.IsConnected)
+                while (serverStream.IsConnected && !cancellationTokenSource.IsCancellationRequested)
                 {
                     byte[] _;
                     int __, ___;
@@ -132,8 +141,20 @@ namespace XOPE_UI.Spy
                 }
                 Console.WriteLine("Closing server...");
 
-                
-            }, System.Threading.CancellationToken.None, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                if (serverStream.IsConnected)
+                {
+                    Send(new ShutdownSpy());   
+                    FlushOutBuffer(serverStream);
+                }
+                serverStream.Close();
+            }, cancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        }
+
+        public void ShutdownServerAndWait()
+        {
+            cancellationTokenSource.Cancel();
+            //serverThread.Wait();
+            serverThread = null;
         }
 
         private void FlushOutBuffer(NamedPipeServerStream serverStream)

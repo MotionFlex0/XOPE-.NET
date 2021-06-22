@@ -14,5 +14,6 @@ namespace XOPE_UI.Spy
 
         void RunAsync();
         void Send(IMessage message);
+        void ShutdownServerAndWait();
     }
 }
