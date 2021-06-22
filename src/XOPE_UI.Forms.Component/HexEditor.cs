@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace XOPE_UI.Forms.Component
@@ -42,8 +44,16 @@ namespace XOPE_UI.Forms.Component
             //}
 
             // Fix columns' width
-            foreach (DataGridViewColumn c in this.textGridView.Columns)
-                c.Width = 18;
+            for (int i = 0; i < this.byteGridView.Columns.Count; i++)
+            {
+                DataGridViewColumn bc = this.byteGridView.Columns[i];
+                DataGridViewColumn tc = this.textGridView.Columns[i];
+                bc.DataPropertyName = $"HEADER{i}";
+                tc.DataPropertyName = $"HEADER{i}";
+                tc.Width = 18;
+            }
+
+
 
             // Enable Double Buffering to prevent flickering on redraw
             this.byteGridView
@@ -64,6 +74,10 @@ namespace XOPE_UI.Forms.Component
             defaultCellStyle.BackColor = CellBackColor;
             this.byteGridView.DefaultCellStyle = defaultCellStyle;
             this.textGridView.DefaultCellStyle = defaultCellStyle;
+
+            //byteGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+
+            //textGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
         }
 
         public void SetBytes(byte[] bytes)
@@ -76,63 +90,52 @@ namespace XOPE_UI.Forms.Component
 
             this.byteGridView.ClearSelection();
             this.textGridView.ClearSelection();
-            this.byteGridView.Rows.Clear();
-            this.textGridView.Rows.Clear();
+;
 
-            Debug.WriteLine("------------------------------------");
-            Debug.WriteLine($"Time taken to clear Gridviews: {stopwatch.ElapsedMilliseconds}ms");
+            DataTable byteDataTable = new DataTable();
+            DataTable textDataTable = new DataTable();
+
+            for (int i = 0; i < 16; i++)
+            {
+                byteDataTable.Columns.Add(new DataColumn($"HEADER{i}"));
+                textDataTable.Columns.Add(new DataColumn($"HEADER{i}"));
+            }
+
 
             byte[] bytesInRow = new byte[16];
             for (int i = 0; i < data.Length; i += 16)
             {
-                Debug.WriteLine($"Beginning of for-loop {i.ToString(OFFSET_FORMAT)}: {stopwatch.ElapsedMilliseconds}ms");
-
+                DataRow byteRow = byteDataTable.NewRow();
+                DataRow textRow = textDataTable.NewRow();
+                
                 int bytesRead = data.Read(bytesInRow, 0, 16);
-                DataGridViewRow dataGridViewRow = new DataGridViewRow();// 
-                dataGridViewRow.HeaderCell.Value = $"0x{i.ToString(OFFSET_FORMAT)}";
-
-                DataGridViewRow textGridViewRow = new DataGridViewRow();
 
                 for (int j = 0; j < bytesRead; j++)
-                {
-                    DataGridViewTextBoxCell byteCell = new DataGridViewTextBoxCell();
-                    DataGridViewTextBoxCell textCell = new DataGridViewTextBoxCell();
-
-                    byteCell.Value = bytesInRow[j].ToString(BYTE_FORMAT);
-                    dataGridViewRow.Cells.Add(byteCell);
+                {     
+                    byteRow[$"HEADER{j}"] = bytesInRow[j].ToString(BYTE_FORMAT);
 
                     if (bytesInRow[j] >= 0x20 && bytesInRow[j] < 0x80)
-                        textCell.Value = (char)bytesInRow[j];
+                        textRow[$"HEADER{j}"] = (char)bytesInRow[j];
                     else
-                        textCell.Value = '.';
-
-                    textGridViewRow.Cells.Add(textCell);
+                        textRow[$"HEADER{j}"] = '.';
                 }
 
-                Debug.WriteLine($"Time to add cell to row {i.ToString(OFFSET_FORMAT)}: {stopwatch.ElapsedMilliseconds}ms");
-
-                this.byteGridView.Rows.Add(dataGridViewRow);
-                
-                Debug.WriteLine($"Time to add style and row to byteGridView {i.ToString(OFFSET_FORMAT)}: {stopwatch.ElapsedMilliseconds}ms");
-
-                this.textGridView.Rows.Add(textGridViewRow);
-
-                Debug.WriteLine($"Time to add style and row to textStyle {i.ToString(OFFSET_FORMAT)}: {stopwatch.ElapsedMilliseconds}ms");
-                Debug.WriteLine("------------------------------------");
-
-
+                byteDataTable.Rows.Add(byteRow);
+                textDataTable.Rows.Add(textRow);
             }
+            this.byteGridView.DataSource = byteDataTable;
+            this.textGridView.DataSource = textDataTable;
+
             data.Position = 0;
 
             stopwatch.Stop();
             Debug.WriteLine($"HexEditor.SetBytes(..) Total Refresh time: {stopwatch.ElapsedMilliseconds}ms");
             Debug.WriteLine("------------------------------------");
-
         }
 
         public byte[] GetBytes()
         {
-            return new byte[2];// data.GetBuffer();
+            return new byte[2];
         }
 
         public void SelectPosition(int column, int row)
@@ -210,8 +213,8 @@ namespace XOPE_UI.Forms.Component
         {
             if (e.StateChanged == DataGridViewElementStates.Selected)
             {
-                Debug.WriteLine($"byteGridView_CellStateChanged - (CxR) {e.Cell.ColumnIndex}x{e.Cell.RowIndex}");
-                if (e.Cell.Value == null && e.Cell.Selected)
+                //Debug.WriteLine($"byteGridView_CellStateChanged - (CxR) {e.Cell.ColumnIndex}x{e.Cell.RowIndex}");
+                if (e.Cell.Value == null && e.Cell.Selected && prevSelectedCell != null)
                 {
                     e.Cell.Selected = false;
                     prevSelectedCell.Selected = true;
@@ -253,6 +256,13 @@ namespace XOPE_UI.Forms.Component
                 otherGridView.HorizontalScrollingOffset = e.NewValue;
             else if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
                 otherGridView.FirstDisplayedScrollingRowIndex = e.NewValue;
+        }
+
+        private void byteGridView_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            DataGridViewHeaderCell headerCell = this.byteGridView.Rows[e.RowIndex].HeaderCell;
+            if (e.RowIndex > 0 && headerCell.Value.ToString() == $"0x{(0).ToString(OFFSET_FORMAT)}")
+                headerCell.Value = $"0x{(e.RowIndex*16).ToString(OFFSET_FORMAT)}";
         }
     }
 }
