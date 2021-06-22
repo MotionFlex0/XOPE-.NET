@@ -150,7 +150,8 @@ void PipeThread(LPVOID param)
             }
             else if (type == SpyMessageType::SHUTDOWN_RECV_THREAD)
             {
-                shouldChildThreadExit = true;
+                shouldChildThreadExit = true; // No longer necessary
+                break;
             }
         }
 
