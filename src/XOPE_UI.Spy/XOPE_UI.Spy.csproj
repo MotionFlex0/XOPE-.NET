@@ -60,6 +60,7 @@
     <Compile Include="ServerType\IMessage.cs" />
     <Compile Include="ServerType\InjectRecvPacket.cs" />
     <Compile Include="ServerType\InjectSendPacket.cs" />
+    <Compile Include="ServerType\ShutdownSpy.cs" />
     <Compile Include="SpyData.cs" />
     <Compile Include="Type\GenericHookedSpyFunc.cs" />
   </ItemGroup>
