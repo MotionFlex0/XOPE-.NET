@@ -23,16 +23,16 @@ namespace SDK
         public static Environment GetEnvironment() => 
             environment ?? (environment = new Environment());
 
-        public void EmitNewPacket(byte[] bytes) =>
+        public void NotifyNewPacket(byte[] bytes) =>
             OnNewPacket?.Invoke(this, bytes);
 
-        public void EmitProcessAttached(Process process)
+        public void NotifyProcessAttached(Process process)
         {
             AttachedProcess = process;
             OnProcessAttached?.Invoke(this, process);
         }
         
-        public void EmitProcessDetached(Process process)
+        public void NotifyProcessDetached(Process process)
         {
             AttachedProcess = null;
             OnProcessDetached?.Invoke(this, process);
