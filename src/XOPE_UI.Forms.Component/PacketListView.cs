@@ -9,6 +9,8 @@ namespace XOPE_UI.Forms.Component
         public event EventHandler<ListViewItem> OnItemSelectedChanged;
         public event EventHandler<ListViewItem> OnItemDoubleClick;
 
+        public int Count { get => captureListView.Items.Count; }
+
         private int packetCounter = 0;
 
         public PacketListView()
@@ -45,6 +47,11 @@ namespace XOPE_UI.Forms.Component
             return Add(packet.Type, packet.Socket, packet.Data);
         }
 
+        public void Clear()
+        {
+            captureListView.Clear();
+            packetCounter = 0;
+        }
         
         private void captureListView_DoubleClick(object sender, EventArgs e)
         {
