@@ -73,7 +73,7 @@ namespace XOPE_UI
 
             environment = SDK.Environment.GetEnvironment();
             server.OnNewPacket += (object sender, Definitions.Packet e) =>
-                environment.EmitNewPacket(e.Data);
+                environment.NotifyNewPacket(e.Data);
         }
 
         public void AttachToProcess()
@@ -83,6 +83,19 @@ namespace XOPE_UI
             {
                 //Console.WriteLine($"Successfully written int: {NativeMethods.WPM(processDialog.SelectedProcess.Handle, (IntPtr)0x008FFD34, 5000)}");
                 //Console.WriteLine($"Successfully written byte: {NativeMethods.WPM(processDialog.SelectedProcess.Handle, (IntPtr)0x008FFD38, "Override partly")}");
+                if (livePacketListView.Count > 0)
+                {
+                    DialogResult shouldClearList = MessageBox.Show("Attaching to a new process will" +
+                        " clear your packet list(s)\n" +
+                        "Are ypu sure you want to do this?", "Warning",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                    if (shouldClearList != DialogResult.Yes)
+                        return;
+
+                    livePacketListView.Clear();
+                }
+                
                 if (attachedProcess != null)
                     DetachFromProcess();
 
@@ -104,7 +117,7 @@ namespace XOPE_UI
                     attachedProcess = processDialog.SelectedProcess;
                     attachedProcess.EnableRaisingEvents = true;
                     attachedProcess.Exited += attachedProcess_Exited;
-                    environment.EmitProcessAttached(attachedProcess);
+                    environment.NotifyProcessAttached(attachedProcess);
                 }
                 else
                     MessageBox.Show($"Error when AttachToProcess");
@@ -119,6 +132,8 @@ namespace XOPE_UI
             if (attachedProcess == null)
                 return;
 
+            server.ShutdownServerAndWait();
+
             bool res;
             if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(attachedProcess.Handle))
                 res = CreateRemoteThread.Free32(attachedProcess.Handle, "XOPESpy32.dll");
@@ -131,7 +146,7 @@ namespace XOPE_UI
             recordToolStripButton.Enabled = false;
             pauseRecToolStripButton.Enabled = false;
             stopRecToolStripButton.Enabled = false;
-            environment.EmitProcessDetached(attachedProcess);
+            environment.NotifyProcessDetached(attachedProcess);
             attachedProcess = null;
         }
 
