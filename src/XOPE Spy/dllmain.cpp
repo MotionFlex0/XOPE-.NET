@@ -13,7 +13,7 @@
 
 #pragma comment(lib, "ws2_32.lib") // Not needed if WSAGetLastError is removed
 
-void InitHooks();
+void InitHooks(HMODULE);
 void UnhookAll();
 void PipeThread(LPVOID param);
 
@@ -38,7 +38,7 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
-        InitHooks();
+        InitHooks(hModule);
         break;
     case DLL_PROCESS_DETACH:
         UnhookAll();
@@ -52,19 +52,20 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
 }
 
 #pragma warning (disable : 4996)
-void InitHooks() 
+void InitHooks(HMODULE module) 
 {
-    //AllocConsole();
+    AllocConsole();
 
-    //FILE* fpstdin = stdin;
-    //FILE* fpstdout = stdout;
-    //FILE* fpstderr = stderr;
+    FILE* fpstdin = stdin;
+    FILE* fpstdout = stdout;
+    FILE* fpstderr = stderr;
 
-    //freopen_s(&fpstdin, "conin$", "r", stdin);
-    //freopen_s(&fpstdout, "conout$", "w", stdout);
-    //freopen_s(&fpstderr, "conout$", "w", stderr);
+    freopen_s(&fpstdin, "conin$", "r", stdin);
+    freopen_s(&fpstdout, "conout$", "w", stdout);
+    freopen_s(&fpstderr, "conout$", "w", stderr);
 
-    std::cout.rdbuf(nullptr);
+    //Redurects stdout/stderror to nothing
+    //std::cout.rdbuf(nullptr); 
 
     std::cout << "Redirected" << std::endl;
 
@@ -89,7 +90,7 @@ void InitHooks()
     else
         std::cout << "failed to find pipe." << '\n';
 
-    childThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)PipeThread, NULL, 0, NULL);
+    childThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)PipeThread, module, 0, NULL);
 }
 
 void UnhookAll()
@@ -98,25 +99,26 @@ void UnhookAll()
     shouldChildThreadExit = true;
     WaitForSingleObject(childThread, 10000);
     std::cout << "Freeing from processes...\n";
-    namedPipe->close();
     hookmgr->destroy();
+    namedPipe->close();
     delete hookmgr;
     delete namedPipe;
-    //fclose(stdin);
-    //fclose(stdout);
-    //fclose(stderr);
+    fclose(stdin);
+    fclose(stdout);
+    fclose(stderr);
     
-    /*if (FreeConsole() == 0)
-        MessageBoxA(NULL, "Failed to free console!", "ERROR", MB_OK);*/
+    if (FreeConsole() == 0)
+        MessageBoxA(NULL, "Failed to free console!", "ERROR", MB_OK);
 }
 
-void PipeThread(LPVOID param)
+void PipeThread(LPVOID module)
 {
     json message;
+    bool shouldFreeLibrary = false;
     while (!shouldChildThreadExit)
     {    
-        bool res = namedPipe->recv(message);
-        if (res)
+        int res = namedPipe->recv(message);
+        if (res > 0)
         {
             SpyMessageType type = message["Type"].get<SpyMessageType>();
            
@@ -154,10 +156,18 @@ void PipeThread(LPVOID param)
                 break;
             }
         }
+        else if (res == -1)
+        {
+            shouldFreeLibrary = true;
+            break;
+        }
 
         namedPipe->flushOutBuffer();
         Sleep(100);
     }
+
+    if (shouldFreeLibrary)
+        FreeLibraryAndExitThread((HMODULE)module, 0);
 }
 
 int WINAPI Hooked_Connect(SOCKET s, const sockaddr* name, int namelen)
