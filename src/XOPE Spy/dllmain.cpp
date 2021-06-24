@@ -54,18 +54,19 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
 #pragma warning (disable : 4996)
 void InitHooks(HMODULE module) 
 {
-    AllocConsole();
+    //Shows console for debugging
+    //AllocConsole();
 
-    FILE* fpstdin = stdin;
-    FILE* fpstdout = stdout;
-    FILE* fpstderr = stderr;
+    //FILE* fpstdin = stdin;
+    //FILE* fpstdout = stdout;
+    //FILE* fpstderr = stderr;
 
-    freopen_s(&fpstdin, "conin$", "r", stdin);
-    freopen_s(&fpstdout, "conout$", "w", stdout);
-    freopen_s(&fpstderr, "conout$", "w", stderr);
+    //freopen_s(&fpstdin, "conin$", "r", stdin);
+    //freopen_s(&fpstdout, "conout$", "w", stdout);
+    //freopen_s(&fpstderr, "conout$", "w", stderr);
 
-    //Redurects stdout/stderror to nothing
-    //std::cout.rdbuf(nullptr); 
+    //Redirects stdout/stderror to nothing
+    std::cout.rdbuf(nullptr); 
 
     std::cout << "Redirected" << std::endl;
 
@@ -103,12 +104,14 @@ void UnhookAll()
     namedPipe->close();
     delete hookmgr;
     delete namedPipe;
-    fclose(stdin);
-    fclose(stdout);
-    fclose(stderr);
-    
-    if (FreeConsole() == 0)
-        MessageBoxA(NULL, "Failed to free console!", "ERROR", MB_OK);
+
+    // Shows console for debugging
+    //fclose(stdin);
+    //fclose(stdout);
+    //fclose(stderr);
+    //
+    //if (FreeConsole() == 0)
+    //    MessageBoxA(NULL, "Failed to free console!", "ERROR", MB_OK);
 }
 
 void PipeThread(LPVOID module)
@@ -153,17 +156,20 @@ void PipeThread(LPVOID module)
             else if (type == SpyMessageType::SHUTDOWN_RECV_THREAD)
             {
                 shouldChildThreadExit = true; // No longer necessary
+
                 break;
             }
         }
         else if (res == -1)
         {
+            shouldChildThreadExit = true;
             shouldFreeLibrary = true;
             break;
         }
 
         namedPipe->flushOutBuffer();
-        Sleep(100);
+
+        Sleep(20);
     }
 
     if (shouldFreeLibrary)
