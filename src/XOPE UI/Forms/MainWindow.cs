@@ -140,6 +140,9 @@ namespace XOPE_UI
             else
                 res = CreateRemoteThread.Free64(attachedProcess.Handle, "XOPESpy64.dll");
 
+            if (!res)
+                MessageBox.Show("Failed to free XOPESpy from the attached process");
+
             this.Text = "XOPE";
             detachToolStripButton.Enabled = false;
             detachToolStripMenuItem.Enabled = false;
