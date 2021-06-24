@@ -25,7 +25,7 @@ namespace XOPE_UI.Spy
         public SpyData Data { get; private set; }
         
         ConcurrentQueue<byte[]> outBuffer;
-        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        CancellationTokenSource cancellationTokenSource;
         Task serverThread; // Change this to something easier to follow
 
         public NamedPipeServer()
@@ -44,13 +44,14 @@ namespace XOPE_UI.Spy
 
         public void RunAsync() 
         {
-            NamedPipeServerStream serverStream = new NamedPipeServerStream("xopespy");
-
             if (serverThread != null)
             {
                 Console.WriteLine("Cannot start new server thread, as one already exists");
                 return;
             }
+
+            NamedPipeServerStream serverStream = new NamedPipeServerStream("xopespy");
+            cancellationTokenSource = new CancellationTokenSource();
 
             serverThread = Task.Factory.StartNew(() => {
                 serverStream.WaitForConnection();
@@ -137,7 +138,7 @@ namespace XOPE_UI.Spy
                     }
 
                     FlushOutBuffer(serverStream);
-                    Thread.Sleep(100);
+                    Thread.Sleep(20);
                 }
                 Console.WriteLine("Closing server...");
 
@@ -153,7 +154,7 @@ namespace XOPE_UI.Spy
         public void ShutdownServerAndWait()
         {
             cancellationTokenSource.Cancel();
-            //serverThread.Wait();
+            serverThread.Wait();
             serverThread = null;
         }
 
