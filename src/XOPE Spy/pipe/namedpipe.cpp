@@ -27,23 +27,31 @@ void NamedPipe::flushOutBuffer()
     _outBuffer.clear();
 }
 
-bool NamedPipe::recv(json& recvData)
+int NamedPipe::recv(json& recvData)
 {
     DWORD bytesRead { 0 };
     DWORD bytesAvailable { 0 };
     char buffer[65535];
     
-    PeekNamedPipe(_pipe, NULL, NULL, NULL, &bytesAvailable, NULL);
+    BOOL ret = PeekNamedPipe(_pipe, NULL, NULL, NULL, &bytesAvailable, NULL);
+    if (!ret && GetLastError() == ERROR_PIPE_NOT_CONNECTED)
+        return -1;
+    
+    if (!ret)
+    {
+        MessageBoxA(NULL, "FAIL - ret error", "", MB_OK);
+    }
+
     if (bytesAvailable > 0)
     {
         ReadFile(_pipe, &buffer, 2047, &bytesRead, NULL);
-        MessageBoxA(NULL, buffer, "INSIDE RECV()", MB_OK);
+        //MessageBoxA(NULL, buffer, "INSIDE RECV()", MB_OK);
         buffer[bytesRead] = 0; // to make sure the json is a null-terminated string
         recvData = json::parse(buffer);
-        return true;
+        return bytesRead;
     }
 
-    return false;
+    return 0;
 }
 
 void NamedPipe::close()

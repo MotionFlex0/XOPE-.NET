@@ -79,7 +79,7 @@ public:
 	~NamedPipe();
 
 	void flushOutBuffer();
-	bool recv(json&);
+	int recv(json&);
 	void close();
 
 
