@@ -34,14 +34,15 @@ int NamedPipe::recv(json& recvData)
     char buffer[65535];
     
     BOOL ret = PeekNamedPipe(_pipe, NULL, NULL, NULL, &bytesAvailable, NULL);
-    if (!ret && GetLastError() == ERROR_PIPE_NOT_CONNECTED)
-        return -1;
-    
     if (!ret)
     {
-        MessageBoxA(NULL, "FAIL - ret error", "", MB_OK);
+        DWORD lastError = GetLastError();
+        if (lastError == ERROR_PIPE_NOT_CONNECTED 
+            || lastError == ERROR_PIPE_NOT_CONNECTED 
+            || lastError == ERROR_BAD_PIPE)
+            return -1;
     }
-
+    
     if (bytesAvailable > 0)
     {
         ReadFile(_pipe, &buffer, 2047, &bytesRead, NULL);
