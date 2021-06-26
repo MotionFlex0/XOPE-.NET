@@ -67,7 +67,7 @@ namespace XOPE_UI
             livePacketListView.OnItemSelectedChanged += LivePacketListView_OnItemSelectedChanged;
 
             server.OnNewPacket += (object sender, Definitions.Packet e) =>
-                livePacketListView.Invoke((MethodInvoker)(() => livePacketListView.Add(e)));
+                livePacketListView.Invoke(new Action(() => livePacketListView.Add(e)));
 
             captureTabControl.MouseClick += captureTabControl_MouseClick;
 
@@ -109,10 +109,7 @@ namespace XOPE_UI
 
                 if (res)
                 {
-                    this.Text = $"XOPE - [{processDialog.SelectedProcess.Id}] {processDialog.SelectedProcessName}";
-                    detachToolStripButton.Enabled = true;
-                    detachToolStripMenuItem.Enabled = true;
-                    recordToolStripButton.Enabled = true;
+                    setUiToAttachedState();
 
                     attachedProcess = processDialog.SelectedProcess;
                     attachedProcess.EnableRaisingEvents = true;
@@ -127,30 +124,52 @@ namespace XOPE_UI
             }
         }
 
-        public void DetachFromProcess()
+        public void DetachFromProcess(bool alreadyFreed = false)
         {
             if (attachedProcess == null)
                 return;
 
             server.ShutdownServerAndWait();
 
-            bool res;
-            if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(attachedProcess.Handle))
-                res = CreateRemoteThread.Free32(attachedProcess.Handle, "XOPESpy32.dll");
-            else
-                res = CreateRemoteThread.Free64(attachedProcess.Handle, "XOPESpy64.dll");
+            if(!alreadyFreed)
+            {
+                bool res;
+                if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(attachedProcess.Handle))
+                    res = CreateRemoteThread.Free32(attachedProcess.Handle, "XOPESpy32.dll");
+                else
+                    res = CreateRemoteThread.Free64(attachedProcess.Handle, "XOPESpy64.dll");
 
-            if (!res)
-                MessageBox.Show("Failed to free XOPESpy from the attached process");
+                if (!res)
+                    MessageBox.Show("Failed to free XOPESpy from the attached process");
+            }
 
-            this.Text = "XOPE";
-            detachToolStripButton.Enabled = false;
-            detachToolStripMenuItem.Enabled = false;
-            recordToolStripButton.Enabled = false;
-            pauseRecToolStripButton.Enabled = false;
-            stopRecToolStripButton.Enabled = false;
+            setUiToDetachedState();
             environment.NotifyProcessDetached(attachedProcess);
             attachedProcess = null;
+        }
+
+        private void setUiToAttachedState()
+        {
+            this.Invoke(new Action(() =>
+            {
+                this.Text = $"XOPE - [{processDialog.SelectedProcess.Id}] {processDialog.SelectedProcessName}";
+                detachToolStripButton.Enabled = true;
+                detachToolStripMenuItem.Enabled = true;
+                recordToolStripButton.Enabled = true;
+            }));
+        }
+
+        private void setUiToDetachedState()
+        {
+            this.Invoke(new Action(() =>
+            {
+                this.Text = "XOPE";
+                detachToolStripButton.Enabled = false;
+                detachToolStripMenuItem.Enabled = false;
+                recordToolStripButton.Enabled = false;
+                pauseRecToolStripButton.Enabled = false;
+                stopRecToolStripButton.Enabled = false;
+            }));
         }
 
         private void CreditsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -185,16 +204,7 @@ namespace XOPE_UI
 
         private void attachedProcess_Exited(object sender, EventArgs e)
         {
-            attachedProcess = null;
-            this.Invoke((MethodInvoker)(() =>
-            {
-                this.Text = "XOPE"; 
-                detachToolStripButton.Enabled = false;
-                detachToolStripMenuItem.Enabled = false;
-                recordToolStripButton.Enabled = false;
-                pauseRecToolStripButton.Enabled = false;
-                stopRecToolStripButton.Enabled = false;
-            }));
+            DetachFromProcess(true);
         }
 
         private void closeTabToolStripMenuItem_Click(object sender, EventArgs e)
