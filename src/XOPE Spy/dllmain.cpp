@@ -82,6 +82,9 @@ void InitHooks(HMODULE module)
 
     const char* pipePath = "\\\\.\\pipe\\xopespy";
 
+    // TODO: Temporary fix to the server not being started by the time the pipe connection is mad
+    Sleep(2000); 
+
     namedPipe = new NamedPipe(pipePath);
     if (namedPipe->isValid())
     {
