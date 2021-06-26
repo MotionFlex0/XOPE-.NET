@@ -49,7 +49,7 @@ namespace XOPE_UI.Forms.Component
 
         public void Clear()
         {
-            captureListView.Clear();
+            captureListView.Items.Clear();
             packetCounter = 0;
         }
         
