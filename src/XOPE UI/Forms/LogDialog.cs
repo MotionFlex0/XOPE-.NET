@@ -19,7 +19,7 @@ namespace XOPE_UI.Forms
             {
                 if (this.IsHandleCreated)
                 {
-                    logTextbox.Invoke((MethodInvoker)(() =>
+                    logTextbox.Invoke(new Action(() =>
                     {
                         if (this.Visible)
                         {
@@ -54,7 +54,6 @@ namespace XOPE_UI.Forms
             {
                 logTextbox.ResetText();
                 logTextbox.AppendText(logger.ToString());
-
             }
         }
     }
