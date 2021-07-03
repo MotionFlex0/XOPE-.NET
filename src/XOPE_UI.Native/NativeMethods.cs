@@ -41,7 +41,27 @@ namespace XOPE_UI.Native
             StringBuilder processPath = new StringBuilder(bufferSize);
             return QueryFullProcessImageName(hProcess, dwFlags, processPath, ref bufferSize) ? processPath.ToString() : null;
         }
-        
+
+        public static IntPtr GetModuleHandle(IntPtr hProcess, string moduleName)
+        {
+            IntPtr moduleHandle = IntPtr.Zero;
+
+            IntPtr[] modules = NativeMethods.EnumProcessModulesEx(hProcess, Win32API.EPMFilterFlag.LIST_MODULES_ALL);
+            if (modules == null)
+                return IntPtr.Zero;
+
+            foreach (IntPtr m in modules)
+            {
+                if (NativeMethods.GetModuleBaseName(hProcess, m).Equals(moduleName, StringComparison.OrdinalIgnoreCase))
+                {
+                    moduleHandle = m;
+                    break;
+                }
+            }
+
+            return moduleHandle;
+        }
+
         public static string GetModuleBaseName(IntPtr hProcess, IntPtr hModule, int bufferSize=257)
         {
             StringBuilder moduleName = new StringBuilder(bufferSize);
