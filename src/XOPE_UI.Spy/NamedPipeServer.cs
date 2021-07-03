@@ -35,8 +35,6 @@ namespace XOPE_UI.Spy
             outBuffer = new ConcurrentQueue<byte[]>();
         }
 
-
-
         public void Send(IMessage message)
         {
             outBuffer.Enqueue(Encoding.ASCII.GetBytes(message.ToJson().ToString())); //TODO: Convert to bson
@@ -161,7 +159,7 @@ namespace XOPE_UI.Spy
         public void ShutdownServerAndWait()
         {
             cancellationTokenSource.Cancel();
-            serverThread.Wait();
+            serverThread.Wait(5000);
             serverThread = null;
         }
 
