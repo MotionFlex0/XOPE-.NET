@@ -103,9 +103,9 @@ namespace XOPE_UI
 
                 bool res;
                 if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(processDialog.SelectedProcess.Handle))
-                    res = CreateRemoteThread.Inject32(processDialog.SelectedProcess.Handle, $@"{Environment.CurrentDirectory}\XOPESpy32.dll");
+                    res = CreateRemoteThread.Inject32(processDialog.SelectedProcess.Handle, $@"{Environment.CurrentDirectory}\{XOPE_SPY_32}");
                 else
-                    res = CreateRemoteThread.Inject64(processDialog.SelectedProcess.Handle, $@"{Environment.CurrentDirectory}\XOPESpy64.dll");
+                    res = CreateRemoteThread.Inject64(processDialog.SelectedProcess.Handle, $@"{Environment.CurrentDirectory}\{XOPE_SPY_64}");
 
                 if (res)
                 {
@@ -135,9 +135,9 @@ namespace XOPE_UI
             {
                 bool res;
                 if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(attachedProcess.Handle))
-                    res = CreateRemoteThread.Free32(attachedProcess.Handle, "XOPESpy32.dll");
+                    res = CreateRemoteThread.Free32(attachedProcess.Handle, XOPE_SPY_32);
                 else
-                    res = CreateRemoteThread.Free64(attachedProcess.Handle, "XOPESpy64.dll");
+                    res = CreateRemoteThread.Free64(attachedProcess.Handle, XOPE_SPY_64);
 
                 if (!res)
                     MessageBox.Show("Failed to free XOPESpy from the attached process");
@@ -275,7 +275,6 @@ namespace XOPE_UI
             var t = captureTabControl.TabPages[(string)recordToolStripButton.Tag];
 
             t.Text = t.Text.Replace("[Capturing]", "[Paused]");
-            
         }
 
         private void stopRecToolStripButton_Click(object sender, EventArgs e)
