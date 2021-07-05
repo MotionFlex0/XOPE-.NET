@@ -176,7 +176,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config\Config.cs" />
+    <Compile Include="Config\Spy.cs" />
     <Compile Include="Core\PacketList.cs" />
     <Compile Include="Core\ViewTabHandler.cs" />
     <Compile Include="Forms\ActiveConnectionsDialog.cs">
