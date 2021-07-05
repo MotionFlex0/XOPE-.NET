@@ -158,6 +158,9 @@ namespace XOPE_UI.Spy
 
         public void ShutdownServerAndWait()
         {
+            if (serverThread == null)
+                return;
+
             cancellationTokenSource.Cancel();
             serverThread.Wait(5000);
             serverThread = null;
