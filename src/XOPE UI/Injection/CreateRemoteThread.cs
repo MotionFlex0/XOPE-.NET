@@ -7,6 +7,13 @@ namespace XOPE_UI.Injection
 {
     class CreateRemoteThread
     {
+        public static bool Inject(IntPtr hProcess)
+        {
+            return (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(hProcess))
+                ? Inject32(hProcess, XOPE_UI.Config.Spy.ModulePath32)
+                : Inject64(hProcess, XOPE_UI.Config.Spy.ModulePath64);
+        }
+
         /*
          * Use Inject64 for remote 64-bit processes. This method is slower as it needs to do some extra 
          *  work to make it compatible with 32-bit processes. 
@@ -81,22 +88,19 @@ namespace XOPE_UI.Injection
             return true;
         }
 
+        public static bool Free(IntPtr hProcess)
+        {
+            return (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(hProcess))
+                ? Free32(hProcess, XOPE_UI.Config.Spy.ModuleName32)
+                : Free64(hProcess, XOPE_UI.Config.Spy.ModuleName64);
+        }
+
         public static bool Free32(IntPtr hProcess, string moduleName)
         {
-            if (!File.Exists("helper32.exe"))
+            if (!File.Exists("helper32.exe") || hProcess == IntPtr.Zero)
                 return false;
-
-            IntPtr moduleToUnload = IntPtr.Zero;
-
-            IntPtr[] modules = NativeMethods.EnumProcessModulesEx(hProcess, Win32API.EPMFilterFlag.LIST_MODULES_32BIT);
-            foreach (IntPtr m in modules)
-            {
-                if (NativeMethods.GetModuleBaseName(hProcess, m).Equals(moduleName, StringComparison.OrdinalIgnoreCase))
-                {
-                    moduleToUnload = m;
-                    break;
-                }
-            }
+           
+            IntPtr moduleToUnload = NativeMethods.GetModuleHandle(hProcess, moduleName);
 
             if (moduleToUnload == IntPtr.Zero)
                 return false;
@@ -129,17 +133,20 @@ namespace XOPE_UI.Injection
 
         public static bool Free64(IntPtr hProcess, string moduleName)
         {
-            IntPtr moduleToUnload = IntPtr.Zero;
+            IntPtr moduleToUnload = NativeMethods.GetModuleHandle(hProcess, moduleName);
 
-            IntPtr[] modules = NativeMethods.EnumProcessModulesEx(hProcess, Win32API.EPMFilterFlag.LIST_MODULES_64BIT);
-            foreach (IntPtr m in modules)
-            {
-                if (NativeMethods.GetModuleBaseName(hProcess, m).Equals(moduleName.ToLower(), StringComparison.OrdinalIgnoreCase))
-                {
-                    moduleToUnload = m;
-                    break;
-                }
-            }
+            //IntPtr[] modules = NativeMethods.EnumProcessModulesEx(hProcess, Win32API.EPMFilterFlag.LIST_MODULES_64BIT);
+            //if (modules == null)
+            //    return false;
+
+            //foreach (IntPtr m in modules)
+            //{
+            //    if (NativeMethods.GetModuleBaseName(hProcess, m).Equals(moduleName.ToLower(), StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        moduleToUnload = m;
+            //        break;
+            //    }
+            //}
 
             if (moduleToUnload == IntPtr.Zero)
                 return false;
