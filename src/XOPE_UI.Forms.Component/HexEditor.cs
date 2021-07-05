@@ -48,8 +48,8 @@ namespace XOPE_UI.Forms.Component
             {
                 DataGridViewColumn bc = this.byteGridView.Columns[i];
                 DataGridViewColumn tc = this.textGridView.Columns[i];
-                bc.DataPropertyName = $"HEADER{i}";
-                tc.DataPropertyName = $"HEADER{i}";
+                bc.DataPropertyName = $"0x{i:X}";
+                tc.DataPropertyName = $"0x{i:X}";
                 tc.Width = 18;
             }
 
@@ -80,6 +80,26 @@ namespace XOPE_UI.Forms.Component
             //textGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
         }
 
+        public void ClearBytes()
+        {
+            data = null;
+
+            DataTable byteDataTable = new DataTable();
+            DataTable textDataTable = new DataTable();
+
+            for (int i = 0; i < 16; i++)
+            {
+                byteDataTable.Columns.Add(new DataColumn($"0x{i:X}"));
+                textDataTable.Columns.Add(new DataColumn($"0x{i:X}"));
+            }
+
+            //byteDataTable.Rows.Add(byteDataTable.NewRow());
+            //textDataTable.Rows.Add(textDataTable.NewRow());
+
+            this.byteGridView.DataSource = byteDataTable;
+            this.textGridView.DataSource = textDataTable;
+        }
+
         public void SetBytes(byte[] bytes)
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -97,8 +117,8 @@ namespace XOPE_UI.Forms.Component
 
             for (int i = 0; i < 16; i++)
             {
-                byteDataTable.Columns.Add(new DataColumn($"HEADER{i}"));
-                textDataTable.Columns.Add(new DataColumn($"HEADER{i}"));
+                byteDataTable.Columns.Add(new DataColumn($"0x{i:X}"));
+                textDataTable.Columns.Add(new DataColumn($"0x{i:X}"));
             }
 
 
@@ -112,12 +132,12 @@ namespace XOPE_UI.Forms.Component
 
                 for (int j = 0; j < bytesRead; j++)
                 {     
-                    byteRow[$"HEADER{j}"] = bytesInRow[j].ToString(BYTE_FORMAT);
+                    byteRow[$"0x{j:X}"] = bytesInRow[j].ToString(BYTE_FORMAT);
 
                     if (bytesInRow[j] >= 0x20 && bytesInRow[j] < 0x80)
-                        textRow[$"HEADER{j}"] = (char)bytesInRow[j];
+                        textRow[$"0x{j:X}"] = (char)bytesInRow[j];
                     else
-                        textRow[$"HEADER{j}"] = '.';
+                        textRow[$"0x{j:X}"] = '.';
                 }
 
                 byteDataTable.Rows.Add(byteRow);
