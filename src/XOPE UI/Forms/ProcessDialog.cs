@@ -114,5 +114,12 @@ namespace XOPE_UI.Forms
         {
             this.DialogResult = DialogResult.Cancel;
         }
+
+        private void processesView_DoubleClick(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection selectedItems = this.processesView.SelectedItems;
+            if (selectedItems.Count > 0)
+                this.confirmButton.PerformClick();
+        }
     }
 }

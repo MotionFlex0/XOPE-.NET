@@ -56,6 +56,7 @@
             this.processesView.UseCompatibleStateImageBehavior = false;
             this.processesView.View = System.Windows.Forms.View.Details;
             this.processesView.SelectedIndexChanged += new System.EventHandler(this.processesView_SelectedIndexChanged);
+            this.processesView.DoubleClick += new System.EventHandler(this.processesView_DoubleClick);
             // 
             // dummyHeader
             // 
