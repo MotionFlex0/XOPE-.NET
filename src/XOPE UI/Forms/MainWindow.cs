@@ -79,49 +79,71 @@ namespace XOPE_UI
         public void AttachToProcess()
         {
             DialogResult result = processDialog.ShowDialog(); //Maybe make processDialog a local var and dispose of dialog here
-            if (result == DialogResult.OK)
+            if (result != DialogResult.OK)
+                return;
+
+            //Console.WriteLine($"Successfully written int: {NativeMethods.WPM(processDialog.SelectedProcess.Handle, (IntPtr)0x008FFD34, 5000)}");
+            //Console.WriteLine($"Successfully written byte: {NativeMethods.WPM(processDialog.SelectedProcess.Handle, (IntPtr)0x008FFD38, "Override partly")}");
+            if (livePacketListView.Count > 0)
             {
-                //Console.WriteLine($"Successfully written int: {NativeMethods.WPM(processDialog.SelectedProcess.Handle, (IntPtr)0x008FFD34, 5000)}");
-                //Console.WriteLine($"Successfully written byte: {NativeMethods.WPM(processDialog.SelectedProcess.Handle, (IntPtr)0x008FFD38, "Override partly")}");
-                if (livePacketListView.Count > 0)
-                {
-                    DialogResult shouldClearList = MessageBox.Show("Attaching to a new process will" +
-                        " clear your packet list(s)\n" +
-                        "Are ypu sure you want to do this?", "Warning",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult shouldClearList = MessageBox.Show("Attaching to a new process will" +
+                    " clear your packet list(s)\n" +
+                    "Are ypu sure you want to do this?", "Warning",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-                    if (shouldClearList != DialogResult.Yes)
-                        return;
+                if (shouldClearList != DialogResult.Yes)
+                    return;
 
-                    livePacketListView.Clear();
-                }
-                
-                if (attachedProcess != null)
-                    DetachFromProcess();
-
-                server.RunAsync();
-
-                bool res;
-                if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(processDialog.SelectedProcess.Handle))
-                    res = CreateRemoteThread.Inject32(processDialog.SelectedProcess.Handle, $@"{Environment.CurrentDirectory}\{XOPE_SPY_32}");
-                else
-                    res = CreateRemoteThread.Inject64(processDialog.SelectedProcess.Handle, $@"{Environment.CurrentDirectory}\{XOPE_SPY_64}");
-
-                if (res)
-                {
-                    setUiToAttachedState();
-
-                    attachedProcess = processDialog.SelectedProcess;
-                    attachedProcess.EnableRaisingEvents = true;
-                    attachedProcess.Exited += attachedProcess_Exited;
-                    environment.NotifyProcessAttached(attachedProcess);
-                }
-                else
-                    MessageBox.Show($"Error when AttachToProcess");
-                //int val = NativeMethods.RPM<int>(processDialog.SelectedProcess.Handle, (IntPtr)0x0133F934);
-                //string strVal = NativeMethods.RPM(processDialog.SelectedProcess.Handle, (IntPtr)0x009861C0, 10);
-                
+                livePacketListView.Clear();
+                this.packetCaptureHexPreview.ClearBytes();
             }
+                
+            if (attachedProcess != null)
+                DetachFromProcess();
+
+            bool spyAlreadyAttached = false;
+            if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(processDialog.SelectedProcess.Handle))
+                spyAlreadyAttached = NativeMethods.GetModuleHandle(processDialog.SelectedProcess.Handle, XOPE_SPY_32) != IntPtr.Zero;
+            else
+                spyAlreadyAttached = NativeMethods.GetModuleHandle(processDialog.SelectedProcess.Handle, XOPE_SPY_32) != IntPtr.Zero;
+
+            if (spyAlreadyAttached)
+            {
+                DialogResult shouldClearList = MessageBox.Show("The Spy is already injected within this process.\n" +
+                    "This may be due to another instance of XOPE.\n" +
+                    "Would you like to allow this instance to remove the already existing Spy from this process?",
+                    "Another XOPE instance?",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (shouldClearList != DialogResult.Yes)
+                    return;
+
+                // TODO: Attempt to removed existing Spy. 
+                CreateRemoteThread.Free(processDialog.SelectedProcess.Handle);
+            }
+
+            server.RunAsync();
+
+            bool res = CreateRemoteThread.Inject(processDialog.SelectedProcess.Handle);
+            //if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(processDialog.SelectedProcess.Handle))
+            //    res = CreateRemoteThread.Inject32(processDialog.SelectedProcess.Handle, $@"{Environment.CurrentDirectory}\{XOPE_SPY_32}");
+            //else
+            //    res = CreateRemoteThread.Inject64(processDialog.SelectedProcess.Handle, $@"{Environment.CurrentDirectory}\{XOPE_SPY_64}");
+
+            if (res)
+            {
+                setUiToAttachedState();
+
+                attachedProcess = processDialog.SelectedProcess;
+                attachedProcess.EnableRaisingEvents = true;
+                attachedProcess.Exited += attachedProcess_Exited;
+                environment.NotifyProcessAttached(attachedProcess);
+            }
+            else
+                MessageBox.Show($"Error when AttachToProcess");
+            //int val = NativeMethods.RPM<int>(processDialog.SelectedProcess.Handle, (IntPtr)0x0133F934);
+            //string strVal = NativeMethods.RPM(processDialog.SelectedProcess.Handle, (IntPtr)0x009861C0, 10);
+                
         }
 
         public void DetachFromProcess(bool alreadyFreed = false)
