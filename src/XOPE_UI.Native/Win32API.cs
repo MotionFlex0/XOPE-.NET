@@ -17,7 +17,7 @@ namespace XOPE_UI.Native
          * */
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr CreateRemoteThread([In] IntPtr hProcess, [In] IntPtr lpThreadAttributes, [In] int dwStackSize,
-            [In] IntPtr lpStartAddress, [In] IntPtr lpParameter, [In] int dwCreationFlags, [Out] out int lpThreadId); // lpThreadAttributes not implemented. pass (IntPtr)0
+            [In] IntPtr lpStartAddress, [In] IntPtr lpParameter, [In] int dwCreationFlags, [Out] out int lpThreadId); // lpThreadAttributes not implemented. pass IntPtr.Zero
 
         [DllImport("Psapi.dll", SetLastError = true)]
         public static extern bool EnumProcessModulesEx([In] IntPtr hProcess, [Out] IntPtr[] lphModule, [In] int cb, [Out] out int lpcbNeeded, [In] int dwFilterFlag);
