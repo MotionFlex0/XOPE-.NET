@@ -83,7 +83,7 @@ void InitHooks(HMODULE module)
     const char* pipePath = "\\\\.\\pipe\\xopespy";
 
     // TODO: Temporary fix to the server not being started by the time the pipe connection is mad
-    Sleep(2000); 
+    //Sleep(2000); 
 
     namedPipe = new NamedPipe(pipePath);
     if (namedPipe->isValid())
@@ -92,7 +92,8 @@ void InitHooks(HMODULE module)
         namedPipe->send(client::ConnectedSuccessMessage());
     }
     else
-        std::cout << "failed to find pipe." << '\n';
+        MessageBox(NULL, "Failed to connect to named pipe!", "ERROR", MB_OK);
+        //std::cout << "failed to find pipe." << '\n';
 
     childThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)PipeThread, module, 0, NULL);
 }
