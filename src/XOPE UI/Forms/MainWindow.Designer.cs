@@ -30,6 +30,11 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            "",
+            "",
+            "1d -> 1e",
+            "p"}, -1);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,17 +67,25 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.captureViewButton = new System.Windows.Forms.Button();
-            this.replayViewButton = new System.Windows.Forms.Button();
+            this.filterViewButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.viewTab = new System.Windows.Forms.TabControl();
             this.captureViewTabPage = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.captureTabControl = new System.Windows.Forms.TabControl();
             this.liveCapture = new System.Windows.Forms.TabPage();
-            this.hexPreviewPanel = new System.Windows.Forms.Panel();
-            this.replayViewTabPage = new System.Windows.Forms.TabPage();
             this.livePacketListView = new XOPE_UI.Forms.Component.PacketListView();
+            this.hexPreviewPanel = new System.Windows.Forms.Panel();
             this.packetCaptureHexPreview = new XOPE_UI.Forms.Component.HexEditor();
+            this.replayViewTabPage = new System.Windows.Forms.TabPage();
+            this.replayViewButton = new System.Windows.Forms.Button();
+            this.filterViewTabPage = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.filterListView = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -86,6 +99,8 @@
             this.captureTabControl.SuspendLayout();
             this.liveCapture.SuspendLayout();
             this.hexPreviewPanel.SuspendLayout();
+            this.replayViewTabPage.SuspendLayout();
+            this.filterViewTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -351,26 +366,27 @@
             this.captureViewButton.Text = "Capture View";
             this.captureViewButton.UseVisualStyleBackColor = false;
             // 
-            // replayViewButton
+            // filterViewButton
             // 
-            this.replayViewButton.BackColor = System.Drawing.SystemColors.Control;
-            this.replayViewButton.FlatAppearance.BorderSize = 0;
-            this.replayViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.replayViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.replayViewButton.Location = new System.Drawing.Point(1, 34);
-            this.replayViewButton.Name = "replayViewButton";
-            this.replayViewButton.Size = new System.Drawing.Size(111, 23);
-            this.replayViewButton.TabIndex = 7;
-            this.replayViewButton.Text = "Replay View";
-            this.replayViewButton.UseVisualStyleBackColor = false;
+            this.filterViewButton.BackColor = System.Drawing.SystemColors.Control;
+            this.filterViewButton.FlatAppearance.BorderSize = 0;
+            this.filterViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.filterViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.filterViewButton.Location = new System.Drawing.Point(1, 34);
+            this.filterViewButton.Name = "filterViewButton";
+            this.filterViewButton.Size = new System.Drawing.Size(111, 23);
+            this.filterViewButton.TabIndex = 7;
+            this.filterViewButton.Text = "Filter View";
+            this.filterViewButton.UseVisualStyleBackColor = false;
             // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
-            this.panel1.Controls.Add(this.captureViewButton);
             this.panel1.Controls.Add(this.replayViewButton);
+            this.panel1.Controls.Add(this.captureViewButton);
+            this.panel1.Controls.Add(this.filterViewButton);
             this.panel1.Location = new System.Drawing.Point(11, 52);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(111, 390);
@@ -383,6 +399,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.viewTab.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
             this.viewTab.Controls.Add(this.captureViewTabPage);
+            this.viewTab.Controls.Add(this.filterViewTabPage);
             this.viewTab.Controls.Add(this.replayViewTabPage);
             this.viewTab.ItemSize = new System.Drawing.Size(0, 1);
             this.viewTab.Location = new System.Drawing.Point(116, 52);
@@ -446,27 +463,6 @@
             this.liveCapture.Text = "Live Capture";
             this.liveCapture.UseVisualStyleBackColor = true;
             // 
-            // hexPreviewPanel
-            // 
-            this.hexPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hexPreviewPanel.Controls.Add(this.packetCaptureHexPreview);
-            this.hexPreviewPanel.Location = new System.Drawing.Point(4, 1);
-            this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(798, 90);
-            this.hexPreviewPanel.TabIndex = 6;
-            // 
-            // replayViewTabPage
-            // 
-            this.replayViewTabPage.Location = new System.Drawing.Point(4, 5);
-            this.replayViewTabPage.Name = "replayViewTabPage";
-            this.replayViewTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.replayViewTabPage.Size = new System.Drawing.Size(805, 381);
-            this.replayViewTabPage.TabIndex = 1;
-            this.replayViewTabPage.Text = "tabPage2";
-            this.replayViewTabPage.UseVisualStyleBackColor = true;
-            // 
             // livePacketListView
             // 
             this.livePacketListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -477,6 +473,17 @@
             this.livePacketListView.Name = "livePacketListView";
             this.livePacketListView.Size = new System.Drawing.Size(793, 261);
             this.livePacketListView.TabIndex = 0;
+            // 
+            // hexPreviewPanel
+            // 
+            this.hexPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.hexPreviewPanel.Controls.Add(this.packetCaptureHexPreview);
+            this.hexPreviewPanel.Location = new System.Drawing.Point(4, 1);
+            this.hexPreviewPanel.Name = "hexPreviewPanel";
+            this.hexPreviewPanel.Size = new System.Drawing.Size(798, 90);
+            this.hexPreviewPanel.TabIndex = 6;
             // 
             // packetCaptureHexPreview
             // 
@@ -491,6 +498,85 @@
             this.packetCaptureHexPreview.SelectionForeColor = System.Drawing.Color.White;
             this.packetCaptureHexPreview.Size = new System.Drawing.Size(795, 83);
             this.packetCaptureHexPreview.TabIndex = 0;
+            // 
+            // replayViewTabPage
+            // 
+            this.replayViewTabPage.Controls.Add(this.label2);
+            this.replayViewTabPage.Location = new System.Drawing.Point(4, 5);
+            this.replayViewTabPage.Name = "replayViewTabPage";
+            this.replayViewTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.replayViewTabPage.Size = new System.Drawing.Size(805, 381);
+            this.replayViewTabPage.TabIndex = 1;
+            this.replayViewTabPage.Text = "tabPage2";
+            this.replayViewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // replayViewButton
+            // 
+            this.replayViewButton.BackColor = System.Drawing.SystemColors.Control;
+            this.replayViewButton.FlatAppearance.BorderSize = 0;
+            this.replayViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.replayViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.replayViewButton.Location = new System.Drawing.Point(1, 63);
+            this.replayViewButton.Name = "replayViewButton";
+            this.replayViewButton.Size = new System.Drawing.Size(111, 23);
+            this.replayViewButton.TabIndex = 8;
+            this.replayViewButton.Text = "Replay View";
+            this.replayViewButton.UseVisualStyleBackColor = false;
+            // 
+            // filterViewTabPage
+            // 
+            this.filterViewTabPage.Controls.Add(this.filterListView);
+            this.filterViewTabPage.Location = new System.Drawing.Point(4, 5);
+            this.filterViewTabPage.Name = "filterViewTabPage";
+            this.filterViewTabPage.Size = new System.Drawing.Size(805, 381);
+            this.filterViewTabPage.TabIndex = 2;
+            this.filterViewTabPage.Text = "tabPage1";
+            this.filterViewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(347, 203);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(111, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "NOT IMPLEMENTED";
+            // 
+            // filterListView
+            // 
+            this.filterListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4});
+            this.filterListView.FullRowSelect = true;
+            this.filterListView.HideSelection = false;
+            listViewItem1.StateImageIndex = 0;
+            this.filterListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1});
+            this.filterListView.Location = new System.Drawing.Point(4, 0);
+            this.filterListView.Name = "filterListView";
+            this.filterListView.Size = new System.Drawing.Size(798, 319);
+            this.filterListView.TabIndex = 0;
+            this.filterListView.UseCompatibleStateImageBehavior = false;
+            this.filterListView.View = System.Windows.Forms.View.Details;
+            this.filterListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.filterListView_DrawSubItem);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "test";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Name";
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Filter";
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Activated";
             // 
             // MainWindow
             // 
@@ -522,6 +608,9 @@
             this.captureTabControl.ResumeLayout(false);
             this.liveCapture.ResumeLayout(false);
             this.hexPreviewPanel.ResumeLayout(false);
+            this.replayViewTabPage.ResumeLayout(false);
+            this.replayViewTabPage.PerformLayout();
+            this.filterViewTabPage.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -556,7 +645,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.Button captureViewButton;
-        private System.Windows.Forms.Button replayViewButton;
+        private System.Windows.Forms.Button filterViewButton;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TabControl viewTab;
         private System.Windows.Forms.TabPage captureViewTabPage;
@@ -571,6 +660,14 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem scriptManagerToolStripMenuItem;
         private Forms.Component.HexEditor packetCaptureHexPreview;
+        private System.Windows.Forms.Button replayViewButton;
+        private System.Windows.Forms.TabPage filterViewTabPage;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ListView filterListView;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
     }
 }
 
