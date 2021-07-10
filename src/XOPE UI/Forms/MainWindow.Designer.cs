@@ -69,6 +69,7 @@
             this.captureViewButton = new System.Windows.Forms.Button();
             this.filterViewButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.replayViewButton = new System.Windows.Forms.Button();
             this.viewTab = new System.Windows.Forms.TabControl();
             this.captureViewTabPage = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -77,15 +78,14 @@
             this.livePacketListView = new XOPE_UI.Forms.Component.PacketListView();
             this.hexPreviewPanel = new System.Windows.Forms.Panel();
             this.packetCaptureHexPreview = new XOPE_UI.Forms.Component.HexEditor();
-            this.replayViewTabPage = new System.Windows.Forms.TabPage();
-            this.replayViewButton = new System.Windows.Forms.Button();
             this.filterViewTabPage = new System.Windows.Forms.TabPage();
-            this.label2 = new System.Windows.Forms.Label();
             this.filterListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.replayViewTabPage = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -99,8 +99,8 @@
             this.captureTabControl.SuspendLayout();
             this.liveCapture.SuspendLayout();
             this.hexPreviewPanel.SuspendLayout();
-            this.replayViewTabPage.SuspendLayout();
             this.filterViewTabPage.SuspendLayout();
+            this.replayViewTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -392,6 +392,19 @@
             this.panel1.Size = new System.Drawing.Size(111, 390);
             this.panel1.TabIndex = 8;
             // 
+            // replayViewButton
+            // 
+            this.replayViewButton.BackColor = System.Drawing.SystemColors.Control;
+            this.replayViewButton.FlatAppearance.BorderSize = 0;
+            this.replayViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.replayViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.replayViewButton.Location = new System.Drawing.Point(1, 63);
+            this.replayViewButton.Name = "replayViewButton";
+            this.replayViewButton.Size = new System.Drawing.Size(111, 23);
+            this.replayViewButton.TabIndex = 8;
+            this.replayViewButton.Text = "Replay View";
+            this.replayViewButton.UseVisualStyleBackColor = false;
+            // 
             // viewTab
             // 
             this.viewTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -499,30 +512,6 @@
             this.packetCaptureHexPreview.Size = new System.Drawing.Size(795, 83);
             this.packetCaptureHexPreview.TabIndex = 0;
             // 
-            // replayViewTabPage
-            // 
-            this.replayViewTabPage.Controls.Add(this.label2);
-            this.replayViewTabPage.Location = new System.Drawing.Point(4, 5);
-            this.replayViewTabPage.Name = "replayViewTabPage";
-            this.replayViewTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.replayViewTabPage.Size = new System.Drawing.Size(805, 381);
-            this.replayViewTabPage.TabIndex = 1;
-            this.replayViewTabPage.Text = "tabPage2";
-            this.replayViewTabPage.UseVisualStyleBackColor = true;
-            // 
-            // replayViewButton
-            // 
-            this.replayViewButton.BackColor = System.Drawing.SystemColors.Control;
-            this.replayViewButton.FlatAppearance.BorderSize = 0;
-            this.replayViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.replayViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.replayViewButton.Location = new System.Drawing.Point(1, 63);
-            this.replayViewButton.Name = "replayViewButton";
-            this.replayViewButton.Size = new System.Drawing.Size(111, 23);
-            this.replayViewButton.TabIndex = 8;
-            this.replayViewButton.Text = "Replay View";
-            this.replayViewButton.UseVisualStyleBackColor = false;
-            // 
             // filterViewTabPage
             // 
             this.filterViewTabPage.Controls.Add(this.filterListView);
@@ -532,15 +521,6 @@
             this.filterViewTabPage.TabIndex = 2;
             this.filterViewTabPage.Text = "tabPage1";
             this.filterViewTabPage.UseVisualStyleBackColor = true;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(347, 203);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(111, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "NOT IMPLEMENTED";
             // 
             // filterListView
             // 
@@ -556,10 +536,13 @@
             listViewItem1});
             this.filterListView.Location = new System.Drawing.Point(4, 0);
             this.filterListView.Name = "filterListView";
+            this.filterListView.OwnerDraw = true;
             this.filterListView.Size = new System.Drawing.Size(798, 319);
             this.filterListView.TabIndex = 0;
             this.filterListView.UseCompatibleStateImageBehavior = false;
             this.filterListView.View = System.Windows.Forms.View.Details;
+            this.filterListView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.filterListView_DrawColumnHeader);
+            this.filterListView.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.filterListView_DrawItem);
             this.filterListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.filterListView_DrawSubItem);
             // 
             // columnHeader1
@@ -577,6 +560,26 @@
             // columnHeader4
             // 
             this.columnHeader4.Text = "Activated";
+            // 
+            // replayViewTabPage
+            // 
+            this.replayViewTabPage.Controls.Add(this.label2);
+            this.replayViewTabPage.Location = new System.Drawing.Point(4, 5);
+            this.replayViewTabPage.Name = "replayViewTabPage";
+            this.replayViewTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.replayViewTabPage.Size = new System.Drawing.Size(805, 381);
+            this.replayViewTabPage.TabIndex = 1;
+            this.replayViewTabPage.Text = "tabPage2";
+            this.replayViewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(347, 203);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(111, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "NOT IMPLEMENTED";
             // 
             // MainWindow
             // 
@@ -608,9 +611,9 @@
             this.captureTabControl.ResumeLayout(false);
             this.liveCapture.ResumeLayout(false);
             this.hexPreviewPanel.ResumeLayout(false);
+            this.filterViewTabPage.ResumeLayout(false);
             this.replayViewTabPage.ResumeLayout(false);
             this.replayViewTabPage.PerformLayout();
-            this.filterViewTabPage.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

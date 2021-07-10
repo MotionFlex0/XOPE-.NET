@@ -11,6 +11,7 @@ using XOPE_UI.Native;
 using XOPE_UI.Util;
 using XOPE_UI.Spy;
 using XOPE_UI.Script;
+using System.Windows.Forms.VisualStyles;
 
 namespace XOPE_UI
 {
@@ -55,7 +56,9 @@ namespace XOPE_UI
 
             viewTabHandler = new ViewTabHandler(viewTab);
             viewTabHandler.AddView(captureViewButton, captureViewTabPage);
+            viewTabHandler.AddView(filterViewButton, filterViewTabPage);
             viewTabHandler.AddView(replayViewButton, replayViewTabPage);
+
 
             scriptManager = new ScriptManager();
 
@@ -164,7 +167,7 @@ namespace XOPE_UI
                 if (!res)
                     MessageBox.Show("Failed to free XOPESpy from the attached process");
             }
-
+            ListViewItem listViewItem = new ListViewItem();
             setUiToDetachedState();
             environment.NotifyProcessDetached(attachedProcess);
             attachedProcess = null;
@@ -370,6 +373,30 @@ namespace XOPE_UI
                 scriptManagerDialog.ShowDialog();
 
             }
+        }
+
+        private void filterListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            e.DrawDefault = true;
+        }
+
+        private void filterListView_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        {
+            Debug.WriteLine($"e.Header.Text: {e.Header.Text}");
+            if (e.Header.Text == "Activated")
+            {
+                //CheckBoxRenderer.DrawCheckBox(e.Graphics, e.Bounds.Location, CheckBoxState.CheckedNormal);
+                //e.DrawDefault = false;
+            }
+        }
+
+        private void filterListView_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            //e.Item.SubItems[0].Bounds.Location
+
+            CheckBoxRenderer.DrawCheckBox(e.Graphics, e.Item.SubItems[3].Bounds.Location, CheckBoxState.CheckedNormal);
+            //e.DrawDefault = true;
+
         }
     }
 }
