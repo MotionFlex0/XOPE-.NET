@@ -12,6 +12,7 @@ using XOPE_UI.Util;
 using XOPE_UI.Spy;
 using XOPE_UI.Script;
 using System.Windows.Forms.VisualStyles;
+using XOPE_UI.Definitions;
 
 namespace XOPE_UI
 {
@@ -24,6 +25,7 @@ namespace XOPE_UI
         public event EventHandler<IntPtr> OnProcessDetached;
 
         int captureIndex = 0;
+        int filterIndex = 0;
         
         ProcessDialog processDialog;
         ActiveConnectionsDialog activeConnectionsDialog;
@@ -394,9 +396,34 @@ namespace XOPE_UI
         {
             //e.Item.SubItems[0].Bounds.Location
 
-            CheckBoxRenderer.DrawCheckBox(e.Graphics, e.Item.SubItems[3].Bounds.Location, CheckBoxState.CheckedNormal);
-            //e.DrawDefault = true;
+            //CheckBoxRenderer.DrawCheckBox(e.Graphics, e.Item.SubItems[3].Bounds.Location, CheckBoxState.CheckedNormal);
+            e.DrawDefault = true;
 
+        }
+
+        private void addFilterButton_Click(object sender, EventArgs e)
+        {
+            using (FilterEditorDialog filterEditorDialog = new FilterEditorDialog())
+            {
+                DialogResult result = filterEditorDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    ListViewItem listViewItem = new ListViewItem();
+                    FilterEntry filter = filterEditorDialog.Filter;
+
+                    string beforeStr = BitConverter.ToString(filter.Before, 0).Replace("-", " ");
+                    string beforeFormatted = beforeStr.Substring(0, Math.Min(15, beforeStr.Length));
+
+                    string afterStr = BitConverter.ToString(filter.After, 0).Replace("-", " ");
+                    string afterFormatted = afterStr.Substring(0, Math.Min(15, afterStr.Length));
+
+                    listViewItem.Text = $"{filterIndex++}";
+                    listViewItem.SubItems.Add(filter.Name);
+                    listViewItem.SubItems.Add($"{beforeFormatted} --> {afterFormatted}");
+                    filterListView.Items.Add(listViewItem);
+                }
+
+            }
         }
     }
 }
