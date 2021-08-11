@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Comms.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="FilterEntry.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
