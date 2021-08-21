@@ -34,6 +34,12 @@ namespace XOPE_UI.Definitions
         ERROR_MESSAGE,
         INJECT_SEND,
         INJECT_RECV,
+        ADD_SEND_FITLER,
+        EDIT_SEND_FILTER,
+        DELETE_SEND_FILTER,
+        ADD_RECV_FITLER,
+        EDIT_RECV_FILTER,
+        DELETE_RECV_FILTER,
         SHUTDOWN_RECV_THREAD
     }
 
