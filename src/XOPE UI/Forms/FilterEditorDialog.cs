@@ -7,7 +7,6 @@ namespace XOPE_UI.Forms
 {
     public partial class FilterEditorDialog : Form
     {
-        //public bool EditMode { get; set; } = false;
         public FilterEntry Filter { get; set; }
 
         public FilterEditorDialog()
@@ -18,13 +17,11 @@ namespace XOPE_UI.Forms
             beforeHexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
             beforeHexEditor.StringByteWidth = 8;
             beforeHexEditor.CanInsertAnywhere = true;
-            beforeHexEditor.ReadOnlyMode = false;
 
             afterHexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
             afterHexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
             afterHexEditor.StringByteWidth = 8;
             afterHexEditor.CanInsertAnywhere = true;
-
         }
 
         private void FilterEditorDialog_Load(object sender, EventArgs e)
@@ -46,10 +43,10 @@ namespace XOPE_UI.Forms
         {
             Filter = new FilterEntry
             {
-                Name = "test",
+                Name = nameTextBox.Text,
                 Before = beforeHexEditor.GetAllBytes(true),
                 After = afterHexEditor.GetAllBytes(true),
-                SocketId = 0
+                SocketId = (int)socketIdTextBox.Value
             };
             DialogResult = DialogResult.OK;
         }
