@@ -46,6 +46,12 @@
     <Filter Include="Header Files\zlib">
       <UniqueIdentifier>{9cdd5527-0ebf-4292-8146-3fe72dd80222}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\definitions">
+      <UniqueIdentifier>{ed9f45a2-4ca6-45d7-85a9-8db6b5c4fbcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\packet">
+      <UniqueIdentifier>{ce5994fa-fc1d-405c-9288-fbee9e7bf7b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -89,9 +95,6 @@
     <ClInclude Include="nlohmann\json.hpp">
       <Filter>Source Files\nlohmann</Filter>
     </ClInclude>
-    <ClInclude Include="comms\definitions.hpp">
-      <Filter>Source Files\comms</Filter>
-    </ClInclude>
     <ClInclude Include="zlib\zconf.h">
       <Filter>Header Files\zlib</Filter>
     </ClInclude>
@@ -100,6 +103,12 @@
     </ClInclude>
     <ClInclude Include="utils\util.h">
       <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="definitions\definitions.hpp">
+      <Filter>Source Files\definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="packet\filter.hpp">
+      <Filter>Source Files\packet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
