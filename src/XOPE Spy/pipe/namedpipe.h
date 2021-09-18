@@ -4,7 +4,7 @@
 #include <memory>
 #include <mutex>
 #include <Windows.h>
-#include "../comms/definitions.hpp"
+#include "../definitions/definitions.hpp"
 #include "../nlohmann/json.hpp"
 
 //TODO: Change the folder name from 'comms' to something more descriptive
