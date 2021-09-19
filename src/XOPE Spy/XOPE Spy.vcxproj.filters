@@ -52,6 +52,9 @@
     <Filter Include="Source Files\packet">
       <UniqueIdentifier>{ce5994fa-fc1d-405c-9288-fbee9e7bf7b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\packet">
+      <UniqueIdentifier>{d69d3c1c-d296-4e16-a32b-b6374df8f0f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -71,6 +74,9 @@
     </ClCompile>
     <ClCompile Include="utils\util.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="packet\filter.cpp">
+      <Filter>Source Files\packet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,8 +113,11 @@
     <ClInclude Include="definitions\definitions.hpp">
       <Filter>Source Files\definitions</Filter>
     </ClInclude>
-    <ClInclude Include="packet\filter.hpp">
-      <Filter>Source Files\packet</Filter>
+    <ClInclude Include="packet\filter.h">
+      <Filter>Header Files\packet</Filter>
+    </ClInclude>
+    <ClInclude Include="packet\type.h">
+      <Filter>Header Files\packet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
