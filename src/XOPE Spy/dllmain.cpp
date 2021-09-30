@@ -10,6 +10,7 @@
 #include "utils/base64.h"
 #include "utils/definition.hpp" //TODO: Improve how this works
 #include "pipe/namedpipe.h"
+#include "packet/filter.h"
 
 #pragma comment(lib, "ws2_32.lib") // Not needed if WSAGetLastError is removed
 
@@ -32,6 +33,7 @@ std::atomic<bool> shouldChildThreadExit = false;
 HookManager* hookmgr;
 NamedPipe* namedPipe;
 
+PacketFilter sendPacketFilter;
 
 BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
@@ -92,7 +94,7 @@ void InitHooks(HMODULE module)
         namedPipe->send(client::ConnectedSuccessMessage());
     }
     else
-        MessageBox(NULL, "Failed to connect to named pipe!", "ERROR", MB_OK);
+        MessageBoxA(NULL, "Failed to connect to named pipe!", "ERROR", MB_OK);
         //std::cout << "failed to find pipe." << '\n';
 
     childThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)PipeThread, module, 0, NULL);
@@ -129,7 +131,11 @@ void PipeThread(LPVOID module)
         {
             SpyMessageType type = message["Type"].get<SpyMessageType>();
            
-            if (type == SpyMessageType::INJECT_SEND)
+            if (type == SpyMessageType::PING)
+            {
+                namedPipe->send(client::PongMessage(message["JobId"].get<std::string>()));
+            }
+            else if (type == SpyMessageType::INJECT_SEND)
             {
                 SOCKET socket = message["SocketId"].get<SOCKET>();
                 std::string data = base64_decode(message["Data"].get<std::string>());
@@ -156,6 +162,18 @@ void PipeThread(LPVOID module)
                 {
                     namedPipe->send(client::ErrorMessage("INJECT_RECV packet size mismatch"));
                 }
+            }
+            else if (type == SpyMessageType::ADD_SEND_FITLER)
+            {
+                const std::string oldValue = base64_decode(message["OldValue"].get<std::string>());
+                const std::string newValue = base64_decode(message["NewValue"].get<std::string>());
+
+                const Packet oldPacket(oldValue.begin(), oldValue.end());
+                const Packet newPacket(newValue.begin(), newValue.end());
+
+
+                boost::uuids::uuid id = sendPacketFilter.add(oldPacket, newPacket, true);
+                
             }
             else if (type == SpyMessageType::SHUTDOWN_RECV_THREAD)
             {
