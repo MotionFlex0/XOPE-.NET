@@ -20,6 +20,7 @@ enum class ServerMessageType
 	CONNECTED_SUCCESS,
 	HOOKED_FUNCTION_CALL,
 	REQUEST_SOCKET_INFO,
+	JOB_RESPONSE
 };
 
 enum class SpyMessageType
@@ -29,6 +30,12 @@ enum class SpyMessageType
 	ERROR_MESSAGE,
 	INJECT_SEND,
 	INJECT_RECV,
+	ADD_SEND_FITLER,
+	EDIT_SEND_FILTER,
+	DELETE_SEND_FILTER,
+	ADD_RECV_FITLER,
+	EDIT_RECV_FILTER,
+	DELETE_RECV_FILTER,
 	SHUTDOWN_RECV_THREAD
 };
 
@@ -49,6 +56,26 @@ namespace client
 	{
 		IMessage(ServerMessageType m) { messageType = m; }
 		ServerMessageType messageType;
+
+		inline virtual void toJson(json& j)
+		{
+			/*j +=
+			{
+				KV(messageType)
+			};*/
+			//j.at("messageType").get_to(messageType);
+		}
+
+		inline static std::string convertBytesToB64String(const char* bytes, const unsigned int len)
+		{
+			return base64_encode(std::string(bytes, len));
+		}
+	};
+
+	struct IMessageResponse : IMessage
+	{
+		IMessageResponse(ServerMessageType m, std::string jobId) : IMessage(m) { IMessageResponse::jobId = jobId; }
+		std::string jobId;
 
 		inline virtual void toJson(json& j)
 		{
@@ -90,6 +117,15 @@ namespace client
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ErrorMessage, messageType, errorMessage);
 	};
 
+	struct PongMessage : IMessageResponse
+	{
+		PongMessage(std::string jobId) : IMessageResponse(ServerMessageType::JOB_RESPONSE, jobId) { }
+
+		std::string data = "PONG!";
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(PongMessage, messageType, data, jobId);
+	};
+
 	struct HookedFunctionCallSocketMessage : IMessage
 	{
 		HookedFunctionCallSocketMessage() : IMessage(ServerMessageType::HOOKED_FUNCTION_CALL) { };
@@ -104,6 +140,9 @@ namespace client
 				
 		}
 	};
+
+
+
 
 	struct ConnectedSuccessMessage : IMessage
 	{
