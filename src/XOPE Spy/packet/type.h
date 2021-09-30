@@ -1,4 +1,4 @@
 #pragma once
 #include <vector>
 
-using Packet = std::vector<std::byte>;
+using Packet = std::vector<uint8_t>;
