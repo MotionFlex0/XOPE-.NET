@@ -19,6 +19,7 @@ namespace XOPE_UI.Definitions
         CONNECTED_SUCCESS,
         HOOKED_FUNCTION_CALL,
         REQUEST_SOCKET_INFO,
+        JOB_RESPONSE
     }
 
 #if NETFRAMEWORK
@@ -40,7 +41,7 @@ namespace XOPE_UI.Definitions
         ADD_RECV_FITLER,
         EDIT_RECV_FILTER,
         DELETE_RECV_FILTER,
-        SHUTDOWN_RECV_THREAD
+        SHUTDOWN_RECV_THREAD,
     }
 
     public enum HookedFuncType
