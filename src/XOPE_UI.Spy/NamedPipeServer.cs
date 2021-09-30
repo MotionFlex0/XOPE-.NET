@@ -2,6 +2,7 @@
 using PeterO.Cbor;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Linq;
 using System.Net;
@@ -28,16 +29,26 @@ namespace XOPE_UI.Spy
         CancellationTokenSource cancellationTokenSource;
         Task serverThread; // Change this to something easier to follow
 
+        Dictionary<Guid, IMessageWithResponse> jobs; // This contains Message that are expecting a response
+
         public NamedPipeServer()
         {
             Data = new SpyData();
 
             outBuffer = new ConcurrentQueue<byte[]>();
+            jobs = new Dictionary<Guid, IMessageWithResponse>();
         }
 
         public void Send(IMessage message)
         {
-            outBuffer.Enqueue(Encoding.ASCII.GetBytes(message.ToJson().ToString())); //TODO: Convert to bson
+            outBuffer.Enqueue(Encoding.ASCII.GetBytes(message.ToJson().ToString())); //TODO: Convert to cbor
+        }
+
+
+        public void Send(IMessageWithResponse message)
+        {
+            outBuffer.Enqueue(Encoding.ASCII.GetBytes(message.ToJson().ToString())); //TODO: Convert to cbor
+            jobs.Add(message.JobId, message);
         }
 
         public void RunAsync() 
@@ -129,6 +140,12 @@ namespace XOPE_UI.Spy
                                             OnNewPacket?.Invoke(this, packet);
                                         }
 
+                                    }
+                                    else if (messageType == ServerMessageType.JOB_RESPONSE)
+                                    {
+                                        Guid guid = Guid.Parse(json.Value<String>("jobId"));
+                                        jobs[guid].NotifyResponse(json);
+                                        jobs.Remove(guid);
                                     }
                                     else if (messageType == ServerMessageType.ERROR_MESSAGE)
                                     {
