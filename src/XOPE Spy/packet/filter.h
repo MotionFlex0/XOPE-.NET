@@ -10,7 +10,7 @@
 
 #include "type.h"
 
-class FilterReplace
+class PacketFilter
 {
 	struct Data
 	{
@@ -20,13 +20,13 @@ class FilterReplace
 	};
 
 public:
-	FilterReplace();
+	PacketFilter();
 
 	boost::uuids::uuid add(const Packet oldVal, const Packet newVal, bool inlineReplace);
 	void remove(boost::uuids::uuid id);
 
 
-	bool find(const Packet packet);
+	bool find(const Packet packet) const;
 	bool findAndReplace(Packet& packet);
 
 private:

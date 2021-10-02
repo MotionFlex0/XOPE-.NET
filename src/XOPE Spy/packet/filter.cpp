@@ -1,25 +1,25 @@
 #include "filter.h"
 
-FilterReplace::FilterReplace()
+PacketFilter::PacketFilter()
 {
 
 }
 
-boost::uuids::uuid FilterReplace::add(Packet oldVal, Packet newVal, bool inlineReplace)
+boost::uuids::uuid PacketFilter::add(const Packet oldVal, const Packet newVal, bool inlineReplace)
 {
-	boost::uuids::uuid id = generator();
+	const boost::uuids::uuid id = generator();
 	filterMap[id] = Data{ .oldVal = oldVal, .newVal = newVal, .inlineReplace = inlineReplace };
 	return id;
 }
 
-void FilterReplace::remove(boost::uuids::uuid id)
+void PacketFilter::remove(boost::uuids::uuid id)
 {
 	filterMap.erase(id);
 }
 
-bool FilterReplace::find(const Packet packet)
+bool PacketFilter::find(const Packet packet) const
 {
-	for (const auto& f : filterMap)
+	for (auto& f : filterMap)
 	{
 		const Packet oldVal = f.second.oldVal;
 		if (oldVal.size() <= packet.size())
@@ -27,13 +27,13 @@ bool FilterReplace::find(const Packet packet)
 			auto found = std::search(packet.begin(), packet.end(), oldVal.begin(), oldVal.end());
 			return found != packet.end();
 		}
-		return false;
 	}
+	return false;
 }
 
-bool FilterReplace::findAndReplace(Packet& packet)
+bool PacketFilter::findAndReplace(Packet& packet)
 {
-	for (const auto& f : filterMap)
+	for (auto& f : filterMap)
 	{
 		const Packet& oldVal = f.second.oldVal;
 		if (oldVal.size() <= packet.size())
@@ -52,12 +52,12 @@ bool FilterReplace::findAndReplace(Packet& packet)
 				}
 				else if (delta < 0)
 				{
-					auto endIt = found + oldVal.size();
+					const auto endIt = found + oldVal.size();
 					packet.erase(endIt - delta - 1, endIt);
 				}
 				return true;
 			}
 		}
-		return false;
 	}
+	return false;
 }
