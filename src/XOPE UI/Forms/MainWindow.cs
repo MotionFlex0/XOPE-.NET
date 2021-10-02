@@ -13,6 +13,7 @@ using XOPE_UI.Spy;
 using XOPE_UI.Script;
 using System.Windows.Forms.VisualStyles;
 using XOPE_UI.Definitions;
+using XOPE_UI.Spy.ServerType;
 
 namespace XOPE_UI
 {
@@ -26,14 +27,14 @@ namespace XOPE_UI
 
         int captureIndex = 0;
         int filterIndex = 0;
-        
+
         ProcessDialog processDialog;
         ActiveConnectionsDialog activeConnectionsDialog;
         /*
          * Not a big fan of this. Unfortunately, due to performance issues with WPFHexaEditor,
          * this is required. TODO: Fix in the future
          */
-        PacketEditorReplayDialog packetEditorReplayDialog; 
+        PacketEditorReplayDialog packetEditorReplayDialog;
 
         Process attachedProcess = null;
 
@@ -102,7 +103,7 @@ namespace XOPE_UI
                 livePacketListView.Clear();
                 this.packetCaptureHexPreview.ClearBytes();
             }
-                
+
             if (attachedProcess != null)
                 DetachFromProcess();
 
@@ -148,7 +149,7 @@ namespace XOPE_UI
                 MessageBox.Show($"Error when AttachToProcess");
             //int val = NativeMethods.RPM<int>(processDialog.SelectedProcess.Handle, (IntPtr)0x0133F934);
             //string strVal = NativeMethods.RPM(processDialog.SelectedProcess.Handle, (IntPtr)0x009861C0, 10);
-                
+
         }
 
         public void DetachFromProcess(bool alreadyFreed = false)
@@ -158,7 +159,7 @@ namespace XOPE_UI
 
             server.ShutdownServerAndWait();
 
-            if(!alreadyFreed)
+            if (!alreadyFreed)
             {
                 bool res;
                 if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(attachedProcess.Handle))
@@ -257,7 +258,7 @@ namespace XOPE_UI
                 }
                 tabContextMenu.Show(this.captureTabControl, e.Location);
             }
-            
+
         }
 
         private void recordToolStripButton_Click(object sender, EventArgs e)
@@ -274,10 +275,10 @@ namespace XOPE_UI
                 tabPage.Controls.Add(new PacketListView());
                 tabPage.Controls[0].Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
                 tabPage.Controls[0].Size = tabPage.Size;// - new System.Drawing.Size(2, 0);
-                Console.WriteLine($"before: {tabPage.Size}");;
-                
+                Console.WriteLine($"before: {tabPage.Size}"); ;
+
                 //tabPage.Controls[0].Size = new System.Drawing.Size(150, 100);
-                
+
                 Console.WriteLine($"after: {tabPage.Controls[0].Size}");
 
                 //Creates a new tabpage, based on the default tab page
@@ -361,10 +362,10 @@ namespace XOPE_UI
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "C# File (*.cs)|*.cs";
             DialogResult result = openFileDialog.ShowDialog();
-            if (result == DialogResult.OK) 
+            if (result == DialogResult.OK)
             {
                 scriptManager.AddCSScript(openFileDialog.FileName);
-                
+
             }
         }
 
@@ -425,5 +426,34 @@ namespace XOPE_UI
 
             }
         }
+
+        private void deleteFilterButton_Click(object sender, EventArgs e)
+        {
+            if (filterListView.SelectedItems.Count > 0)
+                filterListView.Items.Remove(filterListView.SelectedItems[0]);
+        }
+
+        private void filterListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            deleteFilterButton.Enabled = filterListView.SelectedItems.Count > 0;
+        }
+
+        private void pingTestSpyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (attachedProcess == null)
+            {
+                MessageBox.Show("Not attached to a process");
+                return;
+            }
+
+            Ping ping = new Ping();
+            ping.OnResponse += (ev, response) =>
+            {
+                Console.WriteLine($"Received response from Ping. Response: {response.ToString()}");
+            };
+
+            server.Send(ping);
+        }
     }
+
 }
