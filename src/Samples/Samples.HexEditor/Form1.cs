@@ -32,6 +32,14 @@ namespace Samples.HexEditor
             this.hexEditor.SetBytes(testData);
         }
 
- 
+        private void randomiseData_Click(object sender, EventArgs e)
+        {
+            byte[] testData = new byte[16536];
+
+            Random rand = new Random();
+            rand.NextBytes(testData);
+
+            this.hexEditor.SetBytes(testData);
+        }
     }
 }

@@ -3,6 +3,7 @@ using PeterO.Cbor;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Pipes;
 using System.Linq;
 using System.Net;
@@ -29,7 +30,7 @@ namespace XOPE_UI.Spy
         CancellationTokenSource cancellationTokenSource;
         Task serverThread; // Change this to something easier to follow
 
-        Dictionary<Guid, IMessageWithResponse> jobs; // This contains Message that are expecting a response
+        Dictionary<Guid, IMessageWithResponse> jobs; // This contains Messages that are expecting a response
 
         public NamedPipeServer()
         {
@@ -149,7 +150,7 @@ namespace XOPE_UI.Spy
                                     }
                                     else if (messageType == ServerMessageType.ERROR_MESSAGE)
                                     {
-                                        Console.WriteLine($"[Error] {json.Value<String>("errorMessage")}");
+                                        Console.WriteLine($"[Spy-Error] {json.Value<String>("errorMessage")}");
                                     }
                                 }
                             }
@@ -167,7 +168,9 @@ namespace XOPE_UI.Spy
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Server error. Message: {ex.Message}");
+                        Console.WriteLine($"Server error. Aborting server! Message: {ex.Message}");
+                        Debug.WriteLine($"Server error. Message: {ex.Message}");
+                        Debug.WriteLine($"Stacktrac\n{ex.StackTrace}");
                     }
                 }
             }, cancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);
