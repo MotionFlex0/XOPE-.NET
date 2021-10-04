@@ -9,6 +9,7 @@ namespace XOPE_UI.Spy.ServerType
 {
     class AddSendFilter : IMessage
     {
+        
         public int SocketId { get; set; }
         public byte[] Before { get; set; }
         public byte[] After { get; set; }
@@ -23,10 +24,10 @@ namespace XOPE_UI.Spy.ServerType
         {
             JObject json = base.ToJson();
             json["SocketId"] = SocketId;
-            json["Before"] = Convert.ToBase64String(Before);
-            json["BeforeLength"] = Before.Length;
-            json["After"] = Convert.ToBase64String(After);
-            json["AfterLength"] = After.Length;
+            json["OldValue"] = Convert.ToBase64String(Before);
+            json["OldValueLength"] = Before.Length;
+            json["NewValue"] = Convert.ToBase64String(After);
+            json["NewValueLength"] = After.Length;
             json["ReplaceWithAfter"] = ReplaceWithAfter;
             return json;
         }
