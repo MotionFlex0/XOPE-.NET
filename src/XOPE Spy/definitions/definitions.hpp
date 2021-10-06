@@ -19,7 +19,6 @@ enum class ServerMessageType
 	ERROR_MESSAGE,
 	CONNECTED_SUCCESS,
 	HOOKED_FUNCTION_CALL,
-	REQUEST_SOCKET_INFO,
 	JOB_RESPONSE
 };
 
@@ -30,6 +29,7 @@ enum class SpyMessageType
 	ERROR_MESSAGE,
 	INJECT_SEND,
 	INJECT_RECV,
+	REQUEST_SOCKET_INFO,
 	ADD_SEND_FITLER,
 	EDIT_SEND_FILTER,
 	DELETE_SEND_FILTER,
@@ -117,13 +117,22 @@ namespace client
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ErrorMessage, messageType, errorMessage);
 	};
 
-	struct PongMessage : IMessageResponse
+	struct PongMessageResponse : IMessageResponse
 	{
-		PongMessage(std::string jobId) : IMessageResponse(ServerMessageType::JOB_RESPONSE, jobId) { }
+		PongMessageResponse(std::string jobId) : IMessageResponse(ServerMessageType::JOB_RESPONSE, jobId) { }
 
 		std::string data = "PONG!";
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(PongMessage, messageType, data, jobId);
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(PongMessageResponse, messageType, data, jobId);
+	};
+
+	struct SocketInfoResponse : IMessageResponse
+	{
+		SocketInfoResponse(std::string jobId, std::string addr, int port) : IMessageResponse(ServerMessageType::JOB_RESPONSE, jobId), addr(addr), port(port) { }
+		std::string addr;
+		int port;
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(SocketInfoResponse, messageType, jobId, addr, port);
 	};
 
 	struct HookedFunctionCallSocketMessage : IMessage

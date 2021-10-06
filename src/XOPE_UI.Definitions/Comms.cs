@@ -18,7 +18,6 @@ namespace XOPE_UI.Definitions
         ERROR_MESSAGE,
         CONNECTED_SUCCESS,
         HOOKED_FUNCTION_CALL,
-        REQUEST_SOCKET_INFO,
         JOB_RESPONSE
     }
 
@@ -35,6 +34,7 @@ namespace XOPE_UI.Definitions
         ERROR_MESSAGE,
         INJECT_SEND,
         INJECT_RECV,
+        REQUEST_SOCKET_INFO,
         ADD_SEND_FITLER,
         EDIT_SEND_FILTER,
         DELETE_SEND_FILTER,
