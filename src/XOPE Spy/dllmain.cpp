@@ -84,7 +84,7 @@ void InitHooks(HMODULE module)
 
     const char* pipePath = "\\\\.\\pipe\\xopespy";
 
-    // TODO: Temporary fix to the server not being started by the time the pipe connection is mad
+    // TODO: Temporary fix to the server not being started by the time the pipe connection is made
     //Sleep(2000); 
 
     namedPipe = new NamedPipe(pipePath);
@@ -133,7 +133,7 @@ void PipeThread(LPVOID module)
            
             if (type == SpyMessageType::PING)
             {
-                namedPipe->send(client::PongMessage(message["JobId"].get<std::string>()));
+                namedPipe->send(client::PongMessageResponse(message["JobId"].get<std::string>()));
             }
             else if (type == SpyMessageType::INJECT_SEND)
             {
@@ -161,6 +161,24 @@ void PipeThread(LPVOID module)
                 else
                 {
                     namedPipe->send(client::ErrorMessage("INJECT_RECV packet size mismatch"));
+                }
+            }
+            else if (type == SpyMessageType::REQUEST_SOCKET_INFO)
+            {
+                SOCKET socket = message["SocketId"].get<SOCKET>();
+
+                sockaddr_in sin;
+                int sinSize = sizeof(sin);
+                if (getsockname(socket, (sockaddr*)&sin, &sinSize) == 0 && sin.sin_family == AF_INET)
+                {
+                    char addr[32];
+                    int addrSize = sizeof(addr);
+                    WSAAddressToStringA((LPSOCKADDR)&sin, sinSize, NULL, addr, (LPDWORD)&addrSize);
+                    namedPipe->send(client::SocketInfoResponse(message["JobId"].get<std::string>(), std::string(addr), sin.sin_port));
+                }
+                else
+                {
+                    namedPipe->send(client::ErrorMessage("could not find that socket ID"));  // TEMP // need to remove jobId from Server map
                 }
             }
             else if (type == SpyMessageType::ADD_SEND_FITLER)
