@@ -58,10 +58,13 @@
     <Compile Include="NamedPipeServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerType\IMessage.cs" />
+    <Compile Include="ServerType\IMessageWithResponse.cs" />
     <Compile Include="ServerType\InjectRecvPacket.cs" />
     <Compile Include="ServerType\InjectSendPacket.cs" />
     <Compile Include="ServerType\AddSendFilter.cs" />
+    <Compile Include="ServerType\Ping.cs" />
     <Compile Include="ServerType\ShutdownSpy.cs" />
+    <Compile Include="ServerType\SocketInfo.cs" />
     <Compile Include="SpyData.cs" />
     <Compile Include="Type\GenericHookedSpyFunc.cs" />
   </ItemGroup>

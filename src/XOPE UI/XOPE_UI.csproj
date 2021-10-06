@@ -177,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\Spy.cs" />
+    <Compile Include="Core\Job.cs" />
     <Compile Include="Core\PacketList.cs" />
     <Compile Include="Core\ViewTabHandler.cs" />
     <Compile Include="Forms\ActiveConnectionsDialog.cs">
@@ -233,6 +234,12 @@
     <Compile Include="Forms\ScriptManagerDialog.Designer.cs">
       <DependentUpon>ScriptManagerDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\SocketChecker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SocketChecker.Designer.cs">
+      <DependentUpon>SocketChecker.cs</DependentUpon>
+    </Compile>
     <Compile Include="Injection\CreateRemoteThread.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -271,6 +278,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ScriptManagerDialog.resx">
       <DependentUpon>ScriptManagerDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SocketChecker.resx">
+      <DependentUpon>SocketChecker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

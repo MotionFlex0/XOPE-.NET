@@ -454,6 +454,14 @@ namespace XOPE_UI
 
             server.Send(ping);
         }
+
+        private void socketCheckerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (SocketChecker socketChecker = new SocketChecker(server))
+            {
+                socketChecker.ShowDialog();
+            }
+        }
     }
 
 }
