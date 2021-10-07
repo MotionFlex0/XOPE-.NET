@@ -17,16 +17,14 @@ namespace XOPE_UI.Forms
 
             this.logger.OnFlush += (object sender, string value) =>
             {
-                if (this.IsHandleCreated)
+                if (this.IsHandleCreated && this.Visible)
                 {
-                    logTextbox.Invoke(new Action(() =>
+                    //Fixes deadlocked related to Invoke but not great for efficiency on UI thread
+                    logTextbox.BeginInvoke(new Action(() => 
                     {
-                        if (this.Visible)
-                        {
-                            logTextbox.AppendText(value);
-                            //logTextbox.SelectionStart = logTextbox.Text.Length;
-                            //logTextbox.ScrollToCaret();
-                        }
+                        logTextbox.AppendText(value);
+                        //logTextbox.SelectionStart = logTextbox.Text.Length;
+                        //logTextbox.ScrollToCaret();
                     }));
                 }
             };
