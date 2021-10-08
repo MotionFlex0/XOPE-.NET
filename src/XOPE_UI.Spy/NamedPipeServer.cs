@@ -17,7 +17,7 @@ using XOPE_UI.Spy.ServerType;
 namespace XOPE_UI.Spy
 {
     //TODO: this is kinda weird so maybe just remove it and put it back into the mainWindow class;
-    //though, all some sort of translation class for incomming data
+    //though, add some sort of translation class for incomming data
     public class NamedPipeServer : IServer
     {
         public event EventHandler<Packet> OnNewPacket;
@@ -170,7 +170,11 @@ namespace XOPE_UI.Spy
                     {
                         Console.WriteLine($"Server error. Aborting server! Message: {ex.Message}");
                         Debug.WriteLine($"Server error. Message: {ex.Message}");
-                        Debug.WriteLine($"Stacktrac\n{ex.StackTrace}");
+                        Debug.WriteLine($"Stacktrack:\n{ex.StackTrace}");
+                    }
+                    finally
+                    {
+                        Console.WriteLine("Server closed!");
                     }
                 }
             }, cancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);
