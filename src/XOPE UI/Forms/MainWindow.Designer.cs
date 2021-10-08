@@ -33,8 +33,7 @@
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "",
-            "1d -> 1e",
-            "p"}, -1);
+            "1d -> 1e"}, -1);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,6 +45,8 @@
             this.detachToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.connectionsListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.pingTestSpyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newPacketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.scriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,13 +80,18 @@
             this.hexPreviewPanel = new System.Windows.Forms.Panel();
             this.packetCaptureHexPreview = new XOPE_UI.Forms.Component.HexEditor();
             this.filterViewTabPage = new System.Windows.Forms.TabPage();
+            this.deleteFilterButton = new System.Windows.Forms.Button();
+            this.addFilterButton = new System.Windows.Forms.Button();
             this.filterListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.socketCheckerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -158,7 +164,9 @@
             this.attachToToolStripMenuItem,
             this.detachToolStripMenuItem,
             this.toolStripSeparator1,
-            this.connectionsListToolStripMenuItem});
+            this.connectionsListToolStripMenuItem,
+            this.toolStripSeparator4,
+            this.pingTestSpyToolStripMenuItem});
             this.processToolStripMenuItem.Name = "processToolStripMenuItem";
             this.processToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
             this.processToolStripMenuItem.Text = "Process";
@@ -166,7 +174,7 @@
             // attachToToolStripMenuItem
             // 
             this.attachToToolStripMenuItem.Name = "attachToToolStripMenuItem";
-            this.attachToToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.attachToToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.attachToToolStripMenuItem.Text = "Attach to...";
             this.attachToToolStripMenuItem.Click += new System.EventHandler(this.attachToToolStripMenuItem_Click);
             // 
@@ -174,34 +182,48 @@
             // 
             this.detachToolStripMenuItem.Enabled = false;
             this.detachToolStripMenuItem.Name = "detachToolStripMenuItem";
-            this.detachToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.detachToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.detachToolStripMenuItem.Text = "Detach";
             this.detachToolStripMenuItem.Click += new System.EventHandler(this.detachToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(156, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // connectionsListToolStripMenuItem
             // 
             this.connectionsListToolStripMenuItem.Name = "connectionsListToolStripMenuItem";
-            this.connectionsListToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.connectionsListToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.connectionsListToolStripMenuItem.Text = "Connections list";
             this.connectionsListToolStripMenuItem.Click += new System.EventHandler(this.connectionsListToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
+            // 
+            // pingTestSpyToolStripMenuItem
+            // 
+            this.pingTestSpyToolStripMenuItem.Name = "pingTestSpyToolStripMenuItem";
+            this.pingTestSpyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pingTestSpyToolStripMenuItem.Text = "Ping Test Spy";
+            this.pingTestSpyToolStripMenuItem.Click += new System.EventHandler(this.pingTestSpyToolStripMenuItem_Click);
             // 
             // packetToolStripMenuItem
             // 
             this.packetToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newPacketToolStripMenuItem});
+            this.newPacketToolStripMenuItem,
+            this.toolStripSeparator5,
+            this.socketCheckerToolStripMenuItem});
             this.packetToolStripMenuItem.Name = "packetToolStripMenuItem";
-            this.packetToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
-            this.packetToolStripMenuItem.Text = "Packet";
+            this.packetToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
+            this.packetToolStripMenuItem.Text = "Network";
             // 
             // newPacketToolStripMenuItem
             // 
             this.newPacketToolStripMenuItem.Name = "newPacketToolStripMenuItem";
-            this.newPacketToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.newPacketToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newPacketToolStripMenuItem.Text = "New Packet";
             this.newPacketToolStripMenuItem.Click += new System.EventHandler(this.newPacketToolStripMenuItem_Click);
             // 
@@ -514,6 +536,8 @@
             // 
             // filterViewTabPage
             // 
+            this.filterViewTabPage.Controls.Add(this.deleteFilterButton);
+            this.filterViewTabPage.Controls.Add(this.addFilterButton);
             this.filterViewTabPage.Controls.Add(this.filterListView);
             this.filterViewTabPage.Location = new System.Drawing.Point(4, 5);
             this.filterViewTabPage.Name = "filterViewTabPage";
@@ -522,19 +546,42 @@
             this.filterViewTabPage.Text = "tabPage1";
             this.filterViewTabPage.UseVisualStyleBackColor = true;
             // 
+            // deleteFilterButton
+            // 
+            this.deleteFilterButton.Enabled = false;
+            this.deleteFilterButton.Location = new System.Drawing.Point(731, 325);
+            this.deleteFilterButton.Name = "deleteFilterButton";
+            this.deleteFilterButton.Size = new System.Drawing.Size(71, 23);
+            this.deleteFilterButton.TabIndex = 2;
+            this.deleteFilterButton.Text = "Delete Filter";
+            this.deleteFilterButton.UseVisualStyleBackColor = true;
+            this.deleteFilterButton.Click += new System.EventHandler(this.deleteFilterButton_Click);
+            // 
+            // addFilterButton
+            // 
+            this.addFilterButton.Location = new System.Drawing.Point(3, 325);
+            this.addFilterButton.Name = "addFilterButton";
+            this.addFilterButton.Size = new System.Drawing.Size(75, 23);
+            this.addFilterButton.TabIndex = 1;
+            this.addFilterButton.Text = "Add filter";
+            this.addFilterButton.UseVisualStyleBackColor = true;
+            this.addFilterButton.Click += new System.EventHandler(this.addFilterButton_Click);
+            // 
             // filterListView
             // 
             this.filterListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3,
-            this.columnHeader4});
+            this.columnHeader4,
+            this.columnHeader5});
             this.filterListView.FullRowSelect = true;
             this.filterListView.HideSelection = false;
             listViewItem1.StateImageIndex = 0;
             this.filterListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1});
             this.filterListView.Location = new System.Drawing.Point(4, 0);
+            this.filterListView.MultiSelect = false;
             this.filterListView.Name = "filterListView";
             this.filterListView.OwnerDraw = true;
             this.filterListView.Size = new System.Drawing.Size(798, 319);
@@ -544,10 +591,11 @@
             this.filterListView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.filterListView_DrawColumnHeader);
             this.filterListView.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.filterListView_DrawItem);
             this.filterListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.filterListView_DrawSubItem);
+            this.filterListView.SelectedIndexChanged += new System.EventHandler(this.filterListView_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "test";
+            this.columnHeader1.Text = "#";
             // 
             // columnHeader2
             // 
@@ -556,10 +604,15 @@
             // columnHeader3
             // 
             this.columnHeader3.Text = "Filter";
+            this.columnHeader3.Width = 452;
             // 
             // columnHeader4
             // 
-            this.columnHeader4.Text = "Activated";
+            this.columnHeader4.Text = "Socket Id";
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Activated";
             // 
             // replayViewTabPage
             // 
@@ -580,6 +633,18 @@
             this.label2.Size = new System.Drawing.Size(111, 13);
             this.label2.TabIndex = 1;
             this.label2.Text = "NOT IMPLEMENTED";
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
+            // 
+            // socketCheckerToolStripMenuItem
+            // 
+            this.socketCheckerToolStripMenuItem.Name = "socketCheckerToolStripMenuItem";
+            this.socketCheckerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.socketCheckerToolStripMenuItem.Text = "Socket Checker";
+            this.socketCheckerToolStripMenuItem.Click += new System.EventHandler(this.socketCheckerToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -670,7 +735,14 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.Button addFilterButton;
+        private System.Windows.Forms.Button deleteFilterButton;
         private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem pingTestSpyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem socketCheckerToolStripMenuItem;
     }
 }
 
