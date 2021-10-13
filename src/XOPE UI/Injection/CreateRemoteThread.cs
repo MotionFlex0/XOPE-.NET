@@ -105,7 +105,7 @@ namespace XOPE_UI.Injection
             if (moduleToUnload == IntPtr.Zero)
                 return false;
 
-            Console.WriteLine($"[unload] found module: {moduleToUnload:X} | name: {NativeMethods.GetModuleBaseName(hProcess, moduleToUnload).ToLower()}");
+            Console.WriteLine($"[unload] found module: 0x{moduleToUnload.ToString("X")} | name: {NativeMethods.GetModuleBaseName(hProcess, moduleToUnload).ToLower()}");
 
             IntPtr freeLibraryAddr = IntPtr.Zero;
 
@@ -126,7 +126,7 @@ namespace XOPE_UI.Injection
             if (freeLibraryAddr == IntPtr.Zero)
                 return false;
 
-            Console.WriteLine($"[unload] found freelibrary(). addr: {freeLibraryAddr:X}");
+            Console.WriteLine($"[unload] found freelibrary(). addr: 0x{freeLibraryAddr.ToString("X")}");
 
             return FreeImpl(hProcess, moduleToUnload, freeLibraryAddr);
         }
@@ -151,7 +151,7 @@ namespace XOPE_UI.Injection
             if (moduleToUnload == IntPtr.Zero)
                 return false;
 
-            Console.WriteLine($"[unload-64] found module: {moduleToUnload:X} | name: {NativeMethods.GetModuleBaseName(hProcess, moduleToUnload).ToLower()}");
+            Console.WriteLine($"[unload-64] found module: 0x{moduleToUnload.ToString("X")} | name: {NativeMethods.GetModuleBaseName(hProcess, moduleToUnload).ToLower()}");
 
             IntPtr freeLibraryAddr = IntPtr.Zero;
 
@@ -168,7 +168,7 @@ namespace XOPE_UI.Injection
             if (freeLibraryAddr == IntPtr.Zero)
                 return false;
 
-            Console.WriteLine($"[unload-64] found freelibrary(). addr: {freeLibraryAddr:X}");
+            Console.WriteLine($"[unload-64] found freelibrary(). addr: 0x{freeLibraryAddr.ToString("X")}");
 
             return FreeImpl(hProcess, moduleToUnload, freeLibraryAddr);
         }
