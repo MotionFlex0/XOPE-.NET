@@ -38,6 +38,9 @@ public:
 	template <class T>
 	bool hookNewFunction(T* func, T* hookedFunc, int patchSize)
 	{
+		if (m_hooks.contains((uintptr_t)func))
+			return true;
+
 		HookFuncData hookFuncData;
 		hookFuncData.detour = new Detour(hookedFunc, func, patchSize);
 		hookFuncData.oFunc = static_cast<T*>(hookFuncData.detour->patch());
