@@ -1,30 +1,54 @@
 #define WIN32_LEAN_AND_MEAN 
 
 #include <iostream>
-#include <Windows.h>
+#include <numeric>
+#include <sstream>
 #include <unordered_map>
+#include <vector>
+#include <Windows.h>
 
-const std::unordered_map<const char* , const char*> modules = {
+const std::unordered_map<const char* , const char*> functions = {
 	{"LoadLibraryA", "kernel32.dll"},
 	{"FreeLibrary", "kernel32.dll"}
 };
 
 int main(int argc, char* argv[])
 {	
-	void* funcAddr = 0;
+	std::ostringstream oss;
 	if (argc >= 2)
 	{
-		auto findModule = [=](std::pair<const char*, const char*> m) { return strcmp(m.first, argv[1]) == 0; };
-		auto search = std::find_if(modules.begin(), modules.end(), findModule);
-		if (search != modules.end())
+		std::vector<void*> addresses;
+
+		for (int i = 1; i < argc; i++)
 		{
-			HMODULE module = GetModuleHandleA(search->second);
-			if (module != NULL)
-				funcAddr = GetProcAddress(module, search->first);
+			auto findModule = [&](std::pair<const char*, const char*> m) { return strcmp(m.first, argv[i]) == 0; };
+
+			auto search = std::find_if(functions.begin(), functions.end(), findModule);
+			if (search != functions.end())
+			{
+				HMODULE module = GetModuleHandleA(search->second);
+				if (module != NULL)
+				{
+					addresses.push_back(GetProcAddress(module, search->first));
+					continue;
+				}
+			}
+
+			addresses.push_back(0);
+		}
+
+		for (void* a : addresses)
+		{
+			if (!oss.tellp() == 0)
+				oss << ",";
+			oss << (intptr_t)a;
 		}
 	}
 
-	std::cout << (intptr_t)funcAddr;
-	
+	if (oss.tellp() == 0)
+		std::cout << 0;
+	else
+		std::cout << oss.str();
+
 	return 0;
 }
