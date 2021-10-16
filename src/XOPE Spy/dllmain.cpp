@@ -1,4 +1,8 @@
 //#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+
+//Uncommect the line below to show Debug Console on process injection
+//#define SHOW_DEBUG_CONSOLE
+
 #include <iostream>
 #include <queue>
 #include <string>
@@ -56,21 +60,22 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
 #pragma warning (disable : 4996)
 void InitHooks(HMODULE module) 
 {
-    //Shows console for debugging
-    //AllocConsole();
+#ifdef SHOW_DEBUG_CONSOLE
+    AllocConsole();
 
-    //FILE* fpstdin = stdin;
-    //FILE* fpstdout = stdout;
-    //FILE* fpstderr = stderr;
+    FILE* fpstdin = stdin;
+    FILE* fpstdout = stdout;
+    FILE* fpstderr = stderr;
 
-    //freopen_s(&fpstdin, "conin$", "r", stdin);
-    //freopen_s(&fpstdout, "conout$", "w", stdout);
-    //freopen_s(&fpstderr, "conout$", "w", stderr);
-
+    freopen_s(&fpstdin, "conin$", "r", stdin);
+    freopen_s(&fpstdout, "conout$", "w", stdout);
+    freopen_s(&fpstderr, "conout$", "w", stderr);
+    std::cout << "Redirected" << std::endl;
+#else
     //Redirects stdout/stderror to nothing
     std::cout.rdbuf(nullptr); 
+#endif
 
-    std::cout << "Redirected" << std::endl;
 
     hookmgr = new HookManager();
 
@@ -82,10 +87,7 @@ void InitHooks(HMODULE module)
     hookmgr->hookNewFunction(WSASend, Hooked_WSASend, DEFAULTPATCHSIZE);
     hookmgr->hookNewFunction(WSARecv, Hooked_WSARecv, DEFAULTPATCHSIZE);
 
-    const char* pipePath = "\\\\.\\pipe\\xopespy";
-
-    // TODO: Temporary fix to the server not being started by the time the pipe connection is made
-    //Sleep(2000); 
+    const char* pipePath = "\\\\.\\pipe\\xopespy"; 
 
     namedPipe = new NamedPipe(pipePath);
     if (namedPipe->isValid())
@@ -111,13 +113,14 @@ void UnhookAll()
     delete hookmgr;
     delete namedPipe;
 
-    // Shows console for debugging
-    //fclose(stdin);
-    //fclose(stdout);
-    //fclose(stderr);
-    //
-    //if (FreeConsole() == 0)
-    //    MessageBoxA(NULL, "Failed to free console!", "ERROR", MB_OK);
+#ifdef SHOW_DEBUG_CONSOLE
+    fclose(stdin);
+    fclose(stdout);
+    fclose(stderr);
+    
+    if (FreeConsole() == 0)
+        MessageBoxA(NULL, "Failed to free console!", "ERROR", MB_OK);
+#endif
 }
 
 void PipeThread(LPVOID module)
