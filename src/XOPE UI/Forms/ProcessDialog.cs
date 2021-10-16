@@ -21,8 +21,13 @@ namespace XOPE_UI.Forms
         public ProcessDialog()
         {
             InitializeComponent();
-            processesView.Columns[0].Width = 400;//processesView.Width;
+            processesListView.Columns[0].Width = 400;//processesView.Width;
             is64bitText.Text = Environment.Is64BitProcess.ToString();
+
+            this.processesListView
+            .GetType()
+            .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+            .SetValue(processesListView, true, null);
         }
 
         //TODO: fix threading issue https://stackoverflow.com/questions/38423472/what-is-the-difference-between-task-run-and-task-factory-startnew
@@ -32,39 +37,39 @@ namespace XOPE_UI.Forms
 
             Processes = Process.GetProcesses();
 
-            this.processesView.SmallImageList = new ImageList();
-            this.processesView.SmallImageList.ColorDepth = ColorDepth.Depth32Bit;
+            this.processesListView.SmallImageList = new ImageList();
+            this.processesListView.SmallImageList.ColorDepth = ColorDepth.Depth32Bit;
 
-            Processes = Processes.OrderBy(p => p.Id).Where(p => p.ProcessName.Contains("PacketSender") || p.ProcessName.Contains("RuneLite") || p.ProcessName.Contains("SimpleClient")).ToArray();
+            Processes = Processes.OrderBy(p => p.Id).ToArray();
 
             var context = TaskScheduler.FromCurrentSynchronizationContext();
 
             Task.Run(() =>
             {
-                this.processesView.Items.Clear();
+                this.processesListView.Items.Clear();
 
                 List<ListViewItem> listViewItemsQueue = new List<ListViewItem>(); //Stagger the adds to the listView or else it becomes a flicking mess
                 foreach (Process p in Processes)
                 {
                     try
                     {
-                        //p.
+                        string arch = NativeMethods.IsWow64Process(p.Handle) ? "x64" : "x32";
+
                         string processFilePath = NativeMethods.GetFullProcessName(p.Handle, 0);
                         string processName = Path.GetFileName(processFilePath);
-                        ListViewItem listViewItem = new ListViewItem($"[{p.Id}] {processName}", processName)
+                        ListViewItem listViewItem = new ListViewItem($"[{p.Id}] {processName} ({arch})", processName)
                         {
                             Tag = p.Id
                         };
 
-                        //Task.Run<string>()
                         Task.Factory.StartNew(() =>
                         {
-                            this.processesView.SmallImageList.Images.Add(processName, Icon.ExtractAssociatedIcon(processFilePath));
+                            this.processesListView.SmallImageList.Images.Add(processName, Icon.ExtractAssociatedIcon(processFilePath));
 
                             listViewItemsQueue.Add(listViewItem);
                             if (listViewItemsQueue.Count() >= 6)
                             {
-                                processesView.Items.AddRange(listViewItemsQueue.ToArray());
+                                processesListView.Items.AddRange(listViewItemsQueue.ToArray());
                                 listViewItemsQueue.Clear();
                             }
                         }, Task.Factory.CancellationToken, TaskCreationOptions.None, context).Wait();
@@ -84,7 +89,7 @@ namespace XOPE_UI.Forms
                 {
                     Task.Factory.StartNew(() =>
                     {
-                        processesView.Items.AddRange(listViewItemsQueue.ToArray());
+                        processesListView.Items.AddRange(listViewItemsQueue.ToArray());
                     }, Task.Factory.CancellationToken, TaskCreationOptions.None, context).Wait();
                 }
                     
@@ -93,7 +98,7 @@ namespace XOPE_UI.Forms
 
         private void processesView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (processesView.SelectedItems.Count == 0)
+            if (processesListView.SelectedItems.Count == 0)
                 confirmButton.Enabled = false;
             else
             {
@@ -105,8 +110,8 @@ namespace XOPE_UI.Forms
 
         private void confirmButton_Click(object sender, EventArgs e)
         {
-            SelectedProcessName = processesView.SelectedItems[0].ImageKey;
-            SelectedProcess = Processes.Single(p => p.Id == (int)processesView.SelectedItems[0].Tag);
+            SelectedProcessName = processesListView.SelectedItems[0].ImageKey;
+            SelectedProcess = Processes.Single(p => p.Id == (int)processesListView.SelectedItems[0].Tag);
             this.DialogResult = DialogResult.OK;
         }
 
@@ -117,7 +122,7 @@ namespace XOPE_UI.Forms
 
         private void processesView_DoubleClick(object sender, EventArgs e)
         {
-            ListView.SelectedListViewItemCollection selectedItems = this.processesView.SelectedItems;
+            ListView.SelectedListViewItemCollection selectedItems = this.processesListView.SelectedItems;
             if (selectedItems.Count > 0)
                 this.confirmButton.PerformClick();
         }

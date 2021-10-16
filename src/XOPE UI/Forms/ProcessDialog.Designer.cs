@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.processesView = new System.Windows.Forms.ListView();
+            this.processesListView = new System.Windows.Forms.ListView();
             this.dummyHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
             this.is64bitText = new System.Windows.Forms.TextBox();
@@ -39,24 +39,24 @@
             ((System.ComponentModel.ISupportInitialize)(this.processDialogBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
-            // processesView
+            // processesListView
             // 
-            this.processesView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.processesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.processesView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.processesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.dummyHeader});
-            this.processesView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.processesView.HideSelection = false;
-            this.processesView.Location = new System.Drawing.Point(12, 12);
-            this.processesView.MultiSelect = false;
-            this.processesView.Name = "processesView";
-            this.processesView.Size = new System.Drawing.Size(644, 306);
-            this.processesView.TabIndex = 1;
-            this.processesView.UseCompatibleStateImageBehavior = false;
-            this.processesView.View = System.Windows.Forms.View.Details;
-            this.processesView.SelectedIndexChanged += new System.EventHandler(this.processesView_SelectedIndexChanged);
-            this.processesView.DoubleClick += new System.EventHandler(this.processesView_DoubleClick);
+            this.processesListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.processesListView.HideSelection = false;
+            this.processesListView.Location = new System.Drawing.Point(12, 12);
+            this.processesListView.MultiSelect = false;
+            this.processesListView.Name = "processesListView";
+            this.processesListView.Size = new System.Drawing.Size(644, 306);
+            this.processesListView.TabIndex = 1;
+            this.processesListView.UseCompatibleStateImageBehavior = false;
+            this.processesListView.View = System.Windows.Forms.View.Details;
+            this.processesListView.SelectedIndexChanged += new System.EventHandler(this.processesView_SelectedIndexChanged);
+            this.processesListView.DoubleClick += new System.EventHandler(this.processesView_DoubleClick);
             // 
             // dummyHeader
             // 
@@ -114,7 +114,7 @@
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.is64bitText);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.processesView);
+            this.Controls.Add(this.processesListView);
             this.Name = "ProcessDialog";
             this.Text = "Process Selector";
             this.Load += new System.EventHandler(this.ProcessDialog_Load);
@@ -125,7 +125,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.ListView processesView;
+        private System.Windows.Forms.ListView processesListView;
         private System.Windows.Forms.BindingSource processDialogBindingSource;
         private System.Windows.Forms.ColumnHeader dummyHeader;
         private System.Windows.Forms.Label label1;
