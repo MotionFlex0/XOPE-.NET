@@ -1,7 +1,5 @@
 ﻿using System;
-using System.ComponentModel.Design;
 using System.Diagnostics;
-using System.Drawing;
 using System.Windows.Forms;
 using XOPE_UI.Core;
 using XOPE_UI.Forms;
@@ -11,7 +9,6 @@ using XOPE_UI.Native;
 using XOPE_UI.Util;
 using XOPE_UI.Spy;
 using XOPE_UI.Script;
-using System.Windows.Forms.VisualStyles;
 using XOPE_UI.Definitions;
 using XOPE_UI.Spy.ServerType;
 
@@ -43,8 +40,6 @@ namespace XOPE_UI
         LogDialog logDialog;
         ViewTabHandler viewTabHandler;
         ScriptManager scriptManager;
-
-        //ByteViewer packetCaptureHexPreview;
 
         SDK.Environment environment;
 
@@ -88,8 +83,6 @@ namespace XOPE_UI
             if (result != DialogResult.OK)
                 return;
 
-            //Console.WriteLine($"Successfully written int: {NativeMethods.WPM(processDialog.SelectedProcess.Handle, (IntPtr)0x008FFD34, 5000)}");
-            //Console.WriteLine($"Successfully written byte: {NativeMethods.WPM(processDialog.SelectedProcess.Handle, (IntPtr)0x008FFD38, "Override partly")}");
             if (livePacketListView.Count > 0)
             {
                 DialogResult shouldClearList = MessageBox.Show("Attaching to a new process will" +
@@ -130,11 +123,7 @@ namespace XOPE_UI
 
             server.RunAsync();
 
-            bool res = CreateRemoteThread.Inject(processDialog.SelectedProcess.Handle);
-            //if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(processDialog.SelectedProcess.Handle))
-            //    res = CreateRemoteThread.Inject32(processDialog.SelectedProcess.Handle, $@"{Environment.CurrentDirectory}\{XOPE_SPY_32}");
-            //else
-            //    res = CreateRemoteThread.Inject64(processDialog.SelectedProcess.Handle, $@"{Environment.CurrentDirectory}\{XOPE_SPY_64}");
+            bool res = CreateRemoteThread.InjectSpy(processDialog.SelectedProcess.Handle);
 
             if (res)
             {
@@ -147,9 +136,6 @@ namespace XOPE_UI
             }
             else
                 MessageBox.Show($"Error when AttachToProcess");
-            //int val = NativeMethods.RPM<int>(processDialog.SelectedProcess.Handle, (IntPtr)0x0133F934);
-            //string strVal = NativeMethods.RPM(processDialog.SelectedProcess.Handle, (IntPtr)0x009861C0, 10);
-
         }
 
         public void DetachFromProcess(bool alreadyFreed = false)
@@ -277,8 +263,6 @@ namespace XOPE_UI
                 tabPage.Controls[0].Size = tabPage.Size;// - new System.Drawing.Size(2, 0);
                 Console.WriteLine($"before: {tabPage.Size}"); ;
 
-                //tabPage.Controls[0].Size = new System.Drawing.Size(150, 100);
-
                 Console.WriteLine($"after: {tabPage.Controls[0].Size}");
 
                 //Creates a new tabpage, based on the default tab page
@@ -395,9 +379,6 @@ namespace XOPE_UI
 
         private void filterListView_DrawItem(object sender, DrawListViewItemEventArgs e)
         {
-            //e.Item.SubItems[0].Bounds.Location
-
-            //CheckBoxRenderer.DrawCheckBox(e.Graphics, e.Item.SubItems[3].Bounds.Location, CheckBoxState.CheckedNormal);
             e.DrawDefault = true;
 
         }
@@ -459,6 +440,12 @@ namespace XOPE_UI
         {
             using (SocketChecker socketChecker = new SocketChecker(server))
             {
+                if (attachedProcess == null)
+                {
+                    MessageBox.Show("Not currently attached to a process.");
+                    return;
+                }
+
                 socketChecker.ShowDialog();
             }
         }

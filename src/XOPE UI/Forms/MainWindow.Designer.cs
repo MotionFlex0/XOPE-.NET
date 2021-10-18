@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "",
             "1d -> 1e"}, -1);
@@ -49,6 +49,8 @@
             this.pingTestSpyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newPacketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.socketCheckerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.scriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -90,8 +92,6 @@
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.socketCheckerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -174,7 +174,7 @@
             // attachToToolStripMenuItem
             // 
             this.attachToToolStripMenuItem.Name = "attachToToolStripMenuItem";
-            this.attachToToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.attachToToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.attachToToolStripMenuItem.Text = "Attach to...";
             this.attachToToolStripMenuItem.Click += new System.EventHandler(this.attachToToolStripMenuItem_Click);
             // 
@@ -182,31 +182,31 @@
             // 
             this.detachToolStripMenuItem.Enabled = false;
             this.detachToolStripMenuItem.Name = "detachToolStripMenuItem";
-            this.detachToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.detachToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.detachToolStripMenuItem.Text = "Detach";
             this.detachToolStripMenuItem.Click += new System.EventHandler(this.detachToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(156, 6);
             // 
             // connectionsListToolStripMenuItem
             // 
             this.connectionsListToolStripMenuItem.Name = "connectionsListToolStripMenuItem";
-            this.connectionsListToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.connectionsListToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.connectionsListToolStripMenuItem.Text = "Connections list";
             this.connectionsListToolStripMenuItem.Click += new System.EventHandler(this.connectionsListToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(156, 6);
             // 
             // pingTestSpyToolStripMenuItem
             // 
             this.pingTestSpyToolStripMenuItem.Name = "pingTestSpyToolStripMenuItem";
-            this.pingTestSpyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pingTestSpyToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.pingTestSpyToolStripMenuItem.Text = "Ping Test Spy";
             this.pingTestSpyToolStripMenuItem.Click += new System.EventHandler(this.pingTestSpyToolStripMenuItem_Click);
             // 
@@ -223,9 +223,21 @@
             // newPacketToolStripMenuItem
             // 
             this.newPacketToolStripMenuItem.Name = "newPacketToolStripMenuItem";
-            this.newPacketToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newPacketToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.newPacketToolStripMenuItem.Text = "New Packet";
             this.newPacketToolStripMenuItem.Click += new System.EventHandler(this.newPacketToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(152, 6);
+            // 
+            // socketCheckerToolStripMenuItem
+            // 
+            this.socketCheckerToolStripMenuItem.Name = "socketCheckerToolStripMenuItem";
+            this.socketCheckerToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.socketCheckerToolStripMenuItem.Text = "Socket Checker";
+            this.socketCheckerToolStripMenuItem.Click += new System.EventHandler(this.socketCheckerToolStripMenuItem_Click);
             // 
             // scriptToolStripMenuItem
             // 
@@ -577,9 +589,9 @@
             this.columnHeader5});
             this.filterListView.FullRowSelect = true;
             this.filterListView.HideSelection = false;
-            listViewItem1.StateImageIndex = 0;
+            listViewItem2.StateImageIndex = 0;
             this.filterListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
+            listViewItem2});
             this.filterListView.Location = new System.Drawing.Point(4, 0);
             this.filterListView.MultiSelect = false;
             this.filterListView.Name = "filterListView";
@@ -628,23 +640,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(347, 203);
+            this.label2.Location = new System.Drawing.Point(350, 189);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(111, 13);
             this.label2.TabIndex = 1;
             this.label2.Text = "NOT IMPLEMENTED";
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
-            // 
-            // socketCheckerToolStripMenuItem
-            // 
-            this.socketCheckerToolStripMenuItem.Name = "socketCheckerToolStripMenuItem";
-            this.socketCheckerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.socketCheckerToolStripMenuItem.Text = "Socket Checker";
-            this.socketCheckerToolStripMenuItem.Click += new System.EventHandler(this.socketCheckerToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
