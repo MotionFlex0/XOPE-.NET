@@ -33,9 +33,11 @@
             this.dummyHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
             this.is64bitText = new System.Windows.Forms.TextBox();
-            this.processDialogBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.cancelButton = new System.Windows.Forms.Button();
             this.confirmButton = new System.Windows.Forms.Button();
+            this.searchTextBox = new System.Windows.Forms.TextBox();
+            this.processListTotalLabel = new System.Windows.Forms.Label();
+            this.processDialogBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.processDialogBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -105,11 +107,32 @@
             this.confirmButton.UseVisualStyleBackColor = true;
             this.confirmButton.Click += new System.EventHandler(this.confirmButton_Click);
             // 
+            // searchTextBox
+            // 
+            this.searchTextBox.Location = new System.Drawing.Point(242, 326);
+            this.searchTextBox.Name = "searchTextBox";
+            this.searchTextBox.Size = new System.Drawing.Size(178, 20);
+            this.searchTextBox.TabIndex = 6;
+            this.searchTextBox.TextChanged += new System.EventHandler(this.searchTextBox_TextChanged);
+            // 
+            // processListTotalLabel
+            // 
+            this.processListTotalLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.processListTotalLabel.BackColor = System.Drawing.Color.White;
+            this.processListTotalLabel.Location = new System.Drawing.Point(552, 283);
+            this.processListTotalLabel.Name = "processListTotalLabel";
+            this.processListTotalLabel.Size = new System.Drawing.Size(70, 13);
+            this.processListTotalLabel.TabIndex = 7;
+            this.processListTotalLabel.Text = "0/0";
+            this.processListTotalLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // ProcessDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(668, 359);
+            this.Controls.Add(this.processListTotalLabel);
+            this.Controls.Add(this.searchTextBox);
             this.Controls.Add(this.confirmButton);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.is64bitText);
@@ -132,5 +155,7 @@
         private System.Windows.Forms.TextBox is64bitText;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button confirmButton;
+        private System.Windows.Forms.TextBox searchTextBox;
+        private System.Windows.Forms.Label processListTotalLabel;
     }
 }
