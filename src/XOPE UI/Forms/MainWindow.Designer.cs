@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "",
             "1d -> 1e"}, -1);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,12 +59,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripSeparator();
-            this.attachToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.detachToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton5 = new System.Windows.Forms.ToolStripSeparator();
-            this.recordToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.pauseRecToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.stopRecToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.tabContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.closeTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -92,6 +87,12 @@
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
+            this.restartAsAdminToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.attachToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.detachToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.recordToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.pauseRecToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.stopRecToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -128,6 +129,7 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.logToolStripMenuItem,
+            this.restartAsAdminToolStripMenuItem,
             this.toolStripSeparator2,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -137,19 +139,19 @@
             // logToolStripMenuItem
             // 
             this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-            this.logToolStripMenuItem.Size = new System.Drawing.Size(94, 22);
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.logToolStripMenuItem.Text = "Log";
             this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(91, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(94, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             // 
             // editToolStripMenuItem
@@ -304,66 +306,10 @@
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(6, 25);
             // 
-            // attachToolStripButton
-            // 
-            this.attachToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.attachToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("attachToolStripButton.Image")));
-            this.attachToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.attachToolStripButton.Name = "attachToolStripButton";
-            this.attachToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.attachToolStripButton.Text = "Attach to process";
-            this.attachToolStripButton.Click += new System.EventHandler(this.attachToolStripButton_Click);
-            // 
-            // detachToolStripButton
-            // 
-            this.detachToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.detachToolStripButton.Enabled = false;
-            this.detachToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("detachToolStripButton.Image")));
-            this.detachToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.detachToolStripButton.Name = "detachToolStripButton";
-            this.detachToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.detachToolStripButton.Text = "toolStripButton6";
-            this.detachToolStripButton.ToolTipText = "Detach from process";
-            this.detachToolStripButton.Click += new System.EventHandler(this.detachToolStripButton_Click);
-            // 
             // toolStripButton5
             // 
             this.toolStripButton5.Name = "toolStripButton5";
             this.toolStripButton5.Size = new System.Drawing.Size(6, 25);
-            // 
-            // recordToolStripButton
-            // 
-            this.recordToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.recordToolStripButton.Enabled = false;
-            this.recordToolStripButton.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.recordToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("recordToolStripButton.Image")));
-            this.recordToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.recordToolStripButton.Name = "recordToolStripButton";
-            this.recordToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.recordToolStripButton.Text = "Record Packets";
-            this.recordToolStripButton.Click += new System.EventHandler(this.recordToolStripButton_Click);
-            // 
-            // pauseRecToolStripButton
-            // 
-            this.pauseRecToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.pauseRecToolStripButton.Enabled = false;
-            this.pauseRecToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("pauseRecToolStripButton.Image")));
-            this.pauseRecToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.pauseRecToolStripButton.Name = "pauseRecToolStripButton";
-            this.pauseRecToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.pauseRecToolStripButton.Text = "toolStripButton3";
-            this.pauseRecToolStripButton.Click += new System.EventHandler(this.pauseRecToolStripButton_Click);
-            // 
-            // stopRecToolStripButton
-            // 
-            this.stopRecToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.stopRecToolStripButton.Enabled = false;
-            this.stopRecToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("stopRecToolStripButton.Image")));
-            this.stopRecToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.stopRecToolStripButton.Name = "stopRecToolStripButton";
-            this.stopRecToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.stopRecToolStripButton.Text = "toolStripButton4";
-            this.stopRecToolStripButton.Click += new System.EventHandler(this.stopRecToolStripButton_Click);
             // 
             // tabContextMenu
             // 
@@ -589,9 +535,9 @@
             this.columnHeader5});
             this.filterListView.FullRowSelect = true;
             this.filterListView.HideSelection = false;
-            listViewItem2.StateImageIndex = 0;
+            listViewItem1.StateImageIndex = 0;
             this.filterListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem2});
+            listViewItem1});
             this.filterListView.Location = new System.Drawing.Point(4, 0);
             this.filterListView.MultiSelect = false;
             this.filterListView.Name = "filterListView";
@@ -645,6 +591,70 @@
             this.label2.Size = new System.Drawing.Size(111, 13);
             this.label2.TabIndex = 1;
             this.label2.Text = "NOT IMPLEMENTED";
+            // 
+            // restartAsAdminToolStripMenuItem
+            // 
+            this.restartAsAdminToolStripMenuItem.Image = global::XOPE_UI.Properties.Resources.windows_admin_icon;
+            this.restartAsAdminToolStripMenuItem.Name = "restartAsAdminToolStripMenuItem";
+            this.restartAsAdminToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.restartAsAdminToolStripMenuItem.Text = "Restart as Admin";
+            this.restartAsAdminToolStripMenuItem.Click += new System.EventHandler(this.restartAsAdminToolStripMenuItem_Click);
+            // 
+            // attachToolStripButton
+            // 
+            this.attachToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.attachToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("attachToolStripButton.Image")));
+            this.attachToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.attachToolStripButton.Name = "attachToolStripButton";
+            this.attachToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.attachToolStripButton.Text = "Attach to process";
+            this.attachToolStripButton.Click += new System.EventHandler(this.attachToolStripButton_Click);
+            // 
+            // detachToolStripButton
+            // 
+            this.detachToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.detachToolStripButton.Enabled = false;
+            this.detachToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("detachToolStripButton.Image")));
+            this.detachToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.detachToolStripButton.Name = "detachToolStripButton";
+            this.detachToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.detachToolStripButton.Text = "toolStripButton6";
+            this.detachToolStripButton.ToolTipText = "Detach from process";
+            this.detachToolStripButton.Click += new System.EventHandler(this.detachToolStripButton_Click);
+            // 
+            // recordToolStripButton
+            // 
+            this.recordToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.recordToolStripButton.Enabled = false;
+            this.recordToolStripButton.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.recordToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("recordToolStripButton.Image")));
+            this.recordToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.recordToolStripButton.Name = "recordToolStripButton";
+            this.recordToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.recordToolStripButton.Text = "Record Packets";
+            this.recordToolStripButton.Click += new System.EventHandler(this.recordToolStripButton_Click);
+            // 
+            // pauseRecToolStripButton
+            // 
+            this.pauseRecToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.pauseRecToolStripButton.Enabled = false;
+            this.pauseRecToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("pauseRecToolStripButton.Image")));
+            this.pauseRecToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.pauseRecToolStripButton.Name = "pauseRecToolStripButton";
+            this.pauseRecToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.pauseRecToolStripButton.Text = "toolStripButton3";
+            this.pauseRecToolStripButton.Click += new System.EventHandler(this.pauseRecToolStripButton_Click);
+            // 
+            // stopRecToolStripButton
+            // 
+            this.stopRecToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.stopRecToolStripButton.Enabled = false;
+            this.stopRecToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("stopRecToolStripButton.Image")));
+            this.stopRecToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.stopRecToolStripButton.Name = "stopRecToolStripButton";
+            this.stopRecToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.stopRecToolStripButton.Text = "toolStripButton4";
+            this.stopRecToolStripButton.Click += new System.EventHandler(this.stopRecToolStripButton_Click);
             // 
             // MainWindow
             // 
@@ -743,6 +753,7 @@
         private System.Windows.Forms.ToolStripMenuItem pingTestSpyToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem socketCheckerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem restartAsAdminToolStripMenuItem;
     }
 }
 

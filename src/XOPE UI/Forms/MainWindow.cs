@@ -11,6 +11,8 @@ using XOPE_UI.Spy;
 using XOPE_UI.Script;
 using XOPE_UI.Definitions;
 using XOPE_UI.Spy.ServerType;
+using System.Security.Principal;
+using System.ComponentModel;
 
 namespace XOPE_UI
 {
@@ -51,6 +53,10 @@ namespace XOPE_UI
 
             logDialog = new LogDialog(new Logger());
             Console.WriteLine($"Program started at: {DateTime.Now}");
+
+            //Credit: https://www.codeproject.com/Articles/317695/Detecting-If-An-Application-is-Running-as-An-Eleva
+            if ((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator))
+                this.Text += " [Elevated as Admin]";
 
             viewTabHandler = new ViewTabHandler(viewTab);
             viewTabHandler.AddView(captureViewButton, captureViewTabPage);
@@ -447,6 +453,37 @@ namespace XOPE_UI
                 }
 
                 socketChecker.ShowDialog();
+            }
+        }
+
+        private void restartAsAdminToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if ((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator))
+                MessageBox.Show("This process is already running as admin.", "Already Admin", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+            {
+                if (MessageBox.Show("Are you sure you would like to restart process as Admin?\nYour progress will NOT be saved.",
+                    "Warning",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning) == DialogResult.No)
+                {
+                    return;
+                }
+
+                Process process = new Process();
+                process.StartInfo.FileName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+                process.StartInfo.UseShellExecute = true;
+                process.StartInfo.Verb = "runas";
+                
+                try
+                {
+                    process.Start();
+                    Environment.Exit(0);
+                }
+                catch (Win32Exception ex)
+                {
+                    MessageBox.Show($"Failed to start as Admin.\n\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
     }
