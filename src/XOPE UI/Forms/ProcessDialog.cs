@@ -50,6 +50,8 @@ namespace XOPE_UI.Forms
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
+            ObjectCache objectCache = MemoryCache.Default;
+
             this.confirmButton.Enabled = false;
 
             processes.Clear();
@@ -61,39 +63,47 @@ namespace XOPE_UI.Forms
             foreach (Process p in ps)
                 processes.Add(p.Id, p);
 
-            this.processesListView.SmallImageList = new ImageList();
-            this.processesListView.SmallImageList.ColorDepth = ColorDepth.Depth32Bit;
-
+            this.processesListView.BeginUpdate();
             this.processesListView.Items.Clear();
 
-            ObjectCache objectCache = MemoryCache.Default;
+            if (objectCache.Contains("PROCESS_SMALL_IMAGE_LIST"))
+                this.processesListView.SmallImageList = (ImageList)objectCache.Get("PROCESS_SMALL_IMAGE_LIST");
+            else
+            {
+                ImageList imageList = new ImageList
+                {
+                    ColorDepth = ColorDepth.Depth32Bit
+                };
+                this.processesListView.SmallImageList = imageList;
+                objectCache.Add("PROCESS_SMALL_IMAGE_LIST", imageList, DateTime.Now.AddMinutes(30));
+            }
 
             foreach (KeyValuePair<int, Process> kv in processes)
             { 
                 Process p = kv.Value;
+                int pid = p.Id;
                 
-                string cacheKey = $"PROCESS_BLACKLIST_{p.Id}_{p.ProcessName}";
+                string cacheKey = $"PROCESS_BLACKLIST_{pid}_{p.ProcessName}";
                 if ((!isElevated && p.SessionId == 0) || objectCache.Contains(cacheKey))
                     continue;
                 
                 try
                 {
-
                     string arch = NativeMethods.IsWow64Process(p.Handle) ? "x64" : "x32";
 
                     string processFilePath = NativeMethods.GetFullProcessName(p.Handle, 0);
                     string processName = Path.GetFileName(processFilePath);
-                    ListViewItem listViewItem = new ListViewItem($"[{p.Id}] {processName} ({arch})", processName)
+                    ListViewItem listViewItem = new ListViewItem($"[{pid}] {processName} ({arch})", processName)
                     {
                         Tag = p.Id
                     };
 
                     this.Invoke(new Action(() =>
                     {
-                        this.processesListView.SmallImageList.Images.Add(processName, Icon.ExtractAssociatedIcon(processFilePath));
+                        if (!this.processesListView.SmallImageList.Images.ContainsKey(processName))
+                            this.processesListView.SmallImageList.Images.Add(processName, Icon.ExtractAssociatedIcon(processFilePath));
                         this.processesListView.Items.Add(listViewItem);
                     }));
-
                 }
                 catch (Win32Exception ex)
                 {
@@ -104,11 +114,13 @@ namespace XOPE_UI.Forms
 
                 }
             }
+            this.processesListView.EndUpdate();
 
             updateProcessListLabel();
 
             stopwatch.Stop();
-            Debug.WriteLine($"ProcessDialog.updateProcessListView() Total Refresh time: {stopwatch.ElapsedMilliseconds}ms");
+
+            this.Text = $"Process Selector - Loaded in {stopwatch.Elapsed.Milliseconds}ms";
         }
 
         private void updateProcessListLabel()
