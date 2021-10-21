@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Runtime.Caching;
 using System.Windows.Forms;
 using XOPE_UI.Native;
 
@@ -14,18 +12,20 @@ namespace XOPE_UI.Forms
 {
     public partial class ProcessDialog : Form
     {
-        //private Process[] Processes { get; set; }}
         public Process SelectedProcess { get; private set; }
         public string SelectedProcessName { get; private set; }
 
         private SortedDictionary<int, Process> processes;
         private Stack<Tuple<ListViewItem, int>> hiddenProcessListItems; // <processListViewItem, listViewIndex>
+        private bool isElevated;
 
         private int oldSearchLength = 0;
 
-        public ProcessDialog()
+        public ProcessDialog(bool isElevated)
         {
             InitializeComponent();
+
+            this.isElevated = isElevated;
 
             processes = new SortedDictionary<int, Process>();
             hiddenProcessListItems = new Stack<Tuple<ListViewItem, int>>();
@@ -42,6 +42,14 @@ namespace XOPE_UI.Forms
         //TODO: fix threading issue https://stackoverflow.com/questions/38423472/what-is-the-difference-between-task-run-and-task-factory-startnew
         private void ProcessDialog_Load(object sender, EventArgs e)
         {
+            updateProcessListView();
+        }
+
+        private void updateProcessListView()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             this.confirmButton.Enabled = false;
 
             processes.Clear();
@@ -53,60 +61,54 @@ namespace XOPE_UI.Forms
             foreach (Process p in ps)
                 processes.Add(p.Id, p);
 
-
             this.processesListView.SmallImageList = new ImageList();
             this.processesListView.SmallImageList.ColorDepth = ColorDepth.Depth32Bit;
 
-            Task.Run(() =>
-            {
-                this.processesListView.Items.Clear();
+            this.processesListView.Items.Clear();
 
-                List<ListViewItem> listViewItemsQueue = new List<ListViewItem>(); //Stagger the adds to the listView or else it becomes a flicking mess
-                foreach (KeyValuePair<int, Process> kv in processes)
+            ObjectCache objectCache = MemoryCache.Default;
+
+            foreach (KeyValuePair<int, Process> kv in processes)
+            { 
+                Process p = kv.Value;
+                
+                string cacheKey = $"PROCESS_BLACKLIST_{p.Id}_{p.ProcessName}";
+                if ((!isElevated && p.SessionId == 0) || objectCache.Contains(cacheKey))
+                    continue;
+                
+                try
                 {
-                    Process p = kv.Value;
-                    try
+
+                    string arch = NativeMethods.IsWow64Process(p.Handle) ? "x64" : "x32";
+
+                    string processFilePath = NativeMethods.GetFullProcessName(p.Handle, 0);
+                    string processName = Path.GetFileName(processFilePath);
+                    ListViewItem listViewItem = new ListViewItem($"[{p.Id}] {processName} ({arch})", processName)
                     {
-                        
-                        string arch = NativeMethods.IsWow64Process(p.Handle) ? "x64" : "x32";
+                        Tag = p.Id
+                    };
 
-                        string processFilePath = NativeMethods.GetFullProcessName(p.Handle, 0);
-                        string processName = Path.GetFileName(processFilePath);
-                        ListViewItem listViewItem = new ListViewItem($"[{p.Id}] {processName} ({arch})", processName)
-                        {
-                            Tag = p.Id
-                        };
-
-                        this.Invoke(new Action(() =>
-                        {
-                            this.processesListView.SmallImageList.Images.Add(processName, Icon.ExtractAssociatedIcon(processFilePath));
-
-                            listViewItemsQueue.Add(listViewItem);
-                            if (listViewItemsQueue.Count() >= 4)
-                            {
-                                this.processesListView.Items.AddRange(listViewItemsQueue.ToArray());
-                                listViewItemsQueue.Clear();
-                                updateProcessListLabel();
-                            }
-                        }));
-                        
-                    }
-                    catch (Win32Exception ex)
+                    this.Invoke(new Action(() =>
                     {
- 
-                    }
-                    catch (Exception ex)
-                    {
+                        this.processesListView.SmallImageList.Images.Add(processName, Icon.ExtractAssociatedIcon(processFilePath));
+                        this.processesListView.Items.Add(listViewItem);
+                    }));
 
-                    }
                 }
-
-                if (listViewItemsQueue.Count > 0)
+                catch (Win32Exception ex)
                 {
-                    this.Invoke(new Action(() => processesListView.Items.AddRange(listViewItemsQueue.ToArray())));
-                    updateProcessListLabel();
-                }     
-            });
+                    objectCache.Add(cacheKey, true, DateTime.Now.AddMinutes(30));
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+
+            updateProcessListLabel();
+
+            stopwatch.Stop();
+            Debug.WriteLine($"ProcessDialog.updateProcessListView() Total Refresh time: {stopwatch.ElapsedMilliseconds}ms");
         }
 
         private void updateProcessListLabel()
