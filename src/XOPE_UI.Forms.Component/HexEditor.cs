@@ -35,14 +35,6 @@ namespace XOPE_UI.Forms.Component
             this.textGridView.CellPainting += byteGridView_CellPainting;
             this.textGridView.CellStateChanged += byteGridView_CellStateChanged;
 
-            //foreach (DataGridViewColumn c in this.byteGridView.Columns)
-            //{
-            //    if (c.DividerWidth > 0)
-            //        c.Width = 43;
-            //    else
-            //        c.Width = 23;
-            //}
-
             // Fix columns' width
             for (int i = 0; i < this.byteGridView.Columns.Count; i++)
             {
@@ -74,10 +66,6 @@ namespace XOPE_UI.Forms.Component
             defaultCellStyle.BackColor = CellBackColor;
             this.byteGridView.DefaultCellStyle = defaultCellStyle;
             this.textGridView.DefaultCellStyle = defaultCellStyle;
-
-            //byteGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-
-            //textGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
         }
 
         public void ClearBytes()
@@ -92,9 +80,6 @@ namespace XOPE_UI.Forms.Component
                 byteDataTable.Columns.Add(new DataColumn($"0x{i:X}"));
                 textDataTable.Columns.Add(new DataColumn($"0x{i:X}"));
             }
-
-            //byteDataTable.Rows.Add(byteDataTable.NewRow());
-            //textDataTable.Rows.Add(textDataTable.NewRow());
 
             this.byteGridView.DataSource = byteDataTable;
             this.textGridView.DataSource = textDataTable;
@@ -233,7 +218,6 @@ namespace XOPE_UI.Forms.Component
         {
             if (e.StateChanged == DataGridViewElementStates.Selected)
             {
-                //Debug.WriteLine($"byteGridView_CellStateChanged - (CxR) {e.Cell.ColumnIndex}x{e.Cell.RowIndex}");
                 if (e.Cell.Value == null && e.Cell.Selected && prevSelectedCell != null)
                 {
                     e.Cell.Selected = false;
