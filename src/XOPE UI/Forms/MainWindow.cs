@@ -24,10 +24,14 @@ namespace XOPE_UI
         public event EventHandler<IntPtr> OnProcessAttached;
         public event EventHandler<IntPtr> OnProcessDetached;
 
+        bool IsAdmin 
+        { 
+            get => (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator); 
+        }
+
         int captureIndex = 0;
         int filterIndex = 0;
 
-        ProcessDialog processDialog;
         ActiveConnectionsDialog activeConnectionsDialog;
         /*
          * Not a big fan of this. Unfortunately, due to performance issues with WPFHexaEditor,
@@ -55,7 +59,7 @@ namespace XOPE_UI
             Console.WriteLine($"Program started at: {DateTime.Now}");
 
             //Credit: https://www.codeproject.com/Articles/317695/Detecting-If-An-Application-is-Running-as-An-Eleva
-            if ((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator))
+            if (IsAdmin)
                 this.Text += " [Elevated as Admin]";
 
             viewTabHandler = new ViewTabHandler(viewTab);
@@ -66,7 +70,6 @@ namespace XOPE_UI
 
             scriptManager = new ScriptManager();
 
-            processDialog = new ProcessDialog();
             activeConnectionsDialog = new ActiveConnectionsDialog(server.Data);
             packetEditorReplayDialog = new PacketEditorReplayDialog(server);
 
@@ -85,9 +88,16 @@ namespace XOPE_UI
 
         public void AttachToProcess()
         {
-            DialogResult result = processDialog.ShowDialog(); //Maybe make processDialog a local var and dispose of dialog here
-            if (result != DialogResult.OK)
-                return;
+            Process selectedProcess;
+            using (ProcessDialog processDialog = new ProcessDialog(IsAdmin))
+            {
+                DialogResult result = processDialog.ShowDialog(); //Maybe make processDialog a local var and dispose of dialog here
+                if (result != DialogResult.OK)
+                    return;
+                else
+                    selectedProcess = processDialog.SelectedProcess;
+            }
+
 
             if (livePacketListView.Count > 0)
             {
@@ -107,10 +117,10 @@ namespace XOPE_UI
                 DetachFromProcess();
 
             bool spyAlreadyAttached = false;
-            if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(processDialog.SelectedProcess.Handle))
-                spyAlreadyAttached = NativeMethods.GetModuleHandle(processDialog.SelectedProcess.Handle, XOPE_SPY_32) != IntPtr.Zero;
+            if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(selectedProcess.Handle))
+                spyAlreadyAttached = NativeMethods.GetModuleHandle(selectedProcess.Handle, XOPE_SPY_32) != IntPtr.Zero;
             else
-                spyAlreadyAttached = NativeMethods.GetModuleHandle(processDialog.SelectedProcess.Handle, XOPE_SPY_32) != IntPtr.Zero;
+                spyAlreadyAttached = NativeMethods.GetModuleHandle(selectedProcess.Handle, XOPE_SPY_32) != IntPtr.Zero;
 
             if (spyAlreadyAttached)
             {
@@ -124,18 +134,18 @@ namespace XOPE_UI
                     return;
 
                 // TODO: Attempt to removed existing Spy. 
-                CreateRemoteThread.Free(processDialog.SelectedProcess.Handle);
+                CreateRemoteThread.Free(selectedProcess.Handle);
             }
 
             server.RunAsync();
 
-            bool res = CreateRemoteThread.InjectSpy(processDialog.SelectedProcess.Handle);
+            bool res = CreateRemoteThread.InjectSpy(selectedProcess.Handle);
 
             if (res)
             {
                 setUiToAttachedState();
 
-                attachedProcess = processDialog.SelectedProcess;
+                attachedProcess = selectedProcess;
                 attachedProcess.EnableRaisingEvents = true;
                 attachedProcess.Exited += attachedProcess_Exited;
                 environment.NotifyProcessAttached(attachedProcess);
@@ -172,7 +182,7 @@ namespace XOPE_UI
         {
             this.Invoke(new Action(() =>
             {
-                this.Text = $"XOPE - [{processDialog.SelectedProcess.Id}] {processDialog.SelectedProcessName}";
+                this.Text = $"XOPE - [{attachedProcess.Id}] {attachedProcess.MainModule.ModuleName}";
                 detachToolStripButton.Enabled = true;
                 detachToolStripMenuItem.Enabled = true;
                 recordToolStripButton.Enabled = true;
@@ -458,7 +468,7 @@ namespace XOPE_UI
 
         private void restartAsAdminToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if ((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator))
+            if (IsAdmin)
                 MessageBox.Show("This process is already running as admin.", "Already Admin", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
             {
