@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 
 namespace XOPE_UI.Native
@@ -39,6 +40,9 @@ namespace XOPE_UI.Native
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool ReadProcessMemory([In] IntPtr hProcess, [In] IntPtr lpBaseAddress, [Out] byte[] lpBuffer, [In] int nSize, [Out] out int lpNumberOfBytesRead);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SendMessage([In] IntPtr hWnd, [In] uint Msg, [In] IntPtr wParam, [In] IntPtr lParam);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool WriteProcessMemory([In] IntPtr hProcess, [In] IntPtr lpBaseAddress, [In] IntPtr lpBuffer, [In] int nSize, [Out] out int lpNumberOfBytesRead);
@@ -93,6 +97,11 @@ namespace XOPE_UI.Native
             ZERO = 0, //Not needed but it's here as a reminder
             CREATE_SUSPENDED = 0x00000004,
             STACK_SIZE_PARAM_IS_A_RESERVATION = 0x00010000
+        }
+
+        public enum WindowsMessage
+        {
+            EM_SETCUEBANNER = 0x1501
         }
     }
 }

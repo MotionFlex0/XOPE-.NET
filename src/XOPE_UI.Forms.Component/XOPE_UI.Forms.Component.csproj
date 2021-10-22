@@ -70,11 +70,18 @@
     <EmbeddedResource Include="PacketListView.resx">
       <DependentUpon>PacketListView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SearchTextBox.resx">
+      <DependentUpon>SearchTextBox.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XOPE_UI.Definitions\XOPE_UI.Definitions.csproj">
       <Project>{5fbea3f1-33f0-458a-9316-5fd71b4be8eb}</Project>
       <Name>XOPE_UI.Definitions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XOPE_UI.Native\XOPE_UI.Native.csproj">
+      <Project>{0E0549F8-3B40-429F-B109-942B3E253047}</Project>
+      <Name>XOPE_UI.Native</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -100,6 +100,15 @@ namespace XOPE_UI.Native
             }
         }
 
+        // TODO: Change wparam/lparam to nuint on version >=C# 9.0
+        public static IntPtr SendMessage([In] IntPtr hWnd, WindowsMessage Msg, IntPtr wParam, string lParam)
+        {
+            IntPtr pData = Marshal.StringToHGlobalUni(lParam);
+            IntPtr res = Win32API.SendMessage(hWnd, (uint)Msg, wParam, pData);
+            Marshal.FreeHGlobal(pData);
+            return res;
+        }
+
         public static IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, int size, AllocationType flAllocationType, MemoryProtection flProtect)
         {
             return Win32API.VirtualAllocEx(hProcess, lpAddress, size, (int)flAllocationType, (int)flProtect);

@@ -29,7 +29,9 @@ namespace XOPE_UI.Forms.Component
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            this.ResumeLayout(false);
+
         }
 
         #endregion

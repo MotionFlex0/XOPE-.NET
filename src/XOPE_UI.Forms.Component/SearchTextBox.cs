@@ -1,17 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
 using System.Windows.Forms;
+using XOPE_UI.Native;
 
 namespace XOPE_UI.Forms.Component
 {
     public partial class SearchTextBox : TextBox
     {
         private const int WM_PASTE = 0x0302;
+
+        public string PlaceholderText
+        {
+            get => _placeholderText;
+            set
+            {
+                NativeMethods.SendMessage(this.Handle, Win32API.WindowsMessage.EM_SETCUEBANNER, (IntPtr)1, value);
+                _placeholderText = value;
+            }
+        }
+
+        private string _placeholderText;
 
         public SearchTextBox()
         {
