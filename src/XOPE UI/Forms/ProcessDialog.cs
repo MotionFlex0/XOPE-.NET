@@ -33,10 +33,39 @@ namespace XOPE_UI.Forms
             processesListView.Columns[0].Width = 400;//processesView.Width;
             is64bitText.Text = Environment.Is64BitProcess.ToString();
 
+            this.processesListView.SmallImageList = getImageListFromCache();
+
             this.processesListView
             .GetType()
             .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
             .SetValue(processesListView, true, null);
+
+            this.searchTextBox.PlaceholderText = "Search here or F5 to refresh";
+        }
+
+        /// <summary>
+        /// Should be called once, at the earlier possible time.
+        /// </summary>
+        public static void PrecacheResources()
+        {
+            ObjectCache objectCache = MemoryCache.Default;
+            ImageList imageList = getImageListFromCache();
+
+            Process[] ps = Process.GetProcesses();
+            foreach (Process p in ps)
+            {
+                try
+                {
+                    string processFilePath = NativeMethods.GetFullProcessName(p.Handle, 0);
+                    string processName = Path.GetFileName(processFilePath);
+                    imageList.Images.Add(processName, Icon.ExtractAssociatedIcon(processFilePath));
+                }
+                catch (Win32Exception)
+                {
+                    string cacheKey = $"PROCESS_BLACKLIST_{p.Id}_{p.ProcessName}";
+                    objectCache.Add(cacheKey, true, DateTime.Now.AddMinutes(30));
+                }
+            }
         }
 
         //TODO: fix threading issue https://stackoverflow.com/questions/38423472/what-is-the-difference-between-task-run-and-task-factory-startnew
@@ -66,25 +95,13 @@ namespace XOPE_UI.Forms
             this.processesListView.BeginUpdate();
             this.processesListView.Items.Clear();
 
-            if (objectCache.Contains("PROCESS_SMALL_IMAGE_LIST"))
-                this.processesListView.SmallImageList = (ImageList)objectCache.Get("PROCESS_SMALL_IMAGE_LIST");
-            else
-            {
-                ImageList imageList = new ImageList
-                {
-                    ColorDepth = ColorDepth.Depth32Bit
-                };
-                this.processesListView.SmallImageList = imageList;
-                objectCache.Add("PROCESS_SMALL_IMAGE_LIST", imageList, DateTime.Now.AddMinutes(30));
-            }
-
             foreach (KeyValuePair<int, Process> kv in processes)
             { 
                 Process p = kv.Value;
                 int pid = p.Id;
                 
                 string cacheKey = $"PROCESS_BLACKLIST_{pid}_{p.ProcessName}";
-                if ((!isElevated && p.SessionId == 0) || objectCache.Contains(cacheKey))
+                if (objectCache.Contains(cacheKey) || (!isElevated && p.SessionId == 0))
                     continue;
                 
                 try
@@ -121,6 +138,22 @@ namespace XOPE_UI.Forms
             stopwatch.Stop();
 
             this.Text = $"Process Selector - Loaded in {stopwatch.Elapsed.Milliseconds}ms";
+        }
+
+        private static ImageList getImageListFromCache()
+        {
+            ObjectCache objectCache = MemoryCache.Default;
+            if (objectCache.Contains("PROCESS_SMALL_IMAGE_LIST"))
+                return (ImageList)objectCache.Get("PROCESS_SMALL_IMAGE_LIST");
+            else
+            {
+                ImageList imageList = new ImageList
+                {
+                    ColorDepth = ColorDepth.Depth32Bit
+                };
+                objectCache.Add("PROCESS_SMALL_IMAGE_LIST", imageList, DateTime.Now.AddMinutes(30));
+                return imageList;
+            }
         }
 
         private void updateProcessListLabel()
@@ -211,5 +244,16 @@ namespace XOPE_UI.Forms
 
             oldSearchLength = searchTextBox.Text.Length;
         }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.F5)
+            {
+                updateProcessListView();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+         
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using XOPE_UI.Forms;
 using XOPE_UI.Spy;
 
 namespace XOPE_UI
@@ -30,10 +32,18 @@ namespace XOPE_UI
             SDK.Environment environment = SDK.Environment.GetEnvironment();
             environment.Server = server;
 
+            Task.Run(() => PrecacheResources());
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainWindow(server));
             //Application.Run(new ProcessDialog());
+        }
+
+        static void PrecacheResources()
+        {
+            ProcessDialog.PrecacheResources();
+            Console.WriteLine("Finished precaching resources.");
         }
     }
 }
