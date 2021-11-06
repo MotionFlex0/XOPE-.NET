@@ -10,6 +10,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using XOPE_UI.Definitions;
 using XOPE_UI.Native;
 using XOPE_UI.Spy.ServerType;
@@ -25,7 +26,7 @@ namespace XOPE_UI.Spy
         public event EventHandler<Connection> OnCloseConnection;
         
         public SpyData Data { get; private set; }
-        
+
         ConcurrentQueue<byte[]> outBuffer;
         CancellationTokenSource cancellationTokenSource;
         Task serverThread; // Change this to something easier to follow
@@ -52,6 +53,7 @@ namespace XOPE_UI.Spy
             jobs.Add(message.JobId, message);
         }
 
+        // TODO: refactor most of this function
         public void RunAsync() 
         {
             if (serverThread != null)
@@ -63,47 +65,102 @@ namespace XOPE_UI.Spy
             cancellationTokenSource = new CancellationTokenSource();
 
             serverThread = Task.Factory.StartNew(() => {
-                using (NamedPipeServerStream serverStream = new NamedPipeServerStream("xopespy"))
+                using (NamedPipeServerStream serverStream = new NamedPipeServerStream("xopeui"))
                 {
                     serverStream.WaitForConnection();
                     Console.WriteLine("Server connected to Server");
 
+                    NamedPipeClientStream clientStream = null;
                     try
                     {
                         byte[] buffer = new byte[65536];
                         while (serverStream.IsConnected && !cancellationTokenSource.IsCancellationRequested)
                         {
-                            byte[] _;
-                            int __, ___;
                             int bytesAvailable;
 
-                            Win32API.PeekNamedPipe((IntPtr)serverStream.SafePipeHandle.DangerousGetHandle(), out _, 0, out __, out bytesAvailable, out ___);
+                            Win32API.PeekNamedPipe((IntPtr)serverStream.SafePipeHandle.DangerousGetHandle(), out _, 0, out _, out bytesAvailable, out _);
                             if (bytesAvailable > 0)
                             {
                                 int len = serverStream.Read(buffer, 0, 65536);
                                 if (len > 0)
                                 {
                                     CBORObject cbor = CBORObject.DecodeFromBytes((new ArraySegment<byte>(buffer, 0, len)).ToArray());
-                                    //JObject json = JObject.Parse(Encoding.ASCII.GetString(buffer, 0, len));
                                     JObject json = JObject.Parse(cbor.ToString());
-                                    Console.WriteLine($"Incoming message: {(ServerMessageType)json.Value<Int32>("messageType")}");
+                                    //Console.WriteLine($"Incoming message: {(ServerMessageType)json.Value<Int32>("messageType")}");
 
-                                    ServerMessageType messageType = (ServerMessageType)json.Value<Int64>("messageType");
+                                    ServerMessageType messageType = (ServerMessageType)json.Value<Int32>("messageType");
 
-                                    if (messageType == ServerMessageType.HOOKED_FUNCTION_CALL)
+                                    if (messageType == ServerMessageType.CONNECTED_SUCCESS)
                                     {
-                                        HookedFuncType hookedFuncType = (HookedFuncType)json.Value<Int64>("functionName");
+                                        Console.WriteLine($"Connection success: {json}");
+                                        string spyPipeServerName = json.Value<string>("spyPipeServerName");
+                                        clientStream = new NamedPipeClientStream(spyPipeServerName);
+                                        clientStream.Connect(2000);
+                                        if (!clientStream.IsConnected)
+                                        {
+                                            Console.WriteLine("Unable to connect to Spy's Server. Aborting...");
+                                            break;
+                                        }
+                                    }
+                                    else if (messageType == ServerMessageType.HOOKED_FUNCTION_CALL)
+                                    {
+                                        HookedFuncType hookedFuncType = (HookedFuncType)json.Value<Int32>("functionName");
+
+                                        //Console.WriteLine($"Message hookedType: {hookedFuncType}");
+
                                         if (hookedFuncType == HookedFuncType.CONNECT || hookedFuncType == HookedFuncType.WSACONNECT)
                                         {
-                                            Connection connection = new Connection(json.Value<Int32>("socket"),
+                                            Connection connection = new Connection(
+                                                json.Value<Int32>("socket"),
                                                 json.Value<Int32>("protocol"),
                                                 json.Value<Int32>("addrFamily"),
                                                 new IPAddress(json.Value<Int32>("addr")),
                                                 json.Value<Int32>("port"),
-                                                Connection.Status.ESTABLISHED);
-                                            Data.Connections.TryAdd(json.Value<Int32>("socket"), connection);
-                                            OnNewConnection?.Invoke(this, connection);
-                                            Console.WriteLine("new connection");
+                                                Connection.Status.ESTABLISHED
+                                            );
+
+                                            int connectRet = json.Value<int>("ret");
+                                            int connectLastError = json.Value<int>("lastError");
+                                            if (connectRet == 0)
+                                            {
+                                                Data.Connections.TryAdd(json.Value<Int32>("socket"), connection);
+                                                OnNewConnection?.Invoke(this, connection);
+                                                Console.WriteLine("new connection");
+                                            }
+                                            else if (connectRet == -1 && connectLastError == 10035) // ret == SOCKET_ERROR and error == WSAEWOULDBLOCK
+                                            {
+                                                connection.SocketStatus = Connection.Status.CONNECTING;
+                                                Data.Connections.TryAdd(json.Value<Int32>("socket"), connection);
+
+                                                System.Timers.Timer timer = new System.Timers.Timer();
+                                                int counter = 0;
+                                                timer.Elapsed += (object sender, ElapsedEventArgs e) =>
+                                                {
+                                                    EventHandler<JObject> callback = (object o, JObject resp) =>
+                                                    {
+                                                        if (++counter >= 5)
+                                                        {
+                                                            Console.WriteLine($"Socket never became writable. Socket: {connection.SocketId}");
+                                                            Data.Connections.TryRemove(connection.SocketId, out _);
+                                                        }
+                                                        else if (resp.Value<bool>("writable") == false)
+                                                        {
+                                                            timer.Start();
+                                                        }
+                                                    };
+
+                                                    Send(new IsSocketWritable(callback) { SocketId = connection.SocketId });
+                                                };
+                                                timer.Interval = 1000;
+                                                timer.AutoReset = false;
+                                                timer.Start();
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine($"Socket connected failed. Socket: {connection.SocketId} | " +
+                                                    $"Connect Ret: {connectRet} | " +
+                                                    $"WSALastError: {connectLastError}");
+                                            }
                                         }
                                         else if (hookedFuncType == HookedFuncType.CLOSE)
                                         {
@@ -115,20 +172,21 @@ namespace XOPE_UI.Spy
                                                 matchingConnection.SocketStatus = Connection.Status.CLOSED;
                                                 matchingConnection.LastStatusChangeTime = DateTime.Now;
 
-                                                System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
-                                                t.Tick += (object sender, EventArgs e) =>
+                                                System.Timers.Timer t = new System.Timers.Timer();
+                                                t.Elapsed += (object sender, ElapsedEventArgs e) =>
                                                 {
                                                     Data.Connections.TryRemove(matchingConnection.SocketId, out Connection v);
-                                                    t.Stop();
                                                 };
 
                                                 t.Interval = 7000;
+                                                t.AutoReset = false;
                                                 t.Start();
                                                 OnCloseConnection?.Invoke(this, matchingConnection);
                                             }
                                         }
                                         else
                                         {
+                                            int socket = json.Value<int>("socket");
                                             byte[] data = Convert.FromBase64String(json.Value<String>("packetDataB64"));
                                             Packet packet = new Packet
                                             {
@@ -136,9 +194,38 @@ namespace XOPE_UI.Spy
                                                 Type = hookedFuncType,
                                                 Data = data,
                                                 Length = data.Length,
-                                                Socket = json.Value<int>("socket"),
+                                                Socket = socket,
                                             };
                                             OnNewPacket?.Invoke(this, packet);
+
+
+                                            if (!Data.Connections.ContainsKey(socket))
+                                            {
+                                                Console.WriteLine($"Missed Connect/WSAConnect for socket {socket}. Reqesting info...");
+
+                                                Connection connection = new Connection(
+                                                    socket,
+                                                    json.Value<Int32>("protocol"),
+                                                    json.Value<Int32>("addrFamily"),
+                                                    new IPAddress(json.Value<Int32>("addr")),
+                                                    json.Value<Int32>("port"),
+                                                    Connection.Status.REQUESTING_INFO
+                                                );
+                                                Data.Connections.TryAdd(connection.SocketId, connection);
+
+                                                SocketInfo socketInfo = new SocketInfo()
+                                                {
+                                                    SocketId = socket
+                                                };
+                                                socketInfo.OnResponse += (object o, JObject resp) =>
+                                                { 
+                                                    Data.Connections.TryAdd(socket, connection);
+                                                    OnNewConnection?.Invoke(this, connection); // 
+                                                    Console.WriteLine($"Added previously opened socket {socket}");
+                                                };
+
+                                                Send(socketInfo);
+                                            }
                                         }
 
                                     }
@@ -152,10 +239,14 @@ namespace XOPE_UI.Spy
                                     {
                                         Console.WriteLine($"[Spy-Error] {json.Value<String>("errorMessage")}");
                                     }
+                                    else if (messageType == ServerMessageType.INVALID_MESSAGE)
+                                    {
+                                        Console.WriteLine($"[Server-Error] Received a INVALID_MESSAGE. Check if the messageType was sent by Spy.");
+                                    }
                                 }
                             }
 
-                            FlushOutBuffer(serverStream);
+                            FlushOutBuffer(clientStream);
                             Thread.Sleep(20);
                         }
                         Console.WriteLine("Closing server...");
@@ -163,7 +254,7 @@ namespace XOPE_UI.Spy
                         if (serverStream.IsConnected)
                         {
                             Send(new ShutdownSpy());
-                            FlushOutBuffer(serverStream);
+                            FlushOutBuffer(clientStream);
                         }
                     }
                     catch (Exception ex)
@@ -176,7 +267,11 @@ namespace XOPE_UI.Spy
                     {
                         Console.WriteLine("Server closed!");
                     }
+
+                    if (clientStream.IsConnected)
+                        clientStream.Close();
                 }
+
             }, cancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
@@ -190,12 +285,17 @@ namespace XOPE_UI.Spy
             serverThread = null;
         }
 
-        private void FlushOutBuffer(NamedPipeServerStream serverStream)
+        private void FlushOutBuffer(NamedPipeClientStream clientStream)
         {
+            if (clientStream == null)
+            {
+                Console.WriteLine("Client Stream is null. Cannot send message(s) to Spy.");
+                return;
+            }
+
             while (outBuffer.TryDequeue(out byte[] data))
             {
-                Console.WriteLine("Sending data in FlushOutBuffer...");
-                serverStream.Write(data, 0, data.Length);
+                clientStream.Write(data, 0, data.Length);
             }
         }
     }

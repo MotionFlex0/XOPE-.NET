@@ -55,12 +55,24 @@
     <Filter Include="Header Files\packet">
       <UniqueIdentifier>{d69d3c1c-d296-4e16-a32b-b6374df8f0f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\server">
+      <UniqueIdentifier>{a0badf7b-8dab-4835-8e25-7846c9db3920}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\server">
+      <UniqueIdentifier>{912e5d52-0b0a-4753-9f0b-15f4448b94a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\patches">
+      <UniqueIdentifier>{16bb4d62-8d01-48ed-8b69-76bc04f53c80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\patches">
+      <UniqueIdentifier>{3826195e-19b5-4639-b2f6-d1a8642e5a82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pipe\namedpipe.cpp">
+    <ClCompile Include="pipe\namedpipeclient.cpp">
       <Filter>Source Files\pipe</Filter>
     </ClCompile>
     <ClCompile Include="hook\detour.cpp">
@@ -78,9 +90,39 @@
     <ClCompile Include="packet\filter.cpp">
       <Filter>Source Files\packet</Filter>
     </ClCompile>
+    <ClCompile Include="application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="server\namedpipeserver.cpp">
+      <Filter>Source Files\server</Filter>
+    </ClCompile>
+    <ClCompile Include="server\iserver.cpp">
+      <Filter>Source Files\server</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\connect.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\send.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\recv.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\close.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\wsasend.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\wsaconnect.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\wsarecv.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pipe\namedpipe.h">
+    <ClInclude Include="pipe\namedpipeclient.h">
       <Filter>Header Files\pipe</Filter>
     </ClInclude>
     <ClInclude Include="hook\detour.h">
@@ -118,6 +160,21 @@
     </ClInclude>
     <ClInclude Include="packet\type.h">
       <Filter>Header Files\packet</Filter>
+    </ClInclude>
+    <ClInclude Include="application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="server\iserver.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
+    <ClInclude Include="server\namedpipeserver.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
+    <ClInclude Include="server\incomingmessage.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
+    <ClInclude Include="patches\functions.h">
+      <Filter>Header Files\patches</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
