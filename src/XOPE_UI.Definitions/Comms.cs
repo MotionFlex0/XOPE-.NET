@@ -13,6 +13,7 @@ namespace XOPE_UI.Definitions
 
     public enum ServerMessageType
     {
+        INVALID_MESSAGE,
         PING,
         PONG,
         ERROR_MESSAGE,
@@ -29,11 +30,13 @@ namespace XOPE_UI.Definitions
     public enum SpyMessageType
 #endif
     {
+        INVALID_MESSAGE,
         PING,
         PONG,
         ERROR_MESSAGE,
         INJECT_SEND,
         INJECT_RECV,
+        IS_SOCKET_WRITABLE,
         REQUEST_SOCKET_INFO,
         ADD_SEND_FITLER,
         EDIT_SEND_FILTER,

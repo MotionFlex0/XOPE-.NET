@@ -1,6 +1,6 @@
 #pragma once
+#include <WinSock2.h>
 #include <Windows.h>
-
 #include "../nlohmann/json.hpp"
 #include "../utils/base64.h"
 
@@ -14,6 +14,7 @@ using nlohmann::json;
 
 enum class ServerMessageType
 {
+	INVALID_MESSAGE,
 	PING,
 	PONG,
 	ERROR_MESSAGE,
@@ -24,11 +25,13 @@ enum class ServerMessageType
 
 enum class SpyMessageType
 {
+	INVALID_MESSAGE,
 	PING,
 	PONG,
 	ERROR_MESSAGE,
 	INJECT_SEND,
 	INJECT_RECV,
+	IS_SOCKET_WRITABLE,
 	REQUEST_SOCKET_INFO,
 	ADD_SEND_FITLER,
 	EDIT_SEND_FILTER,
@@ -96,16 +99,20 @@ namespace client
 	{
 		HookedFunctionCallPacketMessage() : IMessage(ServerMessageType::HOOKED_FUNCTION_CALL) { };
 
-		//TODO: Maybe use __FUNCTION__ instead of enums
+		//TODO: Maybe use __FUNCTION__ instead of enums for HookedFunction
 		HookedFunction functionName;
 		SOCKET socket;
 		int packetLen;
 		std::string packetDataB64;
+		int ret;
+		int lastError = -1;
 
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(HookedFunctionCallPacketMessage, messageType, functionName,
 			socket, 
 			packetLen, 
-			packetDataB64);
+			packetDataB64,
+			ret,
+			lastError);
 	};
 
 	struct ErrorMessage : IMessage
@@ -128,11 +135,20 @@ namespace client
 
 	struct SocketInfoResponse : IMessageResponse
 	{
-		SocketInfoResponse(std::string jobId, std::string addr, int port) : IMessageResponse(ServerMessageType::JOB_RESPONSE, jobId), addr(addr), port(port) { }
+		SocketInfoResponse(std::string jobId, std::string addr, int port, int addrFamily, int protocol) 
+			: IMessageResponse(ServerMessageType::JOB_RESPONSE, 
+			jobId), 
+			addr(addr), 
+			port(port), 
+			addrFamily(addrFamily), 
+			protocol(protocol) { }
+
 		std::string addr;
 		int port;
+		int addrFamily;
+		int protocol;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(SocketInfoResponse, messageType, jobId, addr, port);
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(SocketInfoResponse, messageType, jobId, addr, port, addrFamily, protocol);
 	};
 
 	struct HookedFunctionCallSocketMessage : IMessage
@@ -142,6 +158,8 @@ namespace client
 		HookedFunction functionName;
 		SOCKET socket;
 		sockaddr_in* addr;
+		int ret;
+		int lastError = -1;
 
 		inline void toJson(json& j) override
 		{
@@ -150,12 +168,36 @@ namespace client
 		}
 	};
 
+	struct IsSocketWritableResponse : IMessageResponse
+	{
+		IsSocketWritableResponse(
+			std::string jobId,
+			bool writable,
+			bool timedOut = false,
+			int lastError = -1
+		) : IMessageResponse(ServerMessageType::JOB_RESPONSE, jobId), 
+			writable(writable), 
+			timedOut(timedOut), 
+			lastError(lastError) { }
 
+		bool writable;
+		bool timedOut = false;
+		int lastError = -1;
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(IsSocketWritableResponse, 
+			messageType, jobId, writable, timedOut, lastError);
+	};
 
 
 	struct ConnectedSuccessMessage : IMessage
 	{
-		ConnectedSuccessMessage() : IMessage(ServerMessageType::CONNECTED_SUCCESS) { }
+		ConnectedSuccessMessage(std::string spyPipeServerName) : IMessage(ServerMessageType::CONNECTED_SUCCESS), spyPipeServerName(spyPipeServerName) { }
+
+		std::string spyPipeServerName;
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ConnectedSuccessMessage,
+			messageType,
+			spyPipeServerName);
 	};
 
 	inline void from_json(const json& j, IMessage& hfcm)
@@ -230,6 +272,8 @@ namespace client
 		to_json(j, (IMessage)hfcm);
 		j["functionName"] = hfcm.functionName;
 		j["socket"] = hfcm.socket;
+		j["ret"] = hfcm.ret;
+		j["lastError"] = hfcm.lastError;
 		if (hfcm.functionName != HookedFunction::CLOSE)
 		{
 			j["protocol"] = -1;
@@ -237,6 +281,5 @@ namespace client
 			j["addr"] = hfcm.addr->sin_addr.S_un.S_addr;
 			j["port"] = ((hfcm.addr->sin_port & 0xFF) << 8) | ((hfcm.addr->sin_port >> 8));
 		}
-
 	}
 }
