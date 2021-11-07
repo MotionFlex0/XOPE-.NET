@@ -1,3 +1,5 @@
+#include "../hook/detour.h"
+
 #if _WIN64
 using Detour = Detour64;
 	#define MESSAGEBOXAPATCHSIZE 14
