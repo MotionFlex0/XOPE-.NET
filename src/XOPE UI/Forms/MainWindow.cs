@@ -143,9 +143,9 @@ namespace XOPE_UI
 
             if (res)
             {
-                setUiToAttachedState();
-
                 attachedProcess = selectedProcess;
+
+                setUiToAttachedState();
                 attachedProcess.EnableRaisingEvents = true;
                 attachedProcess.Exited += attachedProcess_Exited;
                 environment.NotifyProcessAttached(attachedProcess);
