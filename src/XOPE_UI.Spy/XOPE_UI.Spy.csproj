@@ -62,6 +62,7 @@
     <Compile Include="ServerType\InjectRecvPacket.cs" />
     <Compile Include="ServerType\InjectSendPacket.cs" />
     <Compile Include="ServerType\AddSendFilter.cs" />
+    <Compile Include="ServerType\IsSocketWritable.cs" />
     <Compile Include="ServerType\Ping.cs" />
     <Compile Include="ServerType\ShutdownSpy.cs" />
     <Compile Include="ServerType\SocketInfo.cs" />
