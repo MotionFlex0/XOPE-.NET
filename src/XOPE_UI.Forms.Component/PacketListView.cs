@@ -34,9 +34,9 @@ namespace XOPE_UI.Forms.Component
                 listViewItem.Tag = packet;
                 listViewItem.SubItems.Add(type.ToString());
                 listViewItem.SubItems.Add(packet.Length.ToString());
-                listViewItem.SubItems.Add(BitConverter.ToString(packet).Replace("-", " "));
+                listViewItem.SubItems.Add(BitConverter.ToString(packet, 0, Math.Min(30, packet.Length)).Replace("-", " "));
                 listViewItem.SubItems.Add(socketId.ToString());
-                captureListView.Invoke((MethodInvoker)(() => { captureListView.Items.Add(listViewItem); }));
+                captureListView.Invoke(new Action(() => { captureListView.Items.Add(listViewItem); }));
             }
 
             return packetCounter++;
@@ -57,19 +57,13 @@ namespace XOPE_UI.Forms.Component
         {
             ListView.SelectedListViewItemCollection selectedItems = this.captureListView.SelectedItems;
             if (selectedItems.Count > 0)
-            {
-                Console.WriteLine("captureListView_DoubleClick");
                 OnItemDoubleClick?.Invoke(this, selectedItems[0]);
-            }
         }
 
         private void captureListView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             if (e.IsSelected)
-            {
-                Console.WriteLine("captureListView_ItemSelectionChanged");
                 OnItemSelectedChanged?.Invoke(this, e.Item);
-            }
         }
     }
 }
