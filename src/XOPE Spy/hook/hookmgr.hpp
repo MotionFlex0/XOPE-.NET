@@ -4,8 +4,6 @@
 #include <sstream>
 #include <unordered_map>
 #include <typeindex>
-#include <Winsock2.h>
-#include <windows.h>
 #include "../utils/definition.hpp"
 #include "../utils/util.h"
 
