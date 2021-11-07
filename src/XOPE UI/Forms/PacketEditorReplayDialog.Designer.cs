@@ -35,7 +35,7 @@ namespace XOPE_UI.Forms
             this.label1 = new System.Windows.Forms.Label();
             this.addToListButton = new System.Windows.Forms.Button();
             this.replayButton = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.stopButton = new System.Windows.Forms.Button();
             this.waitTimerTextBox = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.socketIdTextBox = new System.Windows.Forms.NumericUpDown();
@@ -88,7 +88,7 @@ namespace XOPE_UI.Forms
             // 
             // replayButton
             // 
-            this.replayButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.replayButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.replayButton.Location = new System.Drawing.Point(488, 14);
             this.replayButton.Name = "replayButton";
             this.replayButton.Size = new System.Drawing.Size(75, 23);
@@ -97,15 +97,15 @@ namespace XOPE_UI.Forms
             this.replayButton.UseVisualStyleBackColor = true;
             this.replayButton.Click += new System.EventHandler(this.replayButton_Click);
             // 
-            // button2
+            // stopButton
             // 
-            this.button2.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button2.Location = new System.Drawing.Point(569, 14);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 15;
-            this.button2.Text = "Stop";
-            this.button2.UseVisualStyleBackColor = true;
+            this.stopButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.stopButton.Location = new System.Drawing.Point(569, 14);
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Size = new System.Drawing.Size(75, 23);
+            this.stopButton.TabIndex = 15;
+            this.stopButton.Text = "Stop";
+            this.stopButton.UseVisualStyleBackColor = true;
             // 
             // waitTimerTextBox
             // 
@@ -158,7 +158,7 @@ namespace XOPE_UI.Forms
             this.Controls.Add(this.socketIdTextBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.waitTimerTextBox);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.stopButton);
             this.Controls.Add(this.replayButton);
             this.Controls.Add(this.addToListButton);
             this.Controls.Add(this.label1);
@@ -182,7 +182,7 @@ namespace XOPE_UI.Forms
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button addToListButton;
         private System.Windows.Forms.Button replayButton;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button stopButton;
         private System.Windows.Forms.NumericUpDown waitTimerTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown socketIdTextBox;
