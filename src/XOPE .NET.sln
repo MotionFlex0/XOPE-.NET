@@ -109,9 +109,7 @@ Global
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Debug|Any CPU (Samples-Controls).Build.0 = Debug|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Debug|x64 binding (UI-Spy).ActiveCfg = Debug|Any CPU
-		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Debug|x64 binding (UI-Spy).Build.0 = Debug|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Debug|x86 binding (UI-Spy).ActiveCfg = Debug|Any CPU
-		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Debug|x86 binding (UI-Spy).Build.0 = Debug|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Debug|x86 build (UI-Spy).ActiveCfg = Debug|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Debug|x86 build (UI-Spy).Build.0 = Debug|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|Any CPU (Samples-Controls).ActiveCfg = Release|Any CPU
