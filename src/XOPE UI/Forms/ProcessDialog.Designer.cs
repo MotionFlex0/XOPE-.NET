@@ -123,8 +123,9 @@
             this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.searchTextBox.Location = new System.Drawing.Point(242, 326);
             this.searchTextBox.Name = "searchTextBox";
+            this.searchTextBox.PlaceholderText = null;
             this.searchTextBox.Size = new System.Drawing.Size(178, 20);
-            this.searchTextBox.TabIndex = 8;
+            this.searchTextBox.TabIndex = 0;
             this.searchTextBox.TextChanged += new System.EventHandler(this.searchTextBox_TextChanged);
             // 
             // ProcessDialog
