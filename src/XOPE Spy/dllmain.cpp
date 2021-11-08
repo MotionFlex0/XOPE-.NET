@@ -2,7 +2,6 @@
 //#define SHOW_DEBUG_CONSOLE
 
 #include <iostream>
-#include <windows.h>
 #include "application.h"
 
 #pragma comment(lib, "ws2_32.lib") // Not needed if WSAGetLastError is removed
