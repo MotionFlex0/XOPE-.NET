@@ -20,7 +20,6 @@ namespace XOPE_UI.Definitions
 
         public Connection(int id, int protocol, int addrFamily, IPAddress ip, int port, Status status)
         {
-            
             SocketId = id;
             Protocol = protocol;
             IPFamily = (AddressFamily)addrFamily;
@@ -44,6 +43,7 @@ namespace XOPE_UI.Definitions
 
         public enum Status
         {
+            REQUESTING_INFO,
             CONNECTING,
             ESTABLISHED,
             CLOSED
