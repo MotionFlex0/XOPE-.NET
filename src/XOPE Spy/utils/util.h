@@ -12,4 +12,10 @@
 namespace Util
 {
 	bool __assert(const char* file, int line, const char* exprStr, const char* msg);
+
+	//https://stackoverflow.com/questions/3175219/restrict-c-template-parameter-to-subclass
+	template<class T, class B> struct Derived_from {
+		static void constraints(T* p) { B* pb = p; }
+		Derived_from() { void(*p)(T*) = constraints; }
+	};
 };
