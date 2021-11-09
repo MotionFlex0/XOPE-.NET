@@ -178,7 +178,6 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="hook\detour.cpp" />
     <ClCompile Include="server\namedpipeserver.cpp" />
-    <ClCompile Include="server\iserver.cpp" />
     <ClCompile Include="utils\base64.cpp" />
     <ClCompile Include="utils\memory.cpp" />
     <ClCompile Include="utils\util.cpp" />

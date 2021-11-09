@@ -96,9 +96,6 @@
     <ClCompile Include="server\namedpipeserver.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
-    <ClCompile Include="server\iserver.cpp">
-      <Filter>Source Files\server</Filter>
-    </ClCompile>
     <ClCompile Include="patches\connect.cpp">
       <Filter>Source Files\patches</Filter>
     </ClCompile>
