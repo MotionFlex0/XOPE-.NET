@@ -3,6 +3,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <queue>
 #include <sstream>
+#include <vector>
 #include "../definitions/definitions.hpp" // only definitions.hpp will import winsock2/windows to prevent redef errors
 #include "../hook/hookmgr.hpp"
 #include "../pipe/namedpipeclient.h"

@@ -138,6 +138,8 @@ namespace XOPE_UI.Spy
                                                 {
                                                     EventHandler<JObject> callback = (object o, JObject resp) =>
                                                     {
+                                                        Console.WriteLine(resp);
+
                                                         if (++counter >= 5)
                                                         {
                                                             Console.WriteLine($"Socket never became writable. Socket: {connection.SocketId}");
@@ -296,6 +298,7 @@ namespace XOPE_UI.Spy
             while (outBuffer.TryDequeue(out byte[] data))
             {
                 clientStream.Write(data, 0, data.Length);
+                clientStream.WriteByte(0);
             }
         }
     }

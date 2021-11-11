@@ -22,8 +22,11 @@ void NamedPipeServer::run()
 	DWORD bytesRead{ 0 };
 	DWORD bytesAvailable{ 0 };
 
+	auto isEndOfJson = [](const char& a, const char& b) { return a == '}' && b == '\x00'; };
+
 	const int storageSize = 65536;
-	char* storageBuf = new char[storageSize]{ 0 };
+	std::vector<char> storageBuf(storageSize, 0xFF);
+	int offset = 0;
 	while (!_stopServer)
 	{
 		if (!PeekNamedPipe(_pipe, NULL, NULL, NULL, &bytesAvailable, NULL))
@@ -35,21 +38,42 @@ void NamedPipeServer::run()
 
 		if (bytesAvailable > 0)
 		{
-			if (ReadFile(_pipe, storageBuf, min(bytesAvailable, storageSize-1), &bytesRead, NULL))
+			if (ReadFile(_pipe, storageBuf.data()+offset, min(bytesAvailable, storageSize-1), &bytesRead, NULL))
 			{
-				*(storageBuf + bytesRead) = 0;
-				json message = json::parse(storageBuf);
+				auto dataEndIt = storageBuf.begin() + offset + bytesRead;
+				auto endOfJsonIt = std::adjacent_find(storageBuf.begin() + offset, dataEndIt, isEndOfJson);
+				if (endOfJsonIt == dataEndIt)
+				{
+					offset += bytesRead;
+					continue;
+				}
+	
+				do
+				{
+					json message = json::parse(storageBuf.data() + offset);
 
-				SpyMessageType type = message["Type"].get<SpyMessageType>();
+					SpyMessageType type = message["Type"].get<SpyMessageType>();
 
-				std::lock_guard lock(_lock);
-				_incomingMessages.push({ type, message });
+					std::lock_guard lock(_lock);
+					_incomingMessages.push({ type, message });
+
+					*(endOfJsonIt + 1) = '\xff'; // 0x00 -> 0xff so the sequence "}\x00" cannot be found again
+					offset = (((endOfJsonIt+2) - storageBuf.begin()));
+
+					if (endOfJsonIt == dataEndIt - 2)
+						break;
+
+					endOfJsonIt = std::adjacent_find(storageBuf.begin() + offset, dataEndIt, isEndOfJson);
+
+				} while (endOfJsonIt < dataEndIt-1);
+
+				if (endOfJsonIt == dataEndIt - 2)
+					offset = 0;
 			}
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(300));
 	}
 
-	delete[] storageBuf;
 	_pipeBroken = true;
 }
 
