@@ -134,7 +134,7 @@ namespace XOPE_UI
                     return;
 
                 // TODO: Attempt to removed existing Spy. 
-                CreateRemoteThread.Free(selectedProcess.Handle);
+                CreateRemoteThread.FreeSpy(selectedProcess.Handle);
             }
 
             server.RunAsync();

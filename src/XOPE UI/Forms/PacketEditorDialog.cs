@@ -41,7 +41,7 @@ namespace XOPE_UI.Forms
                 if (Data != null)
                     hexEditor.Stream = new MemoryStream(Data);
                 else
-                    hexEditor.Stream = new MemoryStream(Encoding.ASCII.GetBytes("___NO DATA___"));
+                    hexEditor.Stream = new MemoryStream(Encoding.ASCII.GetBytes("___NO_DATA___"));
             }
         }
     }
