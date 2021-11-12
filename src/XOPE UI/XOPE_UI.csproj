@@ -1,18 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3B3F2902-E528-4D39-975F-C7900B7AB7DE}</ProjectGuid>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>XOPE_UI</RootNamespace>
     <AssemblyName>XOPE UI</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -28,320 +18,33 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\bin\mixed\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>..\..\bin\mixed\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>XOPE_UI.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CBOR, Version=4.4.4.0, Culture=neutral, PublicKeyToken=9cd62db60ea5554c, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeterO.Cbor.4.4.4\lib\net40\CBOR.dll</HintPath>
-    </Reference>
-    <Reference Include="CSScriptLib, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CS-Script.4.1.0\lib\netstandard2.0\CSScriptLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis, Version=3.11.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.3.11.0\lib\netstandard2.0\Microsoft.CodeAnalysis.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=3.11.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.3.11.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=3.11.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Scripting.3.11.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=3.11.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.3.11.0\lib\netstandard2.0\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyModel, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyModel.5.0.0\lib\net461\Microsoft.Extensions.DependencyModel.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Numbers, Version=1.8.2.0, Culture=neutral, PublicKeyToken=9cd62db60ea5554c, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeterO.Numbers.1.8.2\lib\net40\Numbers.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.5.0.0\lib\net461\System.Collections.Immutable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core" />
     <Reference Include="System.Design" />
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reflection.Metadata.5.0.0\lib\net461\System.Reflection.Metadata.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Text.Encoding.CodePages, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encoding.CodePages.5.0.0\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Encodings.Web, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encodings.Web.5.0.1\lib\net461\System.Text.Encodings.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Json, Version=5.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Json.5.0.2\lib\net461\System.Text.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UIAutomationProvider" />
-    <Reference Include="URIUtility, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9cd62db60ea5554c, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeterO.URIUtility.1.0.0\lib\net40\URIUtility.dll</HintPath>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="WPFHexaEditor, Version=2.1.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WPFHexaEditor.2.1.7\lib\net48\WPFHexaEditor.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config\Spy.cs" />
-    <Compile Include="Core\PacketList.cs" />
-    <Compile Include="Core\ViewTabHandler.cs" />
-    <Compile Include="Forms\ActiveConnectionsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ActiveConnectionsDialog.Designer.cs">
-      <DependentUpon>ActiveConnectionsDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FilterEditorDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FilterEditorDialog.Designer.cs">
-      <DependentUpon>FilterEditorDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\LogDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\LogDialog.Designer.cs">
-      <DependentUpon>LogDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\MainWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\MainWindow.Designer.cs">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\PacketEditorDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PacketEditorDialog.Designer.cs">
-      <DependentUpon>PacketEditorDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\PacketEditorReplayDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PacketEditorReplayDialog.Designer.cs">
-      <DependentUpon>PacketEditorReplayDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ProcessDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ProcessDialog.Designer.cs">
-      <DependentUpon>ProcessDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ScriptLoadingDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ScriptLoadingDialog.Designer.cs">
-      <DependentUpon>ScriptLoadingDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ScriptManagerDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ScriptManagerDialog.Designer.cs">
-      <DependentUpon>ScriptManagerDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\SocketChecker.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\SocketChecker.Designer.cs">
-      <DependentUpon>SocketChecker.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Injection\CreateRemoteThread.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Script\ScriptManager.cs" />
-    <Compile Include="Test\UI\HexEditorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Test\UI\HexEditorForm.Designer.cs">
-      <DependentUpon>HexEditorForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Test\UI\HexEditorFormTest.cs" />
-    <Compile Include="Util\Logger.cs" />
-    <EmbeddedResource Include="Forms\ActiveConnectionsDialog.resx">
-      <DependentUpon>ActiveConnectionsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FilterEditorDialog.resx">
-      <DependentUpon>FilterEditorDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\LogDialog.resx">
-      <DependentUpon>LogDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PacketEditorDialog.resx">
-      <DependentUpon>PacketEditorDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PacketEditorReplayDialog.resx">
-      <DependentUpon>PacketEditorReplayDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ProcessDialog.resx">
-      <DependentUpon>ProcessDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ScriptLoadingDialog.resx">
-      <DependentUpon>ScriptLoadingDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ScriptManagerDialog.resx">
-      <DependentUpon>ScriptManagerDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SocketChecker.resx">
-      <DependentUpon>SocketChecker.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <EmbeddedResource Include="Test\UI\HexEditorForm.resx">
-      <DependentUpon>HexEditorForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <None Include="packages.config" />
-    <None Include="Properties\DataSources\XOPE_UI.Forms.ProcessDialog.datasource" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\EBCDIC-NoSpecialChar.tbl" />
-    <None Include="Resources\EBCDIC.tbl" />
-    <None Include="Resources\play-slideshow-button.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\play-arrow.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\pause-button.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SDK\SDK.csproj">
-      <Project>{275f1d60-7e19-4466-8624-00ec9ea768cd}</Project>
-      <Name>SDK</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XOPE_UI.Definitions\XOPE_UI.Definitions.csproj">
-      <Project>{5fbea3f1-33f0-458a-9316-5fd71b4be8eb}</Project>
-      <Name>XOPE_UI.Definitions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XOPE_UI.Forms.Component\XOPE_UI.Forms.Component.csproj">
-      <Project>{9733e795-8047-4dc6-b5df-40a5c81897d4}</Project>
-      <Name>XOPE_UI.Forms.Component</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XOPE_UI.Native\XOPE_UI.Native.csproj">
-      <Project>{0e0549f8-3b40-429f-b109-942b3e253047}</Project>
-      <Name>XOPE_UI.Native</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XOPE_UI.Spy\XOPE_UI.Spy.csproj">
-      <Project>{ebe6b541-68aa-4a86-b56e-df562244c6ec}</Project>
-      <Name>XOPE_UI.Spy</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\SDK\SDK.csproj" />
+    <ProjectReference Include="..\XOPE_UI.Definitions\XOPE_UI.Definitions.csproj" />
+    <ProjectReference Include="..\XOPE_UI.Forms.Component\XOPE_UI.Forms.Component.csproj" />
+    <ProjectReference Include="..\XOPE_UI.Native\XOPE_UI.Native.csproj" />
+    <ProjectReference Include="..\XOPE_UI.Spy\XOPE_UI.Spy.csproj" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">
@@ -360,15 +63,19 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\windows-admin-icon.png" />
+    <PackageReference Include="CS-Script" Version="4.1.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" />
+    <PackageReference Include="PeterO.Cbor" Version="4.4.4" />
+    <PackageReference Include="PeterO.Numbers" Version="1.8.2" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.0" />
+    <PackageReference Include="WPFHexaEditor" Version="2.1.7" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.9.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.9.0" />
+    <PackageReference Include="System.ServiceModel.Federation" Version="4.9.0" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.255803">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets'))" />
-  </Target>
-  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets')" />
 </Project>
