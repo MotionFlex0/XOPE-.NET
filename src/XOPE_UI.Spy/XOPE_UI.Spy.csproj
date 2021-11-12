@@ -1,87 +1,22 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EBE6B541-68AA-4A86-B56E-DF562244C6EC}</ProjectGuid>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XOPE_UI.Spy</RootNamespace>
-    <AssemblyName>XOPE_UI.Spy</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CBOR, Version=4.4.2.0, Culture=neutral, PublicKeyToken=9cd62db60ea5554c, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeterO.Cbor.4.4.2\lib\net40\CBOR.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Numbers, Version=1.8.0.0, Culture=neutral, PublicKeyToken=9cd62db60ea5554c, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeterO.Numbers.1.8.0\lib\net40\Numbers.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="URIUtility, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9cd62db60ea5554c, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeterO.URIUtility.1.0.0\lib\net40\URIUtility.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\XOPE_UI.Definitions\XOPE_UI.Definitions.csproj" />
+    <ProjectReference Include="..\XOPE_UI.Native\XOPE_UI.Native.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IServer.cs" />
-    <Compile Include="NamedPipeServer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerType\IMessage.cs" />
-    <Compile Include="ServerType\IMessageWithResponse.cs" />
-    <Compile Include="ServerType\InjectRecvPacket.cs" />
-    <Compile Include="ServerType\InjectSendPacket.cs" />
-    <Compile Include="ServerType\AddSendFilter.cs" />
-    <Compile Include="ServerType\IsSocketWritable.cs" />
-    <Compile Include="ServerType\Ping.cs" />
-    <Compile Include="ServerType\ShutdownSpy.cs" />
-    <Compile Include="ServerType\SocketInfo.cs" />
-    <Compile Include="SpyData.cs" />
-    <Compile Include="Type\GenericHookedSpyFunc.cs" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="PeterO.Cbor" Version="4.4.2" />
+    <PackageReference Include="PeterO.Numbers" Version="1.8.0" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.255803">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\XOPE_UI.Definitions\XOPE_UI.Definitions.csproj">
-      <Project>{5fbea3f1-33f0-458a-9316-5fd71b4be8eb}</Project>
-      <Name>XOPE_UI.Definitions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XOPE_UI.Native\XOPE_UI.Native.csproj">
-      <Project>{0e0549f8-3b40-429f-b109-942b3e253047}</Project>
-      <Name>XOPE_UI.Native</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,27 +1,27 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30104.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOPE_UI", "XOPE UI\XOPE_UI.csproj", "{3B3F2902-E528-4D39-975F-C7900B7AB7DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XOPE_UI", "XOPE UI\XOPE_UI.csproj", "{3B3F2902-E528-4D39-975F-C7900B7AB7DE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XOPE_Spy", "XOPE Spy\XOPE Spy.vcxproj", "{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Helper32", "Helper32\Helper32.vcxproj", "{3DE5F825-C491-469C-967C-0769F6D0A1B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOPE_UI.Forms.Component", "XOPE_UI.Forms.Component\XOPE_UI.Forms.Component.csproj", "{9733E795-8047-4DC6-B5DF-40A5C81897D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XOPE_UI.Forms.Component", "XOPE_UI.Forms.Component\XOPE_UI.Forms.Component.csproj", "{9733E795-8047-4DC6-B5DF-40A5C81897D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOPE_UI.Definitions", "XOPE_UI.Definitions\XOPE_UI.Definitions.csproj", "{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XOPE_UI.Definitions", "XOPE_UI.Definitions\XOPE_UI.Definitions.csproj", "{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A766C46D-7809-464B-8643-F4D64B58DE2D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.HexEditor", "Samples\Samples.HexEditor\Samples.HexEditor.csproj", "{D76434B8-685A-48C6-A6CB-B90016AA3C76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDK", "SDK\SDK.csproj", "{275F1D60-7E19-4466-8624-00EC9EA768CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SDK", "SDK\SDK.csproj", "{275F1D60-7E19-4466-8624-00EC9EA768CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOPE_UI.Native", "XOPE_UI.Native\XOPE_UI.Native.csproj", "{0E0549F8-3B40-429F-B109-942B3E253047}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XOPE_UI.Native", "XOPE_UI.Native\XOPE_UI.Native.csproj", "{0E0549F8-3B40-429F-B109-942B3E253047}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOPE_UI.Spy", "XOPE_UI.Spy\XOPE_UI.Spy.csproj", "{EBE6B541-68AA-4A86-B56E-DF562244C6EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XOPE_UI.Spy", "XOPE_UI.Spy\XOPE_UI.Spy.csproj", "{EBE6B541-68AA-4A86-B56E-DF562244C6EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,9 +37,9 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|Any CPU (Samples-Controls).Build.0 = Debug|Any CPU
-		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|x64 binding (UI-Spy).ActiveCfg = Debug|x64
-		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|x64 binding (UI-Spy).Build.0 = Debug|x64
-		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|x86 binding (UI-Spy).ActiveCfg = Debug|x64
+		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|x64 binding (UI-Spy).ActiveCfg = Debug|Any CPU
+		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|x64 binding (UI-Spy).Build.0 = Debug|Any CPU
+		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|x86 binding (UI-Spy).ActiveCfg = Debug|Any CPU
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|x86 build (UI-Spy).ActiveCfg = Debug|Any CPU
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|x86 build (UI-Spy).Build.0 = Debug|Any CPU
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Release|Any CPU (Samples-Controls).ActiveCfg = Release|Any CPU
