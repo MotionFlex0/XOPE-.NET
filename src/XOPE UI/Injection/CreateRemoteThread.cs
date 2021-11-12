@@ -135,19 +135,6 @@ namespace XOPE_UI.Injection
         {
             IntPtr moduleToUnload = NativeMethods.GetModuleHandle(hProcess, moduleName);
 
-            //IntPtr[] modules = NativeMethods.EnumProcessModulesEx(hProcess, Win32API.EPMFilterFlag.LIST_MODULES_64BIT);
-            //if (modules == null)
-            //    return false;
-
-            //foreach (IntPtr m in modules)
-            //{
-            //    if (NativeMethods.GetModuleBaseName(hProcess, m).Equals(moduleName.ToLower(), StringComparison.OrdinalIgnoreCase))
-            //    {
-            //        moduleToUnload = m;
-            //        break;
-            //    }
-            //}
-
             if (moduleToUnload == IntPtr.Zero)
                 return false;
 
