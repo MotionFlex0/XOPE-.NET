@@ -29,14 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "",
             "1d -> 1e"}, -1);
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restartAsAdminToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,7 +60,12 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripSeparator();
+            this.attachToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.detachToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton5 = new System.Windows.Forms.ToolStripSeparator();
+            this.recordToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.pauseRecToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.stopRecToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.tabContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.closeTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -80,19 +86,13 @@
             this.deleteFilterButton = new System.Windows.Forms.Button();
             this.addFilterButton = new System.Windows.Forms.Button();
             this.filterListView = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
-            this.restartAsAdminToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.attachToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.detachToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.recordToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.pauseRecToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.stopRecToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -121,7 +121,8 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(942, 24);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(1099, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -139,19 +140,27 @@
             // logToolStripMenuItem
             // 
             this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-            this.logToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.logToolStripMenuItem.Text = "Log";
             this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
+            // 
+            // restartAsAdminToolStripMenuItem
+            // 
+            this.restartAsAdminToolStripMenuItem.Image = global::XOPE_UI.Properties.Resources.windows_admin_icon;
+            this.restartAsAdminToolStripMenuItem.Name = "restartAsAdminToolStripMenuItem";
+            this.restartAsAdminToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.restartAsAdminToolStripMenuItem.Text = "Restart as Admin";
+            this.restartAsAdminToolStripMenuItem.Click += new System.EventHandler(this.restartAsAdminToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(160, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             // 
             // editToolStripMenuItem
@@ -297,7 +306,7 @@
             this.stopRecToolStripButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(942, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1099, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -305,300 +314,6 @@
             // 
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripButton5
-            // 
-            this.toolStripButton5.Name = "toolStripButton5";
-            this.toolStripButton5.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tabContextMenu
-            // 
-            this.tabContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.closeTabToolStripMenuItem});
-            this.tabContextMenu.Name = "tabContextMenu";
-            this.tabContextMenu.Size = new System.Drawing.Size(125, 26);
-            // 
-            // closeTabToolStripMenuItem
-            // 
-            this.closeTabToolStripMenuItem.Name = "closeTabToolStripMenuItem";
-            this.closeTabToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.closeTabToolStripMenuItem.Text = "Close Tab";
-            this.closeTabToolStripMenuItem.Click += new System.EventHandler(this.closeTabToolStripMenuItem_Click);
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 452);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(942, 22);
-            this.statusStrip1.TabIndex = 4;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // captureViewButton
-            // 
-            this.captureViewButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.captureViewButton.FlatAppearance.BorderSize = 0;
-            this.captureViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.captureViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.captureViewButton.Location = new System.Drawing.Point(1, 5);
-            this.captureViewButton.Name = "captureViewButton";
-            this.captureViewButton.Size = new System.Drawing.Size(111, 23);
-            this.captureViewButton.TabIndex = 6;
-            this.captureViewButton.Text = "Capture View";
-            this.captureViewButton.UseVisualStyleBackColor = false;
-            // 
-            // filterViewButton
-            // 
-            this.filterViewButton.BackColor = System.Drawing.SystemColors.Control;
-            this.filterViewButton.FlatAppearance.BorderSize = 0;
-            this.filterViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.filterViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.filterViewButton.Location = new System.Drawing.Point(1, 34);
-            this.filterViewButton.Name = "filterViewButton";
-            this.filterViewButton.Size = new System.Drawing.Size(111, 23);
-            this.filterViewButton.TabIndex = 7;
-            this.filterViewButton.Text = "Filter View";
-            this.filterViewButton.UseVisualStyleBackColor = false;
-            // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.panel1.BackColor = System.Drawing.SystemColors.Control;
-            this.panel1.Controls.Add(this.replayViewButton);
-            this.panel1.Controls.Add(this.captureViewButton);
-            this.panel1.Controls.Add(this.filterViewButton);
-            this.panel1.Location = new System.Drawing.Point(11, 52);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(111, 390);
-            this.panel1.TabIndex = 8;
-            // 
-            // replayViewButton
-            // 
-            this.replayViewButton.BackColor = System.Drawing.SystemColors.Control;
-            this.replayViewButton.FlatAppearance.BorderSize = 0;
-            this.replayViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.replayViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.replayViewButton.Location = new System.Drawing.Point(1, 63);
-            this.replayViewButton.Name = "replayViewButton";
-            this.replayViewButton.Size = new System.Drawing.Size(111, 23);
-            this.replayViewButton.TabIndex = 8;
-            this.replayViewButton.Text = "Replay View";
-            this.replayViewButton.UseVisualStyleBackColor = false;
-            // 
-            // viewTab
-            // 
-            this.viewTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.viewTab.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
-            this.viewTab.Controls.Add(this.captureViewTabPage);
-            this.viewTab.Controls.Add(this.filterViewTabPage);
-            this.viewTab.Controls.Add(this.replayViewTabPage);
-            this.viewTab.ItemSize = new System.Drawing.Size(0, 1);
-            this.viewTab.Location = new System.Drawing.Point(116, 52);
-            this.viewTab.Name = "viewTab";
-            this.viewTab.SelectedIndex = 0;
-            this.viewTab.Size = new System.Drawing.Size(813, 390);
-            this.viewTab.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
-            this.viewTab.TabIndex = 9;
-            // 
-            // captureViewTabPage
-            // 
-            this.captureViewTabPage.Controls.Add(this.splitContainer1);
-            this.captureViewTabPage.Location = new System.Drawing.Point(4, 5);
-            this.captureViewTabPage.Name = "captureViewTabPage";
-            this.captureViewTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.captureViewTabPage.Size = new System.Drawing.Size(805, 381);
-            this.captureViewTabPage.TabIndex = 0;
-            this.captureViewTabPage.Text = "tabPage1";
-            this.captureViewTabPage.UseVisualStyleBackColor = true;
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.captureTabControl);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.hexPreviewPanel);
-            this.splitContainer1.Size = new System.Drawing.Size(805, 383);
-            this.splitContainer1.SplitterDistance = 283;
-            this.splitContainer1.TabIndex = 3;
-            // 
-            // captureTabControl
-            // 
-            this.captureTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.captureTabControl.Controls.Add(this.liveCapture);
-            this.captureTabControl.Location = new System.Drawing.Point(4, 0);
-            this.captureTabControl.Name = "captureTabControl";
-            this.captureTabControl.SelectedIndex = 0;
-            this.captureTabControl.Size = new System.Drawing.Size(955, 287);
-            this.captureTabControl.TabIndex = 0;
-            // 
-            // liveCapture
-            // 
-            this.liveCapture.Controls.Add(this.livePacketListView);
-            this.liveCapture.Location = new System.Drawing.Point(4, 22);
-            this.liveCapture.Name = "liveCapture";
-            this.liveCapture.Padding = new System.Windows.Forms.Padding(3);
-            this.liveCapture.Size = new System.Drawing.Size(947, 261);
-            this.liveCapture.TabIndex = 1;
-            this.liveCapture.Text = "Live Capture";
-            this.liveCapture.UseVisualStyleBackColor = true;
-            // 
-            // livePacketListView
-            // 
-            this.livePacketListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.livePacketListView.Location = new System.Drawing.Point(0, 0);
-            this.livePacketListView.Margin = new System.Windows.Forms.Padding(0);
-            this.livePacketListView.Name = "livePacketListView";
-            this.livePacketListView.Size = new System.Drawing.Size(793, 261);
-            this.livePacketListView.TabIndex = 0;
-            // 
-            // hexPreviewPanel
-            // 
-            this.hexPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hexPreviewPanel.Controls.Add(this.packetCaptureHexPreview);
-            this.hexPreviewPanel.Location = new System.Drawing.Point(4, 1);
-            this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(798, 90);
-            this.hexPreviewPanel.TabIndex = 6;
-            // 
-            // packetCaptureHexPreview
-            // 
-            this.packetCaptureHexPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.packetCaptureHexPreview.CellBackColor = System.Drawing.Color.White;
-            this.packetCaptureHexPreview.CellHoverBackColor = System.Drawing.Color.Cyan;
-            this.packetCaptureHexPreview.Location = new System.Drawing.Point(4, 4);
-            this.packetCaptureHexPreview.Name = "packetCaptureHexPreview";
-            this.packetCaptureHexPreview.SelectionBackColor = System.Drawing.Color.Blue;
-            this.packetCaptureHexPreview.SelectionForeColor = System.Drawing.Color.White;
-            this.packetCaptureHexPreview.Size = new System.Drawing.Size(795, 83);
-            this.packetCaptureHexPreview.TabIndex = 0;
-            // 
-            // filterViewTabPage
-            // 
-            this.filterViewTabPage.Controls.Add(this.deleteFilterButton);
-            this.filterViewTabPage.Controls.Add(this.addFilterButton);
-            this.filterViewTabPage.Controls.Add(this.filterListView);
-            this.filterViewTabPage.Location = new System.Drawing.Point(4, 5);
-            this.filterViewTabPage.Name = "filterViewTabPage";
-            this.filterViewTabPage.Size = new System.Drawing.Size(805, 381);
-            this.filterViewTabPage.TabIndex = 2;
-            this.filterViewTabPage.Text = "tabPage1";
-            this.filterViewTabPage.UseVisualStyleBackColor = true;
-            // 
-            // deleteFilterButton
-            // 
-            this.deleteFilterButton.Enabled = false;
-            this.deleteFilterButton.Location = new System.Drawing.Point(731, 325);
-            this.deleteFilterButton.Name = "deleteFilterButton";
-            this.deleteFilterButton.Size = new System.Drawing.Size(71, 23);
-            this.deleteFilterButton.TabIndex = 2;
-            this.deleteFilterButton.Text = "Delete Filter";
-            this.deleteFilterButton.UseVisualStyleBackColor = true;
-            this.deleteFilterButton.Click += new System.EventHandler(this.deleteFilterButton_Click);
-            // 
-            // addFilterButton
-            // 
-            this.addFilterButton.Location = new System.Drawing.Point(3, 325);
-            this.addFilterButton.Name = "addFilterButton";
-            this.addFilterButton.Size = new System.Drawing.Size(75, 23);
-            this.addFilterButton.TabIndex = 1;
-            this.addFilterButton.Text = "Add filter";
-            this.addFilterButton.UseVisualStyleBackColor = true;
-            this.addFilterButton.Click += new System.EventHandler(this.addFilterButton_Click);
-            // 
-            // filterListView
-            // 
-            this.filterListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5});
-            this.filterListView.FullRowSelect = true;
-            this.filterListView.HideSelection = false;
-            listViewItem1.StateImageIndex = 0;
-            this.filterListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
-            this.filterListView.Location = new System.Drawing.Point(4, 0);
-            this.filterListView.MultiSelect = false;
-            this.filterListView.Name = "filterListView";
-            this.filterListView.OwnerDraw = true;
-            this.filterListView.Size = new System.Drawing.Size(798, 319);
-            this.filterListView.TabIndex = 0;
-            this.filterListView.UseCompatibleStateImageBehavior = false;
-            this.filterListView.View = System.Windows.Forms.View.Details;
-            this.filterListView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.filterListView_DrawColumnHeader);
-            this.filterListView.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.filterListView_DrawItem);
-            this.filterListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.filterListView_DrawSubItem);
-            this.filterListView.SelectedIndexChanged += new System.EventHandler(this.filterListView_SelectedIndexChanged);
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "#";
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Name";
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Filter";
-            this.columnHeader3.Width = 452;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Socket Id";
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Activated";
-            // 
-            // replayViewTabPage
-            // 
-            this.replayViewTabPage.Controls.Add(this.label2);
-            this.replayViewTabPage.Location = new System.Drawing.Point(4, 5);
-            this.replayViewTabPage.Name = "replayViewTabPage";
-            this.replayViewTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.replayViewTabPage.Size = new System.Drawing.Size(805, 381);
-            this.replayViewTabPage.TabIndex = 1;
-            this.replayViewTabPage.Text = "tabPage2";
-            this.replayViewTabPage.UseVisualStyleBackColor = true;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(350, 189);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(111, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "NOT IMPLEMENTED";
-            // 
-            // restartAsAdminToolStripMenuItem
-            // 
-            this.restartAsAdminToolStripMenuItem.Image = global::XOPE_UI.Properties.Resources.windows_admin_icon;
-            this.restartAsAdminToolStripMenuItem.Name = "restartAsAdminToolStripMenuItem";
-            this.restartAsAdminToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.restartAsAdminToolStripMenuItem.Text = "Restart as Admin";
-            this.restartAsAdminToolStripMenuItem.Click += new System.EventHandler(this.restartAsAdminToolStripMenuItem_Click);
             // 
             // attachToolStripButton
             // 
@@ -621,6 +336,11 @@
             this.detachToolStripButton.Text = "toolStripButton6";
             this.detachToolStripButton.ToolTipText = "Detach from process";
             this.detachToolStripButton.Click += new System.EventHandler(this.detachToolStripButton_Click);
+            // 
+            // toolStripButton5
+            // 
+            this.toolStripButton5.Name = "toolStripButton5";
+            this.toolStripButton5.Size = new System.Drawing.Size(6, 25);
             // 
             // recordToolStripButton
             // 
@@ -656,17 +376,318 @@
             this.stopRecToolStripButton.Text = "toolStripButton4";
             this.stopRecToolStripButton.Click += new System.EventHandler(this.stopRecToolStripButton_Click);
             // 
+            // tabContextMenu
+            // 
+            this.tabContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.closeTabToolStripMenuItem});
+            this.tabContextMenu.Name = "tabContextMenu";
+            this.tabContextMenu.Size = new System.Drawing.Size(125, 26);
+            // 
+            // closeTabToolStripMenuItem
+            // 
+            this.closeTabToolStripMenuItem.Name = "closeTabToolStripMenuItem";
+            this.closeTabToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.closeTabToolStripMenuItem.Text = "Close Tab";
+            this.closeTabToolStripMenuItem.Click += new System.EventHandler(this.closeTabToolStripMenuItem_Click);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Location = new System.Drawing.Point(0, 525);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(1099, 22);
+            this.statusStrip1.TabIndex = 4;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // captureViewButton
+            // 
+            this.captureViewButton.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.captureViewButton.FlatAppearance.BorderSize = 0;
+            this.captureViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.captureViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.captureViewButton.Location = new System.Drawing.Point(1, 6);
+            this.captureViewButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.captureViewButton.Name = "captureViewButton";
+            this.captureViewButton.Size = new System.Drawing.Size(130, 27);
+            this.captureViewButton.TabIndex = 6;
+            this.captureViewButton.Text = "Capture View";
+            this.captureViewButton.UseVisualStyleBackColor = false;
+            // 
+            // filterViewButton
+            // 
+            this.filterViewButton.BackColor = System.Drawing.SystemColors.Control;
+            this.filterViewButton.FlatAppearance.BorderSize = 0;
+            this.filterViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.filterViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.filterViewButton.Location = new System.Drawing.Point(1, 39);
+            this.filterViewButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.filterViewButton.Name = "filterViewButton";
+            this.filterViewButton.Size = new System.Drawing.Size(130, 27);
+            this.filterViewButton.TabIndex = 7;
+            this.filterViewButton.Text = "Filter View";
+            this.filterViewButton.UseVisualStyleBackColor = false;
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.panel1.Controls.Add(this.replayViewButton);
+            this.panel1.Controls.Add(this.captureViewButton);
+            this.panel1.Controls.Add(this.filterViewButton);
+            this.panel1.Location = new System.Drawing.Point(13, 60);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(130, 450);
+            this.panel1.TabIndex = 8;
+            // 
+            // replayViewButton
+            // 
+            this.replayViewButton.BackColor = System.Drawing.SystemColors.Control;
+            this.replayViewButton.FlatAppearance.BorderSize = 0;
+            this.replayViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.replayViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.replayViewButton.Location = new System.Drawing.Point(1, 73);
+            this.replayViewButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.replayViewButton.Name = "replayViewButton";
+            this.replayViewButton.Size = new System.Drawing.Size(130, 27);
+            this.replayViewButton.TabIndex = 8;
+            this.replayViewButton.Text = "Replay View";
+            this.replayViewButton.UseVisualStyleBackColor = false;
+            // 
+            // viewTab
+            // 
+            this.viewTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.viewTab.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
+            this.viewTab.Controls.Add(this.captureViewTabPage);
+            this.viewTab.Controls.Add(this.filterViewTabPage);
+            this.viewTab.Controls.Add(this.replayViewTabPage);
+            this.viewTab.ItemSize = new System.Drawing.Size(0, 1);
+            this.viewTab.Location = new System.Drawing.Point(135, 60);
+            this.viewTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.viewTab.Name = "viewTab";
+            this.viewTab.SelectedIndex = 0;
+            this.viewTab.Size = new System.Drawing.Size(948, 450);
+            this.viewTab.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+            this.viewTab.TabIndex = 9;
+            // 
+            // captureViewTabPage
+            // 
+            this.captureViewTabPage.Controls.Add(this.splitContainer1);
+            this.captureViewTabPage.Location = new System.Drawing.Point(4, 5);
+            this.captureViewTabPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.captureViewTabPage.Name = "captureViewTabPage";
+            this.captureViewTabPage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.captureViewTabPage.Size = new System.Drawing.Size(940, 441);
+            this.captureViewTabPage.TabIndex = 0;
+            this.captureViewTabPage.Text = "tabPage1";
+            this.captureViewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.captureTabControl);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.hexPreviewPanel);
+            this.splitContainer1.Size = new System.Drawing.Size(939, 442);
+            this.splitContainer1.SplitterDistance = 326;
+            this.splitContainer1.SplitterWidth = 5;
+            this.splitContainer1.TabIndex = 3;
+            // 
+            // captureTabControl
+            // 
+            this.captureTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.captureTabControl.Controls.Add(this.liveCapture);
+            this.captureTabControl.Location = new System.Drawing.Point(5, 0);
+            this.captureTabControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.captureTabControl.Name = "captureTabControl";
+            this.captureTabControl.SelectedIndex = 0;
+            this.captureTabControl.Size = new System.Drawing.Size(939, 330);
+            this.captureTabControl.TabIndex = 0;
+            // 
+            // liveCapture
+            // 
+            this.liveCapture.Controls.Add(this.livePacketListView);
+            this.liveCapture.Location = new System.Drawing.Point(4, 24);
+            this.liveCapture.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.liveCapture.Name = "liveCapture";
+            this.liveCapture.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.liveCapture.Size = new System.Drawing.Size(931, 302);
+            this.liveCapture.TabIndex = 1;
+            this.liveCapture.Text = "Live Capture";
+            this.liveCapture.UseVisualStyleBackColor = true;
+            // 
+            // livePacketListView
+            // 
+            this.livePacketListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.livePacketListView.Location = new System.Drawing.Point(0, 0);
+            this.livePacketListView.Margin = new System.Windows.Forms.Padding(0);
+            this.livePacketListView.Name = "livePacketListView";
+            this.livePacketListView.Size = new System.Drawing.Size(927, 298);
+            this.livePacketListView.TabIndex = 0;
+            // 
+            // hexPreviewPanel
+            // 
+            this.hexPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.hexPreviewPanel.Controls.Add(this.packetCaptureHexPreview);
+            this.hexPreviewPanel.Location = new System.Drawing.Point(5, 1);
+            this.hexPreviewPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.hexPreviewPanel.Name = "hexPreviewPanel";
+            this.hexPreviewPanel.Size = new System.Drawing.Size(931, 95);
+            this.hexPreviewPanel.TabIndex = 6;
+            // 
+            // packetCaptureHexPreview
+            // 
+            this.packetCaptureHexPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.packetCaptureHexPreview.CellBackColor = System.Drawing.Color.White;
+            this.packetCaptureHexPreview.CellHoverBackColor = System.Drawing.Color.Cyan;
+            this.packetCaptureHexPreview.Location = new System.Drawing.Point(5, 5);
+            this.packetCaptureHexPreview.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+            this.packetCaptureHexPreview.Name = "packetCaptureHexPreview";
+            this.packetCaptureHexPreview.SelectionBackColor = System.Drawing.Color.Blue;
+            this.packetCaptureHexPreview.SelectionForeColor = System.Drawing.Color.White;
+            this.packetCaptureHexPreview.Size = new System.Drawing.Size(927, 87);
+            this.packetCaptureHexPreview.TabIndex = 0;
+            // 
+            // filterViewTabPage
+            // 
+            this.filterViewTabPage.Controls.Add(this.deleteFilterButton);
+            this.filterViewTabPage.Controls.Add(this.addFilterButton);
+            this.filterViewTabPage.Controls.Add(this.filterListView);
+            this.filterViewTabPage.Location = new System.Drawing.Point(4, 5);
+            this.filterViewTabPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.filterViewTabPage.Name = "filterViewTabPage";
+            this.filterViewTabPage.Size = new System.Drawing.Size(940, 441);
+            this.filterViewTabPage.TabIndex = 2;
+            this.filterViewTabPage.Text = "tabPage1";
+            this.filterViewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // deleteFilterButton
+            // 
+            this.deleteFilterButton.Enabled = false;
+            this.deleteFilterButton.Location = new System.Drawing.Point(853, 375);
+            this.deleteFilterButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.deleteFilterButton.Name = "deleteFilterButton";
+            this.deleteFilterButton.Size = new System.Drawing.Size(83, 27);
+            this.deleteFilterButton.TabIndex = 2;
+            this.deleteFilterButton.Text = "Delete Filter";
+            this.deleteFilterButton.UseVisualStyleBackColor = true;
+            this.deleteFilterButton.Click += new System.EventHandler(this.deleteFilterButton_Click);
+            // 
+            // addFilterButton
+            // 
+            this.addFilterButton.Location = new System.Drawing.Point(4, 375);
+            this.addFilterButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.addFilterButton.Name = "addFilterButton";
+            this.addFilterButton.Size = new System.Drawing.Size(88, 27);
+            this.addFilterButton.TabIndex = 1;
+            this.addFilterButton.Text = "Add filter";
+            this.addFilterButton.UseVisualStyleBackColor = true;
+            this.addFilterButton.Click += new System.EventHandler(this.addFilterButton_Click);
+            // 
+            // filterListView
+            // 
+            this.filterListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5});
+            this.filterListView.FullRowSelect = true;
+            listViewItem1.StateImageIndex = 0;
+            this.filterListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1});
+            this.filterListView.Location = new System.Drawing.Point(5, 0);
+            this.filterListView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.filterListView.MultiSelect = false;
+            this.filterListView.Name = "filterListView";
+            this.filterListView.OwnerDraw = true;
+            this.filterListView.Size = new System.Drawing.Size(930, 367);
+            this.filterListView.TabIndex = 0;
+            this.filterListView.UseCompatibleStateImageBehavior = false;
+            this.filterListView.View = System.Windows.Forms.View.Details;
+            this.filterListView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.filterListView_DrawColumnHeader);
+            this.filterListView.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.filterListView_DrawItem);
+            this.filterListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.filterListView_DrawSubItem);
+            this.filterListView.SelectedIndexChanged += new System.EventHandler(this.filterListView_SelectedIndexChanged);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "#";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Name";
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Filter";
+            this.columnHeader3.Width = 452;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Socket Id";
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Activated";
+            // 
+            // replayViewTabPage
+            // 
+            this.replayViewTabPage.Controls.Add(this.label2);
+            this.replayViewTabPage.Location = new System.Drawing.Point(4, 5);
+            this.replayViewTabPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.replayViewTabPage.Name = "replayViewTabPage";
+            this.replayViewTabPage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.replayViewTabPage.Size = new System.Drawing.Size(940, 441);
+            this.replayViewTabPage.TabIndex = 1;
+            this.replayViewTabPage.Text = "tabPage2";
+            this.replayViewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(408, 218);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(112, 15);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "NOT IMPLEMENTED";
+            // 
             // MainWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(942, 474);
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.ClientSize = new System.Drawing.Size(1099, 547);
             this.Controls.Add(this.viewTab);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "MainWindow";
             this.Text = "XOPE";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
