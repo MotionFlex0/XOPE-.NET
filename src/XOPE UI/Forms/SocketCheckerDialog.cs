@@ -6,11 +6,11 @@ using XOPE_UI.Spy.ServerType;
 
 namespace XOPE_UI.Forms
 {
-    public partial class SocketChecker : Form
+    public partial class SocketCheckerDialog : Form
     {
         IServer server;
 
-        public SocketChecker(IServer server)
+        public SocketCheckerDialog(IServer server)
         {
             InitializeComponent();
             this.server = server;
@@ -25,7 +25,7 @@ namespace XOPE_UI.Forms
 
             socketInfo.OnResponse += (object s, JObject json) =>
             {
-                Console.WriteLine($"Socket Check: {json.ToString()}");
+                MessageBox.Show(this, $"Response:\n\n{json}");
             };
 
             server.Send(socketInfo);

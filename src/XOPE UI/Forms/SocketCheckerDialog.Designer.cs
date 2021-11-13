@@ -1,7 +1,7 @@
 ﻿
 namespace XOPE_UI.Forms
 {
-    partial class SocketChecker
+    partial class SocketCheckerDialog
     {
         /// <summary>
         /// Required designer variable.
