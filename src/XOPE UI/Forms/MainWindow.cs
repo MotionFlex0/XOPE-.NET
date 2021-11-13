@@ -49,6 +49,9 @@ namespace XOPE_UI
 
         SDK.Environment environment;
 
+        Timer resizeTimer = new Timer();
+        bool isResizing = false;
+
         public MainWindow(IServer server)
         {
             InitializeComponent();
@@ -84,6 +87,14 @@ namespace XOPE_UI
             environment = SDK.Environment.GetEnvironment();
             server.OnNewPacket += (object sender, Definitions.Packet e) =>
                 environment.NotifyNewPacket(e.Data);
+
+            resizeTimer.Interval = 100;
+            resizeTimer.Tick += (object sender, EventArgs e) =>
+            {
+                this.ResumeLayout(true);
+                this.SuspendLayout();
+                resizeTimer.Stop();
+            };
         }
 
         public void AttachToProcess()
@@ -91,7 +102,7 @@ namespace XOPE_UI
             Process selectedProcess;
             using (ProcessDialog processDialog = new ProcessDialog(IsAdmin))
             {
-                DialogResult result = processDialog.ShowDialog(); //Maybe make processDialog a local var and dispose of dialog here
+                DialogResult result = processDialog.ShowDialog();
                 if (result != DialogResult.OK)
                     return;
                 else
@@ -124,13 +135,13 @@ namespace XOPE_UI
 
             if (spyAlreadyAttached)
             {
-                DialogResult shouldClearList = MessageBox.Show("The Spy is already injected within this process.\n" +
+                DialogResult shouldFreePreviousSpy = MessageBox.Show("The Spy is already injected within this process.\n" +
                     "This may be due to another instance of XOPE.\n" +
                     "Would you like to allow this instance to remove the already existing Spy from this process?",
                     "Another XOPE instance?",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-                if (shouldClearList != DialogResult.Yes)
+                if (shouldFreePreviousSpy != DialogResult.Yes)
                     return;
 
                 // TODO: Attempt to removed existing Spy. 
@@ -187,6 +198,11 @@ namespace XOPE_UI
                 detachToolStripMenuItem.Enabled = true;
                 recordToolStripButton.Enabled = true;
             }));
+        }
+
+        private void updateStatusBar(string text)
+        {
+            this.statusStrip1.Text = text;
         }
 
         private void setUiToDetachedState()
@@ -401,6 +417,8 @@ namespace XOPE_UI
 
         private void addFilterButton_Click(object sender, EventArgs e)
         {
+            const int MAX_FORMAT_LENGTH = 15;
+
             using (FilterEditorDialog filterEditorDialog = new FilterEditorDialog())
             {
                 DialogResult result = filterEditorDialog.ShowDialog();
@@ -410,10 +428,12 @@ namespace XOPE_UI
                     FilterEntry filter = filterEditorDialog.Filter;
 
                     string beforeStr = BitConverter.ToString(filter.Before, 0).Replace("-", " ");
-                    string beforeFormatted = beforeStr.Substring(0, Math.Min(15, beforeStr.Length));
+                    string beforeFormatted = beforeStr.Substring(0, Math.Min(MAX_FORMAT_LENGTH, beforeStr.Length));
+                    beforeFormatted += beforeStr.Length > MAX_FORMAT_LENGTH ? "..." : "";
 
                     string afterStr = BitConverter.ToString(filter.After, 0).Replace("-", " ");
-                    string afterFormatted = afterStr.Substring(0, Math.Min(15, afterStr.Length));
+                    string afterFormatted = afterStr.Substring(0, Math.Min(MAX_FORMAT_LENGTH, afterStr.Length));
+                    afterFormatted += afterStr.Length > MAX_FORMAT_LENGTH ? "..." : "";
 
                     listViewItem.Text = $"{filterIndex++}";
                     listViewItem.SubItems.Add(filter.Name);
@@ -446,7 +466,7 @@ namespace XOPE_UI
             Ping ping = new Ping();
             ping.OnResponse += (ev, response) =>
             {
-                Console.WriteLine($"Received response from Ping. Response: {response.ToString()}");
+                Console.WriteLine($"Received response from Ping. Response: {response}");
             };
 
             server.Send(ping);
@@ -454,15 +474,15 @@ namespace XOPE_UI
 
         private void socketCheckerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (SocketChecker socketChecker = new SocketChecker(server))
+            if (attachedProcess == null)
             {
-                if (attachedProcess == null)
-                {
-                    MessageBox.Show("Not currently attached to a process.");
-                    return;
-                }
+                MessageBox.Show("Not currently attached to a process.");
+                return;
+            }
 
-                socketChecker.ShowDialog();
+            using (SocketCheckerDialog socketCheckerDialog = new SocketCheckerDialog(server))
+            {
+                socketCheckerDialog.ShowDialog();
             }
         }
 
@@ -495,6 +515,33 @@ namespace XOPE_UI
                     MessageBox.Show($"Failed to start as Admin.\n\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            if (isResizing)
+            {
+                resizeTimer.Stop();
+                resizeTimer.Start();
+            }
+            base.OnResize(e);
+        }
+
+        protected override void OnResizeBegin(EventArgs e)
+        {
+            SuspendLayout();
+            resizeTimer.Start();
+            isResizing = true;
+
+            base.OnResizeBegin(e);
+        }
+
+        protected override void OnResizeEnd(EventArgs e)
+        {
+            base.OnResizeEnd(e);
+            resizeTimer.Stop();
+            ResumeLayout();
+            isResizing = false;
         }
     }
 
