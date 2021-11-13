@@ -15,6 +15,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
     {
     case DLL_PROCESS_ATTACH:
     {
+        Sleep(1000); //temp
         InitConsole();
         Application& app = Application::getInstance();
         app.init(hModule);
