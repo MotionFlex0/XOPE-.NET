@@ -10,18 +10,30 @@ NamedPipeClient::NamedPipeClient(const char* pipePath)
 
 NamedPipeClient::~NamedPipeClient()
 {
-    if (isValid())
+    if (!isPipeBroken())
         CloseHandle(_pipe);
 }
 
 void NamedPipeClient::flushOutBuffer()
 {
+    if (isPipeBroken())
+        return;
+
     std::lock_guard<std::mutex> lock(_mutex);
 
     for (auto& out : _outBuffer)
     {
         DWORD bytesWritten { 0 };
-        WriteFile(_pipe, out.data.get(), out.length, &bytesWritten, NULL);
+        BOOL res = WriteFile(_pipe, out.data.get(), out.length, &bytesWritten, NULL);
+        if (!res)
+        {
+            DWORD lastError = GetLastError();
+            if (lastError == ERROR_PIPE_NOT_CONNECTED || lastError == ERROR_BAD_PIPE)
+            {
+                pipeBroken = true;
+                return;
+            }
+        }
     }
     _outBuffer.clear();
 }
@@ -55,10 +67,11 @@ void NamedPipeClient::flushOutBuffer()
 void NamedPipeClient::close()
 {
     CloseHandle(_pipe);
+    _pipe = INVALID_HANDLE_VALUE;
 }
 
 
-bool NamedPipeClient::isValid()
+bool NamedPipeClient::isPipeBroken()
 {
-    return _pipe != INVALID_HANDLE_VALUE;
+    return _pipe == INVALID_HANDLE_VALUE || pipeBroken;
 }

@@ -74,6 +74,8 @@ void NamedPipeServer::run()
 		std::this_thread::sleep_for(std::chrono::milliseconds(300));
 	}
 
+	CloseHandle(_pipe);
+
 	_pipeBroken = true;
 }
 

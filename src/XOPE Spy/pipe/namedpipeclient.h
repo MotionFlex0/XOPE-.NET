@@ -23,7 +23,7 @@ public:
 	NamedPipeClient(const char* pipePath);
 	~NamedPipeClient();
 
-	bool isValid();
+	bool isPipeBroken();
 
 	template <class T>
 	bool send(T mes);
@@ -35,6 +35,7 @@ public:
 
 private:
 
+	bool pipeBroken = false;
 	HANDLE _pipe = INVALID_HANDLE_VALUE;
 	std::vector<OutMessage> _outBuffer;
 	std::mutex _mutex;
@@ -44,7 +45,7 @@ template <class T>
 bool NamedPipeClient::send(T mes)
 {
 	Util::template Derived_from < T, client::IMessage>();
-	if (!isValid())
+	if (isPipeBroken())
 		return false;
 
 	std::lock_guard<std::mutex> lock(_mutex);
