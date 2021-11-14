@@ -30,8 +30,11 @@ void Application::start()
 
 void Application::shutdown()
 {
-    _stopApplication = true;
-    _applicationThread.join();
+    if (!_stopApplication)
+    {
+        _stopApplication = true;
+        _applicationThread.join();
+    }
 
     _namedPipeServer->shutdownServer();
     _serverThread.join();
@@ -39,7 +42,6 @@ void Application::shutdown()
     _hookManager->destroy();
 
     _namedPipeClient->close();
-    _namedPipeServer->shutdownServer();
 
     delete _hookManager;
     delete _namedPipeClient;
@@ -49,13 +51,25 @@ void Application::shutdown()
 
 void Application::run()
 {
-	while (!_stopApplication)
-	{
-		processIncomingMessages();
-
-        _namedPipeClient->flushOutBuffer();
+    while (!_stopApplication)
+    {
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
-	}
+
+        processIncomingMessages();
+        _namedPipeClient->flushOutBuffer();
+
+        if (_namedPipeClient->isPipeBroken() || _namedPipeServer->isPipeBroken())
+            break;
+    }
+
+    // Shutdown was initialised internally instead of an outside source (e.g. FreeLibrary)
+    if (!_stopApplication)
+    {
+        _stopApplication = true;
+
+        //This will end up calling Application::shutdown
+        FreeLibraryAndExitThread(_dllModule, 0);
+    }
 }
 
 HookManager* Application::getHookManager()
@@ -104,6 +118,7 @@ void Application::processIncomingMessages()
         }
         else if (type == SpyMessageType::REQUEST_SOCKET_INFO)
         {
+            std::string jobId = jsonMessage["JobId"].get<std::string>();
             SOCKET socket = jsonMessage["SocketId"].get<SOCKET>();
 
             sockaddr_in sin;
@@ -116,11 +131,11 @@ void Application::processIncomingMessages()
                 int addrSize = sizeof(addr);
                 WSAAddressToStringA((LPSOCKADDR)&sin, sinSize, NULL, addr, (LPDWORD)&addrSize);
 
-                _namedPipeClient->send(client::SocketInfoResponse(jsonMessage["JobId"].get<std::string>(), std::string(addr), port, sin.sin_family, -1));
+                _namedPipeClient->send(client::SocketInfoResponse(jobId, std::string(addr), port, sin.sin_family, -1));
             }
             else
             {
-                _namedPipeClient->send(client::ErrorMessage("could not find that socket ID"));  // TEMP // need to remove jobId from Server map
+                _namedPipeClient->send(client::ErrorMessageResponse(jobId, "could not find that socket ID"));  // TEMP // need to remove jobId from Server map
             }
         }
         else if (type == SpyMessageType::IS_SOCKET_WRITABLE)
@@ -141,7 +156,7 @@ void Application::processIncomingMessages()
                 jsonMessage["JobId"].get<std::string>(),
                 selectRet == 1,
                 selectRet == 0,
-                selectRet
+                WSAGetLastError()
             ));
         }
         else if (type == SpyMessageType::ADD_SEND_FITLER)
@@ -158,8 +173,13 @@ void Application::processIncomingMessages()
         }
         else if (type == SpyMessageType::SHUTDOWN_RECV_THREAD)
         {
-            _namedPipeServer->shutdownServer();
+            _stopApplication = true;
+            this->shutdown();
+            break;
         }
+
+        if (_stopApplication)
+            break;
     }
 
 }
@@ -183,7 +203,7 @@ void Application::initClient(std::string spyServerPipeName)
     const char* pipePath = "\\\\.\\pipe\\xopeui";
 
     _namedPipeClient = new NamedPipeClient(pipePath);
-    if (_namedPipeClient->isValid())
+    if (!_namedPipeClient->isPipeBroken())
     {
         std::cout << "successfully connected to pipe: " << pipePath << '\n';
         _namedPipeClient->send(client::ConnectedSuccessMessage(spyServerPipeName));
