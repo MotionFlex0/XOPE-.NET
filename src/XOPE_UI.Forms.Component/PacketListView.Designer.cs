@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.captureListView = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
             this.SuspendLayout();
             // 
             // captureListView
@@ -50,12 +50,11 @@
             this.columnHeader4});
             this.captureListView.FullRowSelect = true;
             this.captureListView.GridLines = true;
-            this.captureListView.HideSelection = false;
             this.captureListView.Location = new System.Drawing.Point(0, 0);
             this.captureListView.Margin = new System.Windows.Forms.Padding(0);
             this.captureListView.MultiSelect = false;
             this.captureListView.Name = "captureListView";
-            this.captureListView.Size = new System.Drawing.Size(668, 274);
+            this.captureListView.Size = new System.Drawing.Size(779, 316);
             this.captureListView.TabIndex = 1;
             this.captureListView.UseCompatibleStateImageBehavior = false;
             this.captureListView.View = System.Windows.Forms.View.Details;
@@ -74,7 +73,7 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "Length";
-            this.columnHeader2.Width = 59;
+            this.columnHeader2.Width = 110;
             // 
             // columnHeader3
             // 
@@ -87,12 +86,12 @@
             // 
             // PacketListView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.captureListView);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "PacketListView";
-            this.Size = new System.Drawing.Size(668, 274);
+            this.Size = new System.Drawing.Size(779, 316);
             this.ResumeLayout(false);
 
         }

@@ -24,19 +24,31 @@ namespace XOPE_UI.Forms.Component
                 .GetType()
                 .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
                 .SetValue(captureListView, true, null);
+
+            //this.captureListView.Columns[3].Width = 1500;
         }
 
         public int Add(HookedFuncType type, int socketId, byte[] packet)
         {
+            const int MAX_PACKET_LENGTH = 30;
+
             if (type == HookedFuncType.SEND || type == HookedFuncType.RECV || type == HookedFuncType.WSASEND || type == HookedFuncType.WSARECV)
             {
+                string formattedPacket = BitConverter.ToString(packet, 0, Math.Min(MAX_PACKET_LENGTH, packet.Length));
+                formattedPacket = formattedPacket.Replace("-", " ");
+                formattedPacket += packet.Length > MAX_PACKET_LENGTH ? "..." : "";
+
                 ListViewItem listViewItem = new ListViewItem(packetCounter.ToString());
                 listViewItem.Tag = packet;
                 listViewItem.SubItems.Add(type.ToString());
                 listViewItem.SubItems.Add(packet.Length.ToString());
-                listViewItem.SubItems.Add(BitConverter.ToString(packet, 0, Math.Min(30, packet.Length)).Replace("-", " "));
+                listViewItem.SubItems.Add(formattedPacket);
                 listViewItem.SubItems.Add(socketId.ToString());
-                captureListView.Invoke(new Action(() => { captureListView.Items.Add(listViewItem); }));
+                captureListView.Invoke(new Action(() => 
+                { 
+                    captureListView.Items.Add(listViewItem);
+                    captureListView.AutoScrollOffset = 
+                }));
             }
 
             return packetCounter++;
