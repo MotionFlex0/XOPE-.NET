@@ -16,15 +16,22 @@ namespace XOPE_UI
         static void Main()
         {
             if (!File.Exists("XOPESpy32.dll"))
-                System.Windows.Forms.MessageBox.Show("Canont find XOPESpy32.dll\nMake sure it is in the current directory\nWithout it, you cannot attach to 32-bit processes", "Missing DLL",
+                System.Windows.Forms.MessageBox.Show("Canont find XOPESpy32.dll\n" +
+                    "Make sure it is in the current directory\nWithout it, you cannot attach to 32-bit processes", 
+                    "Missing DLL",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             if (!File.Exists("XOPESpy64.dll") && Environment.Is64BitProcess)
-                System.Windows.Forms.MessageBox.Show("Canont find XOPESpy64.dll\nMake sure it is in the current directory\nWithout it, you cannot attach to 64-bit processes", "Missing DLL",
+                System.Windows.Forms.MessageBox.Show("Canont find XOPESpy64.dll\n" +
+                    "Make sure it is in the current directory\nWithout it, you cannot attach to 64-bit processes", 
+                    "Missing DLL",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             if (!File.Exists("helper32.exe") && Environment.Is64BitProcess)
-                System.Windows.Forms.MessageBox.Show("Canont find helper32.exe\nMake sure it is in the current directory\nWithout it, you cannot attach to 32-bit processes", "Missing helper executable",
+                System.Windows.Forms.MessageBox.Show("Canont find helper32.exe\n" +
+                    "Make sure it is in the current directory\n" +
+                    "Without it, you cannot attach to 32-bit processes", 
+                    "Missing helper executable",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             IServer server = new NamedPipeServer();
