@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace XOPE_UI.Spy.ServerType
 {
-    class ShutdownSpy : IMessage
+    public class ShutdownSpy : IMessage
     {
         public ShutdownSpy()
         {
