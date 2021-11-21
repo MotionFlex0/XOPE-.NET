@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using XOPE_UI.Spy;
+//using XOPE_UI.Spy;
 
 namespace SDK
 {
@@ -14,7 +14,7 @@ namespace SDK
 
         // TODO: May cause a race condition. Watch out for this.
         public Process AttachedProcess { get; private set; }
-        public IServer Server { get; set; }
+        //public IMessageDispatcher MessageDispatcher { get; set; }
 
         private static Environment environment;
 
