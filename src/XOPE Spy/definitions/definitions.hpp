@@ -20,7 +20,8 @@ enum class ServerMessageType
 	ERROR_MESSAGE,
 	CONNECTED_SUCCESS,
 	HOOKED_FUNCTION_CALL,
-	JOB_RESPONSE
+	JOB_RESPONSE_SUCCESS,
+	JOB_RESPONSE_ERROR
 };
 
 enum class SpyMessageType
@@ -79,20 +80,6 @@ namespace client
 	{
 		IMessageResponse(ServerMessageType m, std::string jobId) : IMessage(m) { IMessageResponse::jobId = jobId; }
 		std::string jobId;
-
-		inline virtual void toJson(json& j)
-		{
-			/*j +=
-			{
-				KV(messageType)
-			};*/
-			//j.at("messageType").get_to(messageType);
-		}
-
-		inline static std::string convertBytesToB64String(const char* bytes, const unsigned int len)
-		{
-			return base64_encode(std::string(bytes, len));
-		}
 	};
 
 	struct HookedFunctionCallPacketMessage : IMessage
@@ -124,19 +111,29 @@ namespace client
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ErrorMessage, messageType, errorMessage);
 	};
 
+	struct ErrorMessageResponse : IMessageResponse
+	{
+		ErrorMessageResponse(std::string jobId, std::string errMsg) 
+			: IMessageResponse(ServerMessageType::JOB_RESPONSE_ERROR, jobId), errorMessage(errMsg) { }
+
+		std::string errorMessage;
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ErrorMessageResponse, messageType, jobId, errorMessage);
+	};
+
 	struct PongMessageResponse : IMessageResponse
 	{
-		PongMessageResponse(std::string jobId) : IMessageResponse(ServerMessageType::JOB_RESPONSE, jobId) { }
+		PongMessageResponse(std::string jobId) : IMessageResponse(ServerMessageType::JOB_RESPONSE_SUCCESS, jobId) { }
 
 		std::string data = "PONG!";
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(PongMessageResponse, messageType, data, jobId);
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(PongMessageResponse, messageType, jobId, data);
 	};
 
 	struct SocketInfoResponse : IMessageResponse
 	{
 		SocketInfoResponse(std::string jobId, std::string addr, int port, int addrFamily, int protocol) 
-			: IMessageResponse(ServerMessageType::JOB_RESPONSE, 
+			: IMessageResponse(ServerMessageType::JOB_RESPONSE_SUCCESS,
 			jobId), 
 			addr(addr), 
 			port(port), 
@@ -175,7 +172,7 @@ namespace client
 			bool writable,
 			bool timedOut = false,
 			int lastError = -1
-		) : IMessageResponse(ServerMessageType::JOB_RESPONSE, jobId), 
+		) : IMessageResponse(ServerMessageType::JOB_RESPONSE_SUCCESS, jobId),
 			writable(writable), 
 			timedOut(timedOut), 
 			lastError(lastError) { }
