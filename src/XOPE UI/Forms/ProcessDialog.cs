@@ -65,6 +65,7 @@ namespace XOPE_UI.Forms
                     string cacheKey = $"PROCESS_BLACKLIST_{p.Id}_{p.ProcessName}";
                     objectCache.Add(cacheKey, true, DateTime.Now.AddMinutes(30));
                 }
+                catch(InvalidOperationException e) { }
             }
         }
 
