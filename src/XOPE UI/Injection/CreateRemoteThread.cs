@@ -139,7 +139,7 @@ namespace XOPE_UI.Injection
                 return false;
 
             Console.WriteLine($"[unload-64] found module: 0x{moduleToUnload.ToString("X")} | name: {NativeMethods.GetModuleBaseName(hProcess, moduleToUnload).ToLower()}");
-
+            
             IntPtr freeLibraryAddr = IntPtr.Zero;
 
             var processModules = Process.GetCurrentProcess().Modules;
@@ -166,7 +166,7 @@ namespace XOPE_UI.Injection
             if (threadId == 0)
                 return false;
 
-            Console.WriteLine($"[unload] successfully created thread. id: {threadId}");
+            Console.WriteLine($"[unload] successfully created thread. id: 0x{threadId:X}");
 
             return true;
         }
