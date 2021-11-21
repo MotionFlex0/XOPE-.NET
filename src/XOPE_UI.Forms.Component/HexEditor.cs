@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace XOPE_UI.Forms.Component
 {
+    // Read-only ; TODO: Add write functionality
     public partial class HexEditor : UserControl
     {
         const string OFFSET_FORMAT = "X4";
