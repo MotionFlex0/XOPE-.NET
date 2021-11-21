@@ -13,13 +13,13 @@ namespace XOPE_UI.Forms
         public bool Editible { get; set; } = false;
         public int SocketId { get; set; } = 0;
 
-        private IServer server;
+        private SpyManager spyManager;
 
-        public PacketEditorReplayDialog(IServer server)
+        public PacketEditorReplayDialog(SpyManager spyManager)
         {
             InitializeComponent();
 
-            this.server = server;
+            this.spyManager = spyManager;
 
             hexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
             hexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
@@ -49,6 +49,12 @@ namespace XOPE_UI.Forms
 
         private void replayButton_Click(object sender, EventArgs e)
         {
+            if (spyManager.MessageDispatcher == null)
+            {
+                MessageBox.Show("Cannot replay packet because the UI is not connected to the Spy.");
+                return;
+            }
+
             EventHandler func = (object s, EventArgs _) =>
             {
                 if (s != null && s is Timer) ((Timer)s).Dispose(); 
@@ -60,7 +66,7 @@ namespace XOPE_UI.Forms
                 };
                 //hexEditor.Stream.
                 Console.WriteLine("Sending data.. in replayButton_Click");
-                server.Send(message);
+                spyManager.MessageDispatcher.Send(message);
             };
 
             if (this.waitTimerTextBox.Value >= 1)

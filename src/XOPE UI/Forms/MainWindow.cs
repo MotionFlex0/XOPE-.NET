@@ -32,7 +32,6 @@ namespace XOPE_UI
         int captureIndex = 0;
         int filterIndex = 0;
 
-        ActiveConnectionsDialog activeConnectionsDialog;
         /*
          * Not a big fan of this. Unfortunately, due to performance issues with WPFHexaEditor,
          * this is required. TODO: Fix in the future
@@ -41,8 +40,7 @@ namespace XOPE_UI
 
         Process attachedProcess = null;
 
-        IServer server;
-
+        SpyManager spyManager;
         LogDialog logDialog;
         ViewTabHandler viewTabHandler;
         ScriptManager scriptManager;
@@ -52,11 +50,9 @@ namespace XOPE_UI
         Timer resizeTimer = new Timer();
         bool isResizing = false;
 
-        public MainWindow(IServer server)
+        public MainWindow()
         {
             InitializeComponent();
-
-            this.server = server;
 
             logDialog = new LogDialog(new Logger());
             Console.WriteLine($"Program started at: {DateTime.Now}");
@@ -73,19 +69,20 @@ namespace XOPE_UI
 
             scriptManager = new ScriptManager();
 
-            activeConnectionsDialog = new ActiveConnectionsDialog(server.Data);
-            packetEditorReplayDialog = new PacketEditorReplayDialog(server);
-
             livePacketListView.OnItemDoubleClick += LivePacketListView_OnItemDoubleClick;
             livePacketListView.OnItemSelectedChanged += LivePacketListView_OnItemSelectedChanged;
 
-            server.OnNewPacket += (object sender, Definitions.Packet e) =>
+            spyManager = new SpyManager();
+
+            packetEditorReplayDialog = new PacketEditorReplayDialog(spyManager);
+
+            spyManager.OnNewPacket += (object sender, Definitions.Packet e) =>
                 livePacketListView.Invoke(new Action(() => livePacketListView.Add(e)));
 
             captureTabControl.MouseClick += captureTabControl_MouseClick;
 
             environment = SDK.Environment.GetEnvironment();
-            server.OnNewPacket += (object sender, Definitions.Packet e) =>
+            spyManager.OnNewPacket += (object sender, Definitions.Packet e) =>
                 environment.NotifyNewPacket(e.Data);
 
             resizeTimer.Interval = 100;
@@ -129,9 +126,9 @@ namespace XOPE_UI
 
             bool spyAlreadyAttached = false;
             if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(selectedProcess.Handle))
-                spyAlreadyAttached = NativeMethods.GetModuleHandle(selectedProcess.Handle, XOPE_SPY_32) != IntPtr.Zero;
+                spyAlreadyAttached = NativeMethods.GetModuleHandle(selectedProcess.Handle, XOPE_UI.Config.Spy.ModuleName32) != IntPtr.Zero;
             else
-                spyAlreadyAttached = NativeMethods.GetModuleHandle(selectedProcess.Handle, XOPE_SPY_32) != IntPtr.Zero;
+                spyAlreadyAttached = NativeMethods.GetModuleHandle(selectedProcess.Handle, XOPE_UI.Config.Spy.ModuleName64) != IntPtr.Zero;
 
             if (spyAlreadyAttached)
             {
@@ -148,7 +145,7 @@ namespace XOPE_UI
                 CreateRemoteThread.FreeSpy(selectedProcess.Handle);
             }
 
-            server.RunAsync();
+            spyManager.RunAsync(selectedProcess);
 
             bool res = CreateRemoteThread.InjectSpy(selectedProcess.Handle);
 
@@ -156,7 +153,7 @@ namespace XOPE_UI
             {
                 attachedProcess = selectedProcess;
 
-                setUiToAttachedState();
+                SetUiToAttachedState();
                 attachedProcess.EnableRaisingEvents = true;
                 attachedProcess.Exited += attachedProcess_Exited;
                 environment.NotifyProcessAttached(attachedProcess);
@@ -170,26 +167,38 @@ namespace XOPE_UI
             if (attachedProcess == null)
                 return;
 
-            server.ShutdownServerAndWait();
+            spyManager.Shutdown();
+            // This gives the Spy enough time to properly shutdown and dispose of its running threads (temp fix)
+            System.Threading.Thread.Sleep(2000);
 
             if (!alreadyFreed)
             {
                 bool res;
                 if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(attachedProcess.Handle))
-                    res = CreateRemoteThread.Free32(attachedProcess.Handle, XOPE_SPY_32);
+                    res = CreateRemoteThread.Free32(attachedProcess.Handle, XOPE_UI.Config.Spy.ModuleName32);
                 else
-                    res = CreateRemoteThread.Free64(attachedProcess.Handle, XOPE_SPY_64);
+                    res = CreateRemoteThread.Free64(attachedProcess.Handle, XOPE_UI.Config.Spy.ModuleName64);
 
                 if (!res)
                     MessageBox.Show("Failed to free XOPESpy from the attached process");
             }
             ListViewItem listViewItem = new ListViewItem();
-            setUiToDetachedState();
+            SetUiToDetachedState();
             environment.NotifyProcessDetached(attachedProcess);
             attachedProcess = null;
         }
 
-        private void setUiToAttachedState()
+        private bool IsAttached()
+        {
+            if (attachedProcess == null)
+            {
+                MessageBox.Show("Not attached to a process");
+                return false;
+            }
+            return true;
+        }
+
+        private void SetUiToAttachedState()
         {
             this.Invoke(new Action(() =>
             {
@@ -200,12 +209,12 @@ namespace XOPE_UI
             }));
         }
 
-        private void updateStatusBar(string text)
+        private void UpdateStatusBar(string text)
         {
             this.statusStrip1.Text = text;
         }
 
-        private void setUiToDetachedState()
+        private void SetUiToDetachedState()
         {
             this.Invoke(new Action(() =>
             {
@@ -335,8 +344,14 @@ namespace XOPE_UI
 
         private void connectionsListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            activeConnectionsDialog.UpdateActiveList();
-            activeConnectionsDialog.ShowDialog();
+            if (!IsAttached())
+                return;
+                
+            using (ActiveConnectionsDialog dialog = new ActiveConnectionsDialog(spyManager.SpyData))
+            {
+                dialog.UpdateActiveList();
+                dialog.ShowDialog();
+            }
         }
 
         private void LivePacketListView_OnItemDoubleClick(object sender, ListViewItem e)
@@ -457,30 +472,32 @@ namespace XOPE_UI
 
         private void pingTestSpyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (attachedProcess == null)
-            {
-                MessageBox.Show("Not attached to a process");
+            if (!IsAttached())
                 return;
-            }
 
+            Stopwatch roundTripStopwatch = new Stopwatch();
             Ping ping = new Ping();
             ping.OnResponse += (ev, response) =>
             {
-                Console.WriteLine($"Received response from Ping. Response: {response}");
+                roundTripStopwatch.Stop();
+                Console.WriteLine($"Received response from Ping.\r\n" +
+                    $"Round trip time: {roundTripStopwatch.ElapsedMilliseconds}ms\r\n" +
+                    $"Response:\r\n{response}");
             };
 
-            server.Send(ping);
+            roundTripStopwatch.Start();
+            spyManager.MessageDispatcher.Send(ping);
         }
 
         private void socketCheckerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (attachedProcess == null)
+            if (attachedProcess == null && spyManager.MessageDispatcher != null)
             {
                 MessageBox.Show("Not currently attached to a process.");
                 return;
             }
 
-            using (SocketCheckerDialog socketCheckerDialog = new SocketCheckerDialog(server))
+            using (SocketCheckerDialog socketCheckerDialog = new SocketCheckerDialog(spyManager.MessageDispatcher))
             {
                 socketCheckerDialog.ShowDialog();
             }
