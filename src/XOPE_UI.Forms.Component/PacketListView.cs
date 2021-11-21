@@ -47,7 +47,11 @@ namespace XOPE_UI.Forms.Component
                 captureListView.Invoke(new Action(() => 
                 { 
                     captureListView.Items.Add(listViewItem);
-                    captureListView.AutoScrollOffset = 
+                    //Console.WriteLine
+                    //listViewItem.scroll
+                    if (!(captureListView.TopItem.Index < captureListView.Items.Count - 15))
+                        listViewItem.EnsureVisible();
+                    //captureListView.AutoScrollOffset = 
                 }));
             }
 
