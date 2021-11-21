@@ -53,7 +53,7 @@ void Application::run()
 {
     while (!_stopApplication)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        std::this_thread::sleep_for(std::chrono::milliseconds(30));
 
         processIncomingMessages();
         _namedPipeClient->flushOutBuffer();
