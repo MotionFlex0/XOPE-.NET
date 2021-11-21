@@ -10,7 +10,8 @@ namespace XOPE_UI.Forms.Component
     {
         private const int WM_PASTE = 0x0302;
 
-        public string PlaceholderText
+        private string _placeholderText;
+        public override string PlaceholderText
         {
             get => _placeholderText;
             set
@@ -20,7 +21,6 @@ namespace XOPE_UI.Forms.Component
             }
         }
 
-        private string _placeholderText;
 
         public SearchTextBox()
         {
@@ -40,6 +40,9 @@ namespace XOPE_UI.Forms.Component
             {
                 case WM_PASTE:
                     this.Text = "";
+                    //this.Selection  
+                    //this.OnTextChanged()
+
                     break;
             }
             base.WndProc(ref m);
