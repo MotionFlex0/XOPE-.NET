@@ -19,7 +19,8 @@ namespace XOPE_UI.Definitions
         ERROR_MESSAGE,
         CONNECTED_SUCCESS,
         HOOKED_FUNCTION_CALL,
-        JOB_RESPONSE
+        JOB_RESPONSE_SUCCESS,
+        JOB_RESPONSE_ERROR
     }
 
 #if NETFRAMEWORK
