@@ -34,17 +34,15 @@ namespace XOPE_UI
                     "Missing helper executable",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-            IServer server = new NamedPipeServer();
 
             SDK.Environment environment = SDK.Environment.GetEnvironment();
-            environment.Server = server;
 
             Task.Run(() => PrecacheResources());
 
             Application.EnableVisualStyles();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainWindow(server));
+            Application.Run(new MainWindow());
             //Application.Run(new ProcessDialog());
         }
 

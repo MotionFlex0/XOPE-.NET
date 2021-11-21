@@ -8,16 +8,22 @@ namespace XOPE_UI.Forms
 {
     public partial class SocketCheckerDialog : Form
     {
-        IServer server;
+        IMessageDispatcher messageDispatcher;
 
-        public SocketCheckerDialog(IServer server)
+        public SocketCheckerDialog(IMessageDispatcher messageDispatcher)
         {
             InitializeComponent();
-            this.server = server;
+            this.messageDispatcher = messageDispatcher;
         }
 
         private void socketCheckBtn_Click(object sender, EventArgs e)
         {
+            if (!messageDispatcher.IsConnected)
+            {
+                MessageBox.Show("Cannot check socket because the Spy is no longer available.", "Spy not available");
+                return;
+            }
+
             SocketInfo socketInfo = new SocketInfo
             {
                 SocketId = Convert.ToInt32(this.socketIdTextBox.Value)
@@ -28,7 +34,7 @@ namespace XOPE_UI.Forms
                 MessageBox.Show(this, $"Response:\n\n{json}");
             };
 
-            server.Send(socketInfo);
+            messageDispatcher.Send(socketInfo);
         }
     }
 }
