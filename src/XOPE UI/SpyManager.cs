@@ -53,7 +53,6 @@ namespace XOPE_UI
             cancellationTokenSource = new CancellationTokenSource();
 
             MessageReceiver.RunAsync();
-            Thread.Sleep(2000);
 
             spyThread = Task.Run(() =>
             {
@@ -93,6 +92,9 @@ namespace XOPE_UI
                     MessageReceiver.ShutdownServerAndWait();
 
             }, cancellationTokenSource.Token);
+
+            //Waits until MessageReceiver has started and is waiting for a connection
+            while (!MessageReceiver.IsConnectingOrConnected) Thread.Sleep(50);
         }
 
         private void ProcessIncomingMessage(IncomingMessage incomingMessage)

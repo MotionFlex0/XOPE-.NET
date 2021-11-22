@@ -50,12 +50,12 @@ namespace XOPE_UI.Spy
 
             cancellationTokenSource = new CancellationTokenSource();
 
+            setIsConnectingState();
             serverThread = Task.Factory.StartNew(() => {
                 using (NamedPipeServerStream serverStream = new NamedPipeServerStream("xopeui"))
                 {
-                    setIsConnectingState();
                     serverStream.WaitForConnection();
-                    Console.WriteLine("Server connected to Server");
+                    Console.WriteLine("Spy connected to Server");
 
                     try
                     {
