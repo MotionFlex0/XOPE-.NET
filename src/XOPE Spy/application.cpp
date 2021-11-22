@@ -6,6 +6,11 @@ Application& Application::getInstance()
     return instance;
 }
 
+bool Application::isRunning()
+{
+    return !_stopApplication;
+}
+
 void Application::init(HMODULE dllModule)
 {
     _dllModule = dllModule;
@@ -35,9 +40,14 @@ void Application::shutdown()
         _stopApplication = true;
         _applicationThread.join();
     }
+    else if (_applicationThread.joinable())
+        _applicationThread.detach();
 
-    _namedPipeServer->shutdownServer();
-    _serverThread.join();
+    if (_serverThread.joinable())
+    {
+        _namedPipeServer->shutdownServer();
+        _serverThread.join();
+    }
 
     _hookManager->destroy();
 
@@ -66,8 +76,8 @@ void Application::run()
     if (!_stopApplication)
     {
         _stopApplication = true;
+        this->shutdown();
 
-        //This will end up calling Application::shutdown
         FreeLibraryAndExitThread(_dllModule, 0);
     }
 }

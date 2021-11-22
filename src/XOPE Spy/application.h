@@ -21,6 +21,8 @@ public:
 
 	static Application& getInstance();
 
+	bool isRunning();
+
 	void init(HMODULE dllModule);
 	void start();
 	void shutdown();
