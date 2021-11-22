@@ -25,7 +25,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
     case DLL_PROCESS_DETACH:
     {
         Application& app = Application::getInstance();
-        app.shutdown();
+        if (app.isRunning()) app.shutdown();
         RemoveConsole();
         break;
     }

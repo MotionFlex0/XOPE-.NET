@@ -8,12 +8,6 @@ NamedPipeClient::NamedPipeClient(const char* pipePath)
     this->_pipe = h;
 }
 
-NamedPipeClient::~NamedPipeClient()
-{
-    if (!isPipeBroken())
-        CloseHandle(_pipe);
-}
-
 void NamedPipeClient::flushOutBuffer()
 {
     if (isPipeBroken())
@@ -66,6 +60,9 @@ void NamedPipeClient::flushOutBuffer()
 
 void NamedPipeClient::close()
 {
+    if (isPipeBroken())
+        return;
+
     CloseHandle(_pipe);
     _pipe = INVALID_HANDLE_VALUE;
 }

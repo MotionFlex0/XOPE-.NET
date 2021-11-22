@@ -21,7 +21,6 @@ public:
 
 	//Should be run at the beginning of the program.
 	NamedPipeClient(const char* pipePath);
-	~NamedPipeClient();
 
 	bool isPipeBroken();
 
