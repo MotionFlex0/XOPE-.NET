@@ -9,9 +9,14 @@ int WINAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
     client::HookedFunctionCallPacketMessage hfcm;
     hfcm.functionName = HookedFunction::WSARECV;
     hfcm.socket = s;
-    hfcm.packetDataB64 = client::IMessage::convertBytesToB64String(lpBuffers[0].buf, lpBuffers[0].len);
     hfcm.packetLen = lpBuffers[0].len;
     hfcm.ret = ret;
+    
+    if (ret == SOCKET_ERROR)
+        hfcm.lastError = WSAGetLastError();
+    else if (ret > 0)
+        hfcm.packetDataB64 = client::IMessage::convertBytesToB64String(lpBuffers[0].buf, lpBuffers[0].len);
+    
     app.sendToUI(hfcm);
 
     return ret;

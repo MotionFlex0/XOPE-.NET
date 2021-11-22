@@ -9,12 +9,13 @@ int WINAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
     client::HookedFunctionCallPacketMessage hfcm;
     hfcm.functionName = HookedFunction::SEND;
     hfcm.socket = s;
-    hfcm.packetDataB64 = client::IMessage::convertBytesToB64String(buf, len);
     hfcm.packetLen = len;
     hfcm.ret = ret;
 
     if (ret == SOCKET_ERROR)
         hfcm.lastError = WSAGetLastError();
+    else if (ret > 0)
+        hfcm.packetDataB64 = client::IMessage::convertBytesToB64String(buf, len);
 
     app.sendToUI(hfcm);
 
