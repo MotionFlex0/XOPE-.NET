@@ -60,6 +60,7 @@
             this.captureListView.View = System.Windows.Forms.View.Details;
             this.captureListView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.captureListView_ItemSelectionChanged);
             this.captureListView.DoubleClick += new System.EventHandler(this.captureListView_DoubleClick);
+            this.captureListView.Resize += new System.EventHandler(this.captureListView_Resize);
             // 
             // columnHeader1
             // 
