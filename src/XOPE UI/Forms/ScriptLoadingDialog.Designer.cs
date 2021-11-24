@@ -36,26 +36,30 @@ namespace XOPE_UI.Forms
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(38, 38);
+            this.progressBar.Location = new System.Drawing.Point(44, 44);
+            this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.progressBar.MarqueeAnimationSpeed = 20;
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(122, 23);
+            this.progressBar.Size = new System.Drawing.Size(142, 27);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar.TabIndex = 0;
             // 
             // statusTextbox
             // 
-            this.statusTextbox.Location = new System.Drawing.Point(38, 12);
+            this.statusTextbox.Location = new System.Drawing.Point(44, 14);
+            this.statusTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.statusTextbox.Name = "statusTextbox";
             this.statusTextbox.ReadOnly = true;
-            this.statusTextbox.Size = new System.Drawing.Size(122, 20);
+            this.statusTextbox.Size = new System.Drawing.Size(142, 23);
             this.statusTextbox.TabIndex = 1;
             this.statusTextbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(58, 67);
+            this.cancelButton.Location = new System.Drawing.Point(68, 77);
+            this.cancelButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(82, 23);
+            this.cancelButton.Size = new System.Drawing.Size(96, 27);
             this.cancelButton.TabIndex = 2;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
@@ -63,12 +67,16 @@ namespace XOPE_UI.Forms
             // 
             // ScriptLoadingDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(211, 100);
+            this.ClientSize = new System.Drawing.Size(228, 115);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.statusTextbox);
             this.Controls.Add(this.progressBar);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "ScriptLoadingDialog";
             this.Text = "Loading Script";
             this.Load += new System.EventHandler(this.ScriptLoadingDialog_Load);
