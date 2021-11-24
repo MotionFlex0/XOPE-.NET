@@ -36,16 +36,13 @@ namespace XOPE_UI.Forms
                     return;
 
                 Guid guid = (Guid)scriptInfoListView.Tag;
-                if (guid != null)
-                {
-                    ScriptData scriptData = scriptManager.GetScript(guid);
+                ScriptData scriptData = scriptManager.GetScript(guid);
 
-                    TimeSpan runningTime = scriptData.Status == ScriptStatus.RUNNING
-                                            ? DateTime.Now - scriptData.StartedAt
-                                            : scriptData.StoppedAt - scriptData.StartedAt;
+                TimeSpan runningTime = DateTime.Now - scriptData.StartedAt;
 
-                    scriptInfoListView.Items["running_time"].SubItems[1].Text = runningTime.ToString(@"hh\:mm\:ss");
-                }
+                this.Invoke(() =>
+                    scriptInfoListView.Items["running_time"].SubItems[1].Text = runningTime.ToString(@"hh\:mm\:ss")
+                );
             };
             infoRefreshTimer.Start();
         }
@@ -70,7 +67,7 @@ namespace XOPE_UI.Forms
             }
         }
 
-        private ListViewItem getSelectedItem()
+        private ListViewItem GetSelectedItem()
         {
             if (runningScriptListView.SelectedItems.Count > 0)
                 return runningScriptListView.SelectedItems[0];
@@ -89,14 +86,14 @@ namespace XOPE_UI.Forms
         {
             ListView selectedListView = (ListView)sender;
 
+            if (selectedListView.SelectedItems.Count < 1)
+                return;
+
             (selectedListView == runningScriptListView ? stoppedScriptListView : runningScriptListView)
                 .SelectedItems
                 .Clear();
 
             //Debug.WriteLine($"selectedListView.SelectedItems[0].Name: {selectedListView.SelectedItems[0].Name}");
-
-            if (selectedListView.SelectedItems.Count < 1)
-                return;
 
             Guid selectedScriptGuid = (Guid)selectedListView.SelectedItems[0].Tag;
             ScriptData scriptData = scriptManager.GetScript(selectedScriptGuid);
@@ -105,13 +102,21 @@ namespace XOPE_UI.Forms
 
             scriptInfoListView.Items["name"].SubItems[1].Text = scriptData.Name;
             scriptInfoListView.Items["status"].SubItems[1].Text = scriptData.Status.ToString();
-            scriptInfoListView.Items["running_time"].SubItems[1].Text = runningTime.ToString(@"hh\:mm\:ss");
             scriptInfoListView.Items["started_at"].SubItems[1].Text = scriptData.StartedAt.ToString();
             scriptInfoListView.Items["file_location"].SubItems[1].Text = scriptData.FileLocation;
-
+            
+            if (scriptData.Status == ScriptStatus.STOPPED)
+            {
+                TimeSpan duration = scriptData.StoppedAt - scriptData.StartedAt;
+                scriptInfoListView.Items["running_time"].SubItems[1].Text = duration.ToString(@"hh\:mm\:ss");
+            }
+            else if (scriptData.Status == ScriptStatus.RUNNING)
+            {
+                scriptInfoListView.Items["running_time"].SubItems[1].Text = runningTime.ToString(@"hh\:mm\:ss");
+            }
             scriptInfoListView.Tag = selectedScriptGuid;
 
-            //scriptInfoListView.SelectedItems[]
+            infoRefreshTimer.Enabled = scriptData.Status == ScriptStatus.RUNNING;
         }
 
         private void startButton_Click(object sender, EventArgs e)
@@ -121,7 +126,7 @@ namespace XOPE_UI.Forms
 
         private void stopButton_Click(object sender, EventArgs e)
         {
-            ListViewItem listViewItem = getSelectedItem();
+            ListViewItem listViewItem = GetSelectedItem();
 
             if (listViewItem == null)
                 return;
@@ -129,6 +134,9 @@ namespace XOPE_UI.Forms
             Guid guid = (Guid)listViewItem.Tag;
             scriptManager.StopScript(guid);
             Reload();
+
+            int stoppedListCount = stoppedScriptListView.Items.Count;
+            stoppedScriptListView.Items[stoppedListCount - 1].Selected = true;
         }
 
         private void ScriptManagerDialog_FormClosed(object sender, FormClosedEventArgs e)
