@@ -65,7 +65,7 @@ namespace XOPE_UI.Forms
                     string cacheKey = $"PROCESS_BLACKLIST_{p.Id}_{p.ProcessName}";
                     objectCache.Add(cacheKey, true, DateTime.Now.AddMinutes(30));
                 }
-                catch(InvalidOperationException e) { }
+                catch(InvalidOperationException) { }
             }
         }
 
@@ -123,11 +123,11 @@ namespace XOPE_UI.Forms
                         this.processesListView.Items.Add(listViewItem);
                     }));
                 }
-                catch (Win32Exception ex)
+                catch (Win32Exception)
                 {
                     objectCache.Add(cacheKey, true, DateTime.Now.AddMinutes(30));
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                 }
