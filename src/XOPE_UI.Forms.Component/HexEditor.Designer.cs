@@ -29,7 +29,7 @@ namespace XOPE_UI.Forms.Component
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.byteGridView = new System.Windows.Forms.DataGridView();
             this.Column0 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -79,8 +79,9 @@ namespace XOPE_UI.Forms.Component
             this.byteGridView.AllowUserToDeleteRows = false;
             this.byteGridView.AllowUserToResizeColumns = false;
             this.byteGridView.AllowUserToResizeRows = false;
-            this.byteGridView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.byteGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.byteGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleVertical;
             this.byteGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.byteGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -101,11 +102,12 @@ namespace XOPE_UI.Forms.Component
             this.Column14,
             this.Column15});
             this.byteGridView.Location = new System.Drawing.Point(0, 0);
+            this.byteGridView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.byteGridView.Name = "byteGridView";
             this.byteGridView.ReadOnly = true;
             this.byteGridView.RowHeadersWidth = 90;
             this.byteGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.byteGridView.Size = new System.Drawing.Size(529, 88);
+            this.byteGridView.Size = new System.Drawing.Size(546, 102);
             this.byteGridView.TabIndex = 1;
             this.byteGridView.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_CellMouseEnter);
             this.byteGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_CellMouseLeave);
@@ -273,15 +275,17 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn14,
             this.dataGridViewTextBoxColumn15,
             this.dataGridViewTextBoxColumn16});
-            this.textGridView.Location = new System.Drawing.Point(0, 0);
+            this.textGridView.Location = new System.Drawing.Point(2, 0);
+            this.textGridView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textGridView.Name = "textGridView";
             this.textGridView.ReadOnly = true;
             this.textGridView.RowHeadersVisible = false;
             this.textGridView.RowHeadersWidth = 5;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.textGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.textGridView.Size = new System.Drawing.Size(260, 88);
+            this.textGridView.Size = new System.Drawing.Size(308, 102);
             this.textGridView.TabIndex = 2;
             // 
             // dataGridViewTextBoxColumn1
@@ -291,7 +295,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             this.dataGridViewTextBoxColumn1.ReadOnly = true;
             this.dataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn1.Width = 16;
+            this.dataGridViewTextBoxColumn1.Width = 18;
             // 
             // dataGridViewTextBoxColumn2
             // 
@@ -299,7 +303,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             this.dataGridViewTextBoxColumn2.ReadOnly = true;
             this.dataGridViewTextBoxColumn2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn2.Width = 16;
+            this.dataGridViewTextBoxColumn2.Width = 18;
             // 
             // dataGridViewTextBoxColumn3
             // 
@@ -307,7 +311,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             this.dataGridViewTextBoxColumn3.ReadOnly = true;
             this.dataGridViewTextBoxColumn3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn3.Width = 16;
+            this.dataGridViewTextBoxColumn3.Width = 18;
             // 
             // dataGridViewTextBoxColumn4
             // 
@@ -315,7 +319,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             this.dataGridViewTextBoxColumn4.ReadOnly = true;
             this.dataGridViewTextBoxColumn4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn4.Width = 16;
+            this.dataGridViewTextBoxColumn4.Width = 18;
             // 
             // dataGridViewTextBoxColumn5
             // 
@@ -323,7 +327,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
             this.dataGridViewTextBoxColumn5.ReadOnly = true;
             this.dataGridViewTextBoxColumn5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn5.Width = 16;
+            this.dataGridViewTextBoxColumn5.Width = 18;
             // 
             // dataGridViewTextBoxColumn6
             // 
@@ -331,7 +335,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
             this.dataGridViewTextBoxColumn6.ReadOnly = true;
             this.dataGridViewTextBoxColumn6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn6.Width = 16;
+            this.dataGridViewTextBoxColumn6.Width = 18;
             // 
             // dataGridViewTextBoxColumn7
             // 
@@ -339,7 +343,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
             this.dataGridViewTextBoxColumn7.ReadOnly = true;
             this.dataGridViewTextBoxColumn7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn7.Width = 16;
+            this.dataGridViewTextBoxColumn7.Width = 18;
             // 
             // dataGridViewTextBoxColumn8
             // 
@@ -347,7 +351,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
             this.dataGridViewTextBoxColumn8.ReadOnly = true;
             this.dataGridViewTextBoxColumn8.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn8.Width = 16;
+            this.dataGridViewTextBoxColumn8.Width = 18;
             // 
             // dataGridViewTextBoxColumn9
             // 
@@ -355,7 +359,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
             this.dataGridViewTextBoxColumn9.ReadOnly = true;
             this.dataGridViewTextBoxColumn9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn9.Width = 16;
+            this.dataGridViewTextBoxColumn9.Width = 18;
             // 
             // dataGridViewTextBoxColumn10
             // 
@@ -363,7 +367,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
             this.dataGridViewTextBoxColumn10.ReadOnly = true;
             this.dataGridViewTextBoxColumn10.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn10.Width = 16;
+            this.dataGridViewTextBoxColumn10.Width = 18;
             // 
             // dataGridViewTextBoxColumn11
             // 
@@ -371,7 +375,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn11.Name = "dataGridViewTextBoxColumn11";
             this.dataGridViewTextBoxColumn11.ReadOnly = true;
             this.dataGridViewTextBoxColumn11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn11.Width = 16;
+            this.dataGridViewTextBoxColumn11.Width = 18;
             // 
             // dataGridViewTextBoxColumn12
             // 
@@ -379,7 +383,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn12.Name = "dataGridViewTextBoxColumn12";
             this.dataGridViewTextBoxColumn12.ReadOnly = true;
             this.dataGridViewTextBoxColumn12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn12.Width = 16;
+            this.dataGridViewTextBoxColumn12.Width = 18;
             // 
             // dataGridViewTextBoxColumn13
             // 
@@ -387,7 +391,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn13.Name = "dataGridViewTextBoxColumn13";
             this.dataGridViewTextBoxColumn13.ReadOnly = true;
             this.dataGridViewTextBoxColumn13.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn13.Width = 16;
+            this.dataGridViewTextBoxColumn13.Width = 18;
             // 
             // dataGridViewTextBoxColumn14
             // 
@@ -395,7 +399,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn14.Name = "dataGridViewTextBoxColumn14";
             this.dataGridViewTextBoxColumn14.ReadOnly = true;
             this.dataGridViewTextBoxColumn14.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn14.Width = 16;
+            this.dataGridViewTextBoxColumn14.Width = 18;
             // 
             // dataGridViewTextBoxColumn15
             // 
@@ -403,7 +407,7 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn15.Name = "dataGridViewTextBoxColumn15";
             this.dataGridViewTextBoxColumn15.ReadOnly = true;
             this.dataGridViewTextBoxColumn15.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn15.Width = 16;
+            this.dataGridViewTextBoxColumn15.Width = 18;
             // 
             // dataGridViewTextBoxColumn16
             // 
@@ -411,13 +415,16 @@ namespace XOPE_UI.Forms.Component
             this.dataGridViewTextBoxColumn16.Name = "dataGridViewTextBoxColumn16";
             this.dataGridViewTextBoxColumn16.ReadOnly = true;
             this.dataGridViewTextBoxColumn16.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn16.Width = 16;
+            this.dataGridViewTextBoxColumn16.Width = 18;
             // 
             // splitContainer1
             // 
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.splitContainer1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -427,18 +434,18 @@ namespace XOPE_UI.Forms.Component
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.textGridView);
-            this.splitContainer1.Size = new System.Drawing.Size(795, 88);
-            this.splitContainer1.SplitterDistance = 530;
-            this.splitContainer1.SplitterWidth = 2;
+            this.splitContainer1.Size = new System.Drawing.Size(862, 102);
+            this.splitContainer1.SplitterDistance = 548;
             this.splitContainer1.TabIndex = 3;
             // 
             // HexEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "HexEditor";
-            this.Size = new System.Drawing.Size(795, 88);
+            this.Size = new System.Drawing.Size(862, 102);
             ((System.ComponentModel.ISupportInitialize)(this.byteGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.textGridView)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -469,6 +476,7 @@ namespace XOPE_UI.Forms.Component
         private System.Windows.Forms.DataGridViewTextBoxColumn Column13;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column14;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column15;
+        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
@@ -485,6 +493,5 @@ namespace XOPE_UI.Forms.Component
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn14;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn15;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn16;
-        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }
