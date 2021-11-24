@@ -110,8 +110,9 @@ namespace XOPE_UI
 
                 if (hookedFuncType == HookedFuncType.CONNECT || hookedFuncType == HookedFuncType.WSACONNECT)
                 {
+                    int socket = json.Value<Int32>("socket");
                     Connection connection = new Connection(
-                        json.Value<Int32>("socket"),
+                        socket,
                         json.Value<Int32>("protocol"),
                         json.Value<Int32>("addrFamily"),
                         new IPAddress(json.Value<Int32>("addr")),
@@ -123,9 +124,9 @@ namespace XOPE_UI
                     int connectLastError = json.Value<int>("lastError");
                     if (connectRet == 0)
                     {
-                        SpyData.Connections.TryAdd(json.Value<Int32>("socket"), connection);
+                        SpyData.Connections.TryAdd(socket, connection);
                         OnNewConnection?.Invoke(this, connection);
-                        Console.WriteLine("new connection");
+                        Console.WriteLine($"Socket {socket} has been opened");
                     }
                     else if (connectRet == -1 && connectLastError == 10035) // ret == SOCKET_ERROR and error == WSAEWOULDBLOCK
                     {
@@ -149,7 +150,8 @@ namespace XOPE_UI
                                 }
                             };
 
-                            MessageDispatcher.Send(new IsSocketWritable(callback) { SocketId = connection.SocketId });
+                            if (MessageDispatcher != null)
+                                MessageDispatcher.Send(new IsSocketWritable(callback) { SocketId = connection.SocketId });
                         };
                         timer.Interval = 1000;
                         timer.AutoReset = false;
@@ -187,17 +189,6 @@ namespace XOPE_UI
                 else
                 {
                     int socket = json.Value<int>("socket");
-                    byte[] data = Convert.FromBase64String(json.Value<String>("packetDataB64"));
-                    Packet packet = new Packet
-                    {
-                        Id = Guid.NewGuid(),
-                        Type = hookedFuncType,
-                        Data = data,
-                        Length = data.Length,
-                        Socket = socket,
-                    };
-                    OnNewPacket?.Invoke(this, packet);
-
 
                     if (!SpyData.Connections.ContainsKey(socket))
                     {
@@ -225,6 +216,26 @@ namespace XOPE_UI
                         };
 
                         MessageDispatcher.Send(socketInfo);
+                    }
+
+                    byte[] data = Convert.FromBase64String(json.Value<String>("packetDataB64"));
+                    if (json.Value<int>("ret") == 0)
+                    {
+                        if (SpyData.Connections.ContainsKey(socket))
+                            SpyData.Connections.Remove(socket, out _);
+                        Console.WriteLine($"Socket {socket} closed gracefully");
+                    }
+                    else
+                    {
+                        Packet packet = new Packet
+                        {
+                            Id = Guid.NewGuid(),
+                            Type = hookedFuncType,
+                            Data = data,
+                            Length = data.Length,
+                            Socket = socket,
+                        };
+                        OnNewPacket?.Invoke(this, packet);
                     }
                 }
 

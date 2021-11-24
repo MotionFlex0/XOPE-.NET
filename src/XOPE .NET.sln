@@ -59,7 +59,6 @@ Global
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Debug|x86 build (UI-Spy).Build.0 = Debug|Win32
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Release|Any CPU (Samples-Controls).ActiveCfg = Release|Win32
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Release|x64 binding (UI-Spy).ActiveCfg = Release|x64
-		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Release|x64 binding (UI-Spy).Build.0 = Release|x64
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Release|x86 binding (UI-Spy).ActiveCfg = Release|Win32
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Release|x86 binding (UI-Spy).Build.0 = Release|Win32
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Release|x86 build (UI-Spy).ActiveCfg = Release|Win32
@@ -70,7 +69,6 @@ Global
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Debug|x86 build (UI-Spy).ActiveCfg = Debug|Win32
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|Any CPU (Samples-Controls).ActiveCfg = Release|Win32
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x64 binding (UI-Spy).ActiveCfg = Release|x64
-		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x64 binding (UI-Spy).Build.0 = Release|x64
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x86 binding (UI-Spy).ActiveCfg = Release|Win32
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x86 binding (UI-Spy).Build.0 = Release|Win32
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x86 build (UI-Spy).ActiveCfg = Release|Win32
@@ -115,7 +113,6 @@ Global
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|Any CPU (Samples-Controls).ActiveCfg = Release|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|Any CPU (Samples-Controls).Build.0 = Release|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|x64 binding (UI-Spy).ActiveCfg = Release|Any CPU
-		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|x64 binding (UI-Spy).Build.0 = Release|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|x86 binding (UI-Spy).ActiveCfg = Release|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|x86 binding (UI-Spy).Build.0 = Release|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|x86 build (UI-Spy).ActiveCfg = Release|Any CPU
