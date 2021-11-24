@@ -70,6 +70,7 @@
             this.closeTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.captureViewButton = new System.Windows.Forms.Button();
             this.filterViewButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -96,6 +97,7 @@
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.viewTab.SuspendLayout();
             this.captureViewTabPage.SuspendLayout();
@@ -122,7 +124,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1099, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1038, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -306,7 +308,7 @@
             this.stopRecToolStripButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1099, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1038, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -392,12 +394,20 @@
             // 
             // statusStrip1
             // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 525);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1099, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1038, 22);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel
+            // 
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(10, 17);
+            this.toolStripStatusLabel.Text = "!";
             // 
             // captureViewButton
             // 
@@ -469,7 +479,7 @@
             this.viewTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.viewTab.Name = "viewTab";
             this.viewTab.SelectedIndex = 0;
-            this.viewTab.Size = new System.Drawing.Size(948, 450);
+            this.viewTab.Size = new System.Drawing.Size(890, 454);
             this.viewTab.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.viewTab.TabIndex = 9;
             // 
@@ -480,7 +490,7 @@
             this.captureViewTabPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.captureViewTabPage.Name = "captureViewTabPage";
             this.captureViewTabPage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.captureViewTabPage.Size = new System.Drawing.Size(940, 441);
+            this.captureViewTabPage.Size = new System.Drawing.Size(882, 445);
             this.captureViewTabPage.TabIndex = 0;
             this.captureViewTabPage.Text = "tabPage1";
             this.captureViewTabPage.UseVisualStyleBackColor = true;
@@ -490,6 +500,8 @@
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer1.Name = "splitContainer1";
@@ -502,7 +514,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.hexPreviewPanel);
-            this.splitContainer1.Size = new System.Drawing.Size(939, 442);
+            this.splitContainer1.Size = new System.Drawing.Size(878, 449);
             this.splitContainer1.SplitterDistance = 326;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 3;
@@ -514,10 +526,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.captureTabControl.Controls.Add(this.liveCapture);
             this.captureTabControl.Location = new System.Drawing.Point(5, 0);
-            this.captureTabControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.captureTabControl.Margin = new System.Windows.Forms.Padding(0);
             this.captureTabControl.Name = "captureTabControl";
             this.captureTabControl.SelectedIndex = 0;
-            this.captureTabControl.Size = new System.Drawing.Size(939, 330);
+            this.captureTabControl.Size = new System.Drawing.Size(864, 326);
             this.captureTabControl.TabIndex = 0;
             // 
             // liveCapture
@@ -527,7 +539,7 @@
             this.liveCapture.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.liveCapture.Name = "liveCapture";
             this.liveCapture.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.liveCapture.Size = new System.Drawing.Size(931, 302);
+            this.liveCapture.Size = new System.Drawing.Size(856, 298);
             this.liveCapture.TabIndex = 1;
             this.liveCapture.Text = "Live Capture";
             this.liveCapture.UseVisualStyleBackColor = true;
@@ -540,7 +552,7 @@
             this.livePacketListView.Location = new System.Drawing.Point(0, 0);
             this.livePacketListView.Margin = new System.Windows.Forms.Padding(0);
             this.livePacketListView.Name = "livePacketListView";
-            this.livePacketListView.Size = new System.Drawing.Size(927, 298);
+            this.livePacketListView.Size = new System.Drawing.Size(856, 298);
             this.livePacketListView.TabIndex = 0;
             // 
             // hexPreviewPanel
@@ -552,7 +564,7 @@
             this.hexPreviewPanel.Location = new System.Drawing.Point(5, 1);
             this.hexPreviewPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(931, 95);
+            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 152);
             this.hexPreviewPanel.TabIndex = 6;
             // 
             // packetCaptureHexPreview
@@ -562,12 +574,12 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.packetCaptureHexPreview.CellBackColor = System.Drawing.Color.White;
             this.packetCaptureHexPreview.CellHoverBackColor = System.Drawing.Color.Cyan;
-            this.packetCaptureHexPreview.Location = new System.Drawing.Point(5, 5);
+            this.packetCaptureHexPreview.Location = new System.Drawing.Point(0, 5);
             this.packetCaptureHexPreview.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.packetCaptureHexPreview.Name = "packetCaptureHexPreview";
             this.packetCaptureHexPreview.SelectionBackColor = System.Drawing.Color.Blue;
             this.packetCaptureHexPreview.SelectionForeColor = System.Drawing.Color.White;
-            this.packetCaptureHexPreview.Size = new System.Drawing.Size(927, 87);
+            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 107);
             this.packetCaptureHexPreview.TabIndex = 0;
             // 
             // filterViewTabPage
@@ -578,7 +590,7 @@
             this.filterViewTabPage.Location = new System.Drawing.Point(4, 5);
             this.filterViewTabPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.filterViewTabPage.Name = "filterViewTabPage";
-            this.filterViewTabPage.Size = new System.Drawing.Size(940, 441);
+            this.filterViewTabPage.Size = new System.Drawing.Size(882, 445);
             this.filterViewTabPage.TabIndex = 2;
             this.filterViewTabPage.Text = "tabPage1";
             this.filterViewTabPage.UseVisualStyleBackColor = true;
@@ -660,7 +672,7 @@
             this.replayViewTabPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.replayViewTabPage.Name = "replayViewTabPage";
             this.replayViewTabPage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.replayViewTabPage.Size = new System.Drawing.Size(940, 441);
+            this.replayViewTabPage.Size = new System.Drawing.Size(882, 445);
             this.replayViewTabPage.TabIndex = 1;
             this.replayViewTabPage.Text = "tabPage2";
             this.replayViewTabPage.UseVisualStyleBackColor = true;
@@ -680,7 +692,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1099, 547);
+            this.ClientSize = new System.Drawing.Size(1038, 547);
             this.Controls.Add(this.viewTab);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.statusStrip1);
@@ -697,6 +709,8 @@
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.tabContextMenu.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.viewTab.ResumeLayout(false);
             this.captureViewTabPage.ResumeLayout(false);
@@ -775,6 +789,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem socketCheckerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restartAsAdminToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
     }
 }
 

@@ -21,13 +21,12 @@ namespace XOPE_UI
         const string XOPE_SPY_32 = "XOPESpy32.dll";
         const string XOPE_SPY_64 = "XOPESpy64.dll";
 
-        public event EventHandler<IntPtr> OnProcessAttached;
-        public event EventHandler<IntPtr> OnProcessDetached;
-
         bool IsAdmin 
         { 
             get => (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator); 
         }
+
+        string windowTitle = "XOPE";
 
         int captureIndex = 0;
         int filterIndex = 0;
@@ -54,12 +53,19 @@ namespace XOPE_UI
         {
             InitializeComponent();
 
-            logDialog = new LogDialog(new Logger());
+            // Initialise Logger and add a event handler to update status bar
+            Logger logger = new Logger();
+            logger.OnFlush += (object sender, string value) =>
+            {
+                if (this.IsHandleCreated && value.Trim() != "")
+                    this.BeginInvoke(new Action(() => this.toolStripStatusLabel.Text = value.ReplaceLineEndings(" | ")));
+            };
+            logDialog = new LogDialog(logger);
             Console.WriteLine($"Program started at: {DateTime.Now}");
 
             //Credit: https://www.codeproject.com/Articles/317695/Detecting-If-An-Application-is-Running-as-An-Eleva
             if (IsAdmin)
-                this.Text += " [Elevated as Admin]";
+                windowTitle += " [Elevated as Admin]";
 
             viewTabHandler = new ViewTabHandler(viewTab);
             viewTabHandler.AddView(captureViewButton, captureViewTabPage);
@@ -77,7 +83,15 @@ namespace XOPE_UI
             packetEditorReplayDialog = new PacketEditorReplayDialog(spyManager);
 
             spyManager.OnNewPacket += (object sender, Definitions.Packet e) =>
+            {
+                if (recordToolStripButton.Tag != null && !recordToolStripButton.Enabled) // caoturing and not paused
+                {
+                    PacketListView listView = (PacketListView)captureTabControl.TabPages[(string)recordToolStripButton.Tag].Controls[0];
+                    listView.Invoke(new Action(() => listView.Add(e)));
+
+                }
                 livePacketListView.Invoke(new Action(() => livePacketListView.Add(e)));
+            };
 
             captureTabControl.MouseClick += captureTabControl_MouseClick;
 
@@ -92,6 +106,8 @@ namespace XOPE_UI
                 this.SuspendLayout();
                 resizeTimer.Stop();
             };
+
+            this.Text = windowTitle;
         }
 
         public void AttachToProcess()
@@ -144,6 +160,8 @@ namespace XOPE_UI
                 // TODO: Attempt to removed existing Spy. 
                 CreateRemoteThread.FreeSpy(selectedProcess.Handle);
             }
+
+            Console.WriteLine($"Injecting into ${selectedProcess.ProcessName}.exe - {selectedProcess.Id}");
 
             spyManager.RunAsync(selectedProcess);
 
@@ -202,23 +220,25 @@ namespace XOPE_UI
         {
             this.Invoke(new Action(() =>
             {
-                this.Text = $"XOPE - [{attachedProcess.Id}] {attachedProcess.MainModule.ModuleName}";
+                string processName = attachedProcess.MainModule.ModuleName;
+
+                Console.WriteLine($"Successfully injected into ${processName}.exe - {attachedProcess.Id}");
+                this.Text = $"{windowTitle} - [{attachedProcess.Id}] {attachedProcess.MainModule.ModuleName}";
                 detachToolStripButton.Enabled = true;
                 detachToolStripMenuItem.Enabled = true;
                 recordToolStripButton.Enabled = true;
             }));
         }
 
-        private void UpdateStatusBar(string text)
-        {
-            this.statusStrip1.Text = text;
-        }
-
         private void SetUiToDetachedState()
         {
             this.Invoke(new Action(() =>
             {
-                this.Text = "XOPE";
+                Console.WriteLine($"Successfully freed Spy from process");
+                if (stopRecToolStripButton.Enabled)
+                    stopRecToolStripButton.PerformClick();
+
+                this.Text = windowTitle;
                 detachToolStripButton.Enabled = false;
                 detachToolStripMenuItem.Enabled = false;
                 recordToolStripButton.Enabled = false;
@@ -264,7 +284,6 @@ namespace XOPE_UI
 
         private void closeTabToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //ToolStripMenuItem tab ((ToolStripMenuItem)sender)
             captureTabControl.TabPages.Remove((TabPage)tabContextMenu.Tag);
         }
 
@@ -276,7 +295,7 @@ namespace XOPE_UI
                 {
                     if (captureTabControl.GetTabRect(i).Contains(e.Location))
                     {
-                        if (i == 0 || i == 1)
+                        if (i == 0)
                             return;
 
                         tabContextMenu.Tag = captureTabControl.TabPages[i];
@@ -360,11 +379,7 @@ namespace XOPE_UI
             packetEditorReplayDialog.SocketId = Convert.ToInt32(e.SubItems[4].Text);
             packetEditorReplayDialog.Data = (byte[])e.Tag;
             packetEditorReplayDialog.Editible = true;
-            DialogResult result = packetEditorReplayDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-
-            }
+            packetEditorReplayDialog.ShowDialog();
         }
 
         private void LivePacketListView_OnItemSelectedChanged(object sender, ListViewItem e)
