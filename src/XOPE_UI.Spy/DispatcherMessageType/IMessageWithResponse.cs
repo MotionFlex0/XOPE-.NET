@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XOPE_UI.Spy.ServerType
+namespace XOPE_UI.Spy.DispatcherMessageType
 {
     public abstract class IMessageWithResponse : IMessage
     {
@@ -17,5 +17,6 @@ namespace XOPE_UI.Spy.ServerType
 
         public void NotifyResponse(JObject resposne) =>
             OnResponse?.Invoke(this, resposne);
+
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;
-using XOPE_UI.Spy.ServerType;
+using XOPE_UI.Spy.DispatcherMessageType;
 
 namespace XOPE_UI.Spy
 {

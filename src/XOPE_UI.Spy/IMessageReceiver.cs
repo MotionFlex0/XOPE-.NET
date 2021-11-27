@@ -1,6 +1,6 @@
 ﻿using System;
 using XOPE_UI.Definitions;
-using XOPE_UI.Spy.ServerType;
+using XOPE_UI.Spy.DispatcherMessageType;
 
 namespace XOPE_UI.Spy
 {

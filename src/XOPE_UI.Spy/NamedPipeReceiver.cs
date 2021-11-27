@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using XOPE_UI.Definitions;
 using XOPE_UI.Native;
-using XOPE_UI.Spy.ServerType;
+using XOPE_UI.Spy.DispatcherMessageType;
 using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI.Spy

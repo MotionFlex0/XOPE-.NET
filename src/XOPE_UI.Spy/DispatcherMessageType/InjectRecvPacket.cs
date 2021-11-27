@@ -1,16 +1,17 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 
-namespace XOPE_UI.Spy.ServerType
+namespace XOPE_UI.Spy.DispatcherMessageType
 {
-    public class InjectSendPacket : IMessage
+    //NOT IMPLEMENTED IN SPY
+    public class InjectRecvPacket : IMessage
     {
         public byte[] Data { get; set; }
         public int SocketId { get; set; }
 
-        public InjectSendPacket()
+        public InjectRecvPacket()
         {
-            Type = Definitions.SpyMessageType.INJECT_SEND;
+            Type = Definitions.SpyMessageType.INJECT_RECV;
         }
 
         public override JObject ToJson()
