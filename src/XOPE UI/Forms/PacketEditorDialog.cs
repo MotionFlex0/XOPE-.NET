@@ -2,17 +2,23 @@
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using System.Windows.Forms.Integration;
+using WpfHexaEditor;
 
 namespace XOPE_UI.Forms
 {
     public partial class PacketEditorDialog : Form
     {
+        private ElementHost elementHost;
+        private HexEditor hexEditor;
+
         public byte[] Data { get; set; } = null;
         public bool Editible { get; set; } = false;
 
         public PacketEditorDialog()
         {
             InitializeComponent();
+            InitialiseHexEditor();
 
             hexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
             hexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
@@ -23,10 +29,26 @@ namespace XOPE_UI.Forms
             //hexEditor.LineInfoVisibility = Visibility.Hidden;
         }
 
+        private void InitialiseHexEditor()
+        {
+            this.hexEditor = new HexEditor();
+            this.elementHost = new ElementHost();
+
+            // elementHost1
+            this.elementHost.Anchor = ~AnchorStyles.None;
+            this.elementHost.Location = hexEditorPlaceholder.Location;
+            this.elementHost.Size = hexEditorPlaceholder.Size;
+            this.elementHost.Name = "elementHost1";
+            this.elementHost.TabIndex = 4;
+            this.elementHost.Text = "elementHost1";
+            this.elementHost.Child = this.hexEditor;
+            this.Controls.Remove(this.hexEditorPlaceholder);
+            this.Controls.Add(this.elementHost);
+        }
+
         private void confirmButton_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
-
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
