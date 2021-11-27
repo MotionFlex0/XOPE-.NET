@@ -29,8 +29,6 @@ namespace XOPE_UI.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
-            this.hexEditor = new WpfHexaEditor.HexEditor();
             this.closeButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.addToListButton = new System.Windows.Forms.Button();
@@ -40,28 +38,18 @@ namespace XOPE_UI.Forms
             this.label2 = new System.Windows.Forms.Label();
             this.socketIdTextBox = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
+            this.hexEditorPlaceholder = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.waitTimerTextBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).BeginInit();
             this.SuspendLayout();
             // 
-            // elementHost1
-            // 
-            this.elementHost1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.elementHost1.Location = new System.Drawing.Point(12, 44);
-            this.elementHost1.Name = "elementHost1";
-            this.elementHost1.Size = new System.Drawing.Size(632, 269);
-            this.elementHost1.TabIndex = 8;
-            this.elementHost1.Text = "elementHost1";
-            this.elementHost1.Child = this.hexEditor;
-            // 
             // closeButton
             // 
             this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeButton.Location = new System.Drawing.Point(569, 319);
+            this.closeButton.Location = new System.Drawing.Point(664, 368);
+            this.closeButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(75, 23);
+            this.closeButton.Size = new System.Drawing.Size(88, 27);
             this.closeButton.TabIndex = 9;
             this.closeButton.Text = "Close";
             this.closeButton.UseVisualStyleBackColor = true;
@@ -70,28 +58,32 @@ namespace XOPE_UI.Forms
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 18);
+            this.label1.Location = new System.Drawing.Point(14, 21);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(52, 13);
+            this.label1.Size = new System.Drawing.Size(53, 15);
             this.label1.TabIndex = 11;
             this.label1.Text = "SocketID";
             // 
             // addToListButton
             // 
             this.addToListButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.addToListButton.Location = new System.Drawing.Point(12, 319);
+            this.addToListButton.Location = new System.Drawing.Point(14, 368);
+            this.addToListButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.addToListButton.Name = "addToListButton";
-            this.addToListButton.Size = new System.Drawing.Size(84, 23);
+            this.addToListButton.Size = new System.Drawing.Size(98, 27);
             this.addToListButton.TabIndex = 12;
             this.addToListButton.Text = "Add to List";
             this.addToListButton.UseVisualStyleBackColor = true;
+            this.addToListButton.Click += new System.EventHandler(this.addToListButton_Click);
             // 
             // replayButton
             // 
             this.replayButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.replayButton.Location = new System.Drawing.Point(488, 14);
+            this.replayButton.Location = new System.Drawing.Point(569, 16);
+            this.replayButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.replayButton.Name = "replayButton";
-            this.replayButton.Size = new System.Drawing.Size(75, 23);
+            this.replayButton.Size = new System.Drawing.Size(88, 27);
             this.replayButton.TabIndex = 14;
             this.replayButton.Text = "Replay";
             this.replayButton.UseVisualStyleBackColor = true;
@@ -100,60 +92,77 @@ namespace XOPE_UI.Forms
             // stopButton
             // 
             this.stopButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.stopButton.Location = new System.Drawing.Point(569, 14);
+            this.stopButton.Enabled = false;
+            this.stopButton.Location = new System.Drawing.Point(664, 16);
+            this.stopButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.stopButton.Name = "stopButton";
-            this.stopButton.Size = new System.Drawing.Size(75, 23);
+            this.stopButton.Size = new System.Drawing.Size(88, 27);
             this.stopButton.TabIndex = 15;
             this.stopButton.Text = "Stop";
             this.stopButton.UseVisualStyleBackColor = true;
             // 
             // waitTimerTextBox
             // 
-            this.waitTimerTextBox.Location = new System.Drawing.Point(231, 14);
+            this.waitTimerTextBox.Location = new System.Drawing.Point(270, 16);
+            this.waitTimerTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.waitTimerTextBox.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
             this.waitTimerTextBox.Name = "waitTimerTextBox";
-            this.waitTimerTextBox.Size = new System.Drawing.Size(62, 20);
+            this.waitTimerTextBox.Size = new System.Drawing.Size(72, 23);
             this.waitTimerTextBox.TabIndex = 16;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(170, 18);
+            this.label2.Location = new System.Drawing.Point(198, 21);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(55, 13);
+            this.label2.Size = new System.Drawing.Size(60, 15);
             this.label2.TabIndex = 17;
             this.label2.Text = "Wait Time";
             // 
             // socketIdTextBox
             // 
-            this.socketIdTextBox.Location = new System.Drawing.Point(70, 14);
+            this.socketIdTextBox.Location = new System.Drawing.Point(82, 16);
+            this.socketIdTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.socketIdTextBox.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
             this.socketIdTextBox.Name = "socketIdTextBox";
-            this.socketIdTextBox.Size = new System.Drawing.Size(79, 20);
+            this.socketIdTextBox.Size = new System.Drawing.Size(92, 23);
             this.socketIdTextBox.TabIndex = 18;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(294, 18);
+            this.label3.Location = new System.Drawing.Point(343, 21);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(20, 13);
+            this.label3.Size = new System.Drawing.Size(23, 15);
             this.label3.TabIndex = 19;
             this.label3.Text = "ms";
             // 
+            // hexEditorPlaceholder
+            // 
+            this.hexEditorPlaceholder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.hexEditorPlaceholder.Location = new System.Drawing.Point(14, 51);
+            this.hexEditorPlaceholder.Name = "hexEditorPlaceholder";
+            this.hexEditorPlaceholder.Size = new System.Drawing.Size(737, 310);
+            this.hexEditorPlaceholder.TabIndex = 20;
+            this.hexEditorPlaceholder.Text = "WpfHexaEditor.HexEditor\r\n### DO NOT REMOVE ###";
+            this.hexEditorPlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // PacketEditorReplayDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(656, 354);
+            this.ClientSize = new System.Drawing.Size(765, 408);
+            this.Controls.Add(this.hexEditorPlaceholder);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.socketIdTextBox);
             this.Controls.Add(this.label2);
@@ -162,8 +171,8 @@ namespace XOPE_UI.Forms
             this.Controls.Add(this.replayButton);
             this.Controls.Add(this.addToListButton);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.elementHost1);
             this.Controls.Add(this.closeButton);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "PacketEditorReplayDialog";
             this.Text = "PacketEditorReplayDialog";
             this.VisibleChanged += new System.EventHandler(this.PacketEditorReplayDialog_VisibleChanged);
@@ -176,8 +185,6 @@ namespace XOPE_UI.Forms
 
         #endregion
 
-        private System.Windows.Forms.Integration.ElementHost elementHost1;
-        private WpfHexaEditor.HexEditor hexEditor;
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button addToListButton;
@@ -187,5 +194,6 @@ namespace XOPE_UI.Forms
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown socketIdTextBox;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label hexEditorPlaceholder;
     }
 }

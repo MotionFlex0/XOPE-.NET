@@ -2,8 +2,10 @@
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using System.Windows.Forms.Integration;
+using WpfHexaEditor;
 using XOPE_UI.Spy;
-using XOPE_UI.Spy.ServerType;
+using XOPE_UI.Spy.DispatcherMessageType;
 
 namespace XOPE_UI.Forms
 {
@@ -13,17 +15,38 @@ namespace XOPE_UI.Forms
         public bool Editible { get; set; } = false;
         public int SocketId { get; set; } = 0;
 
+        private ElementHost elementHost;
+        private HexEditor hexEditor;
+
         private SpyManager spyManager;
 
         public PacketEditorReplayDialog(SpyManager spyManager)
         {
             InitializeComponent();
+            InitialiseHexEditor();
 
             this.spyManager = spyManager;
 
             hexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
             hexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
             hexEditor.StringByteWidth = 8;
+        }
+
+        private void InitialiseHexEditor()
+        {
+            hexEditor = new HexEditor();
+            elementHost = new ElementHost();
+            //elementHost
+            elementHost.Anchor = ~AnchorStyles.None;
+            elementHost.Location = this.hexEditorPlaceholder.Location;
+            elementHost.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            elementHost.Name = "elementHost1";
+            elementHost.Size = this.hexEditorPlaceholder.Size;
+            elementHost.TabIndex = 8;
+            elementHost.Text = "elementHost1";
+            elementHost.Child = hexEditor;
+            this.Controls.Remove(hexEditorPlaceholder);
+            this.Controls.Add(elementHost);
         }
 
         private void PacketEditorReplayDialog_VisibleChanged(object sender, EventArgs e)
@@ -78,6 +101,11 @@ namespace XOPE_UI.Forms
             }
             else
                 func(null, null); 
+        }
+
+        private void addToListButton_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
