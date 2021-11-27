@@ -10,7 +10,7 @@ using XOPE_UI.Util;
 using XOPE_UI.Spy;
 using XOPE_UI.Script;
 using XOPE_UI.Definitions;
-using XOPE_UI.Spy.ServerType;
+using XOPE_UI.Spy.DispatcherMessageType;
 using System.Security.Principal;
 using System.ComponentModel;
 

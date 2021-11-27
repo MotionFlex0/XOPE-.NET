@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XOPE_UI.Spy.ServerType
+namespace XOPE_UI.Spy.DispatcherMessageType
 {
     public class Ping : IMessageWithResponse
     {

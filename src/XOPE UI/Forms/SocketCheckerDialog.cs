@@ -2,7 +2,7 @@
 using System;
 using System.Windows.Forms;
 using XOPE_UI.Spy;
-using XOPE_UI.Spy.ServerType;
+using XOPE_UI.Spy.DispatcherMessageType;
 
 namespace XOPE_UI.Forms
 {

@@ -19,8 +19,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -47,7 +47,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\SDK\SDK.csproj" />
-    <ProjectReference Include="..\XOPE Spy\XOPE Spy.vcxproj" />
     <ProjectReference Include="..\XOPE_UI.Definitions\XOPE_UI.Definitions.csproj" />
     <ProjectReference Include="..\XOPE_UI.Forms.Component\XOPE_UI.Forms.Component.csproj" />
     <ProjectReference Include="..\XOPE_UI.Native\XOPE_UI.Native.csproj" />
