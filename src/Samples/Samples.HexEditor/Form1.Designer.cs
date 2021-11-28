@@ -40,18 +40,21 @@ namespace Samples.HexEditor
             | System.Windows.Forms.AnchorStyles.Right)));
             this.hexEditor.CellBackColor = System.Drawing.Color.White;
             this.hexEditor.CellHoverBackColor = System.Drawing.Color.Cyan;
-            this.hexEditor.Location = new System.Drawing.Point(12, 26);
+            this.hexEditor.Location = new System.Drawing.Point(14, 30);
+            this.hexEditor.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.hexEditor.Name = "hexEditor";
             this.hexEditor.SelectionBackColor = System.Drawing.Color.Blue;
             this.hexEditor.SelectionForeColor = System.Drawing.Color.White;
-            this.hexEditor.Size = new System.Drawing.Size(804, 185);
+            this.hexEditor.Size = new System.Drawing.Size(938, 213);
             this.hexEditor.TabIndex = 0;
             // 
             // randomiseData
             // 
-            this.randomiseData.Location = new System.Drawing.Point(362, 231);
+            this.randomiseData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.randomiseData.Location = new System.Drawing.Point(422, 267);
+            this.randomiseData.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.randomiseData.Name = "randomiseData";
-            this.randomiseData.Size = new System.Drawing.Size(111, 23);
+            this.randomiseData.Size = new System.Drawing.Size(130, 27);
             this.randomiseData.TabIndex = 1;
             this.randomiseData.Text = "Randomise Data";
             this.randomiseData.UseVisualStyleBackColor = true;
@@ -59,11 +62,12 @@ namespace Samples.HexEditor
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(828, 291);
+            this.ClientSize = new System.Drawing.Size(966, 336);
             this.Controls.Add(this.randomiseData);
             this.Controls.Add(this.hexEditor);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
