@@ -9,8 +9,8 @@ namespace XOPE_UI.Definitions
     public class FilterEntry
     {
         public string Name { get; set; }
-        public byte[] Before { get; set; }
-        public byte[] After { get; set; }
+        public byte[] OldValue { get; set; }
+        public byte[] NewValue { get; set; }
         public int SocketId { get; set; }
     }
 }

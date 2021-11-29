@@ -33,8 +33,8 @@ namespace XOPE_UI.Forms
             //    Filter = new FilterEntry();
             //else
             //{
-            //    //beforeHexEditor.SetBy(Filter.Before);
-            //    //afterHexEditor.SetBytes(Filter.After);
+            //    //beforeHexEditor.SetBy(Filter.OldValue);
+            //    //afterHexEditor.SetBytes(Filter.NewValue);
             //}
 
         }
@@ -44,8 +44,8 @@ namespace XOPE_UI.Forms
             Filter = new FilterEntry
             {
                 Name = nameTextBox.Text,
-                Before = beforeHexEditor.GetAllBytes(true),
-                After = afterHexEditor.GetAllBytes(true),
+                OldValue = beforeHexEditor.GetAllBytes(true),
+                NewValue = afterHexEditor.GetAllBytes(true),
                 SocketId = (int)socketIdTextBox.Value
             };
             DialogResult = DialogResult.OK;
