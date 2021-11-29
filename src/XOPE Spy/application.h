@@ -40,7 +40,7 @@ private:
 	NamedPipeClient* _namedPipeClient = nullptr;
 	NamedPipeServer* _namedPipeServer = nullptr;
 
-	PacketFilter _sendPacketFilter;
+	PacketFilter _sendPacketFilters;
 
 	bool _stopApplication = false;
 	std::thread _applicationThread;

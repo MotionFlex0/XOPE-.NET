@@ -171,18 +171,35 @@ namespace client
 			std::string jobId,
 			bool writable,
 			bool timedOut = false,
+			bool error = false,
 			int lastError = -1
 		) : IMessageResponse(ServerMessageType::JOB_RESPONSE_SUCCESS, jobId),
 			writable(writable), 
-			timedOut(timedOut), 
+			timedOut(timedOut),
+			error(error),
 			lastError(lastError) { }
 
 		bool writable;
 		bool timedOut = false;
+		bool error = false;
 		int lastError = -1;
 
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(IsSocketWritableResponse, 
-			messageType, jobId, writable, timedOut, lastError);
+			messageType, jobId, writable, timedOut, error, lastError);
+	};
+
+	struct AddXFilterResponse : IMessageResponse
+	{
+		AddXFilterResponse(
+			std::string jobId,
+			std::string filterId
+		) : IMessageResponse(ServerMessageType::JOB_RESPONSE_SUCCESS, jobId),
+			filterId(filterId) { }
+
+		std::string filterId;
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(AddXFilterResponse,
+			messageType, jobId, filterId);
 	};
 
 

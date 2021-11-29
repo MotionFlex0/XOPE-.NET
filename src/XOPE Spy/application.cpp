@@ -166,6 +166,7 @@ void Application::processIncomingMessages()
                 jsonMessage["JobId"].get<std::string>(),
                 selectRet == 1,
                 selectRet == 0,
+                selectRet == SOCKET_ERROR,
                 WSAGetLastError()
             ));
         }
@@ -177,9 +178,12 @@ void Application::processIncomingMessages()
             const Packet oldPacket(oldValue.begin(), oldValue.end());
             const Packet newPacket(newValue.begin(), newValue.end());
 
+            boost::uuids::uuid id = _sendPacketFilters.add(oldPacket, newPacket, true);
 
-            boost::uuids::uuid id = _sendPacketFilter.add(oldPacket, newPacket, true);
-
+            _namedPipeClient->send(client::AddXFilterResponse(
+                jsonMessage["JobId"].get<std::string>(),
+                boost::uuids::to_string(id)
+            ));
         }
         else if (type == SpyMessageType::SHUTDOWN_RECV_THREAD)
         {
