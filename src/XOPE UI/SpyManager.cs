@@ -82,6 +82,8 @@ namespace XOPE_UI
                     Thread.Sleep(30);
                 }
 
+                Console.WriteLine("SpyManager loop ended");
+
                 if (MessageDispatcher != null && MessageDispatcher.IsConnected)
                 {
                     MessageDispatcher.Send(new ShutdownSpy());
@@ -222,7 +224,10 @@ namespace XOPE_UI
                     if (json.Value<int>("ret") == 0)
                     {
                         if (SpyData.Connections.ContainsKey(socket))
+                        {
+                            OnCloseConnection?.Invoke(this, SpyData.Connections[socket]);
                             SpyData.Connections.Remove(socket, out _);
+                        }
                         Console.WriteLine($"Socket {socket} closed gracefully");
                     }
                     else
@@ -274,7 +279,7 @@ namespace XOPE_UI
 
         public void Shutdown()
         {
-            if (spyThread != null && !cancellationTokenSource.IsCancellationRequested)
+            if (spyThread != null && !spyThread.IsCompleted && !cancellationTokenSource.IsCancellationRequested)
             {
                 cancellationTokenSource.Cancel();
                 bool completed = spyThread.Wait(7000);

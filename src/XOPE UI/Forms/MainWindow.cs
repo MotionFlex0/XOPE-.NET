@@ -13,6 +13,7 @@ using XOPE_UI.Definitions;
 using XOPE_UI.Spy.DispatcherMessageType;
 using System.Security.Principal;
 using System.ComponentModel;
+using Newtonsoft.Json.Linq;
 
 namespace XOPE_UI
 {
@@ -71,7 +72,6 @@ namespace XOPE_UI
             viewTabHandler.AddView(captureViewButton, captureViewTabPage);
             viewTabHandler.AddView(filterViewButton, filterViewTabPage);
             viewTabHandler.AddView(replayViewButton, replayViewTabPage);
-
 
             scriptManager = new ScriptManager();
 
@@ -366,7 +366,7 @@ namespace XOPE_UI
             if (!IsAttached())
                 return;
                 
-            using (ActiveConnectionsDialog dialog = new ActiveConnectionsDialog(spyManager.SpyData))
+            using (ActiveConnectionsDialog dialog = new ActiveConnectionsDialog(spyManager))
             {
                 dialog.UpdateActiveList();
                 dialog.ShowDialog();
@@ -457,11 +457,11 @@ namespace XOPE_UI
                     ListViewItem listViewItem = new ListViewItem();
                     FilterEntry filter = filterEditorDialog.Filter;
 
-                    string beforeStr = BitConverter.ToString(filter.Before, 0).Replace("-", " ");
+                    string beforeStr = BitConverter.ToString(filter.OldValue, 0).Replace("-", " ");
                     string beforeFormatted = beforeStr.Substring(0, Math.Min(MAX_FORMAT_LENGTH, beforeStr.Length));
                     beforeFormatted += beforeStr.Length > MAX_FORMAT_LENGTH ? "..." : "";
 
-                    string afterStr = BitConverter.ToString(filter.After, 0).Replace("-", " ");
+                    string afterStr = BitConverter.ToString(filter.NewValue, 0).Replace("-", " ");
                     string afterFormatted = afterStr.Substring(0, Math.Min(MAX_FORMAT_LENGTH, afterStr.Length));
                     afterFormatted += afterStr.Length > MAX_FORMAT_LENGTH ? "..." : "";
 
@@ -469,6 +469,17 @@ namespace XOPE_UI
                     listViewItem.SubItems.Add(filter.Name);
                     listViewItem.SubItems.Add($"{beforeFormatted} --> {afterFormatted}");
                     filterListView.Items.Add(listViewItem);
+
+                    EventHandler<JObject> addSendFilterCallback = (object sender, JObject response) =>
+                        Console.WriteLine(response);
+
+                    spyManager.MessageDispatcher.Send(new AddSendFilter(addSendFilterCallback)
+                    {
+                        SocketId = filter.SocketId,
+                        OldValue = filter.OldValue,
+                        NewValue = filter.NewValue,
+                        ReplaceEntirePacket = false
+                    });
                 }
 
             }

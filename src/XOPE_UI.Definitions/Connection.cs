@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace XOPE_UI.Definitions
 {
-    public class Connection
+    public class Connection : EventArgs
     {
         public int SocketId { get; private set; }
         public int Protocol { get; private set; } //TODO: once implemented, change type to ProtocolType
