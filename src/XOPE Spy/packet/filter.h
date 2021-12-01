@@ -14,20 +14,21 @@ class PacketFilter
 {
 	struct Data
 	{
+		SOCKET socketId;
 		Packet oldVal;
 		Packet newVal;
-		bool inlineReplace;
+		bool replaceEntirePacket;
 	};
 
 public:
 	PacketFilter();
 
-	boost::uuids::uuid add(const Packet oldVal, const Packet newVal, bool inlineReplace);
+	boost::uuids::uuid add(SOCKET s, const Packet oldVal, const Packet newVal, bool replaceEntirePacket);
 	void remove(boost::uuids::uuid id);
 
 
-	bool find(const Packet packet) const;
-	bool findAndReplace(Packet& packet);
+	bool find(SOCKET s, const Packet packet) const;
+	bool findAndReplace(SOCKET s, Packet& packet) const;
 
 private:
 	std::unordered_map<boost::uuids::uuid, Data, boost::hash<boost::uuids::uuid>> filterMap;

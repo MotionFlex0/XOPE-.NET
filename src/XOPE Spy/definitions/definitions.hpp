@@ -92,6 +92,7 @@ namespace client
 		int packetLen;
 		std::string packetDataB64;
 		int ret;
+		bool modified = false;
 		int lastError = -1;
 
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(HookedFunctionCallPacketMessage, messageType, functionName,
@@ -99,6 +100,7 @@ namespace client
 			packetLen, 
 			packetDataB64,
 			ret,
+			modified,
 			lastError);
 	};
 
