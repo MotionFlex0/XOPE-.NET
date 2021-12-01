@@ -27,10 +27,11 @@ public:
 	void start();
 	void shutdown();
 
+	HookManager* getHookManager();
+	const PacketFilter& getSendPacketFilter();
 	
 	template<class T>
 	void sendToUI(T message);
-	HookManager* getHookManager();
 	void processIncomingMessages();
 private:
 	Application() { }

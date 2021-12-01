@@ -87,6 +87,11 @@ HookManager* Application::getHookManager()
     return _hookManager;
 }
 
+const PacketFilter& Application::getSendPacketFilter()
+{
+    return _sendPacketFilters;
+}
+
 void Application::processIncomingMessages()
 {
     while (auto incomingMessage = _namedPipeServer->getIncomingMessage())
@@ -96,7 +101,9 @@ void Application::processIncomingMessages()
 
         if (type == SpyMessageType::PING)
         {
-            _namedPipeClient->send(client::PongMessageResponse(jsonMessage["JobId"].get<std::string>()));
+            _namedPipeClient->send(
+                client::PongMessageResponse(jsonMessage["JobId"].get<std::string>())
+            );
         }
         else if (type == SpyMessageType::INJECT_SEND)
         {
@@ -105,7 +112,8 @@ void Application::processIncomingMessages()
 
             if (data.length() == jsonMessage["Length"].get<int>())
             {
-                _hookManager->get_ofunction<send>()(socket, data.c_str(), static_cast<int>(data.length()), NULL);
+                _hookManager->get_ofunction<send>()
+                    (socket, data.c_str(), static_cast<int>(data.length()), NULL);
             }
             else
             {
@@ -141,11 +149,15 @@ void Application::processIncomingMessages()
                 int addrSize = sizeof(addr);
                 WSAAddressToStringA((LPSOCKADDR)&sin, sinSize, NULL, addr, (LPDWORD)&addrSize);
 
-                _namedPipeClient->send(client::SocketInfoResponse(jobId, std::string(addr), port, sin.sin_family, -1));
+                _namedPipeClient->send(
+                    client::SocketInfoResponse(jobId, addr, port, sin.sin_family, -1)
+                );
             }
             else
             {
-                _namedPipeClient->send(client::ErrorMessageResponse(jobId, "could not find that socket ID"));  // TEMP // need to remove jobId from Server map
+                _namedPipeClient->send(
+                    client::ErrorMessageResponse(jobId, "could not find that socket ID")
+                );  // TEMP // need to remove jobId from Server map
             }
         }
         else if (type == SpyMessageType::IS_SOCKET_WRITABLE)
@@ -172,13 +184,15 @@ void Application::processIncomingMessages()
         }
         else if (type == SpyMessageType::ADD_SEND_FITLER)
         {
+            const SOCKET socket = jsonMessage["SocketId"].get<SOCKET>();
             const std::string oldValue = base64_decode(jsonMessage["OldValue"].get<std::string>());
             const std::string newValue = base64_decode(jsonMessage["NewValue"].get<std::string>());
 
             const Packet oldPacket(oldValue.begin(), oldValue.end());
             const Packet newPacket(newValue.begin(), newValue.end());
 
-            boost::uuids::uuid id = _sendPacketFilters.add(oldPacket, newPacket, true);
+            boost::uuids::uuid id = _sendPacketFilters.add(
+                socket, oldPacket, newPacket, false);
 
             _namedPipeClient->send(client::AddXFilterResponse(
                 jsonMessage["JobId"].get<std::string>(),

@@ -5,10 +5,16 @@ PacketFilter::PacketFilter()
 
 }
 
-boost::uuids::uuid PacketFilter::add(const Packet oldVal, const Packet newVal, bool inlineReplace)
+boost::uuids::uuid PacketFilter::add(SOCKET s, const Packet oldVal, const Packet newVal, 
+	bool replaceEntirePacket)
 {
 	const boost::uuids::uuid id = generator();
-	filterMap[id] = Data{ .oldVal = oldVal, .newVal = newVal, .inlineReplace = inlineReplace };
+	filterMap[id] = Data
+	{ 
+		.oldVal = oldVal, 
+		.newVal = newVal,
+		.replaceEntirePacket = replaceEntirePacket 
+	};
 	return id;
 }
 
@@ -17,7 +23,7 @@ void PacketFilter::remove(boost::uuids::uuid id)
 	filterMap.erase(id);
 }
 
-bool PacketFilter::find(const Packet packet) const
+bool PacketFilter::find(SOCKET s, const Packet packet) const
 {
 	for (auto& f : filterMap)
 	{
@@ -31,12 +37,12 @@ bool PacketFilter::find(const Packet packet) const
 	return false;
 }
 
-bool PacketFilter::findAndReplace(Packet& packet)
+bool PacketFilter::findAndReplace(SOCKET s, Packet& packet) const
 {
 	for (auto& f : filterMap)
 	{
 		const Packet& oldVal = f.second.oldVal;
-		if (oldVal.size() <= packet.size())
+		if (s == f.second.socketId && oldVal.size() <= packet.size())
 		{
 			auto found = std::search(packet.begin(), packet.end(), oldVal.begin(), oldVal.end());
 			if (found != packet.end())

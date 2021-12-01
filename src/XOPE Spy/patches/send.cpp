@@ -4,12 +4,17 @@
 int WINAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
 {
     Application& app = Application::getInstance();
-    int ret = app.getHookManager()->get_ofunction<send>()(s, buf, len, flags);
+    
+    Packet packet(buf, buf + len);
+    bool modified = app.getSendPacketFilter().findAndReplace(s, packet);
+    
+    int ret = app.getHookManager()->get_ofunction<send>()(s, (char*)packet.data(), packet.size(), flags);
 
     client::HookedFunctionCallPacketMessage hfcm;
     hfcm.functionName = HookedFunction::SEND;
     hfcm.socket = s;
     hfcm.packetLen = len;
+    hfcm.modified = modified;
     hfcm.ret = ret;
 
     if (ret == SOCKET_ERROR)
@@ -19,5 +24,8 @@ int WINAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
 
     app.sendToUI(hfcm);
 
-    return ret;
+    if (!modified || ret < 1)
+        return ret;
+    else
+        return len;
 }
