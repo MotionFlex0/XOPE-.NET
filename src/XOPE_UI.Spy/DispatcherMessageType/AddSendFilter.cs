@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
@@ -20,7 +21,7 @@ namespace XOPE_UI.Spy.DispatcherMessageType
             Type = Definitions.SpyMessageType.ADD_SEND_FITLER;
         }
 
-        public AddSendFilter(EventHandler<JObject> callback) : this()
+        public AddSendFilter(EventHandler<IncomingMessage> callback) : this()
         {
             OnResponse += callback;
         }
