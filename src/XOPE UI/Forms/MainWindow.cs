@@ -7,13 +7,12 @@ using XOPE_UI.Forms.Component;
 using XOPE_UI.Injection;
 using XOPE_UI.Native;
 using XOPE_UI.Util;
-using XOPE_UI.Spy;
 using XOPE_UI.Script;
 using XOPE_UI.Definitions;
 using XOPE_UI.Spy.DispatcherMessageType;
 using System.Security.Principal;
 using System.ComponentModel;
-using Newtonsoft.Json.Linq;
+using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI
 {
@@ -31,12 +30,6 @@ namespace XOPE_UI
 
         int captureIndex = 0;
         int filterIndex = 0;
-
-        /*
-         * Not a big fan of this. Unfortunately, due to performance issues with WPFHexaEditor,
-         * this is required. TODO: Fix in the future
-         */
-        PacketEditorReplayDialog packetEditorReplayDialog;
 
         Process attachedProcess = null;
 
@@ -80,9 +73,7 @@ namespace XOPE_UI
 
             spyManager = new SpyManager();
 
-            packetEditorReplayDialog = new PacketEditorReplayDialog(spyManager);
-
-            spyManager.OnNewPacket += (object sender, Definitions.Packet e) =>
+            spyManager.OnNewPacket += (object sender, Packet e) =>
             {
                 if (recordToolStripButton.Tag != null && !recordToolStripButton.Enabled) // caoturing and not paused
                 {
@@ -108,6 +99,10 @@ namespace XOPE_UI
             };
 
             this.Text = windowTitle;
+
+            //Temp solution for reducing first-time loading time of Packet dialog
+            using (PacketEditorReplayDialog p = new PacketEditorReplayDialog(null))
+                p.Show();
         }
 
         public void AttachToProcess()
@@ -375,11 +370,14 @@ namespace XOPE_UI
 
         private void LivePacketListView_OnItemDoubleClick(object sender, ListViewItem e)
         {
-            //[4] is the socket id. TODO: Store info about a packet in a proper structure
-            packetEditorReplayDialog.SocketId = Convert.ToInt32(e.SubItems[4].Text);
-            packetEditorReplayDialog.Data = (byte[])e.Tag;
-            packetEditorReplayDialog.Editible = true;
-            packetEditorReplayDialog.ShowDialog();
+            using (PacketEditorReplayDialog packetEditorReplay = new PacketEditorReplayDialog(spyManager))
+            {
+                //[4] is the socket id. TODO: Store info about a packet in a proper structure
+                packetEditorReplay.SocketId = Convert.ToInt32(e.SubItems[4].Text);
+                packetEditorReplay.Data = (byte[])e.Tag;
+                packetEditorReplay.Editible = true;
+                packetEditorReplay.ShowDialog();
+            }
         }
 
         private void LivePacketListView_OnItemSelectedChanged(object sender, ListViewItem e)
@@ -470,8 +468,8 @@ namespace XOPE_UI
                     listViewItem.SubItems.Add($"{beforeFormatted} --> {afterFormatted}");
                     filterListView.Items.Add(listViewItem);
 
-                    EventHandler<JObject> addSendFilterCallback = (object sender, JObject response) =>
-                        Console.WriteLine(response);
+                    EventHandler<IncomingMessage> addSendFilterCallback = (object sender, IncomingMessage response) =>
+                        Console.WriteLine(response.Json);
 
                     spyManager.MessageDispatcher.Send(new AddSendFilter(addSendFilterCallback)
                     {
@@ -508,7 +506,7 @@ namespace XOPE_UI
                 roundTripStopwatch.Stop();
                 Console.WriteLine($"Received response from Ping.\r\n" +
                     $"Round trip time: {roundTripStopwatch.ElapsedMilliseconds}ms\r\n" +
-                    $"Response:\r\n{response}");
+                    $"Response:\r\n{response.Json}");
             };
 
             roundTripStopwatch.Start();
