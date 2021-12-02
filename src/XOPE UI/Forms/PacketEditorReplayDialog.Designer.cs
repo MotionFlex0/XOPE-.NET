@@ -34,12 +34,13 @@ namespace XOPE_UI.Forms
             this.addToListButton = new System.Windows.Forms.Button();
             this.replayButton = new System.Windows.Forms.Button();
             this.stopButton = new System.Windows.Forms.Button();
-            this.waitTimerTextBox = new System.Windows.Forms.NumericUpDown();
+            this.delayTimerTextBox = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.socketIdTextBox = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.hexEditorPlaceholder = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.waitTimerTextBox)).BeginInit();
+            this.replayProgressLabel = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.delayTimerTextBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -68,6 +69,7 @@ namespace XOPE_UI.Forms
             // addToListButton
             // 
             this.addToListButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.addToListButton.Enabled = false;
             this.addToListButton.Location = new System.Drawing.Point(14, 368);
             this.addToListButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.addToListButton.Name = "addToListButton";
@@ -100,19 +102,25 @@ namespace XOPE_UI.Forms
             this.stopButton.TabIndex = 15;
             this.stopButton.Text = "Stop";
             this.stopButton.UseVisualStyleBackColor = true;
+            this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
             // 
-            // waitTimerTextBox
+            // delayTimerTextBox
             // 
-            this.waitTimerTextBox.Location = new System.Drawing.Point(270, 16);
-            this.waitTimerTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.waitTimerTextBox.Maximum = new decimal(new int[] {
-            10000,
+            this.delayTimerTextBox.Increment = new decimal(new int[] {
+            10,
             0,
             0,
             0});
-            this.waitTimerTextBox.Name = "waitTimerTextBox";
-            this.waitTimerTextBox.Size = new System.Drawing.Size(72, 23);
-            this.waitTimerTextBox.TabIndex = 16;
+            this.delayTimerTextBox.Location = new System.Drawing.Point(270, 16);
+            this.delayTimerTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.delayTimerTextBox.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.delayTimerTextBox.Name = "delayTimerTextBox";
+            this.delayTimerTextBox.Size = new System.Drawing.Size(72, 23);
+            this.delayTimerTextBox.TabIndex = 16;
             // 
             // label2
             // 
@@ -120,9 +128,9 @@ namespace XOPE_UI.Forms
             this.label2.Location = new System.Drawing.Point(198, 21);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(60, 15);
+            this.label2.Size = new System.Drawing.Size(52, 15);
             this.label2.TabIndex = 17;
-            this.label2.Text = "Wait Time";
+            this.label2.Text = "Delay by";
             // 
             // socketIdTextBox
             // 
@@ -157,16 +165,30 @@ namespace XOPE_UI.Forms
             this.hexEditorPlaceholder.Text = "WpfHexaEditor.HexEditor\r\n### DO NOT REMOVE ###";
             this.hexEditorPlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // replayProgressLabel
+            // 
+            this.replayProgressLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.replayProgressLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.replayProgressLabel.Location = new System.Drawing.Point(461, 17);
+            this.replayProgressLabel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.replayProgressLabel.Name = "replayProgressLabel";
+            this.replayProgressLabel.Size = new System.Drawing.Size(100, 25);
+            this.replayProgressLabel.TabIndex = 21;
+            this.replayProgressLabel.Text = "0.00ms";
+            this.replayProgressLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.replayProgressLabel.Visible = false;
+            // 
             // PacketEditorReplayDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(765, 408);
+            this.Controls.Add(this.replayProgressLabel);
             this.Controls.Add(this.hexEditorPlaceholder);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.socketIdTextBox);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.waitTimerTextBox);
+            this.Controls.Add(this.delayTimerTextBox);
             this.Controls.Add(this.stopButton);
             this.Controls.Add(this.replayButton);
             this.Controls.Add(this.addToListButton);
@@ -174,9 +196,9 @@ namespace XOPE_UI.Forms
             this.Controls.Add(this.closeButton);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "PacketEditorReplayDialog";
-            this.Text = "PacketEditorReplayDialog";
+            this.Text = "Packet Replay";
             this.VisibleChanged += new System.EventHandler(this.PacketEditorReplayDialog_VisibleChanged);
-            ((System.ComponentModel.ISupportInitialize)(this.waitTimerTextBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.delayTimerTextBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -190,10 +212,11 @@ namespace XOPE_UI.Forms
         private System.Windows.Forms.Button addToListButton;
         private System.Windows.Forms.Button replayButton;
         private System.Windows.Forms.Button stopButton;
-        private System.Windows.Forms.NumericUpDown waitTimerTextBox;
+        private System.Windows.Forms.NumericUpDown delayTimerTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown socketIdTextBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label hexEditorPlaceholder;
+        private System.Windows.Forms.Label replayProgressLabel;
     }
 }

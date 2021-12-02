@@ -4,7 +4,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using WpfHexaEditor;
-using XOPE_UI.Spy;
 using XOPE_UI.Spy.DispatcherMessageType;
 
 namespace XOPE_UI.Forms
@@ -20,19 +19,21 @@ namespace XOPE_UI.Forms
 
         private SpyManager spyManager;
 
+        private Timer replayTimer = null;
+
         public PacketEditorReplayDialog(SpyManager spyManager)
         {
             InitializeComponent();
-            InitialiseHexEditor();
+            InitializeHexEditor();
 
             this.spyManager = spyManager;
-
             hexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
             hexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
             hexEditor.StringByteWidth = 8;
+            hexEditor.CanInsertAnywhere = true;
         }
 
-        private void InitialiseHexEditor()
+        private void InitializeHexEditor()
         {
             hexEditor = new HexEditor();
             elementHost = new ElementHost();
@@ -47,6 +48,15 @@ namespace XOPE_UI.Forms
             elementHost.Child = hexEditor;
             this.Controls.Remove(hexEditorPlaceholder);
             this.Controls.Add(elementHost);
+
+            hexEditor.CanInsertAnywhere = true;
+            hexEditor.KeyDown += (object sender, System.Windows.Input.KeyEventArgs e) =>
+            {
+                if (e.Key == System.Windows.Input.Key.Insert)
+                {
+                    //hexEditor.InsertByte(0x00, hexEditor.SelectionStart);
+                }
+            };
         }
 
         private void PacketEditorReplayDialog_VisibleChanged(object sender, EventArgs e)
@@ -78,34 +88,68 @@ namespace XOPE_UI.Forms
                 return;
             }
 
+            byte[] data = hexEditor.GetAllBytes(true);
+            int socketId = Convert.ToInt32(socketIdTextBox.Value);
+            double waitTimer = Convert.ToDouble(this.delayTimerTextBox.Value);
+            DateTime timeToReplay = DateTime.Now + TimeSpan.FromMilliseconds(waitTimer);
+
             EventHandler func = (object s, EventArgs _) =>
             {
-                if (s != null && s is Timer) ((Timer)s).Dispose(); 
+                TimeSpan timeDifference = timeToReplay - DateTime.Now;
+                if (timeDifference.TotalMilliseconds > 0)
+                {
+                    replayProgressLabel.Text = $"{timeDifference.TotalSeconds:F2}s";
+                    return;
+                }
+
+                replayProgressLabel.Text = "Sending...";
+
+                if (s != null && s is Timer) ((Timer)s).Dispose();
+                replayTimer = null;
 
                 IMessage message = new InjectSendPacket
                 {
-                    Data = hexEditor.GetAllBytes(true),
-                    SocketId = Convert.ToInt32(socketIdTextBox.Value)
+                    Data = data,
+                    SocketId = socketId
                 };
-                //hexEditor.Stream.
-                Console.WriteLine("Sending data.. in replayButton_Click");
+
                 spyManager.MessageDispatcher.Send(message);
+                setUiToReplayState(false);
             };
 
-            if (this.waitTimerTextBox.Value >= 1)
+            if (this.delayTimerTextBox.Value >= 1)
             {
-                Timer timer = new Timer();
-                timer.Tick += func;
-                timer.Interval = Convert.ToInt32(this.waitTimerTextBox.Value);
-                timer.Start();
+                replayProgressLabel.Text = $"{waitTimer/100:F2}s";
+                replayTimer = new Timer();
+                replayTimer.Tick += func;
+                replayTimer.Interval = 100;
+                replayTimer.Start();
+                setUiToReplayState(true);
             }
             else
-                func(null, null); 
+                func(this, null); 
+        }
+
+        private void setUiToReplayState(bool isReplaying)
+        {
+            replayButton.Enabled = !isReplaying;
+            stopButton.Enabled = isReplaying;
+            replayProgressLabel.Visible = isReplaying;
+            socketIdTextBox.Enabled = !isReplaying;
+            delayTimerTextBox.Enabled = !isReplaying;
+            hexEditor.IsEnabled = !isReplaying;
         }
 
         private void addToListButton_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            replayTimer.Stop();
+            replayTimer = null;
+            setUiToReplayState(false);
         }
     }
 }
