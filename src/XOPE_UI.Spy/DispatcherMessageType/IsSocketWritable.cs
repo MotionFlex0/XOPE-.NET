@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
@@ -16,7 +17,7 @@ namespace XOPE_UI.Spy.DispatcherMessageType
             Type = Definitions.SpyMessageType.IS_SOCKET_WRITABLE;
         }
 
-        public IsSocketWritable(EventHandler<JObject> onResponseCallback) : this()
+        public IsSocketWritable(EventHandler<IncomingMessage> onResponseCallback) : this()
         {
             OnResponse += onResponseCallback;
         }

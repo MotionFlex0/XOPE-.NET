@@ -5,17 +5,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
     public abstract class IMessageWithResponse : IMessage
     {
-        public event EventHandler<JObject> OnResponse;
+        public event EventHandler<IncomingMessage> OnResponse;
 
         [JsonProperty]
         public Guid JobId { get; } = Guid.NewGuid();
 
-        public void NotifyResponse(JObject resposne) =>
+        public void NotifyResponse(IncomingMessage resposne) =>
             OnResponse?.Invoke(this, resposne);
 
     }
