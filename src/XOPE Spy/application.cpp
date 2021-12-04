@@ -141,9 +141,10 @@ void Application::processIncomingMessages()
 
             sockaddr_in sin;
             int sinSize = sizeof(sin);
-            if (getsockname(socket, (sockaddr*)&sin, &sinSize) == 0 && sin.sin_family == AF_INET)
+            if (getpeername(socket, (sockaddr*)&sin, &sinSize) == 0 
+                && (sin.sin_family == AF_INET || sin.sin_family == AF_INET6))
             {
-                int port = ((sin.sin_port & 0xFF) << 8) | ((sin.sin_port >> 8));
+                int port = ntohs(sin.sin_port);
 
                 char addr[32];
                 int addrSize = sizeof(addr);
@@ -226,7 +227,7 @@ void Application::initHooks()
 }
 
 
-void Application::initClient(std::string spyServerPipeName)
+bool Application::initClient(std::string spyServerPipeName)
 {
     const char* pipePath = "\\\\.\\pipe\\xopeui";
 
@@ -239,6 +240,8 @@ void Application::initClient(std::string spyServerPipeName)
     }
     else
         MessageBoxA(NULL, "Failed to connect to named pipe!", "ERROR", MB_OK);
+
+    return !_namedPipeClient->isPipeBroken();
 }
 
 void Application::initServer(std::string spyServerPipeName)
