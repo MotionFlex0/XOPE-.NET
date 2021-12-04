@@ -30,10 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
-            "",
-            "",
-            "1d -> 1e"}, -1);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -564,7 +560,7 @@
             this.hexPreviewPanel.Location = new System.Drawing.Point(5, 1);
             this.hexPreviewPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 152);
+            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 151);
             this.hexPreviewPanel.TabIndex = 6;
             // 
             // packetCaptureHexPreview
@@ -579,7 +575,7 @@
             this.packetCaptureHexPreview.Name = "packetCaptureHexPreview";
             this.packetCaptureHexPreview.SelectionBackColor = System.Drawing.Color.Blue;
             this.packetCaptureHexPreview.SelectionForeColor = System.Drawing.Color.White;
-            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 107);
+            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 106);
             this.packetCaptureHexPreview.TabIndex = 0;
             // 
             // filterViewTabPage
@@ -598,7 +594,7 @@
             // deleteFilterButton
             // 
             this.deleteFilterButton.Enabled = false;
-            this.deleteFilterButton.Location = new System.Drawing.Point(853, 375);
+            this.deleteFilterButton.Location = new System.Drawing.Point(795, 373);
             this.deleteFilterButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.deleteFilterButton.Name = "deleteFilterButton";
             this.deleteFilterButton.Size = new System.Drawing.Size(83, 27);
@@ -627,15 +623,12 @@
             this.columnHeader4,
             this.columnHeader5});
             this.filterListView.FullRowSelect = true;
-            listViewItem1.StateImageIndex = 0;
-            this.filterListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
             this.filterListView.Location = new System.Drawing.Point(5, 0);
             this.filterListView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.filterListView.MultiSelect = false;
             this.filterListView.Name = "filterListView";
             this.filterListView.OwnerDraw = true;
-            this.filterListView.Size = new System.Drawing.Size(930, 367);
+            this.filterListView.Size = new System.Drawing.Size(873, 367);
             this.filterListView.TabIndex = 0;
             this.filterListView.UseCompatibleStateImageBehavior = false;
             this.filterListView.View = System.Windows.Forms.View.Details;

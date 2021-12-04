@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,10 +18,12 @@ namespace XOPE_UI
 {
     public class SpyManager
     {
-        public event EventHandler<Packet> OnNewPacket;
-        public event EventHandler<Connection> OnNewConnection;
-        public event EventHandler<Connection> OnCloseConnection;
-        public event EventHandler<Connection> OnConnectionStatusChange;
+        public event EventHandler<Packet> NewPacket;
+        public event EventHandler<Connection> ConnectionConnecting;
+        public event EventHandler<Connection> ConnectionEstablished;
+        public event EventHandler<Connection> ConnectionClosed;
+        public event EventHandler<Connection> ConnectionStatusChanged;
+        public event EventHandler<Connection> ConnectionPropUpdated;
 
         public SpyData SpyData { get; private set; } = null;
 
@@ -45,6 +48,7 @@ namespace XOPE_UI
             Shutdown();
         }
 
+        // TODO: Refactor this method
         public void RunAsync(Process spyProcess)
         {
             if (spyThread != null)
@@ -54,14 +58,14 @@ namespace XOPE_UI
 
             MessageReceiver.RunAsync();
 
-            spyThread = Task.Run(() =>
+            spyThread = Task.Factory.StartNew(() =>
             {
                 while ((MessageDispatcher == null || MessageDispatcher.IsConnected) && MessageReceiver.IsConnectingOrConnected && !cancellationTokenSource.IsCancellationRequested)
                 {
                     IncomingMessage incomingMessage = MessageReceiver.GetIncomingMessage();
                     if (incomingMessage != null)
                     {
-                        if (incomingMessage.Type == ServerMessageType.CONNECTED_SUCCESS)
+                        if (incomingMessage.Type == UiMessageType.CONNECTED_SUCCESS)
                         {
                             JObject json = incomingMessage.Json;
                             Console.WriteLine($"Connection success: {json}");
@@ -91,9 +95,9 @@ namespace XOPE_UI
                 }
 
                 if (MessageReceiver.IsConnected)
-                    MessageReceiver.ShutdownServerAndWait();
+                    MessageReceiver.ShutdownAndWait();
 
-            }, cancellationTokenSource.Token);
+            }, cancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
             //Waits until MessageReceiver has started and is waiting for a connection
             while (!MessageReceiver.IsConnectingOrConnected) Thread.Sleep(50);
@@ -102,9 +106,9 @@ namespace XOPE_UI
         private void ProcessIncomingMessage(IncomingMessage incomingMessage)
         {
             JObject json = incomingMessage.Json;
-            ServerMessageType messageType = incomingMessage.Type;
+            UiMessageType messageType = incomingMessage.Type;
 
-            if (messageType == ServerMessageType.HOOKED_FUNCTION_CALL)
+            if (messageType == UiMessageType.HOOKED_FUNCTION_CALL)
             {
                 HookedFuncType hookedFuncType = (HookedFuncType)json.Value<Int32>("functionName");
 
@@ -117,7 +121,7 @@ namespace XOPE_UI
                         socket,
                         json.Value<Int32>("protocol"),
                         json.Value<Int32>("addrFamily"),
-                        new IPAddress(json.Value<Int32>("addr")),
+                        json.Value<string>("addr"),
                         json.Value<Int32>("port"),
                         Connection.Status.ESTABLISHED
                     );
@@ -127,7 +131,7 @@ namespace XOPE_UI
                     if (connectRet == 0)
                     {
                         SpyData.Connections.TryAdd(socket, connection);
-                        OnNewConnection?.Invoke(this, connection);
+                        ConnectionEstablished?.Invoke(this, connection);
                         Console.WriteLine($"Socket {socket} has been opened");
                     }
                     else if (connectRet == -1 && connectLastError == 10035) // ret == SOCKET_ERROR and error == WSAEWOULDBLOCK
@@ -139,16 +143,19 @@ namespace XOPE_UI
                         int counter = 0;
                         timer.Elapsed += (object sender, ElapsedEventArgs e) =>
                         {
-                            EventHandler<JObject> callback = (object o, JObject resp) =>
+                            EventHandler<IncomingMessage> callback = (object o, IncomingMessage resp) =>
                             {
                                 if (++counter >= 5)
                                 {
                                     Console.WriteLine($"Socket never became writable. Socket: {connection.SocketId}");
                                     SpyData.Connections.TryRemove(connection.SocketId, out _);
                                 }
-                                else if (resp.Value<bool>("writable") == false)
+                                else if (resp.Type == UiMessageType.JOB_RESPONSE_SUCCESS)
                                 {
-                                    timer.Start();
+                                    if (resp.Json.Value<bool>("writable") == false)
+                                        timer.Start();
+                                    else // writable == true
+                                        connection.SocketStatus = Connection.Status.ESTABLISHED;
                                 }
                             };
 
@@ -185,7 +192,7 @@ namespace XOPE_UI
                         t.Interval = 7000;
                         t.AutoReset = false;
                         t.Start();
-                        OnCloseConnection?.Invoke(this, matchingConnection);
+                        ConnectionClosed?.Invoke(this, matchingConnection);
                     }
                 }
                 else
@@ -200,7 +207,7 @@ namespace XOPE_UI
                             socket,
                             json.Value<Int32>("protocol"),
                             json.Value<Int32>("addrFamily"),
-                            new IPAddress(json.Value<Int32>("addr")),
+                            json.Value<string>("addr"),
                             json.Value<Int32>("port"),
                             Connection.Status.REQUESTING_INFO
                         );
@@ -210,11 +217,26 @@ namespace XOPE_UI
                         {
                             SocketId = socket
                         };
-                        socketInfo.OnResponse += (object o, JObject resp) =>
+                        socketInfo.OnResponse += (object o, IncomingMessage resp) =>
                         {
-                            SpyData.Connections.TryAdd(socket, connection);
-                            OnNewConnection?.Invoke(this, connection); // 
-                            Console.WriteLine($"Added previously opened socket {socket}");
+                            if (resp.Type == UiMessageType.JOB_RESPONSE_SUCCESS)
+                            {
+                                connection.IP = resp.Json.Value<string>("addr");
+                                connection.Port = resp.Json.Value<int>("port");
+                                connection.IPFamily = (AddressFamily)resp.Json.Value<Int32>("addrFamily");
+                                connection.Protocol = resp.Json.Value<int>("protocol");
+                                connection.SocketStatus = Connection.Status.ESTABLISHED;
+
+                                ConnectionEstablished?.Invoke(this, connection); // 
+                                Console.WriteLine($"Added previously opened socket {socket}");
+                            }
+                            else if (resp.Type == UiMessageType.JOB_RESPONSE_ERROR)
+                            {
+                                Console.WriteLine($"Failed to find info on socket {socket}");
+                                SpyData.Connections.TryRemove(connection.SocketId, out _);
+                                ConnectionClosed?.Invoke(this, connection);
+                            }
+
                         };
 
                         MessageDispatcher.Send(socketInfo);
@@ -225,7 +247,7 @@ namespace XOPE_UI
                     {
                         if (SpyData.Connections.ContainsKey(socket))
                         {
-                            OnCloseConnection?.Invoke(this, SpyData.Connections[socket]);
+                            ConnectionClosed?.Invoke(this, SpyData.Connections[socket]);
                             SpyData.Connections.Remove(socket, out _);
                         }
                         Console.WriteLine($"Socket {socket} closed gracefully");
@@ -240,28 +262,29 @@ namespace XOPE_UI
                             Length = data.Length,
                             Socket = socket,
                         };
-                        OnNewPacket?.Invoke(this, packet);
+                        NewPacket?.Invoke(this, packet);
                     }
                 }
 
             }
-            else if (messageType == ServerMessageType.JOB_RESPONSE_SUCCESS
-                    || messageType == ServerMessageType.JOB_RESPONSE_ERROR)
+            else if (messageType == UiMessageType.JOB_RESPONSE_SUCCESS
+                    || messageType == UiMessageType.JOB_RESPONSE_ERROR)
             {
                 Guid guid = Guid.Parse(json.Value<String>("jobId"));
                 if (jobs.ContainsKey(guid))
                 {
-                    jobs[guid].NotifyResponse(json); // TODO: Maybe make this async?
+                    // TODO: Maybe make this async?
+                    jobs[guid].NotifyResponse(incomingMessage); 
                     jobs.Remove(guid);
                 }
                 else
                     Console.WriteLine($"Received JOB_RESPONSE for id '{guid}' but it does not appear to be a valid id.");
             }
-            else if (messageType == ServerMessageType.ERROR_MESSAGE)
+            else if (messageType == UiMessageType.ERROR_MESSAGE)
             {
                 Console.WriteLine($"[Spy-Error] {json.Value<String>("errorMessage")}");
             }
-            else if (messageType == ServerMessageType.INVALID_MESSAGE)
+            else if (messageType == UiMessageType.INVALID_MESSAGE)
             {
                 Console.WriteLine($"[Server-Error] Received a INVALID_MESSAGE. Check if the messageType was sent by Spy.");
             }

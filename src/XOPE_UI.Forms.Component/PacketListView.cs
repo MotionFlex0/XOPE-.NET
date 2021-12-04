@@ -6,8 +6,8 @@ namespace XOPE_UI.Forms.Component
 {
     public partial class PacketListView : UserControl
     {
-        public event EventHandler<ListViewItem> OnItemSelectedChanged;
-        public event EventHandler<ListViewItem> OnItemDoubleClick;
+        public event EventHandler<ListViewItem> ItemSelectedChanged;
+        public event EventHandler<ListViewItem> ItemDoubleClicked;
 
         public int Count { get => captureListView.Items.Count; }
 
@@ -74,13 +74,13 @@ namespace XOPE_UI.Forms.Component
         {
             ListView.SelectedListViewItemCollection selectedItems = this.captureListView.SelectedItems;
             if (selectedItems.Count > 0)
-                OnItemDoubleClick?.Invoke(this, selectedItems[0]);
+                ItemDoubleClicked?.Invoke(this, selectedItems[0]);
         }
 
         private void captureListView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             if (e.IsSelected)
-                OnItemSelectedChanged?.Invoke(this, e.Item);
+                ItemSelectedChanged?.Invoke(this, e.Item);
         }
 
         private void captureListView_Resize(object sender, EventArgs e)
