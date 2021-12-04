@@ -48,7 +48,7 @@ private:
 	std::thread _serverThread;
 
 	void initHooks();
-	void initClient(std::string spyServerPipeName);
+	bool initClient(std::string spyServerPipeName);
 	void initServer(std::string spyServerPipeName);
 	void run();
 };
