@@ -10,10 +10,10 @@ namespace XOPE_UI.Spy.Type
 {
     public record IncomingMessage
     {
-        public ServerMessageType Type { get; }
+        public UiMessageType Type { get; }
         public JObject Json { get; }
 
-        public IncomingMessage(ServerMessageType type, JObject json)
+        public IncomingMessage(UiMessageType type, JObject json)
         {
             Type = type;
             Json = json;

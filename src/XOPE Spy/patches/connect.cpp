@@ -10,7 +10,7 @@ int WINAPI Functions::Hooked_Connect(SOCKET s, const sockaddr* name, int namelen
     client::HookedFunctionCallSocketMessage hfcm;
     hfcm.functionName = HookedFunction::CONNECT;
     hfcm.socket = s;
-    hfcm.addr = (sockaddr_in*)name;
+    hfcm.sockaddr = (sockaddr_in*)name;
     hfcm.ret = ret;
 
     if (ret == SOCKET_ERROR)

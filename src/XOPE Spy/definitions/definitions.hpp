@@ -1,4 +1,5 @@
 #pragma once
+
 #include <WinSock2.h>
 #include <Windows.h>
 #include "../nlohmann/json.hpp"
@@ -10,9 +11,11 @@
 //#define KNV(J, NAME, VAR) J[#NAME] = VAR
 //#define B64BYTES(STR, LEN) base64_encode(std::string(STR, LEN))
 
+#pragma warning(disable: 4996)
+
 using nlohmann::json;
 
-enum class ServerMessageType
+enum class UiMessageType
 {
 	INVALID_MESSAGE,
 	PING,
@@ -58,8 +61,8 @@ namespace client
 {
 	struct IMessage
 	{
-		IMessage(ServerMessageType m) { messageType = m; }
-		ServerMessageType messageType;
+		IMessage(UiMessageType m) { messageType = m; }
+		UiMessageType messageType;
 
 		inline virtual void toJson(json& j)
 		{
@@ -78,13 +81,13 @@ namespace client
 
 	struct IMessageResponse : IMessage
 	{
-		IMessageResponse(ServerMessageType m, std::string jobId) : IMessage(m) { IMessageResponse::jobId = jobId; }
+		IMessageResponse(UiMessageType m, std::string jobId) : IMessage(m) { IMessageResponse::jobId = jobId; }
 		std::string jobId;
 	};
 
 	struct HookedFunctionCallPacketMessage : IMessage
 	{
-		HookedFunctionCallPacketMessage() : IMessage(ServerMessageType::HOOKED_FUNCTION_CALL) { };
+		HookedFunctionCallPacketMessage() : IMessage(UiMessageType::HOOKED_FUNCTION_CALL) { };
 
 		//TODO: Maybe use __FUNCTION__ instead of enums for HookedFunction
 		HookedFunction functionName;
@@ -106,7 +109,7 @@ namespace client
 
 	struct ErrorMessage : IMessage
 	{
-		ErrorMessage(std::string errMsg) : IMessage(ServerMessageType::ERROR_MESSAGE), errorMessage(errMsg) { }
+		ErrorMessage(std::string errMsg) : IMessage(UiMessageType::ERROR_MESSAGE), errorMessage(errMsg) { }
 		
 		std::string errorMessage;
 		
@@ -116,7 +119,7 @@ namespace client
 	struct ErrorMessageResponse : IMessageResponse
 	{
 		ErrorMessageResponse(std::string jobId, std::string errMsg) 
-			: IMessageResponse(ServerMessageType::JOB_RESPONSE_ERROR, jobId), errorMessage(errMsg) { }
+			: IMessageResponse(UiMessageType::JOB_RESPONSE_ERROR, jobId), errorMessage(errMsg) { }
 
 		std::string errorMessage;
 
@@ -125,7 +128,7 @@ namespace client
 
 	struct PongMessageResponse : IMessageResponse
 	{
-		PongMessageResponse(std::string jobId) : IMessageResponse(ServerMessageType::JOB_RESPONSE_SUCCESS, jobId) { }
+		PongMessageResponse(std::string jobId) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId) { }
 
 		std::string data = "PONG!";
 
@@ -135,7 +138,7 @@ namespace client
 	struct SocketInfoResponse : IMessageResponse
 	{
 		SocketInfoResponse(std::string jobId, std::string addr, int port, int addrFamily, int protocol) 
-			: IMessageResponse(ServerMessageType::JOB_RESPONSE_SUCCESS,
+			: IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS,
 			jobId), 
 			addr(addr), 
 			port(port), 
@@ -152,11 +155,11 @@ namespace client
 
 	struct HookedFunctionCallSocketMessage : IMessage
 	{
-		HookedFunctionCallSocketMessage() : IMessage(ServerMessageType::HOOKED_FUNCTION_CALL) { };
+		HookedFunctionCallSocketMessage() : IMessage(UiMessageType::HOOKED_FUNCTION_CALL) { };
 
 		HookedFunction functionName;
 		SOCKET socket;
-		sockaddr_in* addr;
+		sockaddr_in* sockaddr;
 		int ret;
 		int lastError = -1;
 
@@ -175,7 +178,7 @@ namespace client
 			bool timedOut = false,
 			bool error = false,
 			int lastError = -1
-		) : IMessageResponse(ServerMessageType::JOB_RESPONSE_SUCCESS, jobId),
+		) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId),
 			writable(writable), 
 			timedOut(timedOut),
 			error(error),
@@ -195,7 +198,7 @@ namespace client
 		AddXFilterResponse(
 			std::string jobId,
 			std::string filterId
-		) : IMessageResponse(ServerMessageType::JOB_RESPONSE_SUCCESS, jobId),
+		) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId),
 			filterId(filterId) { }
 
 		std::string filterId;
@@ -207,7 +210,7 @@ namespace client
 
 	struct ConnectedSuccessMessage : IMessage
 	{
-		ConnectedSuccessMessage(std::string spyPipeServerName) : IMessage(ServerMessageType::CONNECTED_SUCCESS), spyPipeServerName(spyPipeServerName) { }
+		ConnectedSuccessMessage(std::string spyPipeServerName) : IMessage(UiMessageType::CONNECTED_SUCCESS), spyPipeServerName(spyPipeServerName) { }
 
 		std::string spyPipeServerName;
 
@@ -247,7 +250,7 @@ namespace client
 		from_json(j, (IMessage&)hfcm);
 		j.at("functionName").get_to(hfcm.functionName);
 		j.at("socket").get_to(hfcm.socket);
-		j.at("port").get_to(hfcm.addr->sin_port);
+		j.at("port").get_to(hfcm.sockaddr->sin_port);
 		//j.at("protocol").
 		//hfcm.packetData = new char[hfcm.packetLen];
 		//memcpy(hfcm.packetData, base64_decode(j.at("packetData").get<std::string>()).c_str(), hfcm.packetLen);
@@ -273,7 +276,7 @@ namespace client
 	//	}
 	//}
 
-	inline void to_json(json& j, const HookedFunctionCallSocketMessage& hfcm)
+	static void to_json(json& j, const HookedFunctionCallSocketMessage& hfcm)
 	{
 		/* json
 		{
@@ -293,9 +296,9 @@ namespace client
 		if (hfcm.functionName != HookedFunction::CLOSE)
 		{
 			j["protocol"] = -1;
-			j["addrFamily"] = hfcm.addr->sin_family;
-			j["addr"] = hfcm.addr->sin_addr.S_un.S_addr;
-			j["port"] = ((hfcm.addr->sin_port & 0xFF) << 8) | ((hfcm.addr->sin_port >> 8));
+			j["addrFamily"] = hfcm.sockaddr->sin_family;
+			j["addr"] = std::string("0.0.0.0");
+			j["port"] = ntohs(hfcm.sockaddr->sin_port);
 		}
 	}
 }
