@@ -22,7 +22,7 @@ namespace XOPE_UI.Spy
     {
         ConcurrentQueue<IncomingMessage> incomingMessageQueue;
         CancellationTokenSource cancellationTokenSource;
-        Task serverThread;
+        Task receiverThread;
 
         public bool IsConnecting { get; private set; }
         public bool IsConnected { get; private set; }
@@ -42,57 +42,66 @@ namespace XOPE_UI.Spy
 
         public void RunAsync() 
         {
-            if (serverThread != null)
+            if (receiverThread != null)
             {
-                Console.WriteLine("Cannot start new server thread, as one already exists");
+                Console.WriteLine("Cannot start new receiver thread, as one already exists");
                 return;
             }
 
             cancellationTokenSource = new CancellationTokenSource();
 
             setIsConnectingState();
-            serverThread = Task.Factory.StartNew(() => {
-                using (NamedPipeServerStream serverStream = new NamedPipeServerStream("xopeui"))
+            receiverThread = Task.Factory.StartNew(() => {
+                using (NamedPipeServerStream receiverStream = new NamedPipeServerStream("xopeui"))
                 {
-                    serverStream.WaitForConnection();
-                    Console.WriteLine("Spy connected to Server");
+                    receiverStream.WaitForConnection();
+                    Console.WriteLine("Spy connected to Receiver");
 
                     try
                     {
                         setIsConnectedState();
 
                         byte[] buffer = new byte[65536];
-                        while (serverStream.IsConnected && !cancellationTokenSource.IsCancellationRequested)
+                        while (receiverStream.IsConnected && !cancellationTokenSource.IsCancellationRequested)
                         {
                             int bytesAvailable;
 
-                            Win32API.PeekNamedPipe((IntPtr)serverStream.SafePipeHandle.DangerousGetHandle(), out _, 0, out _, out bytesAvailable, out _);
+                            Win32API.PeekNamedPipe((IntPtr)receiverStream.SafePipeHandle.DangerousGetHandle(), out _, 0, out _, out bytesAvailable, out _);
                             if (bytesAvailable > 0)
                             {
-                                int len = serverStream.Read(buffer, 0, 65536);
+                                int len = receiverStream.Read(buffer, 0, 65536);
                                 if (len > 0)
                                 {
-                                    CBORObject cbor = CBORObject.DecodeFromBytes((new ArraySegment<byte>(buffer, 0, len)).ToArray());
-                                    JObject json = JObject.Parse(cbor.ToString());
-                                    //Console.WriteLine($"Incoming message: {(ServerMessageType)json.Value<Int32>("messageType")}");
+                                    try
+                                    {
+                                        CBORObject cbor = CBORObject.DecodeFromBytes((new ArraySegment<byte>(buffer, 0, len)).ToArray());
+                                        JObject json = JObject.Parse(cbor.ToString());
+                                        //Console.WriteLine($"Incoming message: {(UiMessageType)json.Value<Int32>("messageType")}");
 
-                                    ServerMessageType messageType = (ServerMessageType)json.Value<Int32>("messageType");
-                                    incomingMessageQueue.Enqueue(new IncomingMessage(messageType, json));   
+                                        UiMessageType messageType = (UiMessageType)json.Value<Int32>("messageType");
+                                        incomingMessageQueue.Enqueue(new IncomingMessage(messageType, json));
+                                    }
+                                    catch (CBORException ex)
+                                    {
+                                        Console.WriteLine($"[ui-receiver] Error occurred when decoding message from spy. " +
+                                            $"Message: {ex.Message}. " +
+                                            $"Dropping message...");
+                                    }
                                 }
                             }
                             Thread.Sleep(30); 
                         }
-                        Console.WriteLine("Closing server...");
+                        Console.WriteLine("Closing receiver...");
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Server error. Aborting server! Message: {ex.Message}");
-                        Debug.WriteLine($"Server error. Message: {ex.Message}");
+                        Console.WriteLine($"Receiver error. Aborting receiver! Message: {ex.Message}");
+                        Debug.WriteLine($"Receiver error. Message: {ex.Message}");
                         Debug.WriteLine($"Stacktrack:\n{ex.StackTrace}");
                     }
                     finally
                     {
-                        Console.WriteLine("Server closed!");
+                        Console.WriteLine("Receiver closed!");
                     }
 
                     setNoConnectionState();
@@ -101,14 +110,14 @@ namespace XOPE_UI.Spy
             }, cancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
-        public void ShutdownServerAndWait()
+        public void ShutdownAndWait()
         {
-            if (serverThread == null)
+            if (receiverThread == null)
                 return;
 
             cancellationTokenSource.Cancel();
-            serverThread.Wait(5000);
-            serverThread = null;
+            receiverThread.Wait(5000);
+            receiverThread = null;
             setNoConnectionState();
         }
 

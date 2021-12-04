@@ -11,7 +11,7 @@ namespace XOPE_UI.Definitions
 
     }
 
-    public enum ServerMessageType
+    public enum UiMessageType
     {
         INVALID_MESSAGE,
         PING,
