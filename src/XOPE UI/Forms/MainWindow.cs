@@ -18,9 +18,6 @@ namespace XOPE_UI
 {
     public partial class MainWindow : Form
     {
-        const string XOPE_SPY_32 = "XOPESpy32.dll";
-        const string XOPE_SPY_64 = "XOPESpy64.dll";
-
         bool IsAdmin 
         { 
             get => (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator); 
@@ -68,12 +65,12 @@ namespace XOPE_UI
 
             scriptManager = new ScriptManager();
 
-            livePacketListView.OnItemDoubleClick += LivePacketListView_OnItemDoubleClick;
-            livePacketListView.OnItemSelectedChanged += LivePacketListView_OnItemSelectedChanged;
+            livePacketListView.ItemDoubleClicked += PacketListView_ItemDoubleClicked;
+            livePacketListView.ItemSelectedChanged += PacketListView_ItemSelectedChanged;
 
             spyManager = new SpyManager();
 
-            spyManager.OnNewPacket += (object sender, Packet e) =>
+            spyManager.NewPacket += (object sender, Packet e) =>
             {
                 if (recordToolStripButton.Tag != null && !recordToolStripButton.Enabled) // caoturing and not paused
                 {
@@ -87,7 +84,7 @@ namespace XOPE_UI
             captureTabControl.MouseClick += captureTabControl_MouseClick;
 
             environment = SDK.Environment.GetEnvironment();
-            spyManager.OnNewPacket += (object sender, Definitions.Packet e) =>
+            spyManager.NewPacket += (object sender, Definitions.Packet e) =>
                 environment.NotifyNewPacket(e.Data);
 
             resizeTimer.Interval = 100;
@@ -244,7 +241,7 @@ namespace XOPE_UI
 
         private void CreditsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show("Icon(s) made by Google from www.flaticon.com", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Icon(s) made by Google from www.flaticon.com", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -310,19 +307,19 @@ namespace XOPE_UI
             if (recordToolStripButton.Tag == null)
             {
                 string newCaptureKey = "Capture " + captureIndex++;
-                TabPage tabPage = new TabPage(newCaptureKey + " [Capturing]");
-                captureTabControl.TabPages.Add(tabPage);
-                tabPage.Name = newCaptureKey;
-                tabPage.Controls.Add(new PacketListView());
-                tabPage.Controls[0].Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-                tabPage.Controls[0].Size = tabPage.Size;// - new System.Drawing.Size(2, 0);
-                Console.WriteLine($"before: {tabPage.Size}"); ;
 
-                Console.WriteLine($"after: {tabPage.Controls[0].Size}");
+                PacketListView packetListView = new PacketListView();
+                packetListView.Anchor = ~AnchorStyles.None;
+                packetListView.Size = captureTabControl.TabPages[0].Size;
+                packetListView.ItemDoubleClicked += PacketListView_ItemDoubleClicked;
+                packetListView.ItemSelectedChanged += PacketListView_ItemSelectedChanged;
 
                 //Creates a new tabpage, based on the default tab page
-                //captureTabControl.TabPages.Add(tabPage);
-                //((ListView)tabPage.Controls[0].Controls["captureListView"]).Items.Add("abc123");
+                TabPage tabPage = new TabPage(newCaptureKey + " [Capturing]");
+                tabPage.Name = newCaptureKey;
+                tabPage.Controls.Add(packetListView);
+                captureTabControl.TabPages.Add(tabPage);
+
                 captureTabControl.SelectedTab = captureTabControl.TabPages[newCaptureKey];
                 recordToolStripButton.Tag = newCaptureKey;
             }
@@ -368,7 +365,7 @@ namespace XOPE_UI
             }
         }
 
-        private void LivePacketListView_OnItemDoubleClick(object sender, ListViewItem e)
+        private void PacketListView_ItemDoubleClicked(object sender, ListViewItem e)
         {
             using (PacketEditorReplayDialog packetEditorReplay = new PacketEditorReplayDialog(spyManager))
             {
@@ -380,7 +377,7 @@ namespace XOPE_UI
             }
         }
 
-        private void LivePacketListView_OnItemSelectedChanged(object sender, ListViewItem e)
+        private void PacketListView_ItemSelectedChanged(object sender, ListViewItem e)
         {
             this.packetCaptureHexPreview.SetBytes((byte[])e.Tag);
         }

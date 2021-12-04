@@ -101,10 +101,10 @@ namespace XOPE_UI.Forms.Component
             this.Column13,
             this.Column14,
             this.Column15});
+            this.byteGridView.Enabled = false;
             this.byteGridView.Location = new System.Drawing.Point(0, 0);
             this.byteGridView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.byteGridView.Name = "byteGridView";
-            this.byteGridView.ReadOnly = true;
             this.byteGridView.RowHeadersWidth = 90;
             this.byteGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.byteGridView.Size = new System.Drawing.Size(546, 102);
@@ -121,7 +121,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column0.HeaderText = "00";
             this.Column0.Name = "Column0";
-            this.Column0.ReadOnly = true;
             this.Column0.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column0.Width = 26;
             // 
@@ -129,7 +128,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column1.HeaderText = "01";
             this.Column1.Name = "Column1";
-            this.Column1.ReadOnly = true;
             this.Column1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column1.Width = 26;
             // 
@@ -137,7 +135,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column2.HeaderText = "02";
             this.Column2.Name = "Column2";
-            this.Column2.ReadOnly = true;
             this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column2.Width = 26;
             // 
@@ -145,7 +142,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column3.HeaderText = "03";
             this.Column3.Name = "Column3";
-            this.Column3.ReadOnly = true;
             this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column3.Width = 26;
             // 
@@ -153,7 +149,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column4.HeaderText = "04";
             this.Column4.Name = "Column4";
-            this.Column4.ReadOnly = true;
             this.Column4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column4.Width = 26;
             // 
@@ -161,7 +156,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column5.HeaderText = "05";
             this.Column5.Name = "Column5";
-            this.Column5.ReadOnly = true;
             this.Column5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column5.Width = 26;
             // 
@@ -169,7 +163,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column6.HeaderText = "06";
             this.Column6.Name = "Column6";
-            this.Column6.ReadOnly = true;
             this.Column6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column6.Width = 26;
             // 
@@ -178,7 +171,6 @@ namespace XOPE_UI.Forms.Component
             this.Column7.DividerWidth = 20;
             this.Column7.HeaderText = "07";
             this.Column7.Name = "Column7";
-            this.Column7.ReadOnly = true;
             this.Column7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column7.Width = 46;
             // 
@@ -186,7 +178,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column8.HeaderText = "08";
             this.Column8.Name = "Column8";
-            this.Column8.ReadOnly = true;
             this.Column8.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column8.Width = 26;
             // 
@@ -194,7 +185,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column9.HeaderText = "09";
             this.Column9.Name = "Column9";
-            this.Column9.ReadOnly = true;
             this.Column9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column9.Width = 26;
             // 
@@ -202,7 +192,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column10.HeaderText = "0A";
             this.Column10.Name = "Column10";
-            this.Column10.ReadOnly = true;
             this.Column10.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column10.Width = 26;
             // 
@@ -210,7 +199,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column11.HeaderText = "0B";
             this.Column11.Name = "Column11";
-            this.Column11.ReadOnly = true;
             this.Column11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column11.Width = 26;
             // 
@@ -218,7 +206,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column12.HeaderText = "0C";
             this.Column12.Name = "Column12";
-            this.Column12.ReadOnly = true;
             this.Column12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column12.Width = 26;
             // 
@@ -226,7 +213,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column13.HeaderText = "0D";
             this.Column13.Name = "Column13";
-            this.Column13.ReadOnly = true;
             this.Column13.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column13.Width = 26;
             // 
@@ -234,7 +220,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column14.HeaderText = "0E";
             this.Column14.Name = "Column14";
-            this.Column14.ReadOnly = true;
             this.Column14.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column14.Width = 26;
             // 
@@ -242,7 +227,6 @@ namespace XOPE_UI.Forms.Component
             // 
             this.Column15.HeaderText = "0F";
             this.Column15.Name = "Column15";
-            this.Column15.ReadOnly = true;
             this.Column15.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column15.Width = 26;
             // 

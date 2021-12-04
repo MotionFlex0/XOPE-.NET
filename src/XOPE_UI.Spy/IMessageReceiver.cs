@@ -9,6 +9,6 @@ namespace XOPE_UI.Spy
         bool IsConnected { get; }
 
         void RunAsync();
-        void ShutdownServerAndWait();
+        void ShutdownAndWait();
     }
 }

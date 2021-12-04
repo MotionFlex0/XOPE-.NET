@@ -16,8 +16,8 @@ namespace XOPE_UI.Forms
             InitializeComponent();
             this.spyManager = spyManager;
 
-            this.spyManager.OnNewConnection += (s, e) => this.Invoke(() => SpyManager_OnNewConnection(s, e));
-            this.spyManager.OnCloseConnection += (s, e) => this.Invoke(() => SpyManager_OnCloseConnection(s, e));
+            this.spyManager.ConnectionEstablished += SpyManager_OnNewConnection;
+            this.spyManager.ConnectionClosed += SpyManager_OnCloseConnection;
         }
 
         protected override void Dispose(bool disposing)
@@ -28,8 +28,8 @@ namespace XOPE_UI.Forms
             }
             base.Dispose(disposing);
 
-            this.spyManager.OnNewConnection -= SpyManager_OnNewConnection;
-            this.spyManager.OnCloseConnection -= SpyManager_OnCloseConnection;
+            this.spyManager.ConnectionEstablished -= SpyManager_OnNewConnection;
+            this.spyManager.ConnectionClosed -= SpyManager_OnCloseConnection;
         }
 
         public void UpdateActiveList()
@@ -44,6 +44,7 @@ namespace XOPE_UI.Forms
                 item.SubItems.Add(c.IP.ToString());
                 item.SubItems.Add(c.Port.ToString());
                 item.SubItems.Add(c.SocketStatus.ToString());
+                item.Tag = c.SocketId;
                 connectionListView.Items.Add(item);
             }
         }
@@ -60,51 +61,76 @@ namespace XOPE_UI.Forms
 
         private void SpyManager_OnNewConnection(object sender, Connection c)
         {
-            ListViewItem item = new ListViewItem(c.SocketId.ToString());
-            item.Name = c.SocketId.ToString();
-            item.SubItems.Add(c.IPFamily == AddressFamily.InterNetwork ? "IPv4" : "IPv6");
-            item.SubItems.Add(c.IP.ToString());
-            item.SubItems.Add(c.Port.ToString());
-            item.SubItems.Add(c.SocketStatus.ToString());
-
-            item.BackColor = Color.LightGreen;
-            connectionListView.Items.Add(item);
-
-            System.Windows.Forms.Timer timer = new Timer();
-            timer.Interval = 5000;
-            timer.Tick += (object sender, EventArgs e) =>
+            this.Invoke(() =>
             {
-                if (this.Visible)
+
+                ListViewItem item = null;
+                foreach (ListViewItem lvi in connectionListView.Items)
                 {
-                    timer.Stop();
-                    item.BackColor = Color.White;
+                    if (lvi.Tag is int socketId && socketId == c.SocketId)
+                    {
+                        item = lvi;
+                        item.SubItems[0].Text = c.IPFamily == AddressFamily.InterNetwork ? "IPv4" : "IPv6";
+                        item.SubItems[1].Text = c.IP.ToString();
+                        item.SubItems[2].Text = c.Port.ToString();
+                        item.SubItems[3].Text = c.SocketStatus.ToString();
+                        break;
+                    }
                 }
-            };
 
-            timer.Start();
+                if (item == null)
+                {
+                    item = new ListViewItem(c.SocketId.ToString());
+                    item.Name = c.SocketId.ToString();
+                    item.SubItems.Add(c.IPFamily == AddressFamily.InterNetwork ? "IPv4" : "IPv6");
+                    item.SubItems.Add(c.IP.ToString());
+                    item.SubItems.Add(c.Port.ToString());
+                    item.SubItems.Add(c.SocketStatus.ToString());
+                    connectionListView.Items.Add(item);
+                }
 
+                item.BackColor = Color.LightGreen;
+
+                System.Windows.Forms.Timer timer = new Timer();
+                timer.Interval = 5000;
+                timer.Tick += (object sender, EventArgs e) =>
+                {
+                    if (this.Visible)
+                    {
+                        timer.Stop();
+                        item.BackColor = Color.White;
+                    }
+                };
+
+                timer.Start();
+
+            });
         }
 
         private void SpyManager_OnCloseConnection(object sender, Connection c)
         {
-            ListViewItem item = connectionListView.Items[c.SocketId.ToString()];
-            if (item == null)
-                return;
-
-            item.BackColor = Color.Red;
-
-            System.Windows.Forms.Timer timer = new Timer();
-            timer.Interval = 5000;
-            timer.Tick += (object sender, EventArgs e) =>
+            this.Invoke(() =>
             {
-                if (this.Visible)
-                {
-                    timer.Stop();
-                    item.Remove();
-                }
-            };
 
-            timer.Start();
+                ListViewItem item = connectionListView.Items[c.SocketId.ToString()];
+                if (item == null)
+                    return;
+
+                item.BackColor = Color.Red;
+
+                System.Windows.Forms.Timer timer = new Timer();
+                timer.Interval = 5000;
+                timer.Tick += (object sender, EventArgs e) =>
+                {
+                    if (this.Visible)
+                    {
+                        timer.Stop();
+                        item.Remove();
+                    }
+                };
+
+                timer.Start();
+            });
         }
     }
 }
