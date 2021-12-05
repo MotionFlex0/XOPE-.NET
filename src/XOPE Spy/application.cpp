@@ -35,6 +35,7 @@ void Application::start()
 
 void Application::shutdown()
 {
+    // This block is only entered if shutdown() is called from outside of this class (e.g. DLL_PROCESS_DETACH)
     if (!_stopApplication)
     {
         _stopApplication = true;
@@ -66,9 +67,11 @@ void Application::run()
         std::this_thread::sleep_for(std::chrono::milliseconds(30));
 
         processIncomingMessages();
-        _namedPipeClient->flushOutBuffer();
+        if (_stopApplication || _namedPipeServer->isPipeBroken())
+            break;
 
-        if (_namedPipeClient->isPipeBroken() || _namedPipeServer->isPipeBroken())
+        _namedPipeClient->flushOutBuffer();
+        if (_namedPipeClient->isPipeBroken())
             break;
     }
 
@@ -80,6 +83,8 @@ void Application::run()
 
         FreeLibraryAndExitThread(_dllModule, 0);
     }
+    else
+        this->shutdown();
 }
 
 HookManager* Application::getHookManager()
@@ -203,7 +208,6 @@ void Application::processIncomingMessages()
         else if (type == SpyMessageType::SHUTDOWN_RECV_THREAD)
         {
             _stopApplication = true;
-            this->shutdown();
             break;
         }
 
