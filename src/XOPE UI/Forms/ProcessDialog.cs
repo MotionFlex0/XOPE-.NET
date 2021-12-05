@@ -16,10 +16,10 @@ namespace XOPE_UI.Forms
         public string SelectedProcessName { get; private set; }
 
         private SortedDictionary<int, Process> processes;
-        private Stack<Tuple<ListViewItem, int>> hiddenProcessListItems; // <processListViewItem, listViewIndex>
-        private bool isElevated;
 
-        private int oldSearchLength = 0;
+        private List<ListViewItem> shadowProcessListItems;
+
+        private bool isElevated;
 
         public ProcessDialog(bool isElevated)
         {
@@ -28,7 +28,7 @@ namespace XOPE_UI.Forms
             this.isElevated = isElevated;
 
             processes = new SortedDictionary<int, Process>();
-            hiddenProcessListItems = new Stack<Tuple<ListViewItem, int>>();
+            shadowProcessListItems = new List<ListViewItem>();
 
             processesListView.Columns[0].Width = 400;//processesView.Width;
             is64bitText.Text = Environment.Is64BitProcess.ToString();
@@ -85,9 +85,7 @@ namespace XOPE_UI.Forms
             this.confirmButton.Enabled = false;
 
             processes.Clear();
-            hiddenProcessListItems.Clear();
-            oldSearchLength = 0;
-            this.searchTextBox.Text = "";
+            shadowProcessListItems.Clear();
 
             Process[] ps = Process.GetProcesses();
             foreach (Process p in ps)
@@ -121,6 +119,7 @@ namespace XOPE_UI.Forms
                         if (!this.processesListView.SmallImageList.Images.ContainsKey(processName))
                             this.processesListView.SmallImageList.Images.Add(processName, Icon.ExtractAssociatedIcon(processFilePath));
                         this.processesListView.Items.Add(listViewItem);
+                        shadowProcessListItems.Add(listViewItem);
                     }));
                 }
                 catch (Win32Exception)
@@ -134,7 +133,10 @@ namespace XOPE_UI.Forms
             }
             this.processesListView.EndUpdate();
 
-            updateProcessListLabel();
+            UpdateProcessListLabel();
+
+            if (this.searchTextBox.Text != "")
+                UpdateListViewWithSearchQuery();
 
             stopwatch.Stop();
 
@@ -157,11 +159,42 @@ namespace XOPE_UI.Forms
             }
         }
 
-        private void updateProcessListLabel()
+        private void UpdateListViewWithSearchQuery()
         {
-            int hiddenListCount = hiddenProcessListItems.Count;
+            string searchQuery = this.searchTextBox.Text;
+
+            this.processesListView.BeginUpdate();
+            this.processesListView.Items.Clear();
+
+            foreach (ListViewItem processItem in shadowProcessListItems)
+            {
+                Process process = processes[(int)processItem.Tag];
+                if (process.ProcessName.IndexOf(searchQuery, StringComparison.OrdinalIgnoreCase) != -1)
+                {
+                    this.processesListView.Items.Add(processItem);
+                }
+            }
+
+            this.processesListView.EndUpdate();
+
+            if (searchQuery != "")
+            {
+                if (this.processesListView.Items.Count > 0)
+                    this.searchTextBox.BackColor = Color.LightGreen;
+                else
+                    this.searchTextBox.BackColor = Color.FromArgb(255, 100, 100);
+            }
+            else
+                this.searchTextBox.BackColor = Color.White;
+
+            UpdateProcessListLabel();
+        }
+
+        private void UpdateProcessListLabel()
+        {
+            int totalProcessCount = shadowProcessListItems.Count;
             int processesListCount = this.processesListView.Items.Count;
-            this.processListTotalLabel.Text = $"{processesListCount}/{processesListCount + hiddenListCount}";
+            this.processListTotalLabel.Text = $"{processesListCount}/{totalProcessCount}";
         }
 
         private void processesView_SelectedIndexChanged(object sender, EventArgs e)
@@ -197,53 +230,7 @@ namespace XOPE_UI.Forms
 
         private void searchTextBox_TextChanged(object sender, EventArgs e)
         {
-            string searchQuery = this.searchTextBox.Text;
-
-            this.processesListView.BeginUpdate();
-
-            if (searchTextBox.Text.Length > oldSearchLength)
-            {
-                for (int i = this.processesListView.Items.Count - 1; i >= 0; i--)
-                {
-                    ListViewItem processItem = this.processesListView.Items[i];
-                    Process process = processes[(int)processItem.Tag];
-                    if (process.ProcessName.IndexOf(searchQuery, StringComparison.OrdinalIgnoreCase) == -1)
-                    {
-                        hiddenProcessListItems.Push(new Tuple<ListViewItem, int>(processItem, processItem.Index));
-                        processItem.Remove();
-                    }
-                }
-            }
-            else if (searchTextBox.Text.Length < oldSearchLength)
-            {
-                while (hiddenProcessListItems.Count > 0)
-                {
-                    Tuple<ListViewItem, int> tuple = hiddenProcessListItems.Pop();
-
-                    Process process = processes[(int)tuple.Item1.Tag];
-                    if (process.ProcessName.IndexOf(searchQuery, StringComparison.OrdinalIgnoreCase) != -1)
-                    {
-                        if (tuple.Item2 < this.processesListView.Items.Count)
-                            this.processesListView.Items.Insert(tuple.Item2, tuple.Item1);
-                        else
-                        {
-                            this.processesListView.Items.Add(tuple.Item1);
-                            Debug.WriteLine("Could not add processListViewItem back to its original position");
-                        }
-                    }
-                    else
-                    {
-                        hiddenProcessListItems.Push(tuple);
-                        break;
-                    }
-                }
-            }
-
-            this.processesListView.EndUpdate();
-
-            updateProcessListLabel();
-
-            oldSearchLength = searchTextBox.Text.Length;
+            UpdateListViewWithSearchQuery();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)

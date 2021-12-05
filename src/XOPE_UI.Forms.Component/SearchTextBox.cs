@@ -33,19 +33,5 @@ namespace XOPE_UI.Forms.Component
 
             InitializeComponent();
         }
-
-        protected override void WndProc(ref Message m)
-        {
-            switch (m.Msg)
-            {
-                case WM_PASTE:
-                    this.Text = "";
-                    //this.Selection  
-                    //this.OnTextChanged()
-
-                    break;
-            }
-            base.WndProc(ref m);
-        }
     }
 }
