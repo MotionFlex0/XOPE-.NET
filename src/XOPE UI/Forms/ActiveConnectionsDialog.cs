@@ -111,14 +111,13 @@ namespace XOPE_UI.Forms
         {
             this.Invoke(() =>
             {
-
                 ListViewItem item = connectionListView.Items[c.SocketId.ToString()];
                 if (item == null)
                     return;
 
                 item.BackColor = Color.Red;
 
-                System.Windows.Forms.Timer timer = new Timer();
+                Timer timer = new Timer();
                 timer.Interval = 5000;
                 timer.Tick += (object sender, EventArgs e) =>
                 {
