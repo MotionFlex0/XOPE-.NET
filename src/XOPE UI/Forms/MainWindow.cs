@@ -198,11 +198,12 @@ namespace XOPE_UI
             attachedProcess = null;
         }
 
-        private bool IsAttached()
+        private bool IsAttached(bool showMessage = true)
         {
             if (attachedProcess == null)
             {
-                MessageBox.Show("Not attached to a process");
+                if (showMessage)
+                    MessageBox.Show("Not attached to a process");
                 return false;
             }
             return true;
@@ -390,7 +391,16 @@ namespace XOPE_UI
 
         private void newPacketToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!IsAttached())
+                return;
 
+            using (PacketEditorReplayDialog packetEditorReplayDialog = 
+                new PacketEditorReplayDialog(spyManager)) 
+            {
+                packetEditorReplayDialog.Data = new byte[] { 0x00 };
+                packetEditorReplayDialog.Editible = true;
+                packetEditorReplayDialog.ShowDialog();
+            }
         }
 
         private void logToolStripMenuItem_Click(object sender, EventArgs e)
