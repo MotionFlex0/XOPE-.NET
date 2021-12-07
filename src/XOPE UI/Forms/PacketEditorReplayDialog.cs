@@ -19,6 +19,8 @@ namespace XOPE_UI.Forms
 
         private SpyManager spyManager;
 
+        private Stream internalStream = null;
+
         private Timer replayTimer = null;
 
         public PacketEditorReplayDialog(SpyManager spyManager)
@@ -31,13 +33,23 @@ namespace XOPE_UI.Forms
             hexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
             hexEditor.StringByteWidth = 8;
             hexEditor.CanInsertAnywhere = true;
+            hexEditor.AllowExtend = true;
+            hexEditor.HideByteDeleted = true;
+            hexEditor.AppendNeedConfirmation = false;
+
+            hexEditor.KeyDown += (object sender, System.Windows.Input.KeyEventArgs e) =>
+            {
+                if (e.Key == System.Windows.Input.Key.Insert)
+                {
+
+                }
+            };
         }
 
         private void InitializeHexEditor()
         {
             hexEditor = new HexEditor();
             elementHost = new ElementHost();
-            //elementHost
             elementHost.Anchor = ~AnchorStyles.None;
             elementHost.Location = this.hexEditorPlaceholder.Location;
             elementHost.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -48,15 +60,21 @@ namespace XOPE_UI.Forms
             elementHost.Child = hexEditor;
             this.Controls.Remove(hexEditorPlaceholder);
             this.Controls.Add(elementHost);
+        }
 
-            hexEditor.CanInsertAnywhere = true;
-            hexEditor.KeyDown += (object sender, System.Windows.Input.KeyEventArgs e) =>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
             {
-                if (e.Key == System.Windows.Input.Key.Insert)
-                {
-                    //hexEditor.InsertByte(0x00, hexEditor.SelectionStart);
-                }
-            };
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+
+            if (replayTimer != null)
+            {
+                replayTimer.Stop();
+                replayTimer.Dispose();
+            }
         }
 
         private void PacketEditorReplayDialog_VisibleChanged(object sender, EventArgs e)
@@ -66,12 +84,18 @@ namespace XOPE_UI.Forms
                 hexEditor.ReadOnlyMode = !Editible;
                 if (Data != null)
                 {
-                    hexEditor.Stream = new MemoryStream(Data);
-                    socketIdTextBox.Text = SocketId.ToString(); //Technically not a TextBox but a NumericUpDown instead
+                    internalStream = new MemoryStream(Data.Length);
+                    internalStream.Write(Data, 0, Data.Length);
+                    hexEditor.Stream = internalStream;
 
+                    socketIdTextBox.Text = SocketId.ToString(); //Technically not a TextBox but a NumericUpDown instead
                 }
                 else
-                    hexEditor.Stream = new MemoryStream(Encoding.ASCII.GetBytes("___NO_DATA___"));
+                {
+                    internalStream = new MemoryStream(1);
+                    internalStream.WriteByte(0x00);
+                    hexEditor.Stream = internalStream;
+                }
             }
         }
 
@@ -138,6 +162,7 @@ namespace XOPE_UI.Forms
             socketIdTextBox.Enabled = !isReplaying;
             delayTimerTextBox.Enabled = !isReplaying;
             hexEditor.IsEnabled = !isReplaying;
+            socketSelectorButton.Enabled = !isReplaying;
         }
 
         private void addToListButton_Click(object sender, EventArgs e)
@@ -150,6 +175,19 @@ namespace XOPE_UI.Forms
             replayTimer.Stop();
             replayTimer = null;
             setUiToReplayState(false);
+        }
+
+        private void socketSelectorButton_Click(object sender, EventArgs e)
+        {
+            using (SocketSelectorDialog socketSelectorDialog = 
+                new SocketSelectorDialog(spyManager))
+            {
+                DialogResult result = socketSelectorDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    socketIdTextBox.Value = socketSelectorDialog.SelectedSocketId;
+                }
+            }
         }
     }
 }
