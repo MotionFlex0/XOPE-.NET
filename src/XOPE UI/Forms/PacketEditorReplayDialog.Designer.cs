@@ -8,19 +8,6 @@ namespace XOPE_UI.Forms
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -40,6 +27,7 @@ namespace XOPE_UI.Forms
             this.label3 = new System.Windows.Forms.Label();
             this.hexEditorPlaceholder = new System.Windows.Forms.Label();
             this.replayProgressLabel = new System.Windows.Forms.Label();
+            this.socketSelectorButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.delayTimerTextBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).BeginInit();
             this.SuspendLayout();
@@ -111,7 +99,7 @@ namespace XOPE_UI.Forms
             0,
             0,
             0});
-            this.delayTimerTextBox.Location = new System.Drawing.Point(270, 16);
+            this.delayTimerTextBox.Location = new System.Drawing.Point(288, 16);
             this.delayTimerTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.delayTimerTextBox.Maximum = new decimal(new int[] {
             100000,
@@ -125,7 +113,7 @@ namespace XOPE_UI.Forms
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(198, 21);
+            this.label2.Location = new System.Drawing.Point(228, 21);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(52, 15);
@@ -134,7 +122,7 @@ namespace XOPE_UI.Forms
             // 
             // socketIdTextBox
             // 
-            this.socketIdTextBox.Location = new System.Drawing.Point(82, 16);
+            this.socketIdTextBox.Location = new System.Drawing.Point(75, 16);
             this.socketIdTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.socketIdTextBox.Maximum = new decimal(new int[] {
             65535,
@@ -148,7 +136,7 @@ namespace XOPE_UI.Forms
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(343, 21);
+            this.label3.Location = new System.Drawing.Point(361, 21);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(23, 15);
@@ -178,11 +166,22 @@ namespace XOPE_UI.Forms
             this.replayProgressLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.replayProgressLabel.Visible = false;
             // 
+            // socketSelectorButton
+            // 
+            this.socketSelectorButton.Location = new System.Drawing.Point(174, 16);
+            this.socketSelectorButton.Name = "socketSelectorButton";
+            this.socketSelectorButton.Size = new System.Drawing.Size(30, 23);
+            this.socketSelectorButton.TabIndex = 22;
+            this.socketSelectorButton.Text = "lll";
+            this.socketSelectorButton.UseVisualStyleBackColor = true;
+            this.socketSelectorButton.Click += new System.EventHandler(this.socketSelectorButton_Click);
+            // 
             // PacketEditorReplayDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(765, 408);
+            this.Controls.Add(this.socketSelectorButton);
             this.Controls.Add(this.replayProgressLabel);
             this.Controls.Add(this.hexEditorPlaceholder);
             this.Controls.Add(this.label3);
@@ -218,5 +217,6 @@ namespace XOPE_UI.Forms
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label hexEditorPlaceholder;
         private System.Windows.Forms.Label replayProgressLabel;
+        private System.Windows.Forms.Button socketSelectorButton;
     }
 }
