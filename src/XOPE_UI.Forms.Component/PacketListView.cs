@@ -85,9 +85,10 @@ namespace XOPE_UI.Forms.Component
 
         private void captureListView_Resize(object sender, EventArgs e)
         {
-            if (captureListView.Items.Count > 0)
+            if (captureListView.Items.Count > 0 && captureListView.Items[0] != null)
             {
                 int itemsVisible = (int)Math.Floor((decimal)captureListView.Height / captureListView.Items[0].Bounds.Height - 1);
+
                 minAutoScrollOffset = itemsVisible + 2;
             }
             else
