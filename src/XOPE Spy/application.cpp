@@ -224,7 +224,7 @@ void Application::initHooks()
     _hookManager->hookNewFunction(connect, Functions::Hooked_Connect, DEFAULTPATCHSIZE);
     _hookManager->hookNewFunction(send, Functions::Hooked_Send, DEFAULTPATCHSIZE);
     _hookManager->hookNewFunction(recv, Functions::Hooked_Recv, DEFAULTPATCHSIZE);
-    //hookmgr->hookNewFunction(closesocket, Functions::Hooked_CloseSocket, CLOSEPATCHSIZE);
+    _hookManager->hookNewFunction(closesocket, Functions::Hooked_CloseSocket, CLOSEPATCHSIZE);
     _hookManager->hookNewFunction(WSAConnect, Functions::Hooked_WSAConnect, DEFAULTPATCHSIZE);
     _hookManager->hookNewFunction(WSASend, Functions::Hooked_WSASend, DEFAULTPATCHSIZE);
     _hookManager->hookNewFunction(WSARecv, Functions::Hooked_WSARecv, DEFAULTPATCHSIZE);

@@ -1,9 +1,11 @@
 #pragma once
 
+#include <capstone/capstone.h>
 #include <cassert>
 #include <stdint.h>
+#include <vector>
 #include "../utils/memory.h"
-
+#include "../utils/util.h"
 
 class IDetour;
 class Detour32;
@@ -46,7 +48,12 @@ private:
 	uint8_t* m_targetFunc = nullptr; //original function start
 	uint8_t* m_detourFunc = nullptr;
 	uint8_t* m_trampoline = nullptr; //bridge between the old function's first few bytes and the rest of the function
+	uint8_t* m_originalBytes = nullptr;
 	int m_bytesToPatch = 0;
+	int m_trampolineSize = 0;
 
 	bool m_patched = false;
+
+	// Calculates required size of trampoline
+	int calculateTrampolineSize(cs_insn* inst, size_t instCount);
 };

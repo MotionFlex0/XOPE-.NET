@@ -60,7 +60,8 @@ namespace XOPE_UI
 
             spyThread = Task.Factory.StartNew(() =>
             {
-                while ((MessageDispatcher == null || MessageDispatcher.IsConnected) && MessageReceiver.IsConnectingOrConnected && !cancellationTokenSource.IsCancellationRequested)
+                while ((MessageDispatcher == null || MessageDispatcher.IsConnected) 
+                && MessageReceiver.IsConnectingOrConnected && !cancellationTokenSource.IsCancellationRequested)
                 {
                     IncomingMessage incomingMessage = MessageReceiver.GetIncomingMessage();
                     if (incomingMessage != null)
@@ -176,25 +177,18 @@ namespace XOPE_UI
                 else if (hookedFuncType == HookedFuncType.CLOSE)
                 {
                     int socketId = json.Value<Int32>("socket");
-                    Connection matchingConnection = SpyData.Connections[socketId]; //Data.Connections.FirstOrDefault((Connection c) => c.SocketId == socketId);
-
-                    if (matchingConnection != null && matchingConnection.SocketStatus != Connection.Status.CLOSED)
+                    bool found = SpyData.Connections.TryGetValue(socketId, out Connection matchingConnection);
+                    if (found)
                     {
-                        matchingConnection.SocketStatus = Connection.Status.CLOSED;
-                        matchingConnection.LastStatusChangeTime = DateTime.Now;
-
-                        System.Timers.Timer t = new System.Timers.Timer();
-                        t.Elapsed += (object sender, ElapsedEventArgs e) =>
+                        if (matchingConnection != null && matchingConnection.SocketStatus != Connection.Status.CLOSED)
                         {
-                            SpyData.Connections.TryRemove(matchingConnection.SocketId, out Connection v);
-                        };
+                            matchingConnection.SocketStatus = Connection.Status.CLOSED;
 
-                        t.Interval = 7000;
-                        t.AutoReset = false;
-                        t.Start();
-                        ConnectionClosed?.Invoke(this, matchingConnection);
+                            ConnectionClosed?.Invoke(this, matchingConnection);
+                            SpyData.Connections.TryRemove(matchingConnection.SocketId, out _);
+                        }
                     }
-                }
+                }    
                 else
                 {
                     int socket = json.Value<int>("socket");
