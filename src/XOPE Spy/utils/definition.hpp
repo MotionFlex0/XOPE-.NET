@@ -4,7 +4,7 @@
 using Detour = Detour64;
 	#define MESSAGEBOXAPATCHSIZE 14
 	#define DEFAULTPATCHSIZE 15
-    #define CLOSEPATCHSIZE 15
+    #define CLOSEPATCHSIZE 14
 #else
 using Detour = Detour32;
 	#define MESSAGEBOXAPATCHSIZE 5
