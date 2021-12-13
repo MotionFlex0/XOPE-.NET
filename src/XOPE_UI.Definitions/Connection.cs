@@ -10,13 +10,23 @@ namespace XOPE_UI.Definitions
 {
     public class Connection : EventArgs
     {
+        private Status status;
+
         public int SocketId { get; private set; }
         public int Protocol { get; set; } //TODO: once implemented, change type to ProtocolType
         public AddressFamily IPFamily { get; set; }
         public string IP { get; set; } // original type: IPAddress
         public int Port { get; set; }
-        public Status SocketStatus { get; set; }
-        public DateTime LastStatusChangeTime { get; set; }
+        public Status SocketStatus
+        {
+            get => status;
+            set
+            {
+                status = value;
+                LastStatusChangeTime = DateTime.Now;
+            }
+        }
+        public DateTime LastStatusChangeTime { get; private set; }
 
         public Connection(int id, int protocol, int addrFamily, string ip, int port, Status status)
         {
