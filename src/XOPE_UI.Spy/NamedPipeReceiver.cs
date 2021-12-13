@@ -2,18 +2,12 @@
 using PeterO.Cbor;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Pipes;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using XOPE_UI.Definitions;
 using XOPE_UI.Native;
-using XOPE_UI.Spy.DispatcherMessageType;
 using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI.Spy
