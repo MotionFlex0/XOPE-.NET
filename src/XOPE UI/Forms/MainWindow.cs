@@ -405,7 +405,14 @@ namespace XOPE_UI
 
         private void logToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            logDialog.Show();
+            if (logDialog.Visible)
+            {
+                if (logDialog.WindowState == FormWindowState.Minimized)
+                    logDialog.WindowState = FormWindowState.Normal;
+                logDialog.BringToFront();
+            }
+            else
+                logDialog.Show();
         }
 
         private void runScriptToolStripMenuItem_Click(object sender, EventArgs e)
