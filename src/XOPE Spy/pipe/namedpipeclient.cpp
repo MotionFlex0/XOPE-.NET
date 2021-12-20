@@ -10,13 +10,17 @@ NamedPipeClient::NamedPipeClient(const char* pipePath)
 
 void NamedPipeClient::flushOutBuffer()
 {
-    if (isPipeBroken())
+    if (isPipeBroken() || _outBuffer.empty())
         return;
 
-    std::lock_guard<std::mutex> lock(_mutex);
-
-    for (auto& out : _outBuffer)
+    std::unique_lock<std::mutex> outBufferLock(_mutex, std::defer_lock);
+    while (!_outBuffer.empty())
     {
+        outBufferLock.lock();
+        OutMessage out = std::move(_outBuffer.front());
+        _outBuffer.pop();
+        outBufferLock.unlock();
+
         DWORD bytesWritten { 0 };
         BOOL res = WriteFile(_pipe, out.data.get(), out.length, &bytesWritten, NULL);
         if (!res)
@@ -29,7 +33,6 @@ void NamedPipeClient::flushOutBuffer()
             }
         }
     }
-    _outBuffer.clear();
 }
 
 //int NamedPipeClient::recv(json& recvData)
