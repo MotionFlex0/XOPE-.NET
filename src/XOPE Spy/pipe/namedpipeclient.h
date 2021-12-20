@@ -3,6 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
+#include <queue>
 #include "../definitions/definitions.hpp"
 #include "../nlohmann/json.hpp"
 #include "../utils/util.h"
@@ -27,16 +28,14 @@ public:
 	template <class T>
 	bool send(T mes);
 	
-
 	void flushOutBuffer();
-	//int recv(json&);
 	void close();
 
 private:
 
 	bool pipeBroken = false;
 	HANDLE _pipe = INVALID_HANDLE_VALUE;
-	std::vector<OutMessage> _outBuffer;
+	std::queue<OutMessage> _outBuffer;
 	std::mutex _mutex;
 };
 
@@ -58,7 +57,7 @@ bool NamedPipeClient::send(T mes)
 	auto buffer = std::make_unique<uint8_t[]>(len);
 	memcpy(buffer.get(), cbor.data(), len);
 
-	_outBuffer.push_back({ .data = std::move(buffer), .length = len });
+	_outBuffer.push({ .data = std::move(buffer), .length = len });
 
 	return true;
 }
