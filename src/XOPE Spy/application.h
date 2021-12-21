@@ -44,7 +44,7 @@ private:
 	PacketFilter _sendPacketFilters;
 
 	bool _stopApplication = false;
-	std::thread _applicationThread;
+	HANDLE _applicationThread;
 	std::thread _serverThread;
 
 	void initHooks();

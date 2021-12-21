@@ -30,7 +30,13 @@ void Application::init(HMODULE dllModule)
 
 void Application::start()
 {
-    _applicationThread = std::thread(&Application::run, this);
+    auto applicationRunWrapper = [](LPVOID lpVoid) -> DWORD
+    {
+        Application::getInstance().run();
+        return 0;
+    };
+
+    _applicationThread = CreateThread(NULL, 0, applicationRunWrapper, NULL, 0, NULL);
 }
 
 void Application::shutdown()
@@ -39,10 +45,8 @@ void Application::shutdown()
     if (!_stopApplication)
     {
         _stopApplication = true;
-        _applicationThread.join();
+        WaitForSingleObject(_applicationThread, INFINITE);
     }
-    else if (_applicationThread.joinable())
-        _applicationThread.detach();
 
     if (_serverThread.joinable())
     {
@@ -75,16 +79,10 @@ void Application::run()
             break;
     }
 
-    // Shutdown was initialised internally instead of an outside source (e.g. FreeLibrary)
-    if (!_stopApplication)
-    {
-        _stopApplication = true;
-        this->shutdown();
+    _stopApplication = true;
+    this->shutdown();
 
-        FreeLibraryAndExitThread(_dllModule, 0);
-    }
-    else
-        this->shutdown();
+    FreeLibraryAndExitThread(_dllModule, 0);
 }
 
 HookManager* Application::getHookManager()
