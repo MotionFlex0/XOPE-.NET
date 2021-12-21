@@ -179,18 +179,18 @@ namespace XOPE_UI
 
             spyManager.Shutdown();
             // This gives the Spy enough time to properly shutdown and dispose of its running threads (temp fix)
-            System.Threading.Thread.Sleep(2000);
+            //System.Threading.Thread.Sleep(2000);
 
             if (!alreadyFreed)
             {
-                bool res;
-                if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(attachedProcess.Handle))
-                    res = CreateRemoteThread.Free32(attachedProcess.Handle, XOPE_UI.Config.Spy.ModuleName32);
-                else
-                    res = CreateRemoteThread.Free64(attachedProcess.Handle, XOPE_UI.Config.Spy.ModuleName64);
+                //bool res;
+                //if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(attachedProcess.Handle))
+                //    res = CreateRemoteThread.Free32(attachedProcess.Handle, XOPE_UI.Config.Spy.ModuleName32);
+                //else
+                //    res = CreateRemoteThread.Free64(attachedProcess.Handle, XOPE_UI.Config.Spy.ModuleName64);
 
-                if (!res)
-                    MessageBox.Show("Failed to free XOPESpy from the attached process");
+                //if (!res)
+                //    MessageBox.Show("Failed to free XOPESpy from the attached process");
             }
             ListViewItem listViewItem = new ListViewItem();
             SetUiToDetachedState();
@@ -227,7 +227,7 @@ namespace XOPE_UI
         {
             this.Invoke(new Action(() =>
             {
-                Console.WriteLine($"Successfully freed Spy from process");
+                Console.WriteLine("Detached from process.");
                 if (stopRecToolStripButton.Enabled)
                     stopRecToolStripButton.PerformClick();
 
@@ -242,7 +242,8 @@ namespace XOPE_UI
 
         private void CreditsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Icon(s) made by Google from www.flaticon.com", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Console.WriteLine("This is test message");
+            //MessageBox.Show("Icon(s) made by Google from www.flaticon.com", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void Form1_Load(object sender, EventArgs e)
