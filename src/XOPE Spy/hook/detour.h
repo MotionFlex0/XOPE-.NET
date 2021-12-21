@@ -15,6 +15,10 @@ class IDetour
 {
 public:
 	virtual void* patch() = 0;
+	virtual void restoreOriginalFunction() = 0;
+	virtual void deleteTrampoline() = 0;
+
+	// unpatch() calls restoreOriginalFunction and deleteTrampoline.
 	virtual void unpatch() = 0;
 };
 
@@ -24,6 +28,8 @@ public:
 	Detour32(void* hookedFunc, void* sourceFunc, int bytesToPatch = 5);
 
 	void* patch();
+	void restoreOriginalFunction();
+	void deleteTrampoline();
 	void unpatch();
 
 private:
@@ -41,6 +47,8 @@ public:
 	Detour64(void* hookedFunc, void* sourceFunc, int bytesToPatch);
 
 	void* patch();
+	void restoreOriginalFunction();
+	void deleteTrampoline();
 	void unpatch();
 
 

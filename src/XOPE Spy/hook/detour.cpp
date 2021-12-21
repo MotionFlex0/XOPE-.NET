@@ -39,17 +39,35 @@ void* Detour32::patch()
 	return m_trampoline;
 }
 
-void Detour32::unpatch()
+void Detour32::restoreOriginalFunction()
 {
 	if (!m_patched)
 		return;
 
 	MemoryProtect mp(m_targetFunc, m_bytesToPatch, PAGE_EXECUTE_READWRITE);
 	memcpy(m_targetFunc, m_trampoline, m_bytesToPatch);
-	MemoryProtect ignore(m_trampoline, m_bytesToPatch + 5, PAGE_READWRITE, false);
 
+	if (m_trampoline == nullptr)
+		m_patched = false;
+}
+
+void Detour32::deleteTrampoline()
+{
+	if (!m_patched || m_trampoline == nullptr)
+		return;
+
+	MemoryProtect ignore(m_trampoline, m_bytesToPatch + 5, PAGE_READWRITE, false);
 	delete[] m_trampoline;
 	m_trampoline = nullptr;
+}
+
+void Detour32::unpatch()
+{
+	if (!m_patched)
+		return;
+
+	restoreOriginalFunction();
+	deleteTrampoline();
 	m_patched = false;
 }
 
@@ -152,19 +170,40 @@ void* Detour64::patch()
 	return m_trampoline;
 }
 
+void Detour64::restoreOriginalFunction()
+{
+	if (!m_patched || m_originalBytes == nullptr)
+		return;
+
+	MemoryProtect mp(m_targetFunc, m_bytesToPatch, PAGE_EXECUTE_READWRITE);
+	memcpy(m_targetFunc, m_originalBytes, m_bytesToPatch);
+	delete[] m_originalBytes;
+	m_originalBytes = nullptr;
+
+	if (m_trampoline == nullptr)
+		m_patched = false;
+}
+
+void Detour64::deleteTrampoline()
+{
+	if (!m_patched || m_trampoline == nullptr)
+		return;
+
+	MemoryProtect ignore(m_trampoline, m_trampolineSize, PAGE_READWRITE, false);
+	delete[] m_trampoline;
+	m_trampoline = nullptr;
+
+	if (m_originalBytes == nullptr)
+		m_patched = false;
+}
+
 void Detour64::unpatch()
 {
 	if (!m_patched)
 		return;
 
-	MemoryProtect mp(m_targetFunc, m_bytesToPatch, PAGE_EXECUTE_READWRITE);
-	memcpy(m_targetFunc, m_originalBytes, m_bytesToPatch);
-	MemoryProtect ignore(m_trampoline, m_trampolineSize, PAGE_READWRITE, false);
-
-	delete[] m_trampoline;
-	delete[] m_originalBytes;
-	m_trampoline = nullptr;
-	m_originalBytes = nullptr;
+	restoreOriginalFunction();
+	deleteTrampoline();
 	m_patched = false;
 }
 
