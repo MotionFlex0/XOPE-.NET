@@ -28,6 +28,7 @@ namespace XOPE_UI.Forms
             this.hexEditorPlaceholder = new System.Windows.Forms.Label();
             this.replayProgressLabel = new System.Windows.Forms.Label();
             this.socketSelectorButton = new System.Windows.Forms.Button();
+            this.instructionLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.delayTimerTextBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).BeginInit();
             this.SuspendLayout();
@@ -176,11 +177,23 @@ namespace XOPE_UI.Forms
             this.socketSelectorButton.UseVisualStyleBackColor = true;
             this.socketSelectorButton.Click += new System.EventHandler(this.socketSelectorButton_Click);
             // 
+            // instructionLabel
+            // 
+            this.instructionLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.instructionLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.instructionLabel.Location = new System.Drawing.Point(247, 363);
+            this.instructionLabel.Name = "instructionLabel";
+            this.instructionLabel.Size = new System.Drawing.Size(262, 42);
+            this.instructionLabel.TabIndex = 23;
+            this.instructionLabel.Text = "Insert bytes by pressing any character at EOF\r\nPress DELETE to remove a byte";
+            this.instructionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // PacketEditorReplayDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(765, 408);
+            this.Controls.Add(this.instructionLabel);
             this.Controls.Add(this.socketSelectorButton);
             this.Controls.Add(this.replayProgressLabel);
             this.Controls.Add(this.hexEditorPlaceholder);
@@ -218,5 +231,6 @@ namespace XOPE_UI.Forms
         private System.Windows.Forms.Label hexEditorPlaceholder;
         private System.Windows.Forms.Label replayProgressLabel;
         private System.Windows.Forms.Button socketSelectorButton;
+        private System.Windows.Forms.Label instructionLabel;
     }
 }
