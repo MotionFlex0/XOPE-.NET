@@ -11,9 +11,9 @@ namespace XOPE_UI.Forms.Component
 
         public int Count { get => captureListView.Items.Count; }
 
-        private int packetCounter = 0;
+        int packetCounter = 0;
 
-        private int minAutoScrollOffset = 20;
+        int minAutoScrollOffset = 20;
 
         public PacketListView()
         {
