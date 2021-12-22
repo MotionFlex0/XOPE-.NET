@@ -29,64 +29,79 @@ namespace XOPE_UI.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
-            this.beforeHexEditor = new WpfHexaEditor.HexEditor();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.elementHost2 = new System.Windows.Forms.Integration.ElementHost();
-            this.afterHexEditor = new WpfHexaEditor.HexEditor();
+            this.beforeGroupBox = new System.Windows.Forms.GroupBox();
+            this.beforeHexEditorPlaceholder = new System.Windows.Forms.Label();
+            this.afterGroupBox = new System.Windows.Forms.GroupBox();
+            this.afterHexEditorPlaceholder = new System.Windows.Forms.Label();
             this.acceptButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.nameTextBox = new System.Windows.Forms.TextBox();
             this.socketIdTextBox = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
-            this.groupBox1.SuspendLayout();
+            this.instructionLabel = new System.Windows.Forms.Label();
+            this.beforeGroupBox.SuspendLayout();
+            this.afterGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).BeginInit();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // beforeGroupBox
             // 
-            this.groupBox1.Controls.Add(this.elementHost1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 54);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(818, 121);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Before";
+            this.beforeGroupBox.Controls.Add(this.beforeHexEditorPlaceholder);
+            this.beforeGroupBox.Location = new System.Drawing.Point(14, 62);
+            this.beforeGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.beforeGroupBox.Name = "beforeGroupBox";
+            this.beforeGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.beforeGroupBox.Size = new System.Drawing.Size(685, 156);
+            this.beforeGroupBox.TabIndex = 1;
+            this.beforeGroupBox.TabStop = false;
+            this.beforeGroupBox.Text = "Before";
             // 
-            // elementHost1
+            // beforeHexEditorPlaceholder
             // 
-            this.elementHost1.Location = new System.Drawing.Point(6, 15);
-            this.elementHost1.Name = "elementHost1";
-            this.elementHost1.Size = new System.Drawing.Size(806, 100);
-            this.elementHost1.TabIndex = 0;
-            this.elementHost1.Text = "elementHost1";
-            this.elementHost1.Child = this.beforeHexEditor;
+            this.beforeHexEditorPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.beforeHexEditorPlaceholder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.beforeHexEditorPlaceholder.Location = new System.Drawing.Point(7, 19);
+            this.beforeHexEditorPlaceholder.Name = "beforeHexEditorPlaceholder";
+            this.beforeHexEditorPlaceholder.Size = new System.Drawing.Size(671, 134);
+            this.beforeHexEditorPlaceholder.TabIndex = 21;
+            this.beforeHexEditorPlaceholder.Text = "WpfHexaEditor.HexEditor\r\n### DO NOT REMOVE ###";
+            this.beforeHexEditorPlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // groupBox2
+            // afterGroupBox
             // 
-            this.groupBox2.Location = new System.Drawing.Point(12, 194);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(818, 15);
-            this.groupBox2.TabIndex = 2;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "After";
+            this.afterGroupBox.Controls.Add(this.afterHexEditorPlaceholder);
+            this.afterGroupBox.Location = new System.Drawing.Point(14, 224);
+            this.afterGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.afterGroupBox.Name = "afterGroupBox";
+            this.afterGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.afterGroupBox.Size = new System.Drawing.Size(685, 156);
+            this.afterGroupBox.TabIndex = 2;
+            this.afterGroupBox.TabStop = false;
+            this.afterGroupBox.Text = "After";
             // 
-            // elementHost2
+            // afterHexEditorPlaceholder
             // 
-            this.elementHost2.Location = new System.Drawing.Point(18, 213);
-            this.elementHost2.Name = "elementHost2";
-            this.elementHost2.Size = new System.Drawing.Size(806, 100);
-            this.elementHost2.TabIndex = 5;
-            this.elementHost2.Text = "elementHost2";
-            this.elementHost2.Child = this.afterHexEditor;
+            this.afterHexEditorPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.afterHexEditorPlaceholder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.afterHexEditorPlaceholder.Location = new System.Drawing.Point(7, 19);
+            this.afterHexEditorPlaceholder.Name = "afterHexEditorPlaceholder";
+            this.afterHexEditorPlaceholder.Size = new System.Drawing.Size(671, 134);
+            this.afterHexEditorPlaceholder.TabIndex = 22;
+            this.afterHexEditorPlaceholder.Text = "WpfHexaEditor.HexEditor\r\n### DO NOT REMOVE ###";
+            this.afterHexEditorPlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // acceptButton
             // 
-            this.acceptButton.Location = new System.Drawing.Point(690, 415);
+            this.acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.acceptButton.Location = new System.Drawing.Point(508, 407);
+            this.acceptButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.acceptButton.Name = "acceptButton";
-            this.acceptButton.Size = new System.Drawing.Size(75, 23);
+            this.acceptButton.Size = new System.Drawing.Size(88, 27);
             this.acceptButton.TabIndex = 3;
             this.acceptButton.Text = "Accept";
             this.acceptButton.UseVisualStyleBackColor = true;
@@ -94,9 +109,11 @@ namespace XOPE_UI.Forms
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(771, 415);
+            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Location = new System.Drawing.Point(604, 407);
+            this.cancelButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.Size = new System.Drawing.Size(88, 27);
             this.cancelButton.TabIndex = 4;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
@@ -105,58 +122,73 @@ namespace XOPE_UI.Forms
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(23, 23);
+            this.label1.Location = new System.Drawing.Point(27, 27);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.Size = new System.Drawing.Size(39, 15);
             this.label1.TabIndex = 6;
             this.label1.Text = "Name";
             // 
             // nameTextBox
             // 
-            this.nameTextBox.Location = new System.Drawing.Point(64, 19);
+            this.nameTextBox.Location = new System.Drawing.Point(75, 22);
+            this.nameTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.nameTextBox.Name = "nameTextBox";
-            this.nameTextBox.Size = new System.Drawing.Size(100, 20);
+            this.nameTextBox.Size = new System.Drawing.Size(116, 23);
             this.nameTextBox.TabIndex = 8;
             // 
             // socketIdTextBox
             // 
-            this.socketIdTextBox.Location = new System.Drawing.Point(249, 19);
+            this.socketIdTextBox.Location = new System.Drawing.Point(290, 22);
+            this.socketIdTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.socketIdTextBox.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
             this.socketIdTextBox.Name = "socketIdTextBox";
-            this.socketIdTextBox.Size = new System.Drawing.Size(79, 20);
+            this.socketIdTextBox.Size = new System.Drawing.Size(92, 23);
             this.socketIdTextBox.TabIndex = 20;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(191, 23);
+            this.label2.Location = new System.Drawing.Point(223, 27);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(52, 13);
+            this.label2.Size = new System.Drawing.Size(53, 15);
             this.label2.TabIndex = 19;
             this.label2.Text = "SocketID";
             // 
+            // instructionLabel
+            // 
+            this.instructionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.instructionLabel.Location = new System.Drawing.Point(21, 392);
+            this.instructionLabel.Name = "instructionLabel";
+            this.instructionLabel.Size = new System.Drawing.Size(262, 42);
+            this.instructionLabel.TabIndex = 21;
+            this.instructionLabel.Text = "Insert bytes by pressing any character at EOF\r\nPress DELETE to remove a byte";
+            // 
             // FilterEditorDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(858, 450);
+            this.ClientSize = new System.Drawing.Size(704, 447);
+            this.Controls.Add(this.instructionLabel);
             this.Controls.Add(this.socketIdTextBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.nameTextBox);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.elementHost2);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.acceptButton);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.afterGroupBox);
+            this.Controls.Add(this.beforeGroupBox);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "FilterEditorDialog";
             this.Text = "Filter Dialog";
             this.Load += new System.EventHandler(this.FilterEditorDialog_Load);
-            this.groupBox1.ResumeLayout(false);
+            this.beforeGroupBox.ResumeLayout(false);
+            this.afterGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -164,17 +196,16 @@ namespace XOPE_UI.Forms
         }
 
         #endregion
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox beforeGroupBox;
+        private System.Windows.Forms.GroupBox afterGroupBox;
         private System.Windows.Forms.Button acceptButton;
         private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Integration.ElementHost elementHost1;
-        private WpfHexaEditor.HexEditor beforeHexEditor;
-        private System.Windows.Forms.Integration.ElementHost elementHost2;
-        private WpfHexaEditor.HexEditor afterHexEditor;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox nameTextBox;
         private System.Windows.Forms.NumericUpDown socketIdTextBox;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label beforeHexEditorPlaceholder;
+        private System.Windows.Forms.Label afterHexEditorPlaceholder;
+        private System.Windows.Forms.Label instructionLabel;
     }
 }
