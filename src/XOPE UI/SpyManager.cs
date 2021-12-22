@@ -81,7 +81,7 @@ namespace XOPE_UI
                         else if (MessageDispatcher != null)
                             ProcessIncomingMessage(incomingMessage);
                         else
-                            Console.Write($"Received message before CONNECTED_SUCCESS. " +
+                            Console.WriteLine($"Received message before CONNECTED_SUCCESS. " +
                                 $"Dropping message {incomingMessage.Type}");
                     }
                     Thread.Sleep(30);
@@ -140,9 +140,9 @@ namespace XOPE_UI
                         connection.SocketStatus = Connection.Status.CONNECTING;
                         SpyData.Connections.TryAdd(json.Value<Int32>("socket"), connection);
 
-                        System.Timers.Timer timer = new System.Timers.Timer();
                         int counter = 0;
-                        timer.Elapsed += (object sender, ElapsedEventArgs e) =>
+                        System.Timers.Timer timer = new System.Timers.Timer();
+                        ElapsedEventHandler timerCallback = (object sender, ElapsedEventArgs e) =>
                         {
                             EventHandler<IncomingMessage> callback = (object o, IncomingMessage resp) =>
                             {
@@ -163,9 +163,11 @@ namespace XOPE_UI
                             if (MessageDispatcher != null)
                                 MessageDispatcher.Send(new IsSocketWritable(callback) { SocketId = connection.SocketId });
                         };
+
+                        timer.Elapsed += timerCallback;
                         timer.Interval = 1000;
                         timer.AutoReset = false;
-                        timer.Start();
+                        timerCallback(null, null); // Call it immediately the first time, then try 4 more times with 1s intervals
                     }
                     else
                     {
