@@ -8,19 +8,6 @@ namespace XOPE_UI.Forms
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -29,53 +16,53 @@ namespace XOPE_UI.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.logTextbox = new System.Windows.Forms.TextBox();
             this.closeButton = new System.Windows.Forms.Button();
+            this.logTextBox = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
-            // 
-            // logTextbox
-            // 
-            this.logTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.logTextbox.Location = new System.Drawing.Point(13, 13);
-            this.logTextbox.Multiline = true;
-            this.logTextbox.Name = "logTextbox";
-            this.logTextbox.ReadOnly = true;
-            this.logTextbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.logTextbox.Size = new System.Drawing.Size(391, 428);
-            this.logTextbox.TabIndex = 0;
             // 
             // closeButton
             // 
             this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeButton.Location = new System.Drawing.Point(329, 447);
+            this.closeButton.Location = new System.Drawing.Point(384, 516);
+            this.closeButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(75, 23);
+            this.closeButton.Size = new System.Drawing.Size(88, 27);
             this.closeButton.TabIndex = 1;
             this.closeButton.Text = "Close";
             this.closeButton.UseVisualStyleBackColor = true;
             this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
             // 
+            // logTextBox
+            // 
+            this.logTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.logTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.logTextBox.DetectUrls = false;
+            this.logTextBox.Location = new System.Drawing.Point(15, 15);
+            this.logTextBox.Name = "logTextBox";
+            this.logTextBox.ReadOnly = true;
+            this.logTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
+            this.logTextBox.Size = new System.Drawing.Size(455, 493);
+            this.logTextBox.TabIndex = 2;
+            this.logTextBox.Text = "";
+            // 
             // LogDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(416, 482);
+            this.ClientSize = new System.Drawing.Size(485, 556);
+            this.Controls.Add(this.logTextBox);
             this.Controls.Add(this.closeButton);
-            this.Controls.Add(this.logTextbox);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "LogDialog";
             this.Text = "Log";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LogDialog_FormClosing);
-            this.VisibleChanged += new System.EventHandler(this.LogDialog_VisibleChanged);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox logTextbox;
         private System.Windows.Forms.Button closeButton;
+        private System.Windows.Forms.RichTextBox logTextBox;
     }
 }
