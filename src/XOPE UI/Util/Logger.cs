@@ -11,7 +11,7 @@ namespace XOPE_UI.Util
     // Reference: https://referencesource.microsoft.com/#mscorlib/system/io/stringwriter.cs
     public class Logger : StringWriter
     {
-        public event EventHandler<string> OnFlush;
+        public event EventHandler<string> TextWritten;
 
         public Logger()
         {
@@ -40,19 +40,19 @@ namespace XOPE_UI.Util
         public override void Write(char value)
         {
             base.Write(value);
-            OnFlush?.Invoke(this, value.ToString());
+            TextWritten?.Invoke(this, value.ToString());
         }
 
         public override void Write(char[] buffer, int index, int count)
         {
             base.Write(buffer, index, count);
-            OnFlush?.Invoke(this, new string(buffer, index, count));
+            TextWritten?.Invoke(this, new string(buffer, index, count));
         }
 
         public override void Write(string value)
         {
             base.Write(value);
-            OnFlush?.Invoke(this, value);
+            TextWritten?.Invoke(this, value);
         }
 
         //public void Write<T>(T value)
