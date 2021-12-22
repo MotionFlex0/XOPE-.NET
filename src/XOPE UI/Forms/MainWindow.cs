@@ -18,10 +18,8 @@ namespace XOPE_UI
 {
     public partial class MainWindow : Form
     {
-        bool IsAdmin 
-        { 
-            get => (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator); 
-        }
+        bool IsAdmin => 
+            (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator);
 
         string windowTitle = "XOPE";
 
@@ -31,7 +29,7 @@ namespace XOPE_UI
         Process attachedProcess = null;
 
         SpyManager spyManager;
-        LogDialog logDialog;
+        Logger logger;
         ViewTabHandler viewTabHandler;
         ScriptManager scriptManager;
 
@@ -45,13 +43,13 @@ namespace XOPE_UI
             InitializeComponent();
 
             // Initialise Logger and add a event handler to update status bar
-            Logger logger = new Logger();
-            logger.OnFlush += (object sender, string value) =>
+            logger = new Logger();
+            logger.TextWritten += (object sender, string value) =>
             {
                 if (this.IsHandleCreated && value.Trim() != "")
                     this.BeginInvoke(new Action(() => this.toolStripStatusLabel.Text = value.ReplaceLineEndings(" | ")));
             };
-            logDialog = new LogDialog(logger);
+
             Console.WriteLine($"Program started at: {DateTime.Now}");
 
             //Credit: https://www.codeproject.com/Articles/317695/Detecting-If-An-Application-is-Running-as-An-Eleva
@@ -67,7 +65,7 @@ namespace XOPE_UI
 
             livePacketListView.ItemDoubleClicked += PacketListView_ItemDoubleClicked;
             livePacketListView.ItemSelectedChanged += PacketListView_ItemSelectedChanged;
-
+            
             spyManager = new SpyManager();
 
             spyManager.NewPacket += (object sender, Packet e) =>
@@ -242,8 +240,8 @@ namespace XOPE_UI
 
         private void CreditsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("This is test message");
-            //MessageBox.Show("Icon(s) made by Google from www.flaticon.com", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Icon(s) made by Google from www.flaticon.com", "Credits", 
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -406,14 +404,7 @@ namespace XOPE_UI
 
         private void logToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (logDialog.Visible)
-            {
-                if (logDialog.WindowState == FormWindowState.Minimized)
-                    logDialog.WindowState = FormWindowState.Normal;
-                logDialog.BringToFront();
-            }
-            else
-                logDialog.Show();
+            LogDialog.ShowOrBringToFront(logger);
         }
 
         private void runScriptToolStripMenuItem_Click(object sender, EventArgs e)
