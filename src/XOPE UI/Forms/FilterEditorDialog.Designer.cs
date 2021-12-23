@@ -40,6 +40,7 @@ namespace XOPE_UI.Forms
             this.socketIdTextBox = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.instructionLabel = new System.Windows.Forms.Label();
+            this.packetTypeComboBox = new System.Windows.Forms.ComboBox();
             this.beforeGroupBox.SuspendLayout();
             this.afterGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).BeginInit();
@@ -169,11 +170,22 @@ namespace XOPE_UI.Forms
             this.instructionLabel.TabIndex = 21;
             this.instructionLabel.Text = "Insert bytes by pressing any character at EOF\r\nPress DELETE to remove a byte";
             // 
+            // packetTypeComboBox
+            // 
+            this.packetTypeComboBox.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.packetTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.packetTypeComboBox.FormattingEnabled = true;
+            this.packetTypeComboBox.Location = new System.Drawing.Point(571, 22);
+            this.packetTypeComboBox.Name = "packetTypeComboBox";
+            this.packetTypeComboBox.Size = new System.Drawing.Size(121, 23);
+            this.packetTypeComboBox.TabIndex = 22;
+            // 
             // FilterEditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(704, 447);
+            this.Controls.Add(this.packetTypeComboBox);
             this.Controls.Add(this.instructionLabel);
             this.Controls.Add(this.socketIdTextBox);
             this.Controls.Add(this.label2);
@@ -207,5 +219,6 @@ namespace XOPE_UI.Forms
         private System.Windows.Forms.Label beforeHexEditorPlaceholder;
         private System.Windows.Forms.Label afterHexEditorPlaceholder;
         private System.Windows.Forms.Label instructionLabel;
+        private System.Windows.Forms.ComboBox packetTypeComboBox;
     }
 }
