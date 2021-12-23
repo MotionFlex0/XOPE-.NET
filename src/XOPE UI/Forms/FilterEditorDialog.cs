@@ -11,16 +11,24 @@ namespace XOPE_UI.Forms
     {
         public FilterEntry Filter { get; set; }
 
-        public ElementHost elementHost;
-        public HexEditor beforeHexEditor;
+        static int filterEntryCounter = 0;
 
-        public ElementHost elementHost2;
-        public HexEditor afterHexEditor;
+        ElementHost elementHost;
+        HexEditor beforeHexEditor;
+        MemoryStream beforeHexStream;
+
+        ElementHost elementHost2;
+        HexEditor afterHexEditor;
+        MemoryStream afterHexStream;
 
         public FilterEditorDialog()
         {
             InitializeComponent();
             InitializeHexEditor();
+
+            nameTextBox.Text = $"Filter {filterEntryCounter++}";
+
+            packetTypeComboBox.DataSource = Enum.GetValues<HookedFuncType>();
 
             beforeHexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
             beforeHexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
@@ -37,6 +45,15 @@ namespace XOPE_UI.Forms
             afterHexEditor.AllowExtend = true;
             afterHexEditor.HideByteDeleted = true;
             afterHexEditor.AppendNeedConfirmation = false;
+
+            beforeHexStream = new MemoryStream(1);
+            afterHexStream = new MemoryStream(1);
+
+            beforeHexStream.WriteByte(0x01);
+            afterHexStream.WriteByte(0x02);
+
+            beforeHexEditor.Stream = beforeHexStream;
+            afterHexEditor.Stream = afterHexStream;
         }
 
         private void InitializeHexEditor()
@@ -70,15 +87,7 @@ namespace XOPE_UI.Forms
 
         private void FilterEditorDialog_Load(object sender, EventArgs e)
         {
-            MemoryStream beforeHexStream = new MemoryStream(1);
-            MemoryStream afterHexStream = new MemoryStream(1);
 
-            beforeHexStream.WriteByte(0x01);
-            afterHexStream.WriteByte(0x02);
-
-
-            beforeHexEditor.Stream = beforeHexStream;
-            afterHexEditor.Stream = afterHexStream;
         }
 
         private void acceptButton_Click(object sender, EventArgs e)
@@ -86,9 +95,10 @@ namespace XOPE_UI.Forms
             Filter = new FilterEntry
             {
                 Name = nameTextBox.Text,
-                OldValue = beforeHexEditor.GetAllBytes(true),
-                NewValue = afterHexEditor.GetAllBytes(true),
-                SocketId = (int)socketIdTextBox.Value
+                OldValue = beforeHexStream.ToArray(),
+                NewValue = afterHexStream.ToArray(),
+                SocketId = (int)socketIdTextBox.Value,
+                Type = (HookedFuncType)packetTypeComboBox.SelectedItem
             };
             DialogResult = DialogResult.OK;
         }
