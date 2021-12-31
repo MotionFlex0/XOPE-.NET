@@ -28,7 +28,7 @@ namespace XOPE_UI.Forms
 
             nameTextBox.Text = $"Filter {filterEntryCounter++}";
 
-            packetTypeComboBox.DataSource = Enum.GetValues<HookedFuncType>();
+            packetTypeComboBox.DataSource = Enum.GetValues<ReplayableFunction>();
 
             beforeHexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
             beforeHexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
@@ -95,10 +95,10 @@ namespace XOPE_UI.Forms
             Filter = new FilterEntry
             {
                 Name = nameTextBox.Text,
-                OldValue = beforeHexStream.ToArray(),
-                NewValue = afterHexStream.ToArray(),
+                OldValue = beforeHexEditor.GetAllBytes(true),
+                NewValue = afterHexEditor.GetAllBytes(true),
                 SocketId = (int)socketIdTextBox.Value,
-                Type = (HookedFuncType)packetTypeComboBox.SelectedItem
+                PacketType = (ReplayableFunction)packetTypeComboBox.SelectedItem
             };
             DialogResult = DialogResult.OK;
         }

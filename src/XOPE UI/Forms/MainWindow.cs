@@ -190,7 +190,7 @@ namespace XOPE_UI
                 //if (!res)
                 //    MessageBox.Show("Failed to free XOPESpy from the attached process");
             }
-            ListViewItem listViewItem = new ListViewItem();
+
             SetUiToDetachedState();
             environment.NotifyProcessDetached(attachedProcess);
             attachedProcess = null;
@@ -360,7 +360,6 @@ namespace XOPE_UI
                 
             using (ActiveConnectionsDialog dialog = new ActiveConnectionsDialog(spyManager))
             {
-                dialog.UpdateActiveList();
                 dialog.ShowDialog();
             }
         }
@@ -451,48 +450,81 @@ namespace XOPE_UI
 
         private void addFilterButton_Click(object sender, EventArgs e)
         {
-            const int MAX_FORMAT_LENGTH = 15;
+            if (!IsAttached())
+                return;
+
+            const int MAX_BYTES_SHOWN = 8;
 
             using (FilterEditorDialog filterEditorDialog = new FilterEditorDialog())
             {
                 DialogResult result = filterEditorDialog.ShowDialog();
                 if (result == DialogResult.OK)
                 {
-                    ListViewItem listViewItem = new ListViewItem();
                     FilterEntry filter = filterEditorDialog.Filter;
+                    EventHandler<IncomingMessage> addPacketFilterCallback = (object sender, IncomingMessage response) =>
+                    {
+                        if (response.Type != UiMessageType.JOB_RESPONSE_SUCCESS)
+                        {
+                            MessageBox.Show($"Failed to add filter.\nMessage: " +
+                                $"{response.Json.Value<string>("errorMessage")}");
+                            return;
+                        }
 
-                    string beforeStr = BitConverter.ToString(filter.OldValue, 0).Replace("-", " ");
-                    string beforeFormatted = beforeStr.Substring(0, Math.Min(MAX_FORMAT_LENGTH, beforeStr.Length));
-                    beforeFormatted += beforeStr.Length > MAX_FORMAT_LENGTH ? "..." : "";
+                        filter.FilterId = response.Json.Value<string>("filterId");
 
-                    string afterStr = BitConverter.ToString(filter.NewValue, 0).Replace("-", " ");
-                    string afterFormatted = afterStr.Substring(0, Math.Min(MAX_FORMAT_LENGTH, afterStr.Length));
-                    afterFormatted += afterStr.Length > MAX_FORMAT_LENGTH ? "..." : "";
+                        ListViewItem listViewItem = new ListViewItem();
 
-                    listViewItem.Text = $"{filterIndex++}";
-                    listViewItem.SubItems.Add(filter.Name);
-                    listViewItem.SubItems.Add($"{beforeFormatted} --> {afterFormatted}");
-                    filterListView.Items.Add(listViewItem);
+                        string beforeStr = BitConverter.ToString(filter.OldValue, 0).Replace("-", " ");
+                        string beforeFormatted = beforeStr.Substring(0, Math.Min((MAX_BYTES_SHOWN * 3) - 1, beforeStr.Length));
+                        beforeFormatted += beforeStr.Length > (MAX_BYTES_SHOWN * 3) - 1 ? "..." : "";
 
-                    EventHandler<IncomingMessage> addSendFilterCallback = (object sender, IncomingMessage response) =>
-                        Console.WriteLine(response.Json);
+                        string afterStr = BitConverter.ToString(filter.NewValue, 0).Replace("-", " ");
+                        string afterFormatted = afterStr.Substring(0, Math.Min((MAX_BYTES_SHOWN * 3) - 1, afterStr.Length));
+                        afterFormatted += afterStr.Length > (MAX_BYTES_SHOWN * 3) - 1 ? "..." : "";
 
-                    spyManager.MessageDispatcher.Send(new AddSendFilter(addSendFilterCallback)
+                        listViewItem.Text = $"{filterIndex++}";
+                        listViewItem.SubItems.Add(filter.Name);
+                        listViewItem.SubItems.Add(filter.PacketType.ToString());
+                        listViewItem.SubItems.Add($"{beforeFormatted} --> {afterFormatted}");
+                        listViewItem.SubItems.Add(filter.SocketId.ToString());
+                        listViewItem.Tag = filter;
+                        this.Invoke(() => filterListView.Items.Add(listViewItem));
+                    };
+
+                    spyManager.MessageDispatcher.Send(new AddPacketFilter(addPacketFilterCallback)
                     {
                         SocketId = filter.SocketId,
+                        PacketType = filter.PacketType,
                         OldValue = filter.OldValue,
                         NewValue = filter.NewValue,
                         ReplaceEntirePacket = false
                     });
                 }
-
             }
         }
 
         private void deleteFilterButton_Click(object sender, EventArgs e)
         {
             if (filterListView.SelectedItems.Count > 0)
+            {
+                FilterEntry filter = (FilterEntry)filterListView.SelectedItems[0].Tag;
+
+                if (spyManager.MessageDispatcher != null)
+                {
+                    EventHandler<IncomingMessage> callback = (sender, e) =>
+                    {
+                        if (e.Type != UiMessageType.JOB_RESPONSE_SUCCESS)
+                            Console.WriteLine("Failed to delete that filter.");
+                    };
+
+                    spyManager.MessageDispatcher.Send(new DeletePacketFilter(callback)
+                    {
+                        FilterId = filter.FilterId
+                    });
+                }
+
                 filterListView.Items.Remove(filterListView.SelectedItems[0]);
+            }
         }
 
         private void filterListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -527,7 +559,8 @@ namespace XOPE_UI
                 return;
             }
 
-            using (SocketCheckerDialog socketCheckerDialog = new SocketCheckerDialog(spyManager.MessageDispatcher))
+            using (SocketCheckerDialog socketCheckerDialog = 
+                new SocketCheckerDialog(spyManager.MessageDispatcher))
             {
                 socketCheckerDialog.ShowDialog();
             }
@@ -548,7 +581,7 @@ namespace XOPE_UI
                 }
 
                 Process process = new Process();
-                process.StartInfo.FileName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+                process.StartInfo.FileName = Process.GetCurrentProcess().MainModule.FileName;
                 process.StartInfo.UseShellExecute = true;
                 process.StartInfo.Verb = "runas";
                 
@@ -559,7 +592,8 @@ namespace XOPE_UI
                 }
                 catch (Win32Exception ex)
                 {
-                    MessageBox.Show($"Failed to start as Admin.\n\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Failed to start as Admin.\n\n{ex.Message}", 
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

@@ -90,6 +90,7 @@
             this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
+            this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -561,7 +562,7 @@
             this.hexPreviewPanel.Location = new System.Drawing.Point(5, 1);
             this.hexPreviewPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 150);
+            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 149);
             this.hexPreviewPanel.TabIndex = 6;
             // 
             // packetCaptureHexPreview
@@ -576,7 +577,7 @@
             this.packetCaptureHexPreview.Name = "packetCaptureHexPreview";
             this.packetCaptureHexPreview.SelectionBackColor = System.Drawing.Color.Blue;
             this.packetCaptureHexPreview.SelectionForeColor = System.Drawing.Color.White;
-            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 105);
+            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 104);
             this.packetCaptureHexPreview.TabIndex = 0;
             // 
             // filterViewTabPage
@@ -622,7 +623,8 @@
             this.columnHeader2,
             this.columnHeader3,
             this.columnHeader4,
-            this.columnHeader5});
+            this.columnHeader5,
+            this.columnHeader6});
             this.filterListView.FullRowSelect = true;
             this.filterListView.Location = new System.Drawing.Point(5, 0);
             this.filterListView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -648,16 +650,17 @@
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "Filter";
-            this.columnHeader3.Width = 452;
+            this.columnHeader3.Text = "Type";
+            this.columnHeader3.Width = 70;
             // 
             // columnHeader4
             // 
-            this.columnHeader4.Text = "Socket Id";
+            this.columnHeader4.Text = "Filter";
+            this.columnHeader4.Width = 452;
             // 
             // columnHeader5
             // 
-            this.columnHeader5.Text = "Activated";
+            this.columnHeader5.Text = "Socket Id";
             // 
             // replayViewTabPage
             // 
@@ -680,6 +683,10 @@
             this.label2.Size = new System.Drawing.Size(112, 15);
             this.label2.TabIndex = 1;
             this.label2.Text = "NOT IMPLEMENTED";
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Activated";
             // 
             // MainWindow
             // 
@@ -784,6 +791,7 @@
         private System.Windows.Forms.ToolStripMenuItem socketCheckerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restartAsAdminToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
+        private System.Windows.Forms.ColumnHeader columnHeader6;
     }
 }
 
