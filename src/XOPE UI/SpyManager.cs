@@ -149,7 +149,7 @@ namespace XOPE_UI
                                 if (++counter >= 5)
                                 {
                                     Console.WriteLine($"Socket never became writable. Socket: {connection.SocketId}");
-                                    SpyData.Connections.TryRemove(connection.SocketId, out _);
+                                    RemoveExistingConnection(connection.SocketId);
                                 }
                                 else if (resp.Type == UiMessageType.JOB_RESPONSE_SUCCESS)
                                 {
@@ -185,9 +185,7 @@ namespace XOPE_UI
                         if (matchingConnection != null && matchingConnection.SocketStatus != Connection.Status.CLOSED)
                         {
                             matchingConnection.SocketStatus = Connection.Status.CLOSED;
-
-                            ConnectionClosed?.Invoke(this, matchingConnection);
-                            SpyData.Connections.TryRemove(matchingConnection.SocketId, out _);
+                            RemoveExistingConnection(matchingConnection.SocketId);
                         }
                     }
                 }    
@@ -199,15 +197,9 @@ namespace XOPE_UI
                     {
                         Console.WriteLine($"Missed Connect/WSAConnect for socket {socket}. Reqesting info...");
 
-                        Connection connection = new Connection(
-                            socket,
-                            json.Value<Int32>("protocol"),
-                            json.Value<Int32>("addrFamily"),
-                            json.Value<string>("addr"),
-                            json.Value<Int32>("port"),
-                            Connection.Status.REQUESTING_INFO
-                        );
+                        Connection connection = new Connection(socket);
                         SpyData.Connections.TryAdd(connection.SocketId, connection);
+                        ConnectionConnecting?.Invoke(this, connection);
 
                         SocketInfo socketInfo = new SocketInfo()
                         {
@@ -229,8 +221,7 @@ namespace XOPE_UI
                             else if (resp.Type == UiMessageType.JOB_RESPONSE_ERROR)
                             {
                                 Console.WriteLine($"Failed to find info on socket {socket}");
-                                SpyData.Connections.TryRemove(connection.SocketId, out _);
-                                ConnectionClosed?.Invoke(this, connection);
+                                RemoveExistingConnection(connection.SocketId);
                             }
 
                         };
@@ -238,33 +229,67 @@ namespace XOPE_UI
                         MessageDispatcher.Send(socketInfo);
                     }
 
-                    byte[] data = Convert.FromBase64String(json.Value<String>("packetDataB64"));
-                    if (json.Value<int>("ret") == 0)
+                    if (hookedFuncType == HookedFuncType.SEND || 
+                        hookedFuncType == HookedFuncType.RECV)
                     {
-                        if (SpyData.Connections.ContainsKey(socket))
+                        if (json.Value<int>("ret") == 0)
                         {
-                            ConnectionClosed?.Invoke(this, SpyData.Connections[socket]);
-                            SpyData.Connections.Remove(socket, out _);
+                            RemoveExistingConnection(socket);
+                            Console.WriteLine($"Socket {socket} closed gracefully");
                         }
-                        Console.WriteLine($"Socket {socket} closed gracefully");
-                    }
-                    else
-                    {
-                        Packet packet = new Packet
+                        else if (json.Value<int>("ret") == -1)
                         {
-                            Id = Guid.NewGuid(),
-                            Type = hookedFuncType,
-                            Data = data,
-                            Length = data.Length,
-                            Socket = socket,
-                        };
-                        NewPacket?.Invoke(this, packet);
+                            Console.WriteLine($"Socket {socket} returned WSAError {json.Value<int>("lastError")}");
+                        }
+                        else
+                        {
+                            byte[] data = Convert.FromBase64String(json.Value<String>("packetDataB64"));
+                            Packet packet = new Packet
+                            {
+                                Id = Guid.NewGuid(),
+                                Type = hookedFuncType,
+                                Data = data,
+                                Length = data.Length,
+                                Socket = socket,
+                            };
+                            NewPacket?.Invoke(this, packet);
+                        }
+                    }
+                    else if (hookedFuncType == HookedFuncType.WSASEND ||
+                        hookedFuncType == HookedFuncType.WSARECV)
+                    {
+                        int bufferCount = json.Value<int>("bufferCount");
+                        int lastError = json.Value<int>("lastError");
+                        bool isSocketClosed = lastError == 10101 || lastError == 10054 || bufferCount == 0;
+
+                        if (hookedFuncType == HookedFuncType.WSARECV && isSocketClosed)
+                        {
+                            RemoveExistingConnection(socket);
+                            Console.WriteLine($"Socket {socket} closed gracefully");
+                        }
+                        else
+                        {
+                            JArray buffers = json.Value<JArray>("buffers");
+                            for (int i = 0; i < bufferCount; i++)
+                            {
+                                byte[] data = Convert.FromBase64String(buffers[i].Value<String>("dataB64"));
+                                Packet packet = new Packet
+                                {
+                                    Id = Guid.NewGuid(),
+                                    Type = hookedFuncType,
+                                    Data = data,
+                                    Length = data.Length,
+                                    Socket = socket,
+                                };
+                                NewPacket?.Invoke(this, packet);
+                            }
+                        }
                     }
                 }
 
             }
-            else if (messageType == UiMessageType.JOB_RESPONSE_SUCCESS
-                    || messageType == UiMessageType.JOB_RESPONSE_ERROR)
+            else if (messageType == UiMessageType.JOB_RESPONSE_SUCCESS || 
+                messageType == UiMessageType.JOB_RESPONSE_ERROR)
             {
                 Guid guid = Guid.Parse(json.Value<String>("jobId"));
                 if (jobs.ContainsKey(guid))
@@ -286,16 +311,6 @@ namespace XOPE_UI
             }
         }
 
-        private void ResetState()
-        {
-            jobs.Clear();
-            SpyData.Connections.Clear();
-            SpyData.Packets.Clear();
-
-            spyThread = null;
-            MessageDispatcher = null;
-        }
-
         public void Shutdown()
         {
             if (spyThread != null && !spyThread.IsCompleted && !cancellationTokenSource.IsCancellationRequested)
@@ -308,5 +323,23 @@ namespace XOPE_UI
             }
         }
 
+        private void ResetState()
+        {
+            jobs.Clear();
+            SpyData.Connections.Clear();
+            SpyData.Packets.Clear();
+
+            spyThread = null;
+            MessageDispatcher = null;
+        }
+
+        private void RemoveExistingConnection(int socket)
+        {
+            if (SpyData.Connections.ContainsKey(socket))
+            {
+                ConnectionClosed?.Invoke(this, SpyData.Connections[socket]);
+                SpyData.Connections.Remove(socket, out _);
+            }
+        }
     }
 }

@@ -16,8 +16,12 @@ namespace XOPE_UI.Forms
             InitializeComponent();
             this.spyManager = spyManager;
 
-            this.spyManager.ConnectionEstablished += SpyManager_OnNewConnection;
-            this.spyManager.ConnectionClosed += SpyManager_OnCloseConnection;
+            this.HandleCreated += ActiveConnectionsDialog_HandleCreated;
+
+            connectionListView
+                .GetType()
+                .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(connectionListView, true, null);
         }
 
         protected override void Dispose(bool disposing)
@@ -28,25 +32,89 @@ namespace XOPE_UI.Forms
             }
             base.Dispose(disposing);
 
-            this.spyManager.ConnectionEstablished -= SpyManager_OnNewConnection;
-            this.spyManager.ConnectionClosed -= SpyManager_OnCloseConnection;
+            this.spyManager.ConnectionConnecting -= SpyManager_ConnectionConnecting;
+            this.spyManager.ConnectionEstablished -= SpyManager_ConnectionEstablished;
+            this.spyManager.ConnectionClosed -= SpyManager_ConnectionClosed;
         }
 
-        public void UpdateActiveList()
+        public ListViewItem AddOrUpdateConnectionInList(Connection c)
         {
-            connectionListView.Items.Clear();
-            foreach (KeyValuePair<int, Connection> kvp in spyManager.SpyData.Connections)
-            {
-                Connection c = kvp.Value;
+            ListViewItem item = GetListViewItemFromSocketId(c.SocketId);
 
-                ListViewItem item = new ListViewItem(c.SocketId.ToString());
+            if (item != null)
+            {
+                item.SubItems["ip_family"].Text = c.IPFamily == AddressFamily.InterNetwork ? "IPv4" : "IPv6";
+                item.SubItems["ip_address"].Text = c.IP.ToString();
+                item.SubItems["port"].Text = c.Port.ToString();
+                item.SubItems["status"].Text = c.SocketStatus.ToString();
+            }
+            else
+            {
+                item = new ListViewItem(c.SocketId.ToString());
+                
                 item.SubItems.Add(c.IPFamily == AddressFamily.InterNetwork ? "IPv4" : "IPv6");
                 item.SubItems.Add(c.IP.ToString());
                 item.SubItems.Add(c.Port.ToString());
                 item.SubItems.Add(c.SocketStatus.ToString());
-                item.Tag = c.SocketId;
+
+                // Even though connectionListView.Columns[i].Name is set in the designer, the string is empty at run-time.
+                // This seems to be a bug that days back 12+ years and has yet to be fixed. Use .Tag instead
+                for (int i = 0; i < item.SubItems.Count; i++)
+                    item.SubItems[i].Name = connectionListView.Columns[i].Tag as string;
+
                 connectionListView.Items.Add(item);
             }
+
+            return item;
+        }
+
+        private void AddSingleTimerToListItem(ListViewItem item,  EventHandler tick, int interval)
+        {
+            Timer timer = item.Tag as Timer ?? new Timer();
+            item.Tag = item.Tag ?? timer;
+
+            if (timer.Enabled)
+                timer.Stop();
+
+            timer.Interval = interval;
+            timer.Tick += (object sender, EventArgs e) =>
+            {
+                tick(sender, e);
+                timer.Stop();
+                item.Tag = null;
+            };
+
+            timer.Start();
+        }
+
+        private ListViewItem GetListViewItemFromSocketId(int socketId)
+        {
+            foreach (ListViewItem item in connectionListView.Items)
+                if (item.Text == socketId.ToString())
+                    return item;
+
+            return null;
+        }
+
+        private void UpdateActiveList()
+        {
+            connectionListView.BeginUpdate();
+            connectionListView.Items.Clear();
+            foreach (KeyValuePair<int, Connection> kvp in spyManager.SpyData.Connections)
+            {
+                Connection c = kvp.Value;
+                AddOrUpdateConnectionInList(c);
+            }
+            connectionListView.EndUpdate();
+        }
+
+        private void ActiveConnectionsDialog_HandleCreated(object sender, EventArgs e)
+        {
+            this.spyManager.ConnectionConnecting += SpyManager_ConnectionConnecting;
+            this.spyManager.ConnectionEstablished += SpyManager_ConnectionEstablished;
+            this.spyManager.ConnectionClosed += SpyManager_ConnectionClosed;
+
+            UpdateActiveList();
         }
 
         private void closeButton_Click(object sender, EventArgs e)
@@ -59,77 +127,97 @@ namespace XOPE_UI.Forms
             UpdateActiveList();
         }
 
-        private void SpyManager_OnNewConnection(object sender, Connection c)
+        private void SpyManager_ConnectionConnecting(object sender, Connection c)
         {
             this.Invoke(() =>
             {
+                ListViewItem item = AddOrUpdateConnectionInList(c);
 
-                ListViewItem item = null;
-                foreach (ListViewItem lvi in connectionListView.Items)
-                {
-                    if (lvi.Tag is int socketId && socketId == c.SocketId)
-                    {
-                        item = lvi;
-                        item.SubItems[0].Text = c.IPFamily == AddressFamily.InterNetwork ? "IPv4" : "IPv6";
-                        item.SubItems[1].Text = c.IP.ToString();
-                        item.SubItems[2].Text = c.Port.ToString();
-                        item.SubItems[3].Text = c.SocketStatus.ToString();
-                        break;
-                    }
-                }
+                item.BackColor = Color.Yellow;
 
-                if (item == null)
-                {
-                    item = new ListViewItem(c.SocketId.ToString());
-                    item.Name = c.SocketId.ToString();
-                    item.SubItems.Add(c.IPFamily == AddressFamily.InterNetwork ? "IPv4" : "IPv6");
-                    item.SubItems.Add(c.IP.ToString());
-                    item.SubItems.Add(c.Port.ToString());
-                    item.SubItems.Add(c.SocketStatus.ToString());
-                    connectionListView.Items.Add(item);
-                }
+                EventHandler tick = (object sender, EventArgs e) =>
+                    item.BackColor = Color.White;
 
-                item.BackColor = Color.LightGreen;
-
-                System.Windows.Forms.Timer timer = new Timer();
-                timer.Interval = 5000;
-                timer.Tick += (object sender, EventArgs e) =>
-                {
-                    if (this.Visible)
-                    {
-                        timer.Stop();
-                        item.BackColor = Color.White;
-                    }
-                };
-
-                timer.Start();
-
+                AddSingleTimerToListItem(item, tick, 5000);
             });
         }
 
-        private void SpyManager_OnCloseConnection(object sender, Connection c)
+        private void SpyManager_ConnectionEstablished(object sender, Connection c)
         {
             this.Invoke(() =>
             {
-                ListViewItem item = connectionListView.Items[c.SocketId.ToString()];
+                ListViewItem item = AddOrUpdateConnectionInList(c);
+
+                item.BackColor = Color.LightGreen;
+
+                EventHandler tick = (object sender, EventArgs e) =>
+                    item.BackColor = Color.White;
+
+                AddSingleTimerToListItem(item, tick, 5000);
+            });
+        }
+
+        private void SpyManager_ConnectionClosed(object sender, Connection c)
+        {
+            this.Invoke(() =>
+            {
+                ListViewItem item = GetListViewItemFromSocketId(c.SocketId);
                 if (item == null)
                     return;
 
-                item.BackColor = Color.Red;
+                item.BackColor = Color.FromArgb(255, 100, 100);
+                item.SubItems["status"].Text = c.SocketStatus.ToString();
 
-                Timer timer = new Timer();
-                timer.Interval = 5000;
-                timer.Tick += (object sender, EventArgs e) =>
-                {
-                    if (this.Visible)
-                    {
-                        timer.Stop();
-                        item.Remove();
-                    }
-                };
+                EventHandler tick = (object sender, EventArgs e) =>
+                    item.Remove();
 
-                timer.Start();
+                AddSingleTimerToListItem(item, tick, 5000);
             });
+        }
+
+        private void connectionListView_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                foreach (ListViewItem item in connectionListView.Items)
+                {
+                    if (item.Bounds.Contains(e.Location))
+                    {
+                        connectionContextMenu.Tag = item;
+                        connectionContextMenu.Show(connectionListView, e.Location);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void dNSLookupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void copyIPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListViewItem item = connectionContextMenu.Tag as ListViewItem;
+            Clipboard.SetText(item.SubItems["ip_address"].Text);
+        }
+
+        private void copyIPPortToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListViewItem item = connectionContextMenu.Tag as ListViewItem;
+            Clipboard.SetText($"{item.SubItems["ip_address"].Text}:{item.SubItems["port"].Text}");
+        }
+
+        private void copyPortToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListViewItem item = connectionContextMenu.Tag as ListViewItem;
+            Clipboard.SetText(item.SubItems["port"].Text);
+        }
+
+        private void copySocketIdToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListViewItem item = connectionContextMenu.Tag as ListViewItem;
+            Clipboard.SetText(item.SubItems["socket_id"].Text);
         }
     }
 }
