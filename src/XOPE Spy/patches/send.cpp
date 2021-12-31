@@ -6,7 +6,7 @@ int WINAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
     Application& app = Application::getInstance();
     
     Packet packet(buf, buf + len);
-    bool modified = app.getSendPacketFilter().findAndReplace(s, packet);
+    bool modified = app.getPacketFilter(FilterableFunction::SEND).findAndReplace(s, packet);
     
     int ret = app.getHookManager()->get_ofunction<send>()(s, (char*)packet.data(), packet.size(), flags);
 
