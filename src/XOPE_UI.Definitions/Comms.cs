@@ -23,8 +23,8 @@ namespace XOPE_UI.Definitions
         JOB_RESPONSE_ERROR
     }
 
-#if NETFRAMEWORK
-#warning INSIDE NETFRAMEWORK
+#if CPP_COMPATIBLE_ENUM
+#warning INSIDE CPP_COMPATIBLE_ENUM
     public enum SpyMessageType
 #else
 #warning Another_ONE
@@ -39,13 +39,10 @@ namespace XOPE_UI.Definitions
         INJECT_RECV,
         IS_SOCKET_WRITABLE,
         REQUEST_SOCKET_INFO,
-        ADD_SEND_FITLER,
-        EDIT_SEND_FILTER,
-        DELETE_SEND_FILTER,
-        ADD_RECV_FITLER,
-        EDIT_RECV_FILTER,
-        DELETE_RECV_FILTER,
-        SHUTDOWN_RECV_THREAD,
+        ADD_PACKET_FITLER,
+        EDIT_PACKET_FILTER,
+        DELETE_PACKET_FILTER,
+        SHUTDOWN_RECV_THREAD
     }
 
     public enum HookedFuncType
@@ -59,20 +56,11 @@ namespace XOPE_UI.Definitions
         WSARECV
     }
 
-    //Maybe pass a struct to the spy like this
-    /*
-     * json = {
-     *    type: 3
-     *    args: [
-     *      "test",
-     *      1,
-     *      2,
-     *      3
-     *    ]
-     * 
-     */
-    //public enum SpyMessageType
-    //{
-
-    //}
+    public enum ReplayableFunction
+    {
+        SEND,
+        RECV,
+        WSASEND,
+        WSARECV
+    }
 }

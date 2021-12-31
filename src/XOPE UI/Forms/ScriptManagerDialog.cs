@@ -93,8 +93,6 @@ namespace XOPE_UI.Forms
                 .SelectedItems
                 .Clear();
 
-            //Debug.WriteLine($"selectedListView.SelectedItems[0].Name: {selectedListView.SelectedItems[0].Name}");
-
             Guid selectedScriptGuid = (Guid)selectedListView.SelectedItems[0].Tag;
             ScriptData scriptData = scriptManager.GetScript(selectedScriptGuid);
 

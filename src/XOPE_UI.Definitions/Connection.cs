@@ -28,6 +28,17 @@ namespace XOPE_UI.Definitions
         }
         public DateTime LastStatusChangeTime { get; private set; }
 
+        public Connection(int id)
+        {
+            SocketId = id;
+            Protocol = (int)ProtocolType.Tcp;
+            IPFamily = AddressFamily.InterNetwork;
+            IP = "0.0.0.0";
+            Port = 0;
+            SocketStatus = Status.REQUESTING_INFO;
+            LastStatusChangeTime = DateTime.Now;
+        }
+
         public Connection(int id, int protocol, int addrFamily, string ip, int port, Status status)
         {
             SocketId = id;
