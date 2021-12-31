@@ -37,12 +37,9 @@ enum class SpyMessageType
 	INJECT_RECV,
 	IS_SOCKET_WRITABLE,
 	REQUEST_SOCKET_INFO,
-	ADD_SEND_FITLER,
-	EDIT_SEND_FILTER,
-	DELETE_SEND_FILTER,
-	ADD_RECV_FITLER,
-	EDIT_RECV_FILTER,
-	DELETE_RECV_FILTER,
+	ADD_PACKET_FITLER,
+	EDIT_PACKET_FILTER,
+	DELETE_PACKET_FILTER,
 	SHUTDOWN_RECV_THREAD
 };
 
@@ -56,6 +53,15 @@ enum class HookedFunction
 	WSASEND,
 	WSARECV
 };
+
+enum class ReplayableFunction
+{
+	SEND,
+	RECV,
+	WSASEND,
+	WSARECV
+};
+using FilterableFunction = ReplayableFunction;
 
 namespace client
 {
@@ -104,6 +110,63 @@ namespace client
 			packetDataB64,
 			ret,
 			modified,
+			lastError);
+	};
+
+	struct WSASendFunctionCallMessage : IMessage
+	{
+		struct Buffer 
+		{
+			size_t length;
+			std::string dataB64;
+			size_t bytesSent;
+			bool modified = false;
+
+			NLOHMANN_DEFINE_TYPE_INTRUSIVE(Buffer, length, dataB64, modified);
+		};
+
+		WSASendFunctionCallMessage() : IMessage(UiMessageType::HOOKED_FUNCTION_CALL) { };
+
+		HookedFunction functionName;
+		SOCKET socket;
+		std::vector<Buffer> buffers;
+		int bufferCount;
+		int ret;
+		int lastError = -1;
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(WSASendFunctionCallMessage, messageType, functionName,
+			socket,
+			bufferCount,
+			buffers,
+			ret,
+			lastError);
+	};
+
+	struct WSARecvFunctionCallMessage : IMessage
+	{
+		struct Buffer
+		{
+			size_t length;
+			std::string dataB64;
+			bool modified = false;
+
+			NLOHMANN_DEFINE_TYPE_INTRUSIVE(Buffer, length, dataB64, modified);
+		};
+
+		WSARecvFunctionCallMessage() : IMessage(UiMessageType::HOOKED_FUNCTION_CALL) { };
+
+		HookedFunction functionName;
+		SOCKET socket;
+		std::vector<Buffer> buffers;
+		int bufferCount;
+		int ret;
+		int lastError = -1;
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(WSARecvFunctionCallMessage, messageType, functionName,
+			socket,
+			bufferCount,
+			buffers,
+			ret,
 			lastError);
 	};
 
@@ -193,9 +256,9 @@ namespace client
 			messageType, jobId, writable, timedOut, error, lastError);
 	};
 
-	struct AddXFilterResponse : IMessageResponse
+	struct AddPacketFilterResponse : IMessageResponse
 	{
-		AddXFilterResponse(
+		AddPacketFilterResponse(
 			std::string jobId,
 			std::string filterId
 		) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId),
@@ -203,7 +266,7 @@ namespace client
 
 		std::string filterId;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(AddXFilterResponse,
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(AddPacketFilterResponse,
 			messageType, jobId, filterId);
 	};
 

@@ -90,9 +90,9 @@ HookManager* Application::getHookManager()
     return _hookManager;
 }
 
-const PacketFilter& Application::getSendPacketFilter()
+const PacketFilter& Application::getPacketFilter(FilterableFunction filterableFunction)
 {
-    return _sendPacketFilters;
+    return _packetFilters[filterableFunction];
 }
 
 void Application::processIncomingMessages()
@@ -153,6 +153,8 @@ void Application::processIncomingMessages()
                 int addrSize = sizeof(addr);
                 WSAAddressToStringA((LPSOCKADDR)&sin, sinSize, NULL, addr, (LPDWORD)&addrSize);
 
+                std::replace(addr, addr + sizeof(addr), ':', '\x00');
+
                 _namedPipeClient->send(
                     client::SocketInfoResponse(jobId, addr, port, sin.sin_family, -1)
                 );
@@ -161,7 +163,7 @@ void Application::processIncomingMessages()
             {
                 _namedPipeClient->send(
                     client::ErrorMessageResponse(jobId, "could not find that socket ID")
-                );  // TEMP // need to remove jobId from Server map
+                ); 
             }
         }
         else if (type == SpyMessageType::IS_SOCKET_WRITABLE)
@@ -186,7 +188,7 @@ void Application::processIncomingMessages()
                 WSAGetLastError()
             ));
         }
-        else if (type == SpyMessageType::ADD_SEND_FITLER)
+        else if (type == SpyMessageType::ADD_PACKET_FITLER)
         {
             const SOCKET socket = jsonMessage["SocketId"].get<SOCKET>();
             const std::string oldValue = base64_decode(jsonMessage["OldValue"].get<std::string>());
@@ -195,10 +197,12 @@ void Application::processIncomingMessages()
             const Packet oldPacket(oldValue.begin(), oldValue.end());
             const Packet newPacket(newValue.begin(), newValue.end());
 
-            boost::uuids::uuid id = _sendPacketFilters.add(
+            const FilterableFunction packetType = jsonMessage["PacketType"].get<FilterableFunction>();
+
+            boost::uuids::uuid id = _packetFilters[packetType].add(
                 socket, oldPacket, newPacket, false);
 
-            _namedPipeClient->send(client::AddXFilterResponse(
+            _namedPipeClient->send(client::AddPacketFilterResponse(
                 jsonMessage["JobId"].get<std::string>(),
                 boost::uuids::to_string(id)
             ));

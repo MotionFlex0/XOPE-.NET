@@ -4,6 +4,7 @@
 int WINAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
 {
     Application& app = Application::getInstance();
+
     int bytesRead = app.getHookManager()->get_ofunction<recv>()(s, buf, len, flags);
 
     client::HookedFunctionCallPacketMessage hfcm;
@@ -12,12 +13,28 @@ int WINAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
     hfcm.packetLen = bytesRead;
     hfcm.ret = bytesRead;
 
-    if (bytesRead == SOCKET_ERROR)
-        hfcm.lastError = WSAGetLastError();
-    else if (bytesRead > 0)
-        hfcm.packetDataB64 = client::IMessage::convertBytesToB64String(buf, bytesRead);
+    if (bytesRead < 1)
+    {
+        if (bytesRead == SOCKET_ERROR)
+            hfcm.lastError = WSAGetLastError();
+        app.sendToUI(hfcm);
+        return bytesRead;
+    }
 
+
+    Packet packet(buf, buf + bytesRead);
+    bool modified = app.getPacketFilter(FilterableFunction::RECV).findAndReplace(s, packet);
+    
+    hfcm.packetDataB64 = client::IMessage::convertBytesToB64String(buf, bytesRead);
+    hfcm.modified = modified;
     app.sendToUI(hfcm);
 
-    return bytesRead;
+    if (modified)
+    {
+        int newBytesRead = min(packet.size(), len);
+        memcpy(buf, packet.data(), newBytesRead);
+        return newBytesRead;
+    }
+    else
+        return bytesRead;
 }

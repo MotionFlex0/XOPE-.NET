@@ -28,7 +28,7 @@ public:
 	void shutdown();
 
 	HookManager* getHookManager();
-	const PacketFilter& getSendPacketFilter();
+	const PacketFilter& getPacketFilter(FilterableFunction filterableFunction);
 	
 	template<class T>
 	void sendToUI(T message);
@@ -41,7 +41,7 @@ private:
 	NamedPipeClient* _namedPipeClient = nullptr;
 	NamedPipeServer* _namedPipeServer = nullptr;
 
-	PacketFilter _sendPacketFilters;
+	std::unordered_map<FilterableFunction, PacketFilter> _packetFilters;
 
 	bool _stopApplication = false;
 	HANDLE _applicationThread;
