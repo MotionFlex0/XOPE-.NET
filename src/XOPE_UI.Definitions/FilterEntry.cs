@@ -12,5 +12,7 @@ namespace XOPE_UI.Definitions
         public byte[] OldValue { get; set; }
         public byte[] NewValue { get; set; }
         public int SocketId { get; set; }
+        public ReplayableFunction PacketType { get; set; }
+        public string FilterId { get; set; }
     }
 }
