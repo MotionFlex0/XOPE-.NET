@@ -244,6 +244,7 @@ namespace XOPE_UI
                         else
                         {
                             byte[] data = Convert.FromBase64String(json.Value<String>("packetDataB64"));
+                            bool modified = json.Value<bool>("modified");
                             Packet packet = new Packet
                             {
                                 Id = Guid.NewGuid(),
@@ -251,6 +252,7 @@ namespace XOPE_UI
                                 Data = data,
                                 Length = data.Length,
                                 Socket = socket,
+                                Modified = modified
                             };
                             NewPacket?.Invoke(this, packet);
                         }
@@ -273,6 +275,7 @@ namespace XOPE_UI
                             for (int i = 0; i < bufferCount; i++)
                             {
                                 byte[] data = Convert.FromBase64String(buffers[i].Value<String>("dataB64"));
+                                bool modified = buffers[i].Value<bool>("modified");
                                 Packet packet = new Packet
                                 {
                                     Id = Guid.NewGuid(),
@@ -280,6 +283,7 @@ namespace XOPE_UI
                                     Data = data,
                                     Length = data.Length,
                                     Socket = socket,
+                                    Modified = modified
                                 };
                                 NewPacket?.Invoke(this, packet);
                             }

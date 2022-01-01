@@ -14,5 +14,6 @@ namespace XOPE_UI.Definitions
         public int SocketId { get; set; }
         public ReplayableFunction PacketType { get; set; }
         public string FilterId { get; set; }
+        public bool RecursiveReplace { get; set; }
     }
 }

@@ -13,5 +13,6 @@ namespace XOPE_UI.Definitions
         public byte[] Data { get; set; }
         public int Length { get; set; }
         public HookedFuncType Type { get; set; }
+        public bool Modified { get; set; } = false;
     }
 }
