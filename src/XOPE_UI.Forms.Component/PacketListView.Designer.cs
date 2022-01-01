@@ -34,6 +34,7 @@
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
             this.SuspendLayout();
             // 
             // captureListView
@@ -47,7 +48,8 @@
             this.columnHeader5,
             this.columnHeader2,
             this.columnHeader3,
-            this.columnHeader4});
+            this.columnHeader4,
+            this.columnHeader6});
             this.captureListView.FullRowSelect = true;
             this.captureListView.GridLines = true;
             this.captureListView.Location = new System.Drawing.Point(0, 0);
@@ -85,6 +87,10 @@
             // 
             this.columnHeader4.Text = "SocketID";
             // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Modified";
+            // 
             // PacketListView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -105,5 +111,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader6;
     }
 }

@@ -28,7 +28,7 @@ namespace XOPE_UI.Forms.Component
                 .SetValue(captureListView, true, null);
         }
 
-        public int Add(HookedFuncType type, int socketId, byte[] packet)
+        public int Add(HookedFuncType type, int socketId, byte[] packet, bool modified = false)
         {
             const int MAX_PACKET_LENGTH = 30;
 
@@ -47,6 +47,9 @@ namespace XOPE_UI.Forms.Component
                 listViewItem.SubItems.Add(packet.Length.ToString());
                 listViewItem.SubItems.Add(formattedPacket);
                 listViewItem.SubItems.Add(socketId.ToString());
+                if (modified)
+                    listViewItem.SubItems.Add("modified");
+
                 captureListView.Invoke(new Action(() => 
                 { 
                     captureListView.Items.Add(listViewItem);
@@ -61,7 +64,7 @@ namespace XOPE_UI.Forms.Component
         
         public int Add(Packet packet)
         {
-            return Add(packet.Type, packet.Socket, packet.Data);
+            return Add(packet.Type, packet.Socket, packet.Data, packet.Modified);
         }
 
         public void Clear()
