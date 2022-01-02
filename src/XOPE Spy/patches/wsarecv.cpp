@@ -17,7 +17,7 @@ int WINAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
     for (DWORD i = 0; i < dwBufferCount; i++)
     {
         Packet packet(lpBuffers[i].buf, lpBuffers[i].buf + lpBuffers[i].len);
-        bool modified = app.getPacketFilter(FilterableFunction::WSARECV).findAndReplace(s, packet);
+        bool modified = app.getPacketFilter().findAndReplace(FilterableFunction::WSARECV, s, packet);
 
         message.buffers.push_back({
             .length = (size_t)lpBuffers[i].len,

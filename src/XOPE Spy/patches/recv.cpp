@@ -23,7 +23,7 @@ int WINAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
 
 
     Packet packet(buf, buf + bytesRead);
-    bool modified = app.getPacketFilter(FilterableFunction::RECV).findAndReplace(s, packet);
+    bool modified = app.getPacketFilter().findAndReplace(FilterableFunction::RECV, s, packet);
     
     hfcm.packetDataB64 = client::IMessage::convertBytesToB64String(buf, bytesRead);
     hfcm.modified = modified;

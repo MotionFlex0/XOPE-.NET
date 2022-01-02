@@ -270,6 +270,16 @@ namespace client
 			messageType, jobId, filterId);
 	};
 
+	struct DeletePacketFilterResponse : IMessageResponse
+	{
+		DeletePacketFilterResponse(
+			std::string jobId
+		) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId)
+			{ }
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(DeletePacketFilterResponse,
+			messageType, jobId);
+	};
 
 	struct ConnectedSuccessMessage : IMessage
 	{
