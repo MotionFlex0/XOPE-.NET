@@ -11,6 +11,7 @@ namespace XOPE_UI.Spy.DispatcherMessageType
         public ReplayableFunction PacketType { get; set; }
         public byte[] OldValue { get; set; }
         public byte[] NewValue { get; set; }
+        public bool RecursiveReplace { get; set; } 
         public bool ReplaceEntirePacket { get; set; } = false; // true = replaces entire packet with NewValue, if OldValue is found. (default is false)
 
         public AddPacketFilter()
