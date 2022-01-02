@@ -25,7 +25,7 @@ namespace XOPE_UI.Forms
             this.spyManager = spyManager;
         }
 
-        public void UpdateActiveList()
+        private void UpdateActiveList()
         {
             connectionListView.Items.Clear();
             foreach (KeyValuePair<int, Connection> kvp in spyManager.SpyData.Connections)
