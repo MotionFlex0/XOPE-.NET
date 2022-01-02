@@ -41,6 +41,8 @@ namespace XOPE_UI.Forms
             this.label2 = new System.Windows.Forms.Label();
             this.instructionLabel = new System.Windows.Forms.Label();
             this.packetTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.recursiveReplaceCheckBox = new System.Windows.Forms.CheckBox();
+            this.allSocketsCheckBox = new System.Windows.Forms.CheckBox();
             this.beforeGroupBox.SuspendLayout();
             this.afterGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).BeginInit();
@@ -48,8 +50,11 @@ namespace XOPE_UI.Forms
             // 
             // beforeGroupBox
             // 
+            this.beforeGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.beforeGroupBox.Controls.Add(this.beforeHexEditorPlaceholder);
-            this.beforeGroupBox.Location = new System.Drawing.Point(14, 62);
+            this.beforeGroupBox.Location = new System.Drawing.Point(14, 84);
             this.beforeGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.beforeGroupBox.Name = "beforeGroupBox";
             this.beforeGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -73,8 +78,10 @@ namespace XOPE_UI.Forms
             // 
             // afterGroupBox
             // 
+            this.afterGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.afterGroupBox.Controls.Add(this.afterHexEditorPlaceholder);
-            this.afterGroupBox.Location = new System.Drawing.Point(14, 224);
+            this.afterGroupBox.Location = new System.Drawing.Point(14, 246);
             this.afterGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.afterGroupBox.Name = "afterGroupBox";
             this.afterGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -99,7 +106,7 @@ namespace XOPE_UI.Forms
             // acceptButton
             // 
             this.acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.acceptButton.Location = new System.Drawing.Point(508, 407);
+            this.acceptButton.Location = new System.Drawing.Point(508, 429);
             this.acceptButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.acceptButton.Name = "acceptButton";
             this.acceptButton.Size = new System.Drawing.Size(88, 27);
@@ -111,7 +118,7 @@ namespace XOPE_UI.Forms
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(604, 407);
+            this.cancelButton.Location = new System.Drawing.Point(604, 429);
             this.cancelButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(88, 27);
@@ -123,7 +130,7 @@ namespace XOPE_UI.Forms
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(27, 27);
+            this.label1.Location = new System.Drawing.Point(21, 21);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(39, 15);
@@ -132,7 +139,7 @@ namespace XOPE_UI.Forms
             // 
             // nameTextBox
             // 
-            this.nameTextBox.Location = new System.Drawing.Point(75, 22);
+            this.nameTextBox.Location = new System.Drawing.Point(82, 17);
             this.nameTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.nameTextBox.Name = "nameTextBox";
             this.nameTextBox.Size = new System.Drawing.Size(116, 23);
@@ -140,13 +147,18 @@ namespace XOPE_UI.Forms
             // 
             // socketIdTextBox
             // 
-            this.socketIdTextBox.Location = new System.Drawing.Point(290, 22);
+            this.socketIdTextBox.Location = new System.Drawing.Point(82, 46);
             this.socketIdTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.socketIdTextBox.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
+            this.socketIdTextBox.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
             this.socketIdTextBox.Name = "socketIdTextBox";
             this.socketIdTextBox.Size = new System.Drawing.Size(92, 23);
             this.socketIdTextBox.TabIndex = 20;
@@ -154,7 +166,7 @@ namespace XOPE_UI.Forms
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(223, 27);
+            this.label2.Location = new System.Drawing.Point(21, 50);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 15);
@@ -164,7 +176,7 @@ namespace XOPE_UI.Forms
             // instructionLabel
             // 
             this.instructionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.instructionLabel.Location = new System.Drawing.Point(21, 392);
+            this.instructionLabel.Location = new System.Drawing.Point(21, 414);
             this.instructionLabel.Name = "instructionLabel";
             this.instructionLabel.Size = new System.Drawing.Size(262, 42);
             this.instructionLabel.TabIndex = 21;
@@ -172,19 +184,42 @@ namespace XOPE_UI.Forms
             // 
             // packetTypeComboBox
             // 
-            this.packetTypeComboBox.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.packetTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.packetTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.packetTypeComboBox.FormattingEnabled = true;
-            this.packetTypeComboBox.Location = new System.Drawing.Point(571, 22);
+            this.packetTypeComboBox.Location = new System.Drawing.Point(571, 17);
             this.packetTypeComboBox.Name = "packetTypeComboBox";
             this.packetTypeComboBox.Size = new System.Drawing.Size(121, 23);
             this.packetTypeComboBox.TabIndex = 22;
+            // 
+            // recursiveReplaceCheckBox
+            // 
+            this.recursiveReplaceCheckBox.AutoSize = true;
+            this.recursiveReplaceCheckBox.Location = new System.Drawing.Point(214, 19);
+            this.recursiveReplaceCheckBox.Name = "recursiveReplaceCheckBox";
+            this.recursiveReplaceCheckBox.Size = new System.Drawing.Size(120, 19);
+            this.recursiveReplaceCheckBox.TabIndex = 23;
+            this.recursiveReplaceCheckBox.Text = "Recursive Replace";
+            this.recursiveReplaceCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // allSocketsCheckBox
+            // 
+            this.allSocketsCheckBox.AutoSize = true;
+            this.allSocketsCheckBox.Location = new System.Drawing.Point(214, 47);
+            this.allSocketsCheckBox.Name = "allSocketsCheckBox";
+            this.allSocketsCheckBox.Size = new System.Drawing.Size(83, 19);
+            this.allSocketsCheckBox.TabIndex = 24;
+            this.allSocketsCheckBox.Text = "All Sockets";
+            this.allSocketsCheckBox.UseVisualStyleBackColor = true;
+            this.allSocketsCheckBox.CheckedChanged += new System.EventHandler(this.allSocketsCheckBox_CheckedChanged);
             // 
             // FilterEditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 447);
+            this.ClientSize = new System.Drawing.Size(704, 469);
+            this.Controls.Add(this.allSocketsCheckBox);
+            this.Controls.Add(this.recursiveReplaceCheckBox);
             this.Controls.Add(this.packetTypeComboBox);
             this.Controls.Add(this.instructionLabel);
             this.Controls.Add(this.socketIdTextBox);
@@ -198,7 +233,6 @@ namespace XOPE_UI.Forms
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "FilterEditorDialog";
             this.Text = "Filter Dialog";
-            this.Load += new System.EventHandler(this.FilterEditorDialog_Load);
             this.beforeGroupBox.ResumeLayout(false);
             this.afterGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).EndInit();
@@ -220,5 +254,7 @@ namespace XOPE_UI.Forms
         private System.Windows.Forms.Label afterHexEditorPlaceholder;
         private System.Windows.Forms.Label instructionLabel;
         private System.Windows.Forms.ComboBox packetTypeComboBox;
+        private System.Windows.Forms.CheckBox recursiveReplaceCheckBox;
+        private System.Windows.Forms.CheckBox allSocketsCheckBox;
     }
 }

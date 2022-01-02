@@ -21,6 +21,8 @@ namespace XOPE_UI.Forms
         HexEditor afterHexEditor;
         MemoryStream afterHexStream;
 
+        int oldSocketId = 0;
+
         public FilterEditorDialog()
         {
             InitializeComponent();
@@ -56,6 +58,20 @@ namespace XOPE_UI.Forms
             afterHexEditor.Stream = afterHexStream;
         }
 
+        public FilterEditorDialog(FilterEntry filter) : this()
+        {
+            nameTextBox.Text = filter.Name;
+            beforeHexStream.SetLength(0);
+            beforeHexStream.Write(filter.OldValue);
+            afterHexStream.SetLength(0);
+            afterHexStream.Write(filter.NewValue);
+            socketIdTextBox.Value = filter.SocketId;
+            packetTypeComboBox.SelectedItem = filter.PacketType;
+            recursiveReplaceCheckBox.Checked = filter.RecursiveReplace;
+            allSocketsCheckBox.Checked = filter.SocketId == -1;
+            Filter = filter;
+        }
+
         private void InitializeHexEditor()
         {
             beforeHexEditor = new HexEditor();
@@ -85,20 +101,17 @@ namespace XOPE_UI.Forms
             this.afterGroupBox.Controls.Add(elementHost2);
         }
 
-        private void FilterEditorDialog_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void acceptButton_Click(object sender, EventArgs e)
-        {
+        {   
             Filter = new FilterEntry
             {
                 Name = nameTextBox.Text,
                 OldValue = beforeHexEditor.GetAllBytes(true),
                 NewValue = afterHexEditor.GetAllBytes(true),
                 SocketId = (int)socketIdTextBox.Value,
-                PacketType = (ReplayableFunction)packetTypeComboBox.SelectedItem
+                PacketType = (ReplayableFunction)packetTypeComboBox.SelectedItem,
+                RecursiveReplace = recursiveReplaceCheckBox.Checked,
+                FilterId = Filter?.FilterId
             };
             DialogResult = DialogResult.OK;
         }
@@ -106,6 +119,21 @@ namespace XOPE_UI.Forms
         private void cancelButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
+        }
+
+        private void allSocketsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (allSocketsCheckBox.Checked)
+            {
+                oldSocketId = (int)socketIdTextBox.Value;
+                socketIdTextBox.Value = -1;
+                socketIdTextBox.Enabled = false;
+            }    
+            else
+            {
+                socketIdTextBox.Value = oldSocketId;
+                socketIdTextBox.Enabled = true; 
+            }
         }
     }
 }
