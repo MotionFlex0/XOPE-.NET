@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using XOPE_UI.Definitions;
@@ -193,7 +194,30 @@ namespace XOPE_UI.Forms
 
         private void dNSLookupToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            string padding = new string(' ', 4);
 
+            ListViewItem item = connectionContextMenu.Tag as ListViewItem;
+            IPAddress ip = IPAddress.Parse(item.SubItems["ip_address"].Text);
+
+            if (ip.ToString() == "0.0.0.0")
+                return;
+
+            try
+            {
+                IPHostEntry hostEntry = Dns.GetHostEntry(ip);
+                string addressList = hostEntry.AddressList.Length > 0 ? 
+                    $"Address List:\n{padding}{string.Join<IPAddress>($"\n{padding}", hostEntry.AddressList)}\n\n" : 
+                    "";
+                string alias = hostEntry.Aliases.Length > 0 ?
+                    $"Alias :\n{padding}{ string.Join($"\n{padding}", hostEntry.Aliases)}" : 
+                    "";
+
+                MessageBox.Show($"Hostname: {hostEntry.HostName}\n" + addressList + alias);
+            }
+            catch (SocketException ex)
+            {
+                MessageBox.Show($"Error when performing DNS lookup on {ip}\n\n{ex.Message}");
+            }
         }
 
         private void copyIPToolStripMenuItem_Click(object sender, EventArgs e)
