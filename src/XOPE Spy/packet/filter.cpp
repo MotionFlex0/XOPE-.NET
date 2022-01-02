@@ -5,15 +5,17 @@ PacketFilter::PacketFilter()
 
 }
 
-boost::uuids::uuid PacketFilter::add(SOCKET s, const Packet oldVal, const Packet newVal, 
-	bool replaceEntirePacket)
+boost::uuids::uuid PacketFilter::add(FilterableFunction ff, SOCKET s, const Packet oldVal, const Packet newVal,
+	bool replaceEntirePacket, bool recursiveReplace)
 {
 	const boost::uuids::uuid id = generator();
 	filterMap[id] = Data
-	{ 
+	{
+		.socketId = s,
 		.oldVal = oldVal, 
 		.newVal = newVal,
-		.replaceEntirePacket = replaceEntirePacket 
+		.replaceEntirePacket = replaceEntirePacket,
+		.recursiveReplace = recursiveReplace
 	};
 	return id;
 }
@@ -23,47 +25,65 @@ void PacketFilter::remove(boost::uuids::uuid id)
 	filterMap.erase(id);
 }
 
-bool PacketFilter::find(SOCKET s, const Packet packet) const
+bool PacketFilter::find(FilterableFunction ff, SOCKET s, const Packet packet) const
 {
 	for (auto& f : filterMap)
 	{
+		if (f.second.filterableFunction == ff)
+			continue;
+
 		const Packet oldVal = f.second.oldVal;
 		if (oldVal.size() <= packet.size())
 		{
 			auto found = std::search(packet.begin(), packet.end(), oldVal.begin(), oldVal.end());
-			return found != packet.end();
+			if (found != packet.end())
+				return f.second.socketId == s;
 		}
 	}
 	return false;
 }
 
-bool PacketFilter::findAndReplace(SOCKET s, Packet& packet) const
+bool PacketFilter::findAndReplace(FilterableFunction ff, SOCKET s, Packet& packet) const
 {
+	bool modified = false;
+
 	for (auto& f : filterMap)
 	{
+		if (f.second.filterableFunction == ff)
+			continue;
+
 		const Packet& oldVal = f.second.oldVal;
-		if (s == f.second.socketId && oldVal.size() <= packet.size())
+		if ((f.second.socketId == -1 || f.second.socketId == s) && oldVal.size() <= packet.size())
 		{
 			auto found = std::search(packet.begin(), packet.end(), oldVal.begin(), oldVal.end());
-			if (found != packet.end())
+			while (found != packet.end())
 			{
 				const Packet& newVal = f.second.newVal;
-				const int delta = newVal.size() > oldVal.size();
+				const int copyDelta = newVal.size() - oldVal.size();
 
-				std::copy(newVal.begin(), newVal.end() - delta, found);
+				auto nextIt = std::copy(newVal.begin(), newVal.end() - copyDelta, found);
 
-				if (delta > 0)
+				if (copyDelta > 0)
 				{
-					packet.insert(found + delta, newVal.begin() + delta, newVal.end());
+					nextIt = packet.insert(nextIt, newVal.begin() + copyDelta, newVal.end());
+					nextIt += newVal.size() - copyDelta;
 				}
-				else if (delta < 0)
+				else if (copyDelta < 0)
 				{
 					const auto endIt = found + oldVal.size();
-					packet.erase(endIt - delta - 1, endIt);
+					nextIt = packet.erase(nextIt, endIt);
 				}
-				return true;
+				
+				modified = true;
+				if (!f.second.recursiveReplace)
+					break;
+
+				found = std::search(nextIt, packet.end(), oldVal.begin(), oldVal.end());
 			}
+
+			if (modified)
+				break;
 		}
 	}
-	return false;
+	return modified;
 }

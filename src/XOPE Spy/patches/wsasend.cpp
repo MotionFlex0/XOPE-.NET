@@ -16,7 +16,7 @@ int WINAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
     for (DWORD i = 0; i < dwBufferCount; i++)
     {
         Packet packet(lpBuffers[i].buf, lpBuffers[i].buf + lpBuffers[i].len);
-        bool modified = app.getPacketFilter(FilterableFunction::WSASEND).findAndReplace(s, packet);
+        bool modified = app.getPacketFilter().findAndReplace(FilterableFunction::WSASEND, s, packet);
         
         if (modified)
         {

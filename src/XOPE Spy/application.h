@@ -2,6 +2,7 @@
 #define _WINSOCKAPI_
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
+#include <boost/lexical_cast.hpp>
 #include <queue>
 #include <time.h>
 #include "hook/hookmgr.hpp"
@@ -28,7 +29,7 @@ public:
 	void shutdown();
 
 	HookManager* getHookManager();
-	const PacketFilter& getPacketFilter(FilterableFunction filterableFunction);
+	const PacketFilter& getPacketFilter();
 	
 	template<class T>
 	void sendToUI(T message);
@@ -41,7 +42,7 @@ private:
 	NamedPipeClient* _namedPipeClient = nullptr;
 	NamedPipeServer* _namedPipeServer = nullptr;
 
-	std::unordered_map<FilterableFunction, PacketFilter> _packetFilters;
+	PacketFilter _packetFilter;
 
 	bool _stopApplication = false;
 	HANDLE _applicationThread;

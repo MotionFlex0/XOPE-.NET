@@ -90,9 +90,9 @@ HookManager* Application::getHookManager()
     return _hookManager;
 }
 
-const PacketFilter& Application::getPacketFilter(FilterableFunction filterableFunction)
+const PacketFilter& Application::getPacketFilter()
 {
-    return _packetFilters[filterableFunction];
+    return _packetFilter;
 }
 
 void Application::processIncomingMessages()
@@ -199,12 +199,24 @@ void Application::processIncomingMessages()
 
             const FilterableFunction packetType = jsonMessage["PacketType"].get<FilterableFunction>();
 
-            boost::uuids::uuid id = _packetFilters[packetType].add(
-                socket, oldPacket, newPacket, false);
+            const bool recursiveReplace = jsonMessage["RecursiveReplace"].get<bool>();
+
+            boost::uuids::uuid id = _packetFilter.add(packetType,
+                socket, oldPacket, newPacket, false, recursiveReplace);
 
             _namedPipeClient->send(client::AddPacketFilterResponse(
                 jsonMessage["JobId"].get<std::string>(),
                 boost::uuids::to_string(id)
+            ));
+        }
+        else if (type == SpyMessageType::DELETE_PACKET_FILTER)
+        {
+            const std::string filterId = jsonMessage["FilterId"].get<std::string>();
+
+            _packetFilter.remove(boost::lexical_cast<boost::uuids::uuid>(filterId));
+
+            _namedPipeClient->send(client::DeletePacketFilterResponse(
+                jsonMessage["JobId"].get<std::string>()
             ));
         }
         else if (type == SpyMessageType::SHUTDOWN_RECV_THREAD)
