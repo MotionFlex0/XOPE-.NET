@@ -423,7 +423,6 @@ namespace XOPE_UI
             using (ScriptManagerDialog scriptManagerDialog = new ScriptManagerDialog(scriptManager))
             {
                 scriptManagerDialog.ShowDialog();
-
             }
         }
 
@@ -497,7 +496,8 @@ namespace XOPE_UI
                         PacketType = filter.PacketType,
                         OldValue = filter.OldValue,
                         NewValue = filter.NewValue,
-                        ReplaceEntirePacket = false
+                        ReplaceEntirePacket = false,
+                        RecursiveReplace = filter.RecursiveReplace
                     });
                 }
             }
@@ -530,6 +530,44 @@ namespace XOPE_UI
         private void filterListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             deleteFilterButton.Enabled = filterListView.SelectedItems.Count > 0;
+        }
+
+        private void filterListView_DoubleClick(object sender, EventArgs e)
+        {
+            const int MAX_BYTES_SHOWN = 8;
+
+            if (filterListView.SelectedItems.Count > 0)
+            {
+                FilterEntry filter = filterListView.SelectedItems[0].Tag as FilterEntry;
+                using (FilterEditorDialog dialog = new FilterEditorDialog(filter))
+                {
+                    DialogResult dialogResult = dialog.ShowDialog();
+
+                    if (dialogResult != DialogResult.OK)
+                        return;
+
+                    filterListView.SelectedItems[0].Tag = dialog.Filter;
+                    filter = dialog.Filter;
+
+                    ListViewItem listViewItem = filterListView.SelectedItems[0];
+
+                    string beforeStr = BitConverter.ToString(filter.OldValue, 0).Replace("-", " ");
+                    string beforeFormatted = beforeStr.Substring(0, Math.Min((MAX_BYTES_SHOWN * 3) - 1, beforeStr.Length));
+                    beforeFormatted += beforeStr.Length > (MAX_BYTES_SHOWN * 3) - 1 ? "..." : "";
+
+                    string afterStr = BitConverter.ToString(filter.NewValue, 0).Replace("-", " ");
+                    string afterFormatted = afterStr.Substring(0, Math.Min((MAX_BYTES_SHOWN * 3) - 1, afterStr.Length));
+                    afterFormatted += afterStr.Length > (MAX_BYTES_SHOWN * 3) - 1 ? "..." : "";
+
+                    this.Invoke(() =>
+                    {
+                        listViewItem.SubItems[1].Text = filter.Name;
+                        listViewItem.SubItems[2].Text = filter.PacketType.ToString();
+                        listViewItem.SubItems[3].Text = $"{beforeFormatted} --> {afterFormatted}";
+                        listViewItem.SubItems[4].Text = filter.SocketId.ToString();
+                    });
+                }
+            }
         }
 
         private void pingTestSpyToolStripMenuItem_Click(object sender, EventArgs e)

@@ -68,6 +68,7 @@
             this.connectionListView.MultiSelect = false;
             this.connectionListView.Name = "connectionListView";
             this.connectionListView.Size = new System.Drawing.Size(381, 136);
+            this.connectionListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.connectionListView.TabIndex = 4;
             this.connectionListView.UseCompatibleStateImageBehavior = false;
             this.connectionListView.View = System.Windows.Forms.View.Details;

@@ -88,9 +88,9 @@
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
-            this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -562,7 +562,7 @@
             this.hexPreviewPanel.Location = new System.Drawing.Point(5, 1);
             this.hexPreviewPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 149);
+            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 148);
             this.hexPreviewPanel.TabIndex = 6;
             // 
             // packetCaptureHexPreview
@@ -577,7 +577,7 @@
             this.packetCaptureHexPreview.Name = "packetCaptureHexPreview";
             this.packetCaptureHexPreview.SelectionBackColor = System.Drawing.Color.Blue;
             this.packetCaptureHexPreview.SelectionForeColor = System.Drawing.Color.White;
-            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 104);
+            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 103);
             this.packetCaptureHexPreview.TabIndex = 0;
             // 
             // filterViewTabPage
@@ -639,6 +639,7 @@
             this.filterListView.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.filterListView_DrawItem);
             this.filterListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.filterListView_DrawSubItem);
             this.filterListView.SelectedIndexChanged += new System.EventHandler(this.filterListView_SelectedIndexChanged);
+            this.filterListView.DoubleClick += new System.EventHandler(this.filterListView_DoubleClick);
             // 
             // columnHeader1
             // 
@@ -662,6 +663,10 @@
             // 
             this.columnHeader5.Text = "Socket Id";
             // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Activated";
+            // 
             // replayViewTabPage
             // 
             this.replayViewTabPage.Controls.Add(this.label2);
@@ -683,10 +688,6 @@
             this.label2.Size = new System.Drawing.Size(112, 15);
             this.label2.TabIndex = 1;
             this.label2.Text = "NOT IMPLEMENTED";
-            // 
-            // columnHeader6
-            // 
-            this.columnHeader6.Text = "Activated";
             // 
             // MainWindow
             // 
