@@ -26,8 +26,11 @@ class PacketFilter
 public:
 	PacketFilter();
 
-	boost::uuids::uuid add(FilterableFunction ff, SOCKET s, const Packet oldVal, const Packet newVal, bool replaceEntirePacket, bool recursiveReplace);
-	void remove(boost::uuids::uuid id);
+	boost::uuids::uuid add(FilterableFunction ff, SOCKET s, const Packet oldVal, 
+		const Packet newVal, bool replaceEntirePacket, bool recursiveReplace);
+	bool modify(boost::uuids::uuid id, FilterableFunction ff, SOCKET s,
+		const Packet oldVal, const Packet newVal, bool replaceEntirePacket, bool recursiveReplace);
+	bool remove(boost::uuids::uuid id);
 
 
 	bool find(FilterableFunction ff, SOCKET s, const Packet packet) const;

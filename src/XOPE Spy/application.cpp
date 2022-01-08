@@ -188,7 +188,8 @@ void Application::processIncomingMessages()
                 WSAGetLastError()
             ));
         }
-        else if (type == SpyMessageType::ADD_PACKET_FITLER)
+        else if (type == SpyMessageType::ADD_PACKET_FITLER || 
+            type == SpyMessageType::MODIFY_PACKET_FILTER)
         {
             const SOCKET socket = jsonMessage["SocketId"].get<SOCKET>();
             const std::string oldValue = base64_decode(jsonMessage["OldValue"].get<std::string>());
@@ -201,13 +202,33 @@ void Application::processIncomingMessages()
 
             const bool recursiveReplace = jsonMessage["RecursiveReplace"].get<bool>();
 
-            boost::uuids::uuid id = _packetFilter.add(packetType,
-                socket, oldPacket, newPacket, false, recursiveReplace);
+            if (type == SpyMessageType::ADD_PACKET_FITLER)
+            {
+                boost::uuids::uuid id = _packetFilter.add(packetType,
+                    socket, oldPacket, newPacket, false, recursiveReplace);
 
-            _namedPipeClient->send(client::AddPacketFilterResponse(
-                jsonMessage["JobId"].get<std::string>(),
-                boost::uuids::to_string(id)
-            ));
+                _namedPipeClient->send(client::AddPacketFilterResponse(
+                    jsonMessage["JobId"].get<std::string>(),
+                    boost::uuids::to_string(id)
+                ));
+            }
+            else if (type == SpyMessageType::MODIFY_PACKET_FILTER)
+            {
+                const std::string filterId = jsonMessage["FilterId"].get<std::string>();
+
+                bool success = _packetFilter.modify(boost::lexical_cast<boost::uuids::uuid>(filterId),
+                    packetType, socket, oldPacket, newPacket, false, recursiveReplace);
+
+                if (success)
+                    _namedPipeClient->send(client::ModifyPacketFilterResponse(
+                        jsonMessage["JobId"].get<std::string>()
+                    ));
+                else
+                    _namedPipeClient->send(client::ErrorMessageResponse(
+                        jsonMessage["JobId"].get<std::string>(),
+                        "Error when modifying this packet filter."
+                    ));
+            }
         }
         else if (type == SpyMessageType::DELETE_PACKET_FILTER)
         {

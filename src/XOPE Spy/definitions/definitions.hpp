@@ -38,7 +38,7 @@ enum class SpyMessageType
 	IS_SOCKET_WRITABLE,
 	REQUEST_SOCKET_INFO,
 	ADD_PACKET_FITLER,
-	EDIT_PACKET_FILTER,
+	MODIFY_PACKET_FILTER,
 	DELETE_PACKET_FILTER,
 	SHUTDOWN_RECV_THREAD
 };
@@ -268,6 +268,17 @@ namespace client
 
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(AddPacketFilterResponse,
 			messageType, jobId, filterId);
+	};
+
+	struct ModifyPacketFilterResponse : IMessageResponse
+	{
+		ModifyPacketFilterResponse(
+			std::string jobId
+		) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId)
+		{ }
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ModifyPacketFilterResponse,
+			messageType, jobId);
 	};
 
 	struct DeletePacketFilterResponse : IMessageResponse

@@ -2,9 +2,11 @@
 #define _WINSOCKAPI_
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
-#include <boost/lexical_cast.hpp>
 #include <queue>
 #include <time.h>
+
+#include <boost/lexical_cast.hpp>
+
 #include "hook/hookmgr.hpp"
 #include "pipe/namedpipeclient.h"
 #include "packet/type.h"
