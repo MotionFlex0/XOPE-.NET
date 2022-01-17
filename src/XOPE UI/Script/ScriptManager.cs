@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using XOPE_UI.Forms;
+using XOPE_UI.View;
 
 namespace XOPE_UI.Script
 {

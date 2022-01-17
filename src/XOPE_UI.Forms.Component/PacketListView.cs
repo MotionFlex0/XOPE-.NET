@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using XOPE_UI.Definitions;
+using XOPE_UI.Model;
 
-namespace XOPE_UI.Forms.Component
+namespace XOPE_UI.View.Component
 {
     public partial class PacketListView : UserControl
     {

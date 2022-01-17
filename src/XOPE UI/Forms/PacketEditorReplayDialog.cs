@@ -6,7 +6,7 @@ using System.Windows.Forms.Integration;
 using WpfHexaEditor;
 using XOPE_UI.Spy.DispatcherMessageType;
 
-namespace XOPE_UI.Forms
+namespace XOPE_UI.View
 {
     public partial class PacketEditorReplayDialog : Form
     {

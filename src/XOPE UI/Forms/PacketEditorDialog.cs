@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using WpfHexaEditor;
 
-namespace XOPE_UI.Forms
+namespace XOPE_UI.View
 {
     public partial class PacketEditorDialog : Form
     {

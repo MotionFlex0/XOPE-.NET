@@ -5,7 +5,7 @@ using XOPE_UI.Spy;
 using XOPE_UI.Spy.DispatcherMessageType;
 using XOPE_UI.Spy.Type;
 
-namespace XOPE_UI.Forms
+namespace XOPE_UI.View
 {
     public partial class SocketCheckerDialog : Form
     {

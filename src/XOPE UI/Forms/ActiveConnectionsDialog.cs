@@ -4,10 +4,10 @@ using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
-using XOPE_UI.Definitions;
+using XOPE_UI.Model;
 using XOPE_UI.Spy;
 
-namespace XOPE_UI.Forms
+namespace XOPE_UI.View
 {
     public partial class ActiveConnectionsDialog : Form
     {

@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using XOPE_UI.Util;
 
-namespace XOPE_UI.Forms
+namespace XOPE_UI.View
 {
     public partial class LogDialog : Form
     {

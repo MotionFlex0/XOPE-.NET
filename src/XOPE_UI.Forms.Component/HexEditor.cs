@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace XOPE_UI.Forms.Component
+namespace XOPE_UI.View.Component
 {
     // Read-only ; TODO: Add write functionality
     public partial class HexEditor : UserControl
