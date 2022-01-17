@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using XOPE_UI.Forms;
+using XOPE_UI.View;
 using XOPE_UI.Spy;
 
 namespace XOPE_UI

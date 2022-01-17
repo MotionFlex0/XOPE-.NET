@@ -1,4 +1,4 @@
-﻿namespace XOPE_UI.Forms.Component
+﻿namespace XOPE_UI.View.Component
 {
     partial class PacketListView
     {

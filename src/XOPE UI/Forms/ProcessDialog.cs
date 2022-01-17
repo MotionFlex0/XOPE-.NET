@@ -8,7 +8,7 @@ using System.Runtime.Caching;
 using System.Windows.Forms;
 using XOPE_UI.Native;
 
-namespace XOPE_UI.Forms
+namespace XOPE_UI.View
 {
     public partial class ProcessDialog : Form
     {
@@ -30,7 +30,7 @@ namespace XOPE_UI.Forms
             processes = new SortedDictionary<int, Process>();
             shadowProcessListItems = new List<ListViewItem>();
 
-            processesListView.Columns[0].Width = 400;//processesView.Width;
+            this.processesListView.Columns[0].Width = 400;//processesView.Width;
             is64bitText.Text = Environment.Is64BitProcess.ToString();
 
             this.processesListView.SmallImageList = getImageListFromCache();
@@ -38,7 +38,7 @@ namespace XOPE_UI.Forms
             this.processesListView
             .GetType()
             .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-            .SetValue(processesListView, true, null);
+            .SetValue(this.processesListView, true, null);
 
             this.searchTextBox.PlaceholderText = "Search here or F5 to refresh";
         }
@@ -105,7 +105,7 @@ namespace XOPE_UI.Forms
                 
                 try
                 {
-                    string arch = NativeMethods.IsWow64Process(p.Handle) ? "x64" : "x32";
+                    string arch = NativeMethods.IsWow64Process(p.Handle) ? "x32" : "x64";
 
                     string processFilePath = NativeMethods.GetFullProcessName(p.Handle, 0);
                     string processName = Path.GetFileName(processFilePath);
@@ -199,7 +199,7 @@ namespace XOPE_UI.Forms
 
         private void processesView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (processesListView.SelectedItems.Count == 0)
+            if (this.processesListView.SelectedItems.Count == 0)
                 confirmButton.Enabled = false;
             else
             {

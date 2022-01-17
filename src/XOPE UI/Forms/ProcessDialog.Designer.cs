@@ -1,4 +1,4 @@
-﻿namespace XOPE_UI.Forms
+﻿namespace XOPE_UI.View
 {
     partial class ProcessDialog
     {
@@ -37,7 +37,7 @@
             this.confirmButton = new System.Windows.Forms.Button();
             this.processListTotalLabel = new System.Windows.Forms.Label();
             this.processDialogBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.searchTextBox = new XOPE_UI.Forms.Component.SearchTextBox(this.components);
+            this.searchTextBox = new XOPE_UI.View.Component.SearchTextBox(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.processDialogBindingSource)).BeginInit();
             this.SuspendLayout();
             // 

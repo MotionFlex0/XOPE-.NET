@@ -2,13 +2,13 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using XOPE_UI.Core;
-using XOPE_UI.Forms;
-using XOPE_UI.Forms.Component;
+using XOPE_UI.View;
+using XOPE_UI.View.Component;
 using XOPE_UI.Injection;
 using XOPE_UI.Native;
 using XOPE_UI.Util;
 using XOPE_UI.Script;
-using XOPE_UI.Definitions;
+using XOPE_UI.Model;
 using XOPE_UI.Spy.DispatcherMessageType;
 using System.Security.Principal;
 using System.ComponentModel;
@@ -16,6 +16,7 @@ using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI
 {
+    // TODO: A lot of refactoring and decoupling 
     public partial class MainWindow : Form
     {
         bool IsAdmin => 
@@ -67,10 +68,11 @@ namespace XOPE_UI
             livePacketListView.ItemSelectedChanged += PacketListView_ItemSelectedChanged;
             
             spyManager = new SpyManager();
+            filterViewTab.AttachSpyManager(spyManager);
 
             spyManager.NewPacket += (object sender, Packet e) =>
             {
-                if (recordToolStripButton.Tag != null && !recordToolStripButton.Enabled) // caoturing and not paused
+                if (recordToolStripButton.Tag != null && !recordToolStripButton.Enabled) // capturing and not paused
                 {
                     PacketListView listView = (PacketListView)captureTabControl.TabPages[(string)recordToolStripButton.Tag].Controls[0];
                     listView.Invoke(new Action(() => listView.Add(e)));
@@ -82,7 +84,7 @@ namespace XOPE_UI
             captureTabControl.MouseClick += captureTabControl_MouseClick;
 
             environment = SDK.Environment.GetEnvironment();
-            spyManager.NewPacket += (object sender, Definitions.Packet e) =>
+            spyManager.NewPacket += (object sender, Model.Packet e) =>
                 environment.NotifyNewPacket(e.Data);
 
             resizeTimer.Interval = 100;
@@ -129,7 +131,7 @@ namespace XOPE_UI
 
             if (attachedProcess != null)
                 DetachFromProcess();
-
+            
             bool spyAlreadyAttached = false;
             if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(selectedProcess.Handle))
                 spyAlreadyAttached = NativeMethods.GetModuleHandle(selectedProcess.Handle, XOPE_UI.Config.Spy.ModuleName32) != IntPtr.Zero;
@@ -153,7 +155,7 @@ namespace XOPE_UI
 
             Console.WriteLine($"Injecting into ${selectedProcess.ProcessName}.exe - {selectedProcess.Id}");
 
-            spyManager.RunAsync(selectedProcess);
+            spyManager.RunAsync();
 
             bool res = CreateRemoteThread.InjectSpy(selectedProcess.Handle);
 
@@ -164,6 +166,7 @@ namespace XOPE_UI
                 SetUiToAttachedState();
                 attachedProcess.EnableRaisingEvents = true;
                 attachedProcess.Exited += attachedProcess_Exited;
+                spyManager.AttachedToProcess(attachedProcess);
                 environment.NotifyProcessAttached(attachedProcess);
             }
             else
@@ -172,7 +175,7 @@ namespace XOPE_UI
 
         public void DetachFromProcess(bool alreadyFreed = false)
         {
-            if (attachedProcess == null)
+            if (!spyManager.IsAttached)
                 return;
 
             spyManager.Shutdown();
@@ -192,13 +195,14 @@ namespace XOPE_UI
             }
 
             SetUiToDetachedState();
+            spyManager.DetachedFromProcess();
             environment.NotifyProcessDetached(attachedProcess);
             attachedProcess = null;
         }
 
         private bool IsAttached(bool showMessage = true)
         {
-            if (attachedProcess == null)
+            if (!spyManager.IsAttached)
             {
                 if (showMessage)
                     MessageBox.Show("Not attached to a process");
@@ -218,6 +222,7 @@ namespace XOPE_UI
                 detachToolStripButton.Enabled = true;
                 detachToolStripMenuItem.Enabled = true;
                 recordToolStripButton.Enabled = true;
+                filterViewTab.Enabled = true;
             }));
         }
 
@@ -235,6 +240,7 @@ namespace XOPE_UI
                 recordToolStripButton.Enabled = false;
                 pauseRecToolStripButton.Enabled = false;
                 stopRecToolStripButton.Enabled = false;
+                filterViewTab.Enabled = false;
             }));
         }
 
@@ -426,150 +432,6 @@ namespace XOPE_UI
             }
         }
 
-        private void filterListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
-        {
-            e.DrawDefault = true;
-        }
-
-        private void filterListView_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
-        {
-            Debug.WriteLine($"e.Header.Text: {e.Header.Text}");
-            if (e.Header.Text == "Activated")
-            {
-                //CheckBoxRenderer.DrawCheckBox(e.Graphics, e.Bounds.Location, CheckBoxState.CheckedNormal);
-                //e.DrawDefault = false;
-            }
-        }
-
-        private void filterListView_DrawItem(object sender, DrawListViewItemEventArgs e)
-        {
-            e.DrawDefault = true;
-
-        }
-
-        private void addFilterButton_Click(object sender, EventArgs e)
-        {
-            if (!IsAttached())
-                return;
-
-            const int MAX_BYTES_SHOWN = 8;
-
-            using (FilterEditorDialog filterEditorDialog = new FilterEditorDialog())
-            {
-                DialogResult result = filterEditorDialog.ShowDialog();
-                if (result == DialogResult.OK)
-                {
-                    FilterEntry filter = filterEditorDialog.Filter;
-                    EventHandler<IncomingMessage> addPacketFilterCallback = (object sender, IncomingMessage response) =>
-                    {
-                        if (response.Type != UiMessageType.JOB_RESPONSE_SUCCESS)
-                        {
-                            MessageBox.Show($"Failed to add filter.\nMessage: " +
-                                $"{response.Json.Value<string>("errorMessage")}");
-                            return;
-                        }
-
-                        filter.FilterId = response.Json.Value<string>("filterId");
-
-                        ListViewItem listViewItem = new ListViewItem();
-
-                        string beforeStr = BitConverter.ToString(filter.OldValue, 0).Replace("-", " ");
-                        string beforeFormatted = beforeStr.Substring(0, Math.Min((MAX_BYTES_SHOWN * 3) - 1, beforeStr.Length));
-                        beforeFormatted += beforeStr.Length > (MAX_BYTES_SHOWN * 3) - 1 ? "..." : "";
-
-                        string afterStr = BitConverter.ToString(filter.NewValue, 0).Replace("-", " ");
-                        string afterFormatted = afterStr.Substring(0, Math.Min((MAX_BYTES_SHOWN * 3) - 1, afterStr.Length));
-                        afterFormatted += afterStr.Length > (MAX_BYTES_SHOWN * 3) - 1 ? "..." : "";
-
-                        listViewItem.Text = $"{filterIndex++}";
-                        listViewItem.SubItems.Add(filter.Name);
-                        listViewItem.SubItems.Add(filter.PacketType.ToString());
-                        listViewItem.SubItems.Add($"{beforeFormatted} --> {afterFormatted}");
-                        listViewItem.SubItems.Add(filter.SocketId.ToString());
-                        listViewItem.Tag = filter;
-                        this.Invoke(() => filterListView.Items.Add(listViewItem));
-                    };
-
-                    spyManager.MessageDispatcher.Send(new AddPacketFilter(addPacketFilterCallback)
-                    {
-                        SocketId = filter.SocketId,
-                        PacketType = filter.PacketType,
-                        OldValue = filter.OldValue,
-                        NewValue = filter.NewValue,
-                        ReplaceEntirePacket = false,
-                        RecursiveReplace = filter.RecursiveReplace
-                    });
-                }
-            }
-        }
-
-        private void deleteFilterButton_Click(object sender, EventArgs e)
-        {
-            if (filterListView.SelectedItems.Count > 0)
-            {
-                FilterEntry filter = (FilterEntry)filterListView.SelectedItems[0].Tag;
-
-                if (spyManager.MessageDispatcher != null)
-                {
-                    EventHandler<IncomingMessage> callback = (sender, e) =>
-                    {
-                        if (e.Type != UiMessageType.JOB_RESPONSE_SUCCESS)
-                            Console.WriteLine("Failed to delete that filter.");
-                    };
-
-                    spyManager.MessageDispatcher.Send(new DeletePacketFilter(callback)
-                    {
-                        FilterId = filter.FilterId
-                    });
-                }
-
-                filterListView.Items.Remove(filterListView.SelectedItems[0]);
-            }
-        }
-
-        private void filterListView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            deleteFilterButton.Enabled = filterListView.SelectedItems.Count > 0;
-        }
-
-        private void filterListView_DoubleClick(object sender, EventArgs e)
-        {
-            const int MAX_BYTES_SHOWN = 8;
-
-            if (filterListView.SelectedItems.Count > 0)
-            {
-                FilterEntry filter = filterListView.SelectedItems[0].Tag as FilterEntry;
-                using (FilterEditorDialog dialog = new FilterEditorDialog(filter))
-                {
-                    DialogResult dialogResult = dialog.ShowDialog();
-
-                    if (dialogResult != DialogResult.OK)
-                        return;
-
-                    filterListView.SelectedItems[0].Tag = dialog.Filter;
-                    filter = dialog.Filter;
-
-                    ListViewItem listViewItem = filterListView.SelectedItems[0];
-
-                    string beforeStr = BitConverter.ToString(filter.OldValue, 0).Replace("-", " ");
-                    string beforeFormatted = beforeStr.Substring(0, Math.Min((MAX_BYTES_SHOWN * 3) - 1, beforeStr.Length));
-                    beforeFormatted += beforeStr.Length > (MAX_BYTES_SHOWN * 3) - 1 ? "..." : "";
-
-                    string afterStr = BitConverter.ToString(filter.NewValue, 0).Replace("-", " ");
-                    string afterFormatted = afterStr.Substring(0, Math.Min((MAX_BYTES_SHOWN * 3) - 1, afterStr.Length));
-                    afterFormatted += afterStr.Length > (MAX_BYTES_SHOWN * 3) - 1 ? "..." : "";
-
-                    this.Invoke(() =>
-                    {
-                        listViewItem.SubItems[1].Text = filter.Name;
-                        listViewItem.SubItems[2].Text = filter.PacketType.ToString();
-                        listViewItem.SubItems[3].Text = $"{beforeFormatted} --> {afterFormatted}";
-                        listViewItem.SubItems[4].Text = filter.SocketId.ToString();
-                    });
-                }
-            }
-        }
-
         private void pingTestSpyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!IsAttached())
@@ -591,7 +453,7 @@ namespace XOPE_UI
 
         private void socketCheckerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (attachedProcess == null && spyManager.MessageDispatcher != null)
+            if (!spyManager.IsAttached && spyManager.MessageDispatcher != null)
             {
                 MessageBox.Show("Not currently attached to a process.");
                 return;

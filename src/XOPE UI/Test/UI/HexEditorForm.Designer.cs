@@ -29,7 +29,7 @@ namespace XOPE_UI.Test.UI
         /// </summary>
         private void InitializeComponent()
         {
-            this.hexEditor1 = new XOPE_UI.Forms.Component.HexEditor();
+            this.hexEditor1 = new XOPE_UI.View.Component.HexEditor();
             this.SuspendLayout();
             // 
             // hexEditor1
@@ -53,6 +53,6 @@ namespace XOPE_UI.Test.UI
 
         #endregion
 
-        private Forms.Component.HexEditor hexEditor1;
+        private View.Component.HexEditor hexEditor1;
     }
 }

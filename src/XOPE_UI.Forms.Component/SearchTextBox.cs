@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using XOPE_UI.Native;
 
-namespace XOPE_UI.Forms.Component
+namespace XOPE_UI.View.Component
 {
     public partial class SearchTextBox : TextBox
     {
