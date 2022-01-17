@@ -1,5 +1,5 @@
 ﻿
-namespace XOPE_UI.Forms
+namespace XOPE_UI.View
 {
     partial class FilterEditorDialog
     {
