@@ -10,7 +10,7 @@ namespace XOPE_UI.Spy.DispatcherMessageType
     {
         public ShutdownSpy()
         {
-            Type = Definitions.SpyMessageType.SHUTDOWN_RECV_THREAD;
+            Type = Model.SpyMessageType.SHUTDOWN_RECV_THREAD;
         }
     }
 }

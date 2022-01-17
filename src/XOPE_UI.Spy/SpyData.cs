@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using XOPE_UI.Definitions;
+using XOPE_UI.Model;
 
 namespace XOPE_UI.Spy
 {

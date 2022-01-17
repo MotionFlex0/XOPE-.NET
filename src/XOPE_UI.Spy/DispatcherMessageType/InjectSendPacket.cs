@@ -10,7 +10,7 @@ namespace XOPE_UI.Spy.DispatcherMessageType
 
         public InjectSendPacket()
         {
-            Type = Definitions.SpyMessageType.INJECT_SEND;
+            Type = Model.SpyMessageType.INJECT_SEND;
         }
 
         public override JObject ToJson()

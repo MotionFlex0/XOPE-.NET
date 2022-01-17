@@ -20,7 +20,7 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\XOPE_UI.Definitions\XOPE_UI.Definitions.csproj" />
+    <ProjectReference Include="..\XOPE_UI.Definitions\XOPE_UI.Model.csproj" />
     <ProjectReference Include="..\XOPE_UI.Native\XOPE_UI.Native.csproj" />
   </ItemGroup>
   <ItemGroup>

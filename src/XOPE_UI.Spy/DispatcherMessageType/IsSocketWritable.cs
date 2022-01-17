@@ -14,7 +14,7 @@ namespace XOPE_UI.Spy.DispatcherMessageType
 
         public IsSocketWritable()
         {
-            Type = Definitions.SpyMessageType.IS_SOCKET_WRITABLE;
+            Type = Model.SpyMessageType.IS_SOCKET_WRITABLE;
         }
 
         public IsSocketWritable(EventHandler<IncomingMessage> onResponseCallback) : this()
