@@ -8,9 +8,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using XOPE_UI.Definitions;
+using XOPE_UI.Model;
 
-namespace XOPE_UI.Forms
+namespace XOPE_UI.View
 {
     public partial class SocketSelectorDialog : Form
     {

@@ -12,7 +12,7 @@ namespace XOPE_UI.Spy.DispatcherMessageType
 
         public SocketInfo()
         {
-            Type = Definitions.SpyMessageType.REQUEST_SOCKET_INFO;
+            Type = Model.SpyMessageType.REQUEST_SOCKET_INFO;
         }
     }
 }

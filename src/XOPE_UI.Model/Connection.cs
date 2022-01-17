@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XOPE_UI.Definitions
+namespace XOPE_UI.Model
 {
     public class Connection : EventArgs
     {

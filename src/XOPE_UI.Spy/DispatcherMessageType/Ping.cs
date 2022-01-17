@@ -10,7 +10,7 @@ namespace XOPE_UI.Spy.DispatcherMessageType
     {
         public Ping()
         {
-            Type = Definitions.SpyMessageType.PING;
+            Type = Model.SpyMessageType.PING;
         }
     }
 }

@@ -47,7 +47,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\SDK\SDK.csproj" />
-    <ProjectReference Include="..\XOPE_UI.Definitions\XOPE_UI.Definitions.csproj" />
+    <ProjectReference Include="..\XOPE_UI.Definitions\XOPE_UI.Model.csproj" />
     <ProjectReference Include="..\XOPE_UI.Forms.Component\XOPE_UI.Forms.Component.csproj" />
     <ProjectReference Include="..\XOPE_UI.Native\XOPE_UI.Native.csproj" />
     <ProjectReference Include="..\XOPE_UI.Spy\XOPE_UI.Spy.csproj" />
@@ -89,6 +89,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Update="View\FilterViewTab.cs">
+      <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>

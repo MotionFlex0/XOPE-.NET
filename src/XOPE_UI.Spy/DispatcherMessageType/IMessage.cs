@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using XOPE_UI.Definitions;
+using XOPE_UI.Model;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {

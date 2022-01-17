@@ -1,5 +1,5 @@
 ﻿using System;
-using XOPE_UI.Definitions;
+using XOPE_UI.Model;
 using XOPE_UI.Spy.DispatcherMessageType;
 
 namespace XOPE_UI.Spy

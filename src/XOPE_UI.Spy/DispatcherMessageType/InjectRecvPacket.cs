@@ -11,7 +11,7 @@ namespace XOPE_UI.Spy.DispatcherMessageType
 
         public InjectRecvPacket()
         {
-            Type = Definitions.SpyMessageType.INJECT_RECV;
+            Type = Model.SpyMessageType.INJECT_RECV;
         }
 
         public override JObject ToJson()

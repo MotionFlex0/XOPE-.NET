@@ -8,7 +8,7 @@
     <BaseOutputPath>C:\Users\Nathaniel\source\repos\XOPE .NET\bin\mixed</BaseOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\XOPE_UI.Definitions\XOPE_UI.Definitions.csproj" />
+    <ProjectReference Include="..\XOPE_UI.Definitions\XOPE_UI.Model.csproj" />
     <ProjectReference Include="..\XOPE_UI.Native\XOPE_UI.Native.csproj" />
   </ItemGroup>
   <ItemGroup>

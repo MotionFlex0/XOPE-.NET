@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
-using XOPE_UI.Definitions;
+using XOPE_UI.Model;
 using XOPE_UI.Native;
 using XOPE_UI.Spy.Type;
 

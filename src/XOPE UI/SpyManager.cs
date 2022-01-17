@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using XOPE_UI.Definitions;
+using XOPE_UI.Model;
 using XOPE_UI.Spy;
 using XOPE_UI.Spy.DispatcherMessageType;
 using XOPE_UI.Spy.Type;
@@ -26,6 +26,7 @@ namespace XOPE_UI
         public event EventHandler<Connection> ConnectionPropUpdated;
 
         public SpyData SpyData { get; private set; } = null;
+        public bool IsAttached { get => _attachedProcess != null; }
 
         public NamedPipeDispatcher MessageDispatcher { get; private set; } = null;
         NamedPipeReceiver MessageReceiver { get; set; } = null;
@@ -35,6 +36,7 @@ namespace XOPE_UI
 
         Dictionary<Guid, IMessageWithResponse> jobs; // This contains Messages that are expecting a response
 
+        Process _attachedProcess = null;
 
         public SpyManager()
         {
@@ -48,8 +50,18 @@ namespace XOPE_UI
             Shutdown();
         }
 
+        public void AttachedToProcess(Process process)
+        {
+            _attachedProcess = process;
+        }
+
+        public void DetachedFromProcess()
+        {
+            _attachedProcess = null;
+        }
+
         // TODO: Refactor this method
-        public void RunAsync(Process spyProcess)
+        public void RunAsync()
         {
             if (spyThread != null)
                 return;
