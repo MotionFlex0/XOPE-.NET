@@ -21,6 +21,7 @@ class PacketFilter
 		bool replaceEntirePacket;
 		bool recursiveReplace;
 		FilterableFunction filterableFunction;
+		bool activated = true;
 	};
 
 public:
@@ -30,6 +31,7 @@ public:
 		const Packet newVal, bool replaceEntirePacket, bool recursiveReplace);
 	bool modify(boost::uuids::uuid id, FilterableFunction ff, SOCKET s,
 		const Packet oldVal, const Packet newVal, bool replaceEntirePacket, bool recursiveReplace);
+	bool toggleActivated(boost::uuids::uuid id, bool isActivated);
 	bool remove(boost::uuids::uuid id);
 
 

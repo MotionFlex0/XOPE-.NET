@@ -76,21 +76,13 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.captureTabControl = new System.Windows.Forms.TabControl();
             this.liveCapture = new System.Windows.Forms.TabPage();
-            this.livePacketListView = new XOPE_UI.Forms.Component.PacketListView();
+            this.livePacketListView = new XOPE_UI.View.Component.PacketListView();
             this.hexPreviewPanel = new System.Windows.Forms.Panel();
-            this.packetCaptureHexPreview = new XOPE_UI.Forms.Component.HexEditor();
+            this.packetCaptureHexPreview = new XOPE_UI.View.Component.HexEditor();
             this.filterViewTabPage = new System.Windows.Forms.TabPage();
-            this.deleteFilterButton = new System.Windows.Forms.Button();
-            this.addFilterButton = new System.Windows.Forms.Button();
-            this.filterListView = new System.Windows.Forms.ListView();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
+            this.filterViewTab = new XOPE_UI.View.FilterViewTab();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -562,7 +554,7 @@
             this.hexPreviewPanel.Location = new System.Drawing.Point(5, 1);
             this.hexPreviewPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 148);
+            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 143);
             this.hexPreviewPanel.TabIndex = 6;
             // 
             // packetCaptureHexPreview
@@ -577,14 +569,12 @@
             this.packetCaptureHexPreview.Name = "packetCaptureHexPreview";
             this.packetCaptureHexPreview.SelectionBackColor = System.Drawing.Color.Blue;
             this.packetCaptureHexPreview.SelectionForeColor = System.Drawing.Color.White;
-            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 103);
+            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 98);
             this.packetCaptureHexPreview.TabIndex = 0;
             // 
             // filterViewTabPage
             // 
-            this.filterViewTabPage.Controls.Add(this.deleteFilterButton);
-            this.filterViewTabPage.Controls.Add(this.addFilterButton);
-            this.filterViewTabPage.Controls.Add(this.filterListView);
+            this.filterViewTabPage.Controls.Add(this.filterViewTab);
             this.filterViewTabPage.Location = new System.Drawing.Point(4, 5);
             this.filterViewTabPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.filterViewTabPage.Name = "filterViewTabPage";
@@ -592,80 +582,6 @@
             this.filterViewTabPage.TabIndex = 2;
             this.filterViewTabPage.Text = "tabPage1";
             this.filterViewTabPage.UseVisualStyleBackColor = true;
-            // 
-            // deleteFilterButton
-            // 
-            this.deleteFilterButton.Enabled = false;
-            this.deleteFilterButton.Location = new System.Drawing.Point(795, 373);
-            this.deleteFilterButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.deleteFilterButton.Name = "deleteFilterButton";
-            this.deleteFilterButton.Size = new System.Drawing.Size(83, 27);
-            this.deleteFilterButton.TabIndex = 2;
-            this.deleteFilterButton.Text = "Delete Filter";
-            this.deleteFilterButton.UseVisualStyleBackColor = true;
-            this.deleteFilterButton.Click += new System.EventHandler(this.deleteFilterButton_Click);
-            // 
-            // addFilterButton
-            // 
-            this.addFilterButton.Location = new System.Drawing.Point(4, 375);
-            this.addFilterButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.addFilterButton.Name = "addFilterButton";
-            this.addFilterButton.Size = new System.Drawing.Size(88, 27);
-            this.addFilterButton.TabIndex = 1;
-            this.addFilterButton.Text = "Add filter";
-            this.addFilterButton.UseVisualStyleBackColor = true;
-            this.addFilterButton.Click += new System.EventHandler(this.addFilterButton_Click);
-            // 
-            // filterListView
-            // 
-            this.filterListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5,
-            this.columnHeader6});
-            this.filterListView.FullRowSelect = true;
-            this.filterListView.Location = new System.Drawing.Point(5, 0);
-            this.filterListView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.filterListView.MultiSelect = false;
-            this.filterListView.Name = "filterListView";
-            this.filterListView.OwnerDraw = true;
-            this.filterListView.Size = new System.Drawing.Size(873, 367);
-            this.filterListView.TabIndex = 0;
-            this.filterListView.UseCompatibleStateImageBehavior = false;
-            this.filterListView.View = System.Windows.Forms.View.Details;
-            this.filterListView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.filterListView_DrawColumnHeader);
-            this.filterListView.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.filterListView_DrawItem);
-            this.filterListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.filterListView_DrawSubItem);
-            this.filterListView.SelectedIndexChanged += new System.EventHandler(this.filterListView_SelectedIndexChanged);
-            this.filterListView.DoubleClick += new System.EventHandler(this.filterListView_DoubleClick);
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "#";
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Name";
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Type";
-            this.columnHeader3.Width = 70;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Filter";
-            this.columnHeader4.Width = 452;
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Socket Id";
-            // 
-            // columnHeader6
-            // 
-            this.columnHeader6.Text = "Activated";
             // 
             // replayViewTabPage
             // 
@@ -688,6 +604,17 @@
             this.label2.Size = new System.Drawing.Size(112, 15);
             this.label2.TabIndex = 1;
             this.label2.Text = "NOT IMPLEMENTED";
+            // 
+            // filterViewTab
+            // 
+            this.filterViewTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.filterViewTab.Enabled = false;
+            this.filterViewTab.Location = new System.Drawing.Point(4, 3);
+            this.filterViewTab.Name = "filterViewTab";
+            this.filterViewTab.Size = new System.Drawing.Size(875, 421);
+            this.filterViewTab.TabIndex = 0;
             // 
             // MainWindow
             // 
@@ -767,32 +694,24 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TabControl captureTabControl;
         private System.Windows.Forms.TabPage liveCapture;
-        private Forms.Component.PacketListView livePacketListView;
+        private View.Component.PacketListView livePacketListView;
         private System.Windows.Forms.Panel hexPreviewPanel;
         private System.Windows.Forms.TabPage replayViewTabPage;
         private System.Windows.Forms.ToolStripMenuItem scriptToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runScriptToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem scriptManagerToolStripMenuItem;
-        private Forms.Component.HexEditor packetCaptureHexPreview;
+        private View.Component.HexEditor packetCaptureHexPreview;
         private System.Windows.Forms.Button replayViewButton;
         private System.Windows.Forms.TabPage filterViewTabPage;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ListView filterListView;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ColumnHeader columnHeader5;
-        private System.Windows.Forms.Button addFilterButton;
-        private System.Windows.Forms.Button deleteFilterButton;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem pingTestSpyToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem socketCheckerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restartAsAdminToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
-        private System.Windows.Forms.ColumnHeader columnHeader6;
+        private View.FilterViewTab filterViewTab;
     }
 }
 
