@@ -220,7 +220,7 @@ void Application::processIncomingMessages()
                     packetType, socket, oldPacket, newPacket, false, recursiveReplace);
 
                 if (success)
-                    _namedPipeClient->send(client::ModifyPacketFilterResponse(
+                    _namedPipeClient->send(client::GenericPacketFilterResponse(
                         jsonMessage["JobId"].get<std::string>()
                     ));
                 else
@@ -230,13 +230,32 @@ void Application::processIncomingMessages()
                     ));
             }
         }
+        else if (type == SpyMessageType::TOGGLE_ACTIVATE_FILTER)
+        {
+            const std::string filterId = jsonMessage["FilterId"].get<std::string>();
+            const bool isActivated = jsonMessage["Activated"].get<bool>();
+
+            bool success = _packetFilter.toggleActivated(boost::lexical_cast<boost::uuids::uuid>(filterId),
+                isActivated);
+
+            if (success)
+                _namedPipeClient->send(client::GenericPacketFilterResponse(
+                    jsonMessage["JobId"].get<std::string>()
+                ));
+            else
+                _namedPipeClient->send(client::ErrorMessageResponse(
+                    jsonMessage["JobId"].get<std::string>(),
+                    "That packet filter does not seem to exist in Spy."
+                ));
+
+        }
         else if (type == SpyMessageType::DELETE_PACKET_FILTER)
         {
             const std::string filterId = jsonMessage["FilterId"].get<std::string>();
 
             _packetFilter.remove(boost::lexical_cast<boost::uuids::uuid>(filterId));
 
-            _namedPipeClient->send(client::DeletePacketFilterResponse(
+            _namedPipeClient->send(client::GenericPacketFilterResponse(
                 jsonMessage["JobId"].get<std::string>()
             ));
         }

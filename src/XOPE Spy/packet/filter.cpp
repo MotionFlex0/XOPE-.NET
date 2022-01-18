@@ -39,6 +39,16 @@ bool PacketFilter::modify(boost::uuids::uuid id, FilterableFunction ff, SOCKET s
 	return true;
 }
 
+bool PacketFilter::toggleActivated(boost::uuids::uuid id, bool isActivated)
+{
+	const auto it = filterMap.find(id);
+	if (it == filterMap.end())
+		return false;
+
+	it->second.activated = isActivated;
+	return true;
+}
+
 bool PacketFilter::remove(boost::uuids::uuid id)
 {
 	return filterMap.erase(id) == 1;
@@ -48,7 +58,7 @@ bool PacketFilter::find(FilterableFunction ff, SOCKET s, const Packet packet) co
 {
 	for (auto& f : filterMap)
 	{
-		if (f.second.filterableFunction != ff)
+		if (f.second.filterableFunction != ff || !f.second.activated)
 			continue;
 
 		const Packet oldVal = f.second.oldVal;
@@ -68,7 +78,7 @@ bool PacketFilter::findAndReplace(FilterableFunction ff, SOCKET s, Packet& packe
 
 	for (auto& [_, filterData] : filterMap)
 	{
-		if (filterData.filterableFunction != ff)
+		if (filterData.filterableFunction != ff || !filterData.activated)
 			continue;
 
 		const Packet& oldVal = filterData.oldVal;

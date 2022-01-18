@@ -39,6 +39,7 @@ enum class SpyMessageType
 	REQUEST_SOCKET_INFO,
 	ADD_PACKET_FITLER,
 	MODIFY_PACKET_FILTER,
+	TOGGLE_ACTIVATE_FILTER,
 	DELETE_PACKET_FILTER,
 	SHUTDOWN_RECV_THREAD
 };
@@ -270,25 +271,14 @@ namespace client
 			messageType, jobId, filterId);
 	};
 
-	struct ModifyPacketFilterResponse : IMessageResponse
+	struct GenericPacketFilterResponse : IMessageResponse
 	{
-		ModifyPacketFilterResponse(
+		GenericPacketFilterResponse(
 			std::string jobId
 		) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId)
 		{ }
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ModifyPacketFilterResponse,
-			messageType, jobId);
-	};
-
-	struct DeletePacketFilterResponse : IMessageResponse
-	{
-		DeletePacketFilterResponse(
-			std::string jobId
-		) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId)
-			{ }
-
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(DeletePacketFilterResponse,
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(GenericPacketFilterResponse,
 			messageType, jobId);
 	};
 

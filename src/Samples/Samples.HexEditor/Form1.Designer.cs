@@ -29,7 +29,7 @@ namespace Samples.HexEditor
         /// </summary>
         private void InitializeComponent()
         {
-            this.hexEditor = new XOPE_UI.Forms.Component.HexEditor();
+            this.hexEditor = new XOPE_UI.View.Component.HexEditor();
             this.randomiseData = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -76,7 +76,7 @@ namespace Samples.HexEditor
 
         #endregion
 
-        private XOPE_UI.Forms.Component.HexEditor hexEditor;
+        private XOPE_UI.View.Component.HexEditor hexEditor;
         private System.Windows.Forms.Button randomiseData;
     }
 }
