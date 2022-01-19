@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using XOPE_UI.Core;
-using XOPE_UI.View;
-using XOPE_UI.View.Component;
-using XOPE_UI.Injection;
-using XOPE_UI.Native;
-using XOPE_UI.Util;
-using XOPE_UI.Script;
-using XOPE_UI.Model;
-using XOPE_UI.Spy.DispatcherMessageType;
 using System.Security.Principal;
 using System.ComponentModel;
-using XOPE_UI.Spy.Type;
+using XOPE_UI.Core;
+using XOPE_UI.Injection;
+using XOPE_UI.Model;
+using XOPE_UI.Native;
+using XOPE_UI.Script;
+using XOPE_UI.Spy.DispatcherMessageType;
+using XOPE_UI.Util;
+using XOPE_UI.View;
+using XOPE_UI.View.Component;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace XOPE_UI
 {
@@ -36,7 +37,7 @@ namespace XOPE_UI
 
         SDK.Environment environment;
 
-        Timer resizeTimer = new Timer();
+        System.Windows.Forms.Timer resizeTimer = new System.Windows.Forms.Timer();
         bool isResizing = false;
 
         public MainWindow()
@@ -114,7 +115,6 @@ namespace XOPE_UI
                     selectedProcess = processDialog.SelectedProcess;
             }
 
-
             if (livePacketListView.Count > 0)
             {
                 DialogResult shouldClearList = MessageBox.Show("Attaching to a new process will" +
@@ -148,29 +148,61 @@ namespace XOPE_UI
 
                 if (shouldFreePreviousSpy != DialogResult.Yes)
                     return;
-
-                // TODO: Attempt to removed existing Spy. 
-                CreateRemoteThread.FreeSpy(selectedProcess.Handle);
             }
 
-            Console.WriteLine($"Injecting into ${selectedProcess.ProcessName}.exe - {selectedProcess.Id}");
-
-            spyManager.RunAsync();
-
-            bool res = CreateRemoteThread.InjectSpy(selectedProcess.Handle);
-
-            if (res)
+            using (ProcessAttachingDialog loadingDialog = new ProcessAttachingDialog(selectedProcess.ProcessName))
             {
-                attachedProcess = selectedProcess;
+                Task.Run(() =>
+                {
+                    if (spyAlreadyAttached)
+                    {
+                        // TODO: Attempt to removed existing Spy. 
+                        //CreateRemoteThread.FreeSpy(selectedProcess.Handle);
+                        
+                        while (spyAlreadyAttached)
+                        {
+                            if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(selectedProcess.Handle))
+                                spyAlreadyAttached = NativeMethods.GetModuleHandle(selectedProcess.Handle, 
+                                    XOPE_UI.Config.Spy.ModuleName32) != IntPtr.Zero;
+                            else
+                                spyAlreadyAttached = NativeMethods.GetModuleHandle(selectedProcess.Handle, 
+                                    XOPE_UI.Config.Spy.ModuleName64) != IntPtr.Zero;
 
-                SetUiToAttachedState();
-                attachedProcess.EnableRaisingEvents = true;
-                attachedProcess.Exited += attachedProcess_Exited;
-                spyManager.AttachedToProcess(attachedProcess);
-                environment.NotifyProcessAttached(attachedProcess);
+                            if (loadingDialog.CancellationToken.IsCancellationRequested)
+                            {
+                                Console.WriteLine("Cancelling injecting into processes.");
+                                loadingDialog.CloseDialog();
+                                return;
+                            }
+
+                            Thread.Sleep(1000);
+                        }
+                    }
+
+                    Console.WriteLine($"Injecting into ${selectedProcess.ProcessName}.exe - {selectedProcess.Id}");
+
+                    spyManager.RunAsync();
+
+                    bool res = CreateRemoteThread.InjectSpy(selectedProcess.Handle);
+
+                    if (res)
+                    {
+                        attachedProcess = selectedProcess;
+
+                        SetUiToAttachedState();
+                        attachedProcess.EnableRaisingEvents = true;
+                        attachedProcess.Exited += attachedProcess_Exited;
+                        spyManager.AttachedToProcess(attachedProcess);
+                        environment.NotifyProcessAttached(attachedProcess);
+                    }
+                    else
+                        MessageBox.Show($"Error when AttachToProcess");
+
+                    loadingDialog.CloseDialog();
+                }, loadingDialog.CancellationToken.Token);
+
+                loadingDialog.ShowDialog();
             }
-            else
-                MessageBox.Show($"Error when AttachToProcess");
         }
 
         public void DetachFromProcess(bool alreadyFreed = false)
