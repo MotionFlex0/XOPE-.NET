@@ -8,7 +8,7 @@ namespace XOPE_UI.View
 {
     public partial class LogDialog : Form
     {
-        Logger logger;
+        Logger _logger;
         static LogDialog instance = null;
 
         public static void ShowOrBringToFront(Logger logger)
@@ -34,10 +34,10 @@ namespace XOPE_UI.View
 
             this.ActiveControl = null;
 
-            this.logger = logger;
-            this.logger.TextWritten += Logger_TextWritten; 
+            this._logger = logger;
+            this._logger.TextWritten += Logger_TextWritten; 
 
-            this.logTextBox.Text = this.logger.ToString();
+            this.logTextBox.Text = this._logger.ToString();
         }
 
         protected override void Dispose(bool disposing)
@@ -48,7 +48,7 @@ namespace XOPE_UI.View
             }
             base.Dispose(disposing);
 
-            this.logger.TextWritten -= Logger_TextWritten;
+            this._logger.TextWritten -= Logger_TextWritten;
             instance = null;
         }
 
@@ -68,6 +68,15 @@ namespace XOPE_UI.View
                     if (shouldScroll)
                         logTextBox.ScrollToCaret();
                 }));
+            }
+        }
+
+        private void LogDialog_VisibleChanged(object sender, EventArgs e)
+        {
+            if (this.Visible)
+            {
+                this.logTextBox.Select(logTextBox.Text.Length-1, 1);
+                this.logTextBox.ScrollToCaret();
             }
         }
 

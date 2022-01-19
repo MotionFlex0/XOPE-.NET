@@ -57,6 +57,7 @@ namespace XOPE_UI.View
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "LogDialog";
             this.Text = "Log";
+            this.VisibleChanged += new System.EventHandler(this.LogDialog_VisibleChanged);
             this.ResumeLayout(false);
 
         }
