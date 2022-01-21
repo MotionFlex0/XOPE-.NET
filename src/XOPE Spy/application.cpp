@@ -202,10 +202,12 @@ void Application::processIncomingMessages()
 
             const bool recursiveReplace = jsonMessage["RecursiveReplace"].get<bool>();
 
+            const bool isActivated = jsonMessage["Activated"].get<bool>();
+
             if (type == SpyMessageType::ADD_PACKET_FITLER)
             {
                 boost::uuids::uuid id = _packetFilter.add(packetType,
-                    socket, oldPacket, newPacket, false, recursiveReplace);
+                    socket, oldPacket, newPacket, false, recursiveReplace, isActivated);
 
                 _namedPipeClient->send(client::AddPacketFilterResponse(
                     jsonMessage["JobId"].get<std::string>(),
