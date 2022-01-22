@@ -14,6 +14,7 @@ using XOPE_UI.View;
 using XOPE_UI.View.Component;
 using System.Threading.Tasks;
 using System.Threading;
+using XOPE_UI.Settings;
 
 namespace XOPE_UI
 {
@@ -23,30 +24,33 @@ namespace XOPE_UI
         bool IsAdmin => 
             (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator);
 
-        string windowTitle = "XOPE";
+        string _windowTitle = "XOPE";
 
-        int captureIndex = 0;
-        int filterIndex = 0;
+        int _captureIndex = 0;
 
-        Process attachedProcess = null;
+        Process _attachedProcess = null;
 
-        SpyManager spyManager;
-        Logger logger;
-        ViewTabHandler viewTabHandler;
-        ScriptManager scriptManager;
+        Logger _logger;
+        ViewTabHandler _viewTabHandler;
+        ScriptManager _scriptManager;
+        IUserSettings _settings;
+        SpyManager _spyManager;
 
-        SDK.Environment environment;
 
-        System.Windows.Forms.Timer resizeTimer = new System.Windows.Forms.Timer();
-        bool isResizing = false;
+        SDK.Environment _environment;
 
-        public MainWindow()
+        System.Windows.Forms.Timer _resizeTimer = new System.Windows.Forms.Timer();
+        bool _isResizing = false;
+
+        public MainWindow(IUserSettings settings)
         {
             InitializeComponent();
 
+            _settings = settings;
+
             // Initialise Logger and add a event handler to update status bar
-            logger = new Logger();
-            logger.TextWritten += (object sender, string value) =>
+            _logger = new Logger();
+            _logger.TextWritten += (object sender, string value) =>
             {
                 if (this.IsHandleCreated && value.Trim() != "")
                     this.BeginInvoke(new Action(() => this.toolStripStatusLabel.Text = value.ReplaceLineEndings(" | ")));
@@ -56,22 +60,23 @@ namespace XOPE_UI
 
             //Credit: https://www.codeproject.com/Articles/317695/Detecting-If-An-Application-is-Running-as-An-Eleva
             if (IsAdmin)
-                windowTitle += " [Elevated as Admin]";
+                _windowTitle += " [Elevated as Admin]";
 
-            viewTabHandler = new ViewTabHandler(viewTab);
-            viewTabHandler.AddView(captureViewButton, captureViewTabPage);
-            viewTabHandler.AddView(filterViewButton, filterViewTabPage);
-            viewTabHandler.AddView(replayViewButton, replayViewTabPage);
+            _viewTabHandler = new ViewTabHandler(viewTab);
+            _viewTabHandler.AddView(captureViewButton, captureViewTabPage);
+            _viewTabHandler.AddView(filterViewButton, filterViewTabPage);
+            _viewTabHandler.AddView(replayViewButton, replayViewTabPage);
 
-            scriptManager = new ScriptManager();
+            _scriptManager = new ScriptManager();
 
             livePacketListView.ItemDoubleClicked += PacketListView_ItemDoubleClicked;
             livePacketListView.ItemSelectedChanged += PacketListView_ItemSelectedChanged;
             
-            spyManager = new SpyManager();
-            filterViewTab.AttachSpyManager(spyManager);
+            _spyManager = new SpyManager();
+            filterViewTab.AttachSpyManager(_spyManager);
+            filterViewTab.AttachSettings(_settings);
 
-            spyManager.NewPacket += (object sender, Packet e) =>
+            _spyManager.NewPacket += (object sender, Packet e) =>
             {
                 if (recordToolStripButton.Tag != null && !recordToolStripButton.Enabled) // capturing and not paused
                 {
@@ -84,19 +89,19 @@ namespace XOPE_UI
 
             captureTabControl.MouseClick += captureTabControl_MouseClick;
 
-            environment = SDK.Environment.GetEnvironment();
-            spyManager.NewPacket += (object sender, Model.Packet e) =>
-                environment.NotifyNewPacket(e.Data);
+            _environment = SDK.Environment.GetEnvironment();
+            _spyManager.NewPacket += (object sender, Model.Packet e) =>
+                _environment.NotifyNewPacket(e.Data);
 
-            resizeTimer.Interval = 100;
-            resizeTimer.Tick += (object sender, EventArgs e) =>
+            _resizeTimer.Interval = 100;
+            _resizeTimer.Tick += (object sender, EventArgs e) =>
             {
                 this.ResumeLayout(true);
                 this.SuspendLayout();
-                resizeTimer.Stop();
+                _resizeTimer.Stop();
             };
 
-            this.Text = windowTitle;
+            this.Text = _windowTitle;
 
             //Temp solution for reducing first-time loading time of Packet dialog
             using (PacketEditorReplayDialog p = new PacketEditorReplayDialog(null))
@@ -129,7 +134,7 @@ namespace XOPE_UI
                 this.packetCaptureHexPreview.ClearBytes();
             }
 
-            if (attachedProcess != null)
+            if (_attachedProcess != null)
                 DetachFromProcess();
             
             bool spyAlreadyAttached = false;
@@ -181,19 +186,19 @@ namespace XOPE_UI
 
                     Console.WriteLine($"Injecting into ${selectedProcess.ProcessName}.exe - {selectedProcess.Id}");
 
-                    spyManager.RunAsync();
+                    _spyManager.RunAsync();
 
                     bool res = CreateRemoteThread.InjectSpy(selectedProcess.Handle);
 
                     if (res)
                     {
-                        attachedProcess = selectedProcess;
+                        _attachedProcess = selectedProcess;
 
                         SetUiToAttachedState();
-                        attachedProcess.EnableRaisingEvents = true;
-                        attachedProcess.Exited += attachedProcess_Exited;
-                        spyManager.AttachedToProcess(attachedProcess);
-                        environment.NotifyProcessAttached(attachedProcess);
+                        _attachedProcess.EnableRaisingEvents = true;
+                        _attachedProcess.Exited += attachedProcess_Exited;
+                        _spyManager.AttachedToProcess(_attachedProcess);
+                        _environment.NotifyProcessAttached(_attachedProcess);
                     }
                     else
                         MessageBox.Show($"Error when AttachToProcess");
@@ -207,34 +212,34 @@ namespace XOPE_UI
 
         public void DetachFromProcess(bool alreadyFreed = false)
         {
-            if (!spyManager.IsAttached)
+            if (!_spyManager.IsAttached)
                 return;
 
-            spyManager.Shutdown();
+            _spyManager.Shutdown();
             // This gives the Spy enough time to properly shutdown and dispose of its running threads (temp fix)
             //System.Threading.Thread.Sleep(2000);
 
             if (!alreadyFreed)
             {
                 //bool res;
-                //if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(attachedProcess.Handle))
-                //    res = CreateRemoteThread.Free32(attachedProcess.Handle, XOPE_UI.Config.Spy.ModuleName32);
+                //if (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(_attachedProcess.Handle))
+                //    res = CreateRemoteThread.Free32(_attachedProcess.Handle, XOPE_UI.Config.Spy.ModuleName32);
                 //else
-                //    res = CreateRemoteThread.Free64(attachedProcess.Handle, XOPE_UI.Config.Spy.ModuleName64);
+                //    res = CreateRemoteThread.Free64(_attachedProcess.Handle, XOPE_UI.Config.Spy.ModuleName64);
 
                 //if (!res)
                 //    MessageBox.Show("Failed to free XOPESpy from the attached process");
             }
 
             SetUiToDetachedState();
-            spyManager.DetachedFromProcess();
-            environment.NotifyProcessDetached(attachedProcess);
-            attachedProcess = null;
+            _spyManager.DetachedFromProcess();
+            _environment.NotifyProcessDetached(_attachedProcess);
+            _attachedProcess = null;
         }
 
         private bool IsAttached(bool showMessage = true)
         {
-            if (!spyManager.IsAttached)
+            if (!_spyManager.IsAttached)
             {
                 if (showMessage)
                     MessageBox.Show("Not attached to a process");
@@ -247,10 +252,10 @@ namespace XOPE_UI
         {
             this.Invoke(new Action(() =>
             {
-                string processName = attachedProcess.MainModule.ModuleName;
+                string processName = _attachedProcess.MainModule.ModuleName;
 
-                Console.WriteLine($"Successfully injected into ${processName}.exe - {attachedProcess.Id}");
-                this.Text = $"{windowTitle} - [{attachedProcess.Id}] {attachedProcess.MainModule.ModuleName}";
+                Console.WriteLine($"Successfully injected into ${processName}.exe - {_attachedProcess.Id}");
+                this.Text = $"{_windowTitle} - [{_attachedProcess.Id}] {_attachedProcess.MainModule.ModuleName}";
                 detachToolStripButton.Enabled = true;
                 detachToolStripMenuItem.Enabled = true;
                 recordToolStripButton.Enabled = true;
@@ -266,7 +271,7 @@ namespace XOPE_UI
                 if (stopRecToolStripButton.Enabled)
                     stopRecToolStripButton.PerformClick();
 
-                this.Text = windowTitle;
+                this.Text = _windowTitle;
                 detachToolStripButton.Enabled = false;
                 detachToolStripMenuItem.Enabled = false;
                 recordToolStripButton.Enabled = false;
@@ -334,7 +339,6 @@ namespace XOPE_UI
                 }
                 tabContextMenu.Show(this.captureTabControl, e.Location);
             }
-
         }
 
         private void recordToolStripButton_Click(object sender, EventArgs e)
@@ -344,7 +348,7 @@ namespace XOPE_UI
             stopRecToolStripButton.Enabled = true;
             if (recordToolStripButton.Tag == null)
             {
-                string newCaptureKey = "Capture " + captureIndex++;
+                string newCaptureKey = "Capture " + _captureIndex++;
 
                 PacketListView packetListView = new PacketListView();
                 packetListView.Anchor = ~AnchorStyles.None;
@@ -396,7 +400,7 @@ namespace XOPE_UI
             if (!IsAttached())
                 return;
                 
-            using (ActiveConnectionsDialog dialog = new ActiveConnectionsDialog(spyManager))
+            using (ActiveConnectionsDialog dialog = new ActiveConnectionsDialog(_spyManager))
             {
                 dialog.ShowDialog();
             }
@@ -404,7 +408,7 @@ namespace XOPE_UI
 
         private void PacketListView_ItemDoubleClicked(object sender, ListViewItem e)
         {
-            using (PacketEditorReplayDialog packetEditorReplay = new PacketEditorReplayDialog(spyManager))
+            using (PacketEditorReplayDialog packetEditorReplay = new PacketEditorReplayDialog(_spyManager))
             {
                 //[4] is the socket id. TODO: Store info about a packet in a proper structure
                 packetEditorReplay.SocketId = Convert.ToInt32(e.SubItems[4].Text);
@@ -421,7 +425,7 @@ namespace XOPE_UI
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (attachedProcess != null)
+            if (_attachedProcess != null)
                 DetachFromProcess();
         }
 
@@ -431,7 +435,7 @@ namespace XOPE_UI
                 return;
 
             using (PacketEditorReplayDialog packetEditorReplayDialog = 
-                new PacketEditorReplayDialog(spyManager)) 
+                new PacketEditorReplayDialog(_spyManager)) 
             {
                 packetEditorReplayDialog.Data = new byte[] { 0x00 };
                 packetEditorReplayDialog.Editible = true;
@@ -441,7 +445,7 @@ namespace XOPE_UI
 
         private void logToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LogDialog.ShowOrBringToFront(logger);
+            LogDialog.ShowOrBringToFront(_logger);
         }
 
         private void runScriptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -451,14 +455,14 @@ namespace XOPE_UI
             DialogResult result = openFileDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                scriptManager.AddCSScript(openFileDialog.FileName);
+                _scriptManager.AddCSScript(openFileDialog.FileName);
 
             }
         }
 
         private void scriptManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (ScriptManagerDialog scriptManagerDialog = new ScriptManagerDialog(scriptManager))
+            using (ScriptManagerDialog scriptManagerDialog = new ScriptManagerDialog(_scriptManager))
             {
                 scriptManagerDialog.ShowDialog();
             }
@@ -480,19 +484,19 @@ namespace XOPE_UI
             };
 
             roundTripStopwatch.Start();
-            spyManager.MessageDispatcher.Send(ping);
+            _spyManager.MessageDispatcher.Send(ping);
         }
 
         private void socketCheckerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!spyManager.IsAttached && spyManager.MessageDispatcher != null)
+            if (!_spyManager.IsAttached && _spyManager.MessageDispatcher != null)
             {
                 MessageBox.Show("Not currently attached to a process.");
                 return;
             }
 
             using (SocketCheckerDialog socketCheckerDialog = 
-                new SocketCheckerDialog(spyManager.MessageDispatcher))
+                new SocketCheckerDialog(_spyManager.MessageDispatcher))
             {
                 socketCheckerDialog.ShowDialog();
             }
@@ -532,10 +536,10 @@ namespace XOPE_UI
 
         protected override void OnResize(EventArgs e)
         {
-            if (isResizing)
+            if (_isResizing)
             {
-                resizeTimer.Stop();
-                resizeTimer.Start();
+                _resizeTimer.Stop();
+                _resizeTimer.Start();
             }
             base.OnResize(e);
         }
@@ -543,8 +547,8 @@ namespace XOPE_UI
         protected override void OnResizeBegin(EventArgs e)
         {
             SuspendLayout();
-            resizeTimer.Start();
-            isResizing = true;
+            _resizeTimer.Start();
+            _isResizing = true;
 
             base.OnResizeBegin(e);
         }
@@ -552,9 +556,17 @@ namespace XOPE_UI
         protected override void OnResizeEnd(EventArgs e)
         {
             base.OnResizeEnd(e);
-            resizeTimer.Stop();
+            _resizeTimer.Stop();
             ResumeLayout();
-            isResizing = false;
+            _isResizing = false;
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (SettingsDialog settingsDialog = new SettingsDialog(_settings))
+            {
+                settingsDialog.ShowDialog();
+            }
         }
     }
 

@@ -80,9 +80,12 @@
             this.hexPreviewPanel = new System.Windows.Forms.Panel();
             this.packetCaptureHexPreview = new XOPE_UI.View.Component.HexEditor();
             this.filterViewTabPage = new System.Windows.Forms.TabPage();
+            this.filterViewTab = new XOPE_UI.View.FilterViewTab();
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
-            this.filterViewTab = new XOPE_UI.View.FilterViewTab();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -109,6 +112,7 @@
             this.processToolStripMenuItem,
             this.packetToolStripMenuItem,
             this.scriptToolStripMenuItem,
+            this.toolsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -123,6 +127,7 @@
             this.logToolStripMenuItem,
             this.restartAsAdminToolStripMenuItem,
             this.toolStripSeparator2,
+            this.toolStripSeparator6,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -554,7 +559,7 @@
             this.hexPreviewPanel.Location = new System.Drawing.Point(5, 1);
             this.hexPreviewPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 143);
+            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 142);
             this.hexPreviewPanel.TabIndex = 6;
             // 
             // packetCaptureHexPreview
@@ -569,7 +574,7 @@
             this.packetCaptureHexPreview.Name = "packetCaptureHexPreview";
             this.packetCaptureHexPreview.SelectionBackColor = System.Drawing.Color.Blue;
             this.packetCaptureHexPreview.SelectionForeColor = System.Drawing.Color.White;
-            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 98);
+            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 97);
             this.packetCaptureHexPreview.TabIndex = 0;
             // 
             // filterViewTabPage
@@ -582,6 +587,17 @@
             this.filterViewTabPage.TabIndex = 2;
             this.filterViewTabPage.Text = "tabPage1";
             this.filterViewTabPage.UseVisualStyleBackColor = true;
+            // 
+            // filterViewTab
+            // 
+            this.filterViewTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.filterViewTab.Enabled = false;
+            this.filterViewTab.Location = new System.Drawing.Point(4, 3);
+            this.filterViewTab.Name = "filterViewTab";
+            this.filterViewTab.Size = new System.Drawing.Size(875, 421);
+            this.filterViewTab.TabIndex = 0;
             // 
             // replayViewTabPage
             // 
@@ -605,16 +621,25 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "NOT IMPLEMENTED";
             // 
-            // filterViewTab
+            // toolStripSeparator6
             // 
-            this.filterViewTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.filterViewTab.Enabled = false;
-            this.filterViewTab.Location = new System.Drawing.Point(4, 3);
-            this.filterViewTab.Name = "filterViewTab";
-            this.filterViewTab.Size = new System.Drawing.Size(875, 421);
-            this.filterViewTab.TabIndex = 0;
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(160, 6);
+            // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.settingsToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -712,6 +737,9 @@
         private System.Windows.Forms.ToolStripMenuItem restartAsAdminToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
         private View.FilterViewTab filterViewTab;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
     }
 }
 
