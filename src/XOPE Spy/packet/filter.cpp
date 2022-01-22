@@ -6,7 +6,7 @@ PacketFilter::PacketFilter()
 }
 
 boost::uuids::uuid PacketFilter::add(FilterableFunction ff, SOCKET s, const Packet oldVal, const Packet newVal,
-	bool replaceEntirePacket, bool recursiveReplace)
+	bool replaceEntirePacket, bool recursiveReplace, bool activated)
 {
 	const boost::uuids::uuid id = generator();
 	filterMap[id] = Data
@@ -16,7 +16,8 @@ boost::uuids::uuid PacketFilter::add(FilterableFunction ff, SOCKET s, const Pack
 		.newVal = newVal,
 		.replaceEntirePacket = replaceEntirePacket,
 		.recursiveReplace = recursiveReplace,
-		.filterableFunction = ff
+		.filterableFunction = ff,
+		.activated = activated
 	};
 	return id;
 }
@@ -88,9 +89,28 @@ bool PacketFilter::findAndReplace(FilterableFunction ff, SOCKET s, Packet& packe
 			while (found != packet.end())
 			{
 				const Packet& newVal = filterData.newVal;
-				const size_t copyDelta = newVal.size() - oldVal.size();
+				const int sizeDelta = static_cast<int>(newVal.size()) - static_cast<int>(oldVal.size());
+				
+				// if newVal is longer than the oldVal
+				if (sizeDelta > 0)
+				{
+					const auto newIt = packet.insert(found + oldVal.size(), sizeDelta, 0);
+					found = newIt - oldVal.size();
+				}
+				else if (sizeDelta < 0)
+				{
+					const auto beginIt = found + newVal.size();
+					packet.erase(beginIt, beginIt + abs(sizeDelta));
+				}
 
-				auto nextIt = std::copy(newVal.begin(), newVal.end() - copyDelta, found);
+				std::copy(newVal.begin(), newVal.end(), found);
+
+				modified = true;
+				if (!filterData.recursiveReplace)
+					break;
+				
+				found = std::search(found + newVal.size(), packet.end(), oldVal.begin(), oldVal.end());
+				/*auto nextIt = std::copy(newVal.begin(), newVal.end() - copyDelta, found);
 
 				if (copyDelta > 0)
 				{
@@ -107,7 +127,7 @@ bool PacketFilter::findAndReplace(FilterableFunction ff, SOCKET s, Packet& packe
 				if (!filterData.recursiveReplace)
 					break;
 
-				found = std::search(nextIt, packet.end(), oldVal.begin(), oldVal.end());
+				found = std::search(nextIt, packet.end(), oldVal.begin(), oldVal.end());*/
 			}
 
 			if (modified)

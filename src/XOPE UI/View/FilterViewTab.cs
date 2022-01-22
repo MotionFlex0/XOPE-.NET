@@ -3,13 +3,12 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using XOPE_UI.Model;
 using XOPE_UI.Presenter;
+using XOPE_UI.Settings;
 
 namespace XOPE_UI.View
 {
     public partial class FilterViewTab : UserControl, IFilterViewTab
     {
-        const int MAX_BYTES_SHOWN = 8;
-
         public BindingList<FilterEntry> Filters { get; } = new BindingList<FilterEntry>();
         public FilterEntry SelectedItem
         {
@@ -17,6 +16,7 @@ namespace XOPE_UI.View
         }
 
         FilterViewTabPresenter _presenter;
+        IUserSettings _settings;
 
         public FilterViewTab()
         {
@@ -26,9 +26,22 @@ namespace XOPE_UI.View
             this.filterDataGridView.AutoGenerateColumns = false;
 
             this.filterDataGridView.DataSource = Filters;
+            Filters.ListChanged += Filters_ListChanged;
         }
 
         public void AttachSpyManager(SpyManager spyManager) => _presenter.SpyManager = spyManager;
+
+        public void AttachSettings(IUserSettings settings)
+        {
+            _presenter.Settings = settings;
+            _settings = settings;
+            _settings.Get(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_FILTER).ValueChanged += (sender, e) =>
+            {
+                DataGridViewRowCollection rows = this.filterDataGridView.Rows;
+                foreach (DataGridViewRow row in rows)
+                    UpdateRowFilterColumnText(row.Index);
+            };
+        }
 
         void IFilterViewTab.AddFilter(FilterEntry entry)
         {
@@ -73,6 +86,29 @@ namespace XOPE_UI.View
             }
         }
 
+        private void UpdateRowFilterColumnText(int rowIndex)
+        {
+            DataGridViewRow row = this.filterDataGridView.Rows[rowIndex];
+            if (row == null)
+                return;
+
+            FilterEntry filter = row.DataBoundItem as FilterEntry;
+            if (filter == null)
+                return;
+            
+            int maxBytesShown = _settings.GetValue<int>(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_FILTER);
+
+            string beforeStr = BitConverter.ToString(filter.OldValue, 0).Replace("-", " ");
+            string beforeFormatted = beforeStr.Substring(0, Math.Min((maxBytesShown * 3) - 1, beforeStr.Length));
+            beforeFormatted += beforeStr.Length > (maxBytesShown * 3) - 1 ? "..." : "";
+
+            string afterStr = BitConverter.ToString(filter.NewValue, 0).Replace("-", " ");
+            string afterFormatted = afterStr.Substring(0, Math.Min((maxBytesShown * 3) - 1, afterStr.Length));
+            afterFormatted += afterStr.Length > (maxBytesShown * 3) - 1 ? "..." : "";
+
+            row.Cells["Filter"].Value = $"{beforeFormatted} --> {afterFormatted}";
+        }
+
         private void addFilterButton_Click(object sender, EventArgs e)
         {
             _presenter.AddFilterButtonClicked();
@@ -93,33 +129,8 @@ namespace XOPE_UI.View
             if (e.Button == MouseButtons.Left && !checkbox.ContentBounds.Contains(e.Location))
             {
                 _presenter.ShowFilterEditor(SelectedItem);
-                this.filterDataGridView.InvalidateRow(e.RowIndex);
+                this.UpdateRowFilterColumnText(e.RowIndex);
             }
-        }
-
-        private void filterDataGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine("filterDataGridView_RowsAdded");
-            DataGridViewRow row = this.filterDataGridView.Rows[e.RowIndex];
-
-            FilterEntry filter = row.DataBoundItem as FilterEntry;
-            if (filter == null)
-                return;
-
-            string beforeStr = BitConverter.ToString(filter.OldValue, 0).Replace("-", " ");
-            string beforeFormatted = beforeStr.Substring(0, Math.Min((MAX_BYTES_SHOWN * 3) - 1, beforeStr.Length));
-            beforeFormatted += beforeStr.Length > (MAX_BYTES_SHOWN * 3) - 1 ? "..." : "";
-
-            string afterStr = BitConverter.ToString(filter.NewValue, 0).Replace("-", " ");
-            string afterFormatted = afterStr.Substring(0, Math.Min((MAX_BYTES_SHOWN * 3) - 1, afterStr.Length));
-            afterFormatted += afterStr.Length > (MAX_BYTES_SHOWN * 3) - 1 ? "..." : "";
-
-            row.Cells["Filter"].Value = $"{beforeFormatted} --> {afterFormatted}";
-        }
-
-        private void filterDataGridView_SelectionChanged(object sender, EventArgs e)
-        {
-            this.deleteFilterButton.Enabled = filterDataGridView.SelectedRows.Count > 0;
         }
 
         private void filterDataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -131,6 +142,11 @@ namespace XOPE_UI.View
             }
         }
 
+        private void filterDataGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            UpdateRowFilterColumnText(e.RowIndex);
+        }
+
         private void filterDataGridView_CurrentCellDirtyStateChanged(object sender, EventArgs e)
         {
             int currentCellColumnIndex = this.filterDataGridView.CurrentCell.ColumnIndex;
@@ -138,6 +154,23 @@ namespace XOPE_UI.View
             if (currentCellHeaderName == "Activated" && this.filterDataGridView.IsCurrentCellDirty)
                 this.filterDataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
                     
+        }
+
+        private void Filters_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            if (e.ListChangedType != ListChangedType.ItemChanged)
+                return;
+
+            if (e.PropertyDescriptor.Name == nameof(FilterEntry.OldValue) || 
+                e.PropertyDescriptor.Name == nameof(FilterEntry.NewValue))
+            {
+                UpdateRowFilterColumnText(e.NewIndex);
+            }
+        }
+
+        private void filterDataGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            this.deleteFilterButton.Enabled = filterDataGridView.SelectedRows.Count > 0;
         }
     }
 }

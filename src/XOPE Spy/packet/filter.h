@@ -28,7 +28,7 @@ public:
 	PacketFilter();
 
 	boost::uuids::uuid add(FilterableFunction ff, SOCKET s, const Packet oldVal, 
-		const Packet newVal, bool replaceEntirePacket, bool recursiveReplace);
+		const Packet newVal, bool replaceEntirePacket, bool recursiveReplace, bool activated);
 	bool modify(boost::uuids::uuid id, FilterableFunction ff, SOCKET s,
 		const Packet oldVal, const Packet newVal, bool replaceEntirePacket, bool recursiveReplace);
 	bool toggleActivated(boost::uuids::uuid id, bool isActivated);

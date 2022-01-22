@@ -44,13 +44,13 @@
             // 
             this.filterDataGridView.AllowUserToAddRows = false;
             this.filterDataGridView.AllowUserToDeleteRows = false;
+            this.filterDataGridView.AllowUserToResizeColumns = false;
             this.filterDataGridView.AllowUserToResizeRows = false;
             this.filterDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.filterDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenVertical;
             this.filterDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            this.filterDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.filterDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.FilterNumber,
             this.FilterName,
@@ -98,11 +98,11 @@
             // 
             // Filter
             // 
+            this.Filter.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.Filter.DataPropertyName = "Filter";
             this.Filter.HeaderText = "Filter";
             this.Filter.Name = "Filter";
             this.Filter.ReadOnly = true;
-            this.Filter.Width = 470;
             // 
             // SocketId
             // 
@@ -119,7 +119,7 @@
             this.Activated.Name = "Activated";
             this.Activated.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.Activated.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.Activated.Width = 70;
+            this.Activated.Width = 91;
             // 
             // deleteFilterButton
             // 
