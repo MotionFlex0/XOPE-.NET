@@ -10,10 +10,8 @@ namespace XOPE_UI.View
     public partial class FilterViewTab : UserControl, IFilterViewTab
     {
         public BindingList<FilterEntry> Filters { get; } = new BindingList<FilterEntry>();
-        public FilterEntry SelectedItem
-        {
-            get => filterDataGridView.SelectedRows?[0]?.DataBoundItem as FilterEntry;
-        }
+        public FilterEntry SelectedItem => 
+            filterDataGridView.SelectedRows?[0]?.DataBoundItem as FilterEntry;
 
         FilterViewTabPresenter _presenter;
         IUserSettings _settings;
@@ -35,11 +33,14 @@ namespace XOPE_UI.View
         {
             _presenter.Settings = settings;
             _settings = settings;
-            _settings.Get(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_FILTER).ValueChanged += (sender, e) =>
+            _settings.Get(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_FILTER).PropertyChanged += (sender, e) =>
             {
-                DataGridViewRowCollection rows = this.filterDataGridView.Rows;
-                foreach (DataGridViewRow row in rows)
-                    UpdateRowFilterColumnText(row.Index);
+                if (e.PropertyName == nameof(SettingsEntry.Value))
+                {
+                    DataGridViewRowCollection rows = this.filterDataGridView.Rows;
+                    foreach (DataGridViewRow row in rows)
+                        UpdateRowFilterColumnText(row.Index);
+                }
             };
         }
 
@@ -63,7 +64,6 @@ namespace XOPE_UI.View
         {
             MessageBox.Show($"Failed to add filter.\nMessage: " +
                         $"{errorMessage}");
-            
         }
 
         FilterEntry IFilterViewTab.ShowFilterEditorDialog()
