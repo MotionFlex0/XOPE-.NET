@@ -69,11 +69,8 @@
             this.settingsDataGridView.Size = new System.Drawing.Size(528, 310);
             this.settingsDataGridView.TabIndex = 1;
             this.settingsDataGridView.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.settingsDataGridView_CellBeginEdit);
-            this.settingsDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.settingsDataGridView_CellClick);
-            this.settingsDataGridView.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.settingsDataGridView_CellLeave);
             this.settingsDataGridView.CurrentCellDirtyStateChanged += new System.EventHandler(this.settingsDataGridView_CurrentCellDirtyStateChanged);
             this.settingsDataGridView.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.settingsDataGridView_EditingControlShowing);
-            this.settingsDataGridView.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.settingsDataGridView_RowsAdded);
             this.settingsDataGridView.SelectionChanged += new System.EventHandler(this.settingsDataGridView_SelectionChanged);
             // 
             // SettingsName

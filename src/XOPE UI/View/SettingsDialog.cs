@@ -27,15 +27,19 @@ namespace XOPE_UI.View
 
         private void settingsDataGridView_CurrentCellDirtyStateChanged(object sender, System.EventArgs e)
         {
-            this.settingsDataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            if (this.settingsDataGridView.CurrentCell is DataGridViewComboBoxCell)
+            {
+                DataGridViewRow selectedRow = this.settingsDataGridView.SelectedRows[0];
 
-            DataGridViewRow selectedRow = this.settingsDataGridView.SelectedRows[0];
-            if ((selectedRow.DataBoundItem as SettingsEntry).ValueType == SettingsType.BOOLEAN)
+                this.settingsDataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);  
                 this.settingsDataGridView.CurrentCell = selectedRow.Cells["SettingsName"];
+            }
         }
 
         private void settingsDataGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
+            e.Control.PreviewKeyDown += settingsDataGridView_EditingControl_PreviewKeyDown;
+
             DataGridViewTextBoxEditingControl editingControl = e.Control as DataGridViewTextBoxEditingControl;
             if (editingControl == null)
                 return;
@@ -59,9 +63,14 @@ namespace XOPE_UI.View
             });
         }
 
-        private void settingsDataGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        private void settingsDataGridView_EditingControl_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-
+            if (e.KeyCode == Keys.Enter &&
+                this.settingsDataGridView.IsCurrentCellInEditMode)
+            {
+                DataGridViewRow selectedRow = this.settingsDataGridView.SelectedRows[0];
+                this.settingsDataGridView.CurrentCell = selectedRow.Cells["SettingsName"];
+            }
         }
 
         private void settingsDataGridView_SelectionChanged(object sender, System.EventArgs e)
@@ -74,73 +83,27 @@ namespace XOPE_UI.View
             descriptionTextBox.Text = $"{settingsEntry.Description}\r\nDefault value: {settingsEntry.DefaultValue}";
         }
 
-        private void settingsDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            //if (e.RowIndex < 0 || e.ColumnIndex < 0)
-            //    return;
-
-            ////if (this.settingsDataGridView.Columns[e.ColumnIndex].DataPropertyName != "Value")
-            ////    return;
-
-            //DataGridViewRow row = this.settingsDataGridView.Rows[e.RowIndex];
-            //SettingsEntry settingsEntry = row.DataBoundItem as SettingsEntry;
-            //if (settingsEntry == null)
-            //    return;
-
-            //if (settingsEntry.ValueType == SettingsType.BOOLEAN)
-            //{
-            //    DataGridViewComboBoxCell comboBoxCell = new DataGridViewComboBoxCell() { Value = settingsEntry.Value };
-            //    comboBoxCell.DisplayStyle = DataGridViewComboBoxDisplayStyle.Nothing;
-            //    comboBoxCell.FlatStyle = FlatStyle.Popup;
-
-            //    comboBoxCell.DataSource = new bool[] { true, false };
-            //    comboBoxCell.ValueType = typeof(bool);
-
-            //    row.Cells["Value"] = comboBoxCell;
-            //    Invalidate();
-            //}
-        }
-
-        private void settingsDataGridView_CellLeave(object sender, DataGridViewCellEventArgs e)
-        {
-            //if (e.RowIndex < 0 || e.ColumnIndex < 0)
-            //    return;
-
-            //if (this.settingsDataGridView.Columns[e.ColumnIndex].DataPropertyName != "Value")
-            //    return;
-
-            //DataGridViewRow row = this.settingsDataGridView.Rows[e.RowIndex];
-            //SettingsEntry settingsEntry = row.DataBoundItem as SettingsEntry;
-            //if (settingsEntry == null)
-            //    return;
-
-            //if (settingsEntry.ValueType == SettingsType.BOOLEAN)
-            //{
-            //    DataGridViewTextBoxCell textBoxCell = new DataGridViewTextBoxCell() { Value = settingsEntry.Value };
-            //    textBoxCell.ValueType = typeof(bool);
-            //    row.Cells["Value"] = textBoxCell;
-            //}
-        }
-
         private void settingsDataGridView_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            //DataGridViewRow row = this.settingsDataGridView.Rows[e.RowIndex];
-            //SettingsEntry settingsEntry = row.DataBoundItem as SettingsEntry;
-            //if (settingsEntry == null)
-            //    return;
+            DataGridViewRow row = this.settingsDataGridView.Rows[e.RowIndex];
+            if (row.Cells["Value"] is DataGridViewComboBoxCell)
+                return;
 
-            //if (settingsEntry.ValueType == SettingsType.BOOLEAN)
-            //{
-            //    DataGridViewComboBoxCell comboBoxCell = new DataGridViewComboBoxCell() { Value = settingsEntry.Value };
-            //    comboBoxCell.DisplayStyle = DataGridViewComboBoxDisplayStyle.Nothing;
-            //    comboBoxCell.FlatStyle = FlatStyle.Popup;
+            SettingsEntry settingsEntry = row.DataBoundItem as SettingsEntry;
+            if (settingsEntry == null)
+                return;
 
-            //    comboBoxCell.DataSource = new bool[] { true, false };
-            //    comboBoxCell.ValueType = typeof(bool);
+            if (settingsEntry.ValueType == typeof(bool))
+            {
+                DataGridViewComboBoxCell comboBoxCell = new DataGridViewComboBoxCell() { Value = settingsEntry.Value };
+                comboBoxCell.DisplayStyle = DataGridViewComboBoxDisplayStyle.Nothing;
+                comboBoxCell.FlatStyle = FlatStyle.Popup;
 
-            //    row.Cells["Value"] = comboBoxCell;
-            //    //Invalidate();
-            //}
+                comboBoxCell.DataSource = new bool[] { true, false };
+                comboBoxCell.ValueType = typeof(bool);
+
+                row.Cells["Value"] = comboBoxCell;
+            }
         }
     }
 }
