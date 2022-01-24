@@ -13,17 +13,19 @@ namespace XOPE_UI.Settings
 
         public UserSettings()
         {
-            //AddSettings(IUserSettings.Keys.FILTER_ENABLED_BY_DEFAULT,
-            //    new SettingsEntry("Filter Enabled by default", "Affects whether filter are enabled by default or not.",
-            //    SettingsType.BOOLEAN, true));
+            AddSettings(IUserSettings.Keys.FILTER_ENABLED_BY_DEFAULT,
+                new SettingsEntry("Filter Enabled by default", "Affects whether filter are enabled by default or not.",
+                true));
 
             AddSettings(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_FILTER,
-                new SettingsEntry("Max bytes shown in Filter list", "The maximum number of bytes shown within the Filter column in the Filter List.",
-                SettingsType.NUMBER, 8));
+                new SettingsEntry("Max bytes shown in Filter list", 
+                "The maximum number of bytes shown within the Filter column in the Filter List.",
+                8, 1));
 
-            //AddSettings(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_PACKET_VIEW,
-            //    new SettingsEntry("Max bytes in the packet list", "Empty",
-            //    SettingsType.NUMBER, 15));
+            AddSettings(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_PACKET_VIEW,
+                new SettingsEntry("Max bytes in the packet list", 
+                "The maximum number of bytes shown within the Data column in the Capture List.",
+                30, 1));
         }
 
         public SettingsEntry Get(IUserSettings.Keys key) => _settings[key];
@@ -37,7 +39,5 @@ namespace XOPE_UI.Settings
 
             _settings.Add(key, settingsEntry);
         }
-
-
     }
 }

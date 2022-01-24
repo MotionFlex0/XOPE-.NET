@@ -47,6 +47,15 @@ namespace XOPE_UI
             InitializeComponent();
 
             _settings = settings;
+            this.livePacketListView.ChangeBytesLength(
+                _settings.GetValue<int>(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_PACKET_VIEW));
+            _settings.Get(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_PACKET_VIEW).PropertyChanged += (o, e) =>
+            {
+                if (e.PropertyName == nameof(SettingsEntry.Value))
+                {
+                    this.livePacketListView.ChangeBytesLength((int)(o as SettingsEntry).Value);
+                }
+            };
 
             // Initialise Logger and add a event handler to update status bar
             _logger = new Logger();

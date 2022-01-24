@@ -4,6 +4,7 @@ using XOPE_UI.Model;
 
 namespace XOPE_UI.View.Component
 {
+    //TODO: Use MVP
     public partial class PacketListView : UserControl
     {
         public event EventHandler<ListViewItem> ItemSelectedChanged;
@@ -11,9 +12,11 @@ namespace XOPE_UI.View.Component
 
         public int Count { get => captureListView.Items.Count; }
 
-        int packetCounter = 0;
+        int _packetCounter = 0;
 
-        int minAutoScrollOffset = 20;
+        int _minAutoScrollOffset = 20;
+
+        int _maxPacketLength = 30;
 
         public PacketListView()
         {
@@ -30,18 +33,16 @@ namespace XOPE_UI.View.Component
 
         public int Add(HookedFuncType type, int socketId, byte[] packet, bool modified = false)
         {
-            const int MAX_PACKET_LENGTH = 30;
-
             if (type == HookedFuncType.SEND || 
                 type == HookedFuncType.RECV ||
                 type == HookedFuncType.WSASEND || 
                 type == HookedFuncType.WSARECV)
             {
-                string formattedPacket = BitConverter.ToString(packet, 0, Math.Min(MAX_PACKET_LENGTH, packet.Length));
+                string formattedPacket = BitConverter.ToString(packet, 0, Math.Min(_maxPacketLength, packet.Length));
                 formattedPacket = formattedPacket.Replace("-", " ");
-                formattedPacket += packet.Length > MAX_PACKET_LENGTH ? "..." : "";
+                formattedPacket += packet.Length > _maxPacketLength ? "..." : "";
 
-                ListViewItem listViewItem = new ListViewItem(packetCounter.ToString());
+                ListViewItem listViewItem = new ListViewItem(_packetCounter.ToString());
                 listViewItem.Tag = packet;
                 listViewItem.SubItems.Add(type.ToString());
                 listViewItem.SubItems.Add(packet.Length.ToString());
@@ -54,12 +55,12 @@ namespace XOPE_UI.View.Component
                 { 
                     captureListView.Items.Add(listViewItem);
 
-                    if (captureListView.TopItem.Index >= captureListView.Items.Count - minAutoScrollOffset)
+                    if (captureListView.TopItem.Index >= captureListView.Items.Count - _minAutoScrollOffset)
                         listViewItem.EnsureVisible();
                 }));
             }
 
-            return packetCounter++;
+            return _packetCounter++;
         }
         
         public int Add(Packet packet)
@@ -70,9 +71,31 @@ namespace XOPE_UI.View.Component
         public void Clear()
         {
             captureListView.Items.Clear();
-            packetCounter = 0;
+            _packetCounter = 0;
         }
         
+        public void ChangeBytesLength(int newLen)
+        {
+            _maxPacketLength = newLen;
+            if (!this.IsHandleCreated)
+                return;
+
+            this.Invoke(() =>
+            {
+                ListView.ListViewItemCollection items = this.captureListView.Items;
+                foreach (ListViewItem item in items)
+                {
+                    byte[] packet = item.Tag as byte[];
+
+                    string formattedPacket = BitConverter.ToString(packet, 0, Math.Min(newLen, packet.Length));
+                    formattedPacket = formattedPacket.Replace("-", " ");
+                    formattedPacket += packet.Length > newLen ? "..." : "";
+
+                    item.SubItems[3].Text = formattedPacket;
+                }
+            });
+        }
+
         private void captureListView_DoubleClick(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection selectedItems = this.captureListView.SelectedItems;
@@ -95,7 +118,7 @@ namespace XOPE_UI.View.Component
             {
                 int itemsVisible = (int)Math.Floor((decimal)captureListView.Height / captureListView.Items[0].Bounds.Height - 1);
 
-                minAutoScrollOffset = itemsVisible + 2;
+                _minAutoScrollOffset = itemsVisible + 2;
             }
             else
             {
@@ -103,7 +126,7 @@ namespace XOPE_UI.View.Component
                 ListViewItem item = new ListViewItem("DEFAULT_ITEM");
                 captureListView.Items.Add(item);
                 int itemsVisible = (int)Math.Floor((decimal)captureListView.Height / item.Bounds.Height - 1);
-                minAutoScrollOffset = itemsVisible + 2;
+                _minAutoScrollOffset = itemsVisible + 2;
                 item.Remove();
             }
         }

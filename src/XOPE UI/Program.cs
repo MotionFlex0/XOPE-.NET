@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using XOPE_UI.View;
 using XOPE_UI.Spy;
+using XOPE_UI.Settings;
 
 namespace XOPE_UI
 {
@@ -34,7 +35,6 @@ namespace XOPE_UI
                     "Missing helper executable",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-
             SDK.Environment environment = SDK.Environment.GetEnvironment();
 
             Task.Run(() => PrecacheResources());
@@ -42,7 +42,7 @@ namespace XOPE_UI
             Application.EnableVisualStyles();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainWindow());
+            Application.Run(new MainWindow(new UserSettings()));
             //Application.Run(new ProcessDialog());
         }
 
