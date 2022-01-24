@@ -1,43 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace XOPE_UI.Model
 {
-    public class SettingsEntry
+    public class SettingsEntry : INotifyPropertyChanged
     {
-        public event EventHandler ValueChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         object _value;
 
         public string Name { get; }
         public string Description { get; }
-        public SettingsType ValueType { get; }
+        public Type ValueType { get; }
         public object DefaultValue { get; }
+        public object MinValue { get; }
         public object Value 
         {
             get => _value; 
             set
             {
-                _value = value;
-                ValueChanged?.Invoke(this, EventArgs.Empty);
+                try
+                {
+                    _value = Convert.ChangeType(value, ValueType);
+                    if (MinValue != null && _value is int v && v < (int)MinValue)
+                        _value = MinValue;
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidCastException($"Invalid value.\n\n{ex.Message}");
+                }
+
+                NotifyPropertyChanged();
             }
         }
 
-        public SettingsEntry(string name, string description, SettingsType type, object value)
+        public SettingsEntry(string name, string description, object value)
         {
             Name = name;
             Description = description;
-            ValueType = type;
+            ValueType = value.GetType();
             DefaultValue = value;
             Value = value;
         }
-    }
 
-    public enum SettingsType
-    {
-        BOOLEAN,
-        STRING,
-        NUMBER
+        public SettingsEntry(string name, string description, object value, object minValue) : 
+            this(name, description, value)
+        {
+            if (value.GetType() != minValue.GetType())
+                throw new ArgumentException("The value argument type does not match the minValue type.");
+
+            MinValue = minValue;
+        }
+
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "") =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
