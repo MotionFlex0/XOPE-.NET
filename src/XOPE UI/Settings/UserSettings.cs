@@ -7,14 +7,15 @@ namespace XOPE_UI.Settings
 {
     public class UserSettings : IUserSettings
     {
-        Dictionary<IUserSettings.Keys, SettingsEntry> _settings = new();
+        readonly Dictionary<IUserSettings.Keys, SettingsEntry> _settings = new();
         
         public List<SettingsEntry> SettingsEntries => _settings.Values.ToList();
 
         public UserSettings()
         {
             AddSettings(IUserSettings.Keys.FILTER_ENABLED_BY_DEFAULT,
-                new SettingsEntry("Filter Enabled by default", "Affects whether filter are enabled by default or not.",
+                new SettingsEntry("Filter Enabled by default", 
+                "Affects whether filter are enabled by default or not.",
                 true));
 
             AddSettings(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_FILTER,

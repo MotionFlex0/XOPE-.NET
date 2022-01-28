@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using XOPE_UI.Model;
@@ -23,6 +22,10 @@ namespace XOPE_UI.View
 
             this.settingsDataGridView.AutoGenerateColumns = false;
             this.settingsDataGridView.DataSource = Settings;
+            //this.settingsDataGridView.Sort(this.settingsDataGridView.Columns["SettingsName"], 
+                //ListSortDirection.Ascending);
+
+            
         }
 
         private void settingsDataGridView_CurrentCellDirtyStateChanged(object sender, System.EventArgs e)
@@ -38,13 +41,15 @@ namespace XOPE_UI.View
 
         private void settingsDataGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
+            e.Control.PreviewKeyDown -= settingsDataGridView_EditingControl_PreviewKeyDown;
             e.Control.PreviewKeyDown += settingsDataGridView_EditingControl_PreviewKeyDown;
 
             DataGridViewTextBoxEditingControl editingControl = e.Control as DataGridViewTextBoxEditingControl;
             if (editingControl == null)
                 return;
 
-            BeginInvoke(() =>
+            // Clicking on a cell's value results in the caret appearing at that location
+            this.BeginInvoke(() =>
             {
                 editingControl.SelectionLength = 0;
 
@@ -55,7 +60,7 @@ namespace XOPE_UI.View
                 int closestCharIndex = editingControl.GetCharIndexFromPosition(mousePosRelToControl);
                 Point closestCharPoint = editingControl.GetPositionFromCharIndex(closestCharIndex);
 
-                // Could calculate the length of the last character instead of a magic number
+                // Could calculate the pixel length of the last character instead of a magic number
                 if (closestCharIndex == editingControl.TextLength-1 && mousePosRelToControl.X > closestCharPoint.X + 7) 
                     closestCharIndex += 1;
 

@@ -107,7 +107,7 @@
             this.Controls.Add(this.settingsDataGridView);
             this.Controls.Add(this.listView1);
             this.Name = "SettingsDialog";
-            this.Text = "SettingsDialog";
+            this.Text = "Settings";
             ((System.ComponentModel.ISupportInitialize)(this.settingsDataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
