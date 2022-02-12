@@ -24,6 +24,7 @@ namespace XOPE_UI.View
 
         int _oldSocketId = 0;
 
+        SpyManager _spyManager;
         FilterEntry _filter;
 
         #region Inheritied Props
@@ -87,10 +88,12 @@ namespace XOPE_UI.View
         }
         #endregion
 
-        public FilterEditorDialog()
+        public FilterEditorDialog(SpyManager spyManager)
         {
             InitializeComponent();
             InitializeHexEditor();
+
+            _spyManager = spyManager;
 
             _presenter = new FilterEditorDialogPresenter(this);
 
@@ -174,11 +177,26 @@ namespace XOPE_UI.View
                 _oldSocketId = (int)socketIdTextBox.Value;
                 SocketId = -1;
                 socketIdTextBox.Enabled = false;
+                socketSelectorButton.Enabled = false;
             }    
             else
             {
                 SocketId = _oldSocketId;
-                socketIdTextBox.Enabled = true; 
+                socketIdTextBox.Enabled = true;
+                socketSelectorButton.Enabled = true;
+            }
+        }
+
+        private void socketSelectorButton_Click(object sender, EventArgs e)
+        {
+            using (SocketSelectorDialog socketSelectorDialog =
+                new SocketSelectorDialog(_spyManager))
+            {
+                DialogResult result = socketSelectorDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    socketIdTextBox.Value = socketSelectorDialog.SelectedSocketId;
+                }
             }
         }
     }

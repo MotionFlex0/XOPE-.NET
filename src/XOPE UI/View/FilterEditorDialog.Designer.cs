@@ -43,6 +43,7 @@ namespace XOPE_UI.View
             this.packetTypeComboBox = new System.Windows.Forms.ComboBox();
             this.recursiveReplaceCheckBox = new System.Windows.Forms.CheckBox();
             this.allSocketsCheckBox = new System.Windows.Forms.CheckBox();
+            this.socketSelectorButton = new System.Windows.Forms.Button();
             this.beforeGroupBox.SuspendLayout();
             this.afterGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).BeginInit();
@@ -142,7 +143,7 @@ namespace XOPE_UI.View
             this.nameTextBox.Location = new System.Drawing.Point(82, 17);
             this.nameTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.nameTextBox.Name = "nameTextBox";
-            this.nameTextBox.Size = new System.Drawing.Size(116, 23);
+            this.nameTextBox.Size = new System.Drawing.Size(129, 23);
             this.nameTextBox.TabIndex = 8;
             // 
             // socketIdTextBox
@@ -195,7 +196,7 @@ namespace XOPE_UI.View
             // recursiveReplaceCheckBox
             // 
             this.recursiveReplaceCheckBox.AutoSize = true;
-            this.recursiveReplaceCheckBox.Location = new System.Drawing.Point(214, 19);
+            this.recursiveReplaceCheckBox.Location = new System.Drawing.Point(231, 19);
             this.recursiveReplaceCheckBox.Name = "recursiveReplaceCheckBox";
             this.recursiveReplaceCheckBox.Size = new System.Drawing.Size(120, 19);
             this.recursiveReplaceCheckBox.TabIndex = 23;
@@ -205,7 +206,7 @@ namespace XOPE_UI.View
             // allSocketsCheckBox
             // 
             this.allSocketsCheckBox.AutoSize = true;
-            this.allSocketsCheckBox.Location = new System.Drawing.Point(214, 47);
+            this.allSocketsCheckBox.Location = new System.Drawing.Point(231, 47);
             this.allSocketsCheckBox.Name = "allSocketsCheckBox";
             this.allSocketsCheckBox.Size = new System.Drawing.Size(83, 19);
             this.allSocketsCheckBox.TabIndex = 24;
@@ -213,11 +214,22 @@ namespace XOPE_UI.View
             this.allSocketsCheckBox.UseVisualStyleBackColor = true;
             this.allSocketsCheckBox.CheckedChanged += new System.EventHandler(this.allSocketsCheckBox_CheckedChanged);
             // 
+            // socketSelectorButton
+            // 
+            this.socketSelectorButton.Location = new System.Drawing.Point(181, 46);
+            this.socketSelectorButton.Name = "socketSelectorButton";
+            this.socketSelectorButton.Size = new System.Drawing.Size(30, 23);
+            this.socketSelectorButton.TabIndex = 25;
+            this.socketSelectorButton.Text = "lll";
+            this.socketSelectorButton.UseVisualStyleBackColor = true;
+            this.socketSelectorButton.Click += new System.EventHandler(this.socketSelectorButton_Click);
+            // 
             // FilterEditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(704, 469);
+            this.Controls.Add(this.socketSelectorButton);
             this.Controls.Add(this.allSocketsCheckBox);
             this.Controls.Add(this.recursiveReplaceCheckBox);
             this.Controls.Add(this.packetTypeComboBox);
@@ -256,5 +268,6 @@ namespace XOPE_UI.View
         private System.Windows.Forms.ComboBox packetTypeComboBox;
         private System.Windows.Forms.CheckBox recursiveReplaceCheckBox;
         private System.Windows.Forms.CheckBox allSocketsCheckBox;
+        private System.Windows.Forms.Button socketSelectorButton;
     }
 }

@@ -14,6 +14,7 @@ namespace XOPE_UI.View
             filterDataGridView.SelectedRows?[0]?.DataBoundItem as FilterEntry;
 
         FilterViewTabPresenter _presenter;
+        SpyManager _spyManager;
         IUserSettings _settings;
 
         public FilterViewTab()
@@ -27,7 +28,8 @@ namespace XOPE_UI.View
             Filters.ListChanged += Filters_ListChanged;
         }
 
-        public void AttachSpyManager(SpyManager spyManager) => _presenter.SpyManager = spyManager;
+        public void AttachSpyManager(SpyManager spyManager) => 
+            _presenter.SpyManager = _spyManager = spyManager;
 
         public void AttachSettings(IUserSettings settings)
         {
@@ -73,7 +75,7 @@ namespace XOPE_UI.View
 
         FilterEntry IFilterViewTab.ShowFilterEditorDialog(FilterEntry filter)
         {
-            using (FilterEditorDialog dialog = new FilterEditorDialog())
+            using (FilterEditorDialog dialog = new FilterEditorDialog(_spyManager))
             {
                 if (filter != null)
                     dialog.SetFilterEntry(filter);
