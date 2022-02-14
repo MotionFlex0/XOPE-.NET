@@ -110,20 +110,20 @@ void* Detour64::patch()
 	int offset = 0;
 	for (int i = 0; i < count; i++)
 	{
+		cs_insn* currentInstr = &(inst[i]);
 		bool keepOriginalInstr = true;
-		cs_insn* instr = &(inst[i]);
-		if (strcmp(instr->mnemonic, "mov") == 0)
+		if (strcmp(currentInstr->mnemonic, "mov") == 0)
 		{
-			for (int j = 0; j < instr->detail->x86.op_count; j++)
+			for (int j = 0; j < currentInstr->detail->x86.op_count; j++)
 			{
-				cs_x86 opDetails = instr->detail->x86;
+				cs_x86 opDetails = currentInstr->detail->x86;
 				cs_x86_op operand = opDetails.operands[j];
 				x86_op_type operandType = operand.type;
 				if (operandType == X86_OP_MEM && operand.mem.base == x86_reg::X86_REG_RIP)
 				{
-					// (instr->address + instr->size) = RIP after exec of this instr.
+					// (currentInstr->address + currentInstr->size) = RIP after exec of this instr.
 					// Add disp to RIP, to get the absolute address of operand
-					uint64_t absoluteAddr = (instr->address + instr->size) + operand.mem.disp;
+					uint64_t absoluteAddr = (currentInstr->address + currentInstr->size) + operand.mem.disp;
 
 					// MOV RAX [absoluteAddr]
 					m_trampoline[offset] = (uint8_t)0x48; // REX.W
@@ -138,8 +138,8 @@ void* Detour64::patch()
 		
 		if (keepOriginalInstr)
 		{
-			memcpy(m_trampoline + offset, &(instr->bytes[0]), instr->size);
-			offset += instr->size;
+			memcpy(m_trampoline + offset, &(currentInstr->bytes[0]), currentInstr->size);
+			offset += currentInstr->size;
 		}
 	}
 
@@ -213,18 +213,18 @@ int Detour64::calculateTrampolineSize(cs_insn* inst, size_t instCount)
 
 	for (int i = 0; i < instCount; i++)
 	{
+		cs_insn* currentInstr = &(inst[i]);
 		bool keepOriginalInstr = true;
-		cs_insn* instr = &(inst[i]);
-		if (strcmp(instr->mnemonic, "mov") == 0)
+		if (strcmp(currentInstr->mnemonic, "mov") == 0)
 		{
-			for (int j = 0; j < instr->detail->x86.op_count; j++)
+			for (int j = 0; j < currentInstr->detail->x86.op_count; j++)
 			{
-				cs_x86 opDetails = instr->detail->x86;
+				cs_x86 opDetails = currentInstr->detail->x86;
 				cs_x86_op operand = opDetails.operands[j];
 				x86_op_type operandType = operand.type;
 				if (operandType == X86_OP_MEM && operand.mem.base == x86_reg::X86_REG_RIP)
 				{
-					// Add 10 bytes. MOV RAX [RIP+OFFSET] or MOV [RIP+OFFSET] RAX
+					// Add 10 bytes. MOV RAX [RIP+DISP] or MOV [RIP+DISP] RAX
 					keepOriginalInstr = false;
 					tSize += 10;
 				}
@@ -232,7 +232,7 @@ int Detour64::calculateTrampolineSize(cs_insn* inst, size_t instCount)
 		}
 
 		if (keepOriginalInstr)
-			tSize += instr->size;
+			tSize += currentInstr->size;
 	}
 
 	// Add 14 bytes for JMP [m_targetFunction+m_bytesToPatch] -> Executes target function

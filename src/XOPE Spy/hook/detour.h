@@ -4,8 +4,8 @@
 #include <cassert>
 #include <stdint.h>
 #include <vector>
-#include "../utils/memory.h"
 #include "../utils/util.h"
+#include "../utils/memory.h"
 
 class IDetour;
 class Detour32;
