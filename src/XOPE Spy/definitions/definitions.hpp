@@ -71,14 +71,9 @@ namespace client
 		IMessage(UiMessageType m) { messageType = m; }
 		UiMessageType messageType;
 
-		inline virtual void toJson(json& j)
-		{
-			/*j +=
-			{
-				KV(messageType)
-			};*/
-			//j.at("messageType").get_to(messageType);
-		}
+		inline virtual void toJson(json& j) { };
+		inline virtual void fromJson(json& j) { };
+
 
 		inline static std::string convertBytesToB64String(const char* bytes, const unsigned int len)
 		{

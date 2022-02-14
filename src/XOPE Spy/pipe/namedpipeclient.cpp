@@ -35,32 +35,6 @@ void NamedPipeClient::flushOutBuffer()
     }
 }
 
-//int NamedPipeClient::recv(json& recvData)
-//{
-//    DWORD bytesRead { 0 };
-//    DWORD bytesAvailable { 0 };
-//    char buffer[65535];
-//    
-//    BOOL ret = PeekNamedPipe(_pipe, NULL, NULL, NULL, &bytesAvailable, NULL);
-//    if (!ret)
-//    {
-//        DWORD lastError = GetLastError();
-//        if (lastError == ERROR_PIPE_NOT_CONNECTED 
-//            || lastError == ERROR_BAD_PIPE)
-//            return -1;
-//    }
-//
-//    if (bytesAvailable > 0)
-//    {
-//        ReadFile(_pipe, &buffer, 2047, &bytesRead, NULL);
-//        buffer[bytesRead] = 0; // to make sure the json string is a null-terminated string
-//        recvData = json::parse(buffer);
-//        return bytesRead;
-//    }
-//
-//    return 0;
-//}
-
 void NamedPipeClient::close()
 {
     if (isPipeBroken())

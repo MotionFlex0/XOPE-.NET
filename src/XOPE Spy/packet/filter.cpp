@@ -110,24 +110,6 @@ bool PacketFilter::findAndReplace(FilterableFunction ff, SOCKET s, Packet& packe
 					break;
 				
 				found = std::search(found + newVal.size(), packet.end(), oldVal.begin(), oldVal.end());
-				/*auto nextIt = std::copy(newVal.begin(), newVal.end() - copyDelta, found);
-
-				if (copyDelta > 0)
-				{
-					nextIt = packet.insert(nextIt, newVal.begin() + copyDelta, newVal.end());
-					nextIt += newVal.size() - copyDelta;
-				}
-				else if (copyDelta < 0)
-				{
-					const auto endIt = found + oldVal.size();
-					nextIt = packet.erase(nextIt, endIt);
-				}
-				
-				modified = true;
-				if (!filterData.recursiveReplace)
-					break;
-
-				found = std::search(nextIt, packet.end(), oldVal.begin(), oldVal.end());*/
 			}
 
 			if (modified)
