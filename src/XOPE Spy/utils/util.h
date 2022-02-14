@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../definitions/definitions.hpp"
 #include <string>
 #include <Windows.h>
 
@@ -12,4 +13,7 @@
 namespace Util
 {
 	bool __assert(const char* file, int line, const char* exprStr, const char* msg);
+
+	template <class T>
+	concept IMessageDerived = std::is_base_of_v<client::IMessage, T>;
 };

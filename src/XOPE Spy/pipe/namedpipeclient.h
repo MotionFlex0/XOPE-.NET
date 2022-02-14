@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <concepts>
 #include <iostream>
 #include <memory>
 #include <mutex>
@@ -25,8 +26,7 @@ public:
 
 	bool isPipeBroken();
 
-	template <class T>
-	bool send(T mes);
+	bool send(Util::IMessageDerived auto mes);
 	
 	void flushOutBuffer();
 	void close();
@@ -39,10 +39,8 @@ private:
 	std::mutex _mutex;
 };
 
-template <class T>
-bool NamedPipeClient::send(T mes)
+bool NamedPipeClient::send(Util::IMessageDerived auto mes)
 {
-	Util::template Derived_from < T, client::IMessage>();
 	if (isPipeBroken())
 		return false;
 
@@ -61,3 +59,4 @@ bool NamedPipeClient::send(T mes)
 
 	return true;
 }
+

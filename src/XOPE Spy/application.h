@@ -33,8 +33,7 @@ public:
 	HookManager* getHookManager();
 	const PacketFilter& getPacketFilter();
 	
-	template<class T>
-	void sendToUI(T message);
+	void sendToUI(Util::IMessageDerived auto message);
 	void processIncomingMessages();
 private:
 	Application() { }
@@ -56,9 +55,7 @@ private:
 	void run();
 };
 
-template<class T>
-void Application::sendToUI(T message)
+void Application::sendToUI(Util::IMessageDerived auto message)
 {
-	Util::Derived_from < T, client::IMessage>();
 	_namedPipeClient->send(message);
 }
