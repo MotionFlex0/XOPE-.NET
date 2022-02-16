@@ -117,6 +117,9 @@
     <ClCompile Include="patches\wsarecv.cpp">
       <Filter>Source Files\patches</Filter>
     </ClCompile>
+    <ClCompile Include="utils\guid.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pipe\namedpipeclient.h">
@@ -172,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="patches\functions.h">
       <Filter>Header Files\patches</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\guid.h">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
