@@ -182,12 +182,13 @@ namespace XOPE_UI
                                 spyAlreadyAttached = NativeMethods.GetModuleHandle(selectedProcess.Handle, 
                                     XOPE_UI.Config.Spy.ModuleName64) != IntPtr.Zero;
 
-                            if (loadingDialog.CancellationToken.IsCancellationRequested)
+                            if (loadingDialog.CancellationToken.IsCancellationRequested || selectedProcess.HasExited)
                             {
                                 Console.WriteLine("Cancelling injecting into processes.");
                                 loadingDialog.CloseDialog();
                                 return;
                             }
+
 
                             Thread.Sleep(1000);
                         }

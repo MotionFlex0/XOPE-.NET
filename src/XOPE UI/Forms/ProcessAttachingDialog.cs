@@ -19,6 +19,7 @@ namespace XOPE_UI.View
         // Called when script has finished loading
         public void CloseDialog()
         {
+            CancellationToken.Cancel();
             this.DialogResult = DialogResult.OK;
         }
 
