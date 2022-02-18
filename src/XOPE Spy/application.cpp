@@ -105,7 +105,7 @@ void Application::processIncomingMessages()
         if (type == SpyMessageType::PING)
         {
             _namedPipeClient->send(
-                client::PongMessageResponse(jsonMessage["JobId"].get<std::string>())
+                client::PongMessageResponse(jsonMessage["JobId"].get<Guid>())
             );
         }
         else if (type == SpyMessageType::INJECT_SEND)
@@ -130,7 +130,7 @@ void Application::processIncomingMessages()
 
             if (data.length() == jsonMessage["Length"].get<int>())
             {
-                //hookmgr->get_ofunction<send>()(socket, data.c_str(), data.length(), NULL);
+                _hookManager->get_ofunction<send>()(socket, data.c_str(), data.length(), NULL);
             }
             else
             {

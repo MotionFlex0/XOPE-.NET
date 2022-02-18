@@ -14,6 +14,7 @@
 #include "patches/functions.h"
 #include "server/incomingmessage.h"
 #include "server/namedpipeserver.h"
+#include "utils/guid.h"
 #include "utils/util.h"
 
 class Application

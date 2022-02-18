@@ -20,7 +20,9 @@ public:
 
 	bool operator==(const GUID& guid) const;
 	bool operator==(const Guid& guid) const;
+
 	operator GUID() const;
+
 private:
 	GUID m_guid;
 };
@@ -30,12 +32,19 @@ namespace nlohmann
 	template<>
 	struct adl_serializer<Guid>
 	{
-		static Guid from_json(const json& j) {
+		static Guid from_json(const json& j) 
+		{
 			return { j.get<std::string>() };
 		}
 
-		static void to_json(json& j, Guid t) {
-			j = t.toString();
+		static void from_json(const json& j, Guid& guid) 
+		{
+			guid = j.get<std::string>();
+		}
+
+		static void to_json(json& j, Guid guid) 
+		{
+			j = guid.toString();
 		}
 	};
 }

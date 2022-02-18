@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include "../nlohmann/json.hpp"
 #include "../utils/base64.h"
+#include "../utils/guid.h"
 
 //#define KV(J, VAR) J[#VAR] = VAR
 //#define KV(VAR) {#VAR, VAR}
@@ -83,8 +84,8 @@ namespace client
 
 	struct IMessageResponse : IMessage
 	{
-		IMessageResponse(UiMessageType m, std::string jobId) : IMessage(m) { IMessageResponse::jobId = jobId; }
-		std::string jobId;
+		IMessageResponse(UiMessageType m, Guid jobId) : IMessage(m), jobId(jobId) { }
+		Guid jobId;
 	};
 
 	struct HookedFunctionCallPacketMessage : IMessage
@@ -177,7 +178,7 @@ namespace client
 
 	struct ErrorMessageResponse : IMessageResponse
 	{
-		ErrorMessageResponse(std::string jobId, std::string errMsg) 
+		ErrorMessageResponse(Guid jobId, std::string errMsg) 
 			: IMessageResponse(UiMessageType::JOB_RESPONSE_ERROR, jobId), errorMessage(errMsg) { }
 
 		std::string errorMessage;
@@ -187,7 +188,7 @@ namespace client
 
 	struct PongMessageResponse : IMessageResponse
 	{
-		PongMessageResponse(std::string jobId) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId) { }
+		PongMessageResponse(Guid jobId) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId) { }
 
 		std::string data = "PONG!";
 
@@ -196,7 +197,7 @@ namespace client
 
 	struct SocketInfoResponse : IMessageResponse
 	{
-		SocketInfoResponse(std::string jobId, std::string addr, int port, int addrFamily, int protocol) 
+		SocketInfoResponse(Guid jobId, std::string addr, int port, int addrFamily, int protocol) 
 			: IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS,
 			jobId), 
 			addr(addr), 
@@ -232,7 +233,7 @@ namespace client
 	struct IsSocketWritableResponse : IMessageResponse
 	{
 		IsSocketWritableResponse(
-			std::string jobId,
+			Guid jobId,
 			bool writable,
 			bool timedOut = false,
 			bool error = false,
@@ -255,7 +256,7 @@ namespace client
 	struct AddPacketFilterResponse : IMessageResponse
 	{
 		AddPacketFilterResponse(
-			std::string jobId,
+			Guid jobId,
 			std::string filterId
 		) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId),
 			filterId(filterId) { }
@@ -269,7 +270,7 @@ namespace client
 	struct GenericPacketFilterResponse : IMessageResponse
 	{
 		GenericPacketFilterResponse(
-			std::string jobId
+			Guid jobId
 		) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId)
 		{ }
 
