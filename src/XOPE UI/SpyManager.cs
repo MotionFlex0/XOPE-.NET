@@ -31,10 +31,10 @@ namespace XOPE_UI
         public NamedPipeDispatcher MessageDispatcher { get; private set; } = null;
         NamedPipeReceiver MessageReceiver { get; set; } = null;
 
-        CancellationTokenSource cancellationTokenSource = null;
-        Task spyThread = null;
+        CancellationTokenSource _cancellationTokenSource = null;
+        Task _spyThread = null;
 
-        Dictionary<Guid, IMessageWithResponse> jobs; // This contains Messages that are expecting a response
+        Dictionary<Guid, IMessageWithResponse> _jobs; // This contains Messages that are expecting a response
 
         Process _attachedProcess = null;
 
@@ -42,7 +42,7 @@ namespace XOPE_UI
         {
             SpyData = new SpyData();
             MessageReceiver = new NamedPipeReceiver();
-            jobs = new Dictionary<Guid, IMessageWithResponse>();
+            _jobs = new Dictionary<Guid, IMessageWithResponse>();
         }
 
         ~SpyManager()
@@ -63,17 +63,17 @@ namespace XOPE_UI
         // TODO: Refactor this method
         public void RunAsync()
         {
-            if (spyThread != null)
+            if (_spyThread != null)
                 return;
 
-            cancellationTokenSource = new CancellationTokenSource();
+            _cancellationTokenSource = new CancellationTokenSource();
 
             MessageReceiver.RunAsync();
 
-            spyThread = Task.Factory.StartNew(() =>
+            _spyThread = Task.Factory.StartNew(() =>
             {
                 while ((MessageDispatcher == null || MessageDispatcher.IsConnected) 
-                && MessageReceiver.IsConnectingOrConnected && !cancellationTokenSource.IsCancellationRequested)
+                && MessageReceiver.IsConnectingOrConnected && !_cancellationTokenSource.IsCancellationRequested)
                 {
                     IncomingMessage incomingMessage = MessageReceiver.GetIncomingMessage();
                     if (incomingMessage != null)
@@ -83,7 +83,7 @@ namespace XOPE_UI
                             JObject json = incomingMessage.Json;
                             Console.WriteLine($"Connection success: {json}");
                             string spyPipeServerName = json.Value<string>("spyPipeServerName");
-                            MessageDispatcher = new NamedPipeDispatcher(spyPipeServerName, jobs);
+                            MessageDispatcher = new NamedPipeDispatcher(spyPipeServerName, _jobs);
                             if (!MessageDispatcher.IsConnected)
                             {
                                 Console.WriteLine("Unable to connect to Spy's Server. Aborting...");
@@ -93,7 +93,7 @@ namespace XOPE_UI
                         else if (MessageDispatcher != null)
                             ProcessIncomingMessage(incomingMessage);
                         else
-                            Console.WriteLine($"Received message before CONNECTED_SUCCESS. " +
+                            Console.WriteLine($"Received message before CONNECTED_SUCCESS." +
                                 $"Dropping message {incomingMessage.Type}");
                     }
                     Thread.Sleep(30);
@@ -110,7 +110,7 @@ namespace XOPE_UI
                 if (MessageReceiver.IsConnected)
                     MessageReceiver.ShutdownAndWait();
 
-            }, cancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            }, _cancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
             //Waits until MessageReceiver has started and is waiting for a connection
             while (!MessageReceiver.IsConnectingOrConnected) Thread.Sleep(50);
@@ -124,8 +124,6 @@ namespace XOPE_UI
             if (messageType == UiMessageType.HOOKED_FUNCTION_CALL)
             {
                 HookedFuncType hookedFuncType = (HookedFuncType)json.Value<Int32>("functionName");
-
-                //Console.WriteLine($"Message hookedType: {hookedFuncType}");
 
                 if (hookedFuncType == HookedFuncType.CONNECT || hookedFuncType == HookedFuncType.WSACONNECT)
                 {
@@ -308,11 +306,11 @@ namespace XOPE_UI
                 messageType == UiMessageType.JOB_RESPONSE_ERROR)
             {
                 Guid guid = Guid.Parse(json.Value<String>("jobId"));
-                if (jobs.ContainsKey(guid))
+                if (_jobs.ContainsKey(guid))
                 {
                     // TODO: Maybe make this async?
-                    jobs[guid].NotifyResponse(incomingMessage); 
-                    jobs.Remove(guid);
+                    _jobs[guid].NotifyResponse(incomingMessage); 
+                    _jobs.Remove(guid);
                 }
                 else
                     Console.WriteLine($"Received JOB_RESPONSE for id '{guid}' but it does not appear to be a valid id.");
@@ -329,10 +327,11 @@ namespace XOPE_UI
 
         public void Shutdown()
         {
-            if (spyThread != null && !spyThread.IsCompleted && !cancellationTokenSource.IsCancellationRequested)
+            if (_spyThread != null && 
+                !_spyThread.IsCompleted && !_cancellationTokenSource.IsCancellationRequested)
             {
-                cancellationTokenSource.Cancel();
-                bool completed = spyThread.Wait(7000);
+                _cancellationTokenSource.Cancel();
+                bool completed = _spyThread.Wait(7000);
                 if (!completed)
                     Console.WriteLine("App.Shutdown waited for SpyManager Thread to exit but it timed-out");
                 ResetState();
@@ -341,11 +340,11 @@ namespace XOPE_UI
 
         private void ResetState()
         {
-            jobs.Clear();
+            _jobs.Clear();
             SpyData.Connections.Clear();
             SpyData.Packets.Clear();
 
-            spyThread = null;
+            _spyThread = null;
             MessageDispatcher = null;
         }
 

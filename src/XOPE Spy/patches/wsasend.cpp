@@ -22,7 +22,7 @@ int WINAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
         {
             modifiedPackets.push_back(std::move(packet));
             updatedBuffers[i].buf = reinterpret_cast<CHAR*>(modifiedPackets.back().data());
-            updatedBuffers[i].len = static_cast<size_t>(modifiedPackets.back().size());
+            updatedBuffers[i].len = static_cast<ULONG>(modifiedPackets.back().size());
         }
         else
         {

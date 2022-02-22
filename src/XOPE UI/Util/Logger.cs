@@ -21,20 +21,7 @@ namespace XOPE_UI.Util
         protected override void Dispose(bool disposing)
         {
             Console.SetOut(new StreamWriter(Console.OpenStandardOutput()));
-            //Console.F
             base.Dispose(disposing);
-        }
-        
-        public override void Flush()
-        {
-            MessageBox.Show(this.ToString());
-            //OnFlush?.Invoke(this, this.ToString());
-        }
-
-
-        public override Task FlushAsync()
-        {
-            return Task.Run(() => Flush());
         }
 
         public override void Write(char value)
@@ -54,27 +41,6 @@ namespace XOPE_UI.Util
             base.Write(value);
             TextWritten?.Invoke(this, value);
         }
-
-        //public void Write<T>(T value)
-        //{
-        //    base.Write(value);
-        //    MessageBox.Show($"Write<T>(T value) with value type: {value.GetType().Name}");
-        //    OnFlush?.Invoke(this, value.ToString());
-        //}
-
-        //public void WriteLine<T>(T value)
-        //{
-        //    base.WriteLine(value);
-        //    MessageBox.Show($"WriteLine<T>(T value) with value type: {value.GetType().Name}");
-        //    OnFlush?.Invoke(this, value + "\r\n");
-        //}
-
-
-        //public override void WriteLine()
-        //{
-        //    base.WriteLine();
-        //    OnFlush?.Invoke(this, "\r\n");
-        //}
 
         public override Encoding Encoding
         {
