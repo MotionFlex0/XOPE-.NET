@@ -29,7 +29,7 @@ namespace XOPE_UI.View.Component
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.byteGridView = new System.Windows.Forms.DataGridView();
             this.Column0 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -109,13 +109,17 @@ namespace XOPE_UI.View.Component
             this.byteGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.byteGridView.Size = new System.Drawing.Size(546, 102);
             this.byteGridView.TabIndex = 1;
+            this.byteGridView.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.byteGridView_CellMouseDown);
             this.byteGridView.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_CellMouseEnter);
             this.byteGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_CellMouseLeave);
+            this.byteGridView.CellMouseMove += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.byteGridView_CellMouseMove);
+            this.byteGridView.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.byteGridView_CellMouseUp);
             this.byteGridView.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.byteGridView_CellPainting);
             this.byteGridView.CellStateChanged += new System.Windows.Forms.DataGridViewCellStateChangedEventHandler(this.byteGridView_CellStateChanged);
             this.byteGridView.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_RowLeave);
             this.byteGridView.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.byteGridView_RowPrePaint);
             this.byteGridView.Scroll += new System.Windows.Forms.ScrollEventHandler(this.byteGridView_Scroll);
+            this.byteGridView.SelectionChanged += new System.EventHandler(this.byteGridView_SelectionChanged);
             // 
             // Column0
             // 
@@ -281,8 +285,8 @@ namespace XOPE_UI.View.Component
             this.textGridView.ReadOnly = true;
             this.textGridView.RowHeadersVisible = false;
             this.textGridView.RowHeadersWidth = 5;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.textGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.textGridView.Size = new System.Drawing.Size(308, 102);
@@ -446,6 +450,8 @@ namespace XOPE_UI.View.Component
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "HexEditor";
             this.Size = new System.Drawing.Size(862, 102);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HexEditor_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.HexEditor_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.byteGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.textGridView)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);

@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -19,7 +20,12 @@ namespace XOPE_UI.View.Component
         public Color CellHoverBackColor { get; set; } = Color.Cyan;
 
         Stream data;
-        DataGridViewCell prevSelectedCell = null;
+        DataGridViewCell _prevSelectedCell = null;
+
+        bool _shiftPressed = false;
+        bool _currentlyMouseDragging = false;
+        DataGridViewCell _firstCellDrag = null;
+        DataGridViewCell _currentCellDrag = null;
 
         public HexEditor()
         {
@@ -149,6 +155,11 @@ namespace XOPE_UI.View.Component
             this.byteGridView.CurrentCell = this.byteGridView.Rows[row].Cells[column];
         }
 
+        public void UpdateSelection()
+        {
+
+        }
+
         private void byteGridView_RowLeave(object sender, DataGridViewCellEventArgs e)
         {
             this.byteGridView.Rows[e.RowIndex].HeaderCell.Value = $"0x{(e.RowIndex * 16).ToString(OFFSET_FORMAT)}";
@@ -167,7 +178,6 @@ namespace XOPE_UI.View.Component
                     this.textGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = CellHoverBackColor;
                     this.textGridView.InvalidateCell(e.ColumnIndex, e.RowIndex);
                 }
-               
             }
         }
 
@@ -219,11 +229,11 @@ namespace XOPE_UI.View.Component
         {
             if (e.StateChanged == DataGridViewElementStates.Selected)
             {
-                if (e.Cell.Value == null && e.Cell.Selected && prevSelectedCell != null)
+                if (e.Cell.Value == null && e.Cell.Selected && _prevSelectedCell != null)
                 {
                     e.Cell.Selected = false;
-                    prevSelectedCell.Selected = true;
-                    prevSelectedCell.OwningRow.Selected = true;
+                    _prevSelectedCell.Selected = true;
+                    _prevSelectedCell.OwningRow.Selected = true;
 
                     ((DataGridView)sender).Invalidate();
                 }
@@ -242,7 +252,7 @@ namespace XOPE_UI.View.Component
                     if (otherCell.Selected != e.Cell.Selected)
                     {
                         otherCell.Selected = e.Cell.Selected;
-                        prevSelectedCell = e.Cell;
+                        _prevSelectedCell = e.Cell;
 
 
                        ((DataGridView)sender).Invalidate();
@@ -267,7 +277,114 @@ namespace XOPE_UI.View.Component
         {
             DataGridViewHeaderCell headerCell = this.byteGridView.Rows[e.RowIndex].HeaderCell;
             if (e.RowIndex > 0 && headerCell.Value.ToString() == $"0x{(0).ToString(OFFSET_FORMAT)}")
-                headerCell.Value = $"0x{(e.RowIndex*16).ToString(OFFSET_FORMAT)}";
+                headerCell.Value = $"0x{(e.RowIndex * 16).ToString(OFFSET_FORMAT)}";
+        }
+
+        private void byteGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            //if (_ignoreSelectionChanged)
+            //    return;
+
+
+                
+
+            //_ignoreSelectionChanged = false;
+        }
+
+        private void byteGridView_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            _currentlyMouseDragging = true;
+            _firstCellDrag = this.byteGridView[e.ColumnIndex, e.RowIndex];
+            _currentCellDrag = _firstCellDrag;
+        }
+
+        private void byteGridView_CellMouseMove(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (!_currentlyMouseDragging)
+                return;
+
+            if (e.ColumnIndex < 0 || e.RowIndex < 0)
+                return;
+
+            int selectedCellsCount = this.byteGridView.SelectedCells.Count;
+            if (selectedCellsCount < 1)
+                return;
+
+            var selectionStartCell = _firstCellDrag;
+            var selectionEndCell = this.byteGridView[e.ColumnIndex, e.RowIndex];
+
+            if (selectionEndCell.RowIndex == _currentCellDrag.RowIndex &&
+                selectionEndCell.ColumnIndex == _currentCellDrag.ColumnIndex)
+                return;
+
+            _currentCellDrag = selectionEndCell;
+
+            // Swap the cells if the first selected cell is after the
+            //  last selected cell.
+            if (selectionStartCell.RowIndex > selectionEndCell.RowIndex)
+            {
+                var copy = selectionStartCell;
+                selectionStartCell = selectionEndCell;
+                selectionEndCell = copy;
+            }
+
+            Debug.WriteLine($"e.rowIndex: {e.RowIndex} | e.columnIndex: {e.ColumnIndex}");
+
+            this.BeginInvoke(() =>
+            {
+                this.byteGridView.SuspendLayout();
+                this.textGridView.SuspendLayout();
+
+                this.byteGridView.ClearSelection();
+                for (int i = selectionStartCell.RowIndex; i <= selectionEndCell.RowIndex; i++)
+                {
+                    DataGridViewRow row = this.byteGridView.Rows[i];
+
+                    int firstCellToSelect;
+                    if (row.Index == selectionStartCell.RowIndex)
+                        firstCellToSelect = selectionStartCell.ColumnIndex;
+                    else
+                        firstCellToSelect = 0;
+
+                    int lastCellToSelect;
+                    if (row.Index == selectionEndCell.RowIndex)
+                        lastCellToSelect = selectionEndCell.ColumnIndex;
+                    else
+                        lastCellToSelect = row.Cells.Count - 1;
+
+                    for (int j = firstCellToSelect; j <= lastCellToSelect; j++)
+                    {
+                        if (!row.Cells[j].Selected)
+                            row.Cells[j].Selected = true;
+                    }
+                    this.byteGridView.ResumeLayout();
+                    this.textGridView.ResumeLayout();
+                }
+            });
+        }
+
+        private void byteGridView_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            _currentlyMouseDragging = false;
+            _firstCellDrag = null;
+        }
+
+        private void HexEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Shift)
+            {
+                _shiftPressed = true;
+
+            }
+        }
+
+        private void HexEditor_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Shift)
+            {
+                _shiftPressed = false;
+
+            }
         }
     }
 }
