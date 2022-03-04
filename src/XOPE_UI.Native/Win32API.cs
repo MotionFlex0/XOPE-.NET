@@ -8,7 +8,7 @@ namespace XOPE_UI.Native
     /*
      * Avoid using this class directly. Instead use NativeMethods instead.
      */
-    public class Win32API
+    public static class Win32API
     {
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool AllocConsole();
@@ -42,7 +42,10 @@ namespace XOPE_UI.Native
         public static extern bool ReadProcessMemory([In] IntPtr hProcess, [In] IntPtr lpBaseAddress, [Out] byte[] lpBuffer, [In] int nSize, [Out] out int lpNumberOfBytesRead);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SendMessage([In] IntPtr hWnd, [In] uint Msg, [In] IntPtr wParam, [In] IntPtr lParam);
+        public static extern nuint SendMessage([In] IntPtr hWnd, [In] uint Msg, [In] nuint wParam, [In] nuint lParam);
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SendMessage([In] IntPtr hWnd, [In] uint Msg, [In] nuint wParam, [In] IntPtr lParam);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool WriteProcessMemory([In] IntPtr hProcess, [In] IntPtr lpBaseAddress, [In] IntPtr lpBuffer, [In] int nSize, [Out] out int lpNumberOfBytesRead);
@@ -101,6 +104,7 @@ namespace XOPE_UI.Native
 
         public enum WindowsMessage
         {
+            WM_SETREDRAW = 0x000B,
             EM_SETCUEBANNER = 0x1501
         }
     }

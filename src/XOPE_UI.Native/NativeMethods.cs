@@ -6,7 +6,7 @@ namespace XOPE_UI.Native
 {
     using static Win32API;
 
-    public class NativeMethods
+    public static class NativeMethods
     {
         public static bool CreateConsole()
         {
@@ -100,12 +100,17 @@ namespace XOPE_UI.Native
             }
         }
 
-        // TODO: Change wparam/lparam to nuint on version >=C# 9.0
-        public static IntPtr SendMessage([In] IntPtr hWnd, WindowsMessage Msg, IntPtr wParam, string lParam)
+        public static IntPtr SendMessage([In] IntPtr hWnd, WindowsMessage Msg, nuint wParam, string lParam)
         {
             IntPtr pData = Marshal.StringToHGlobalUni(lParam);
             IntPtr res = Win32API.SendMessage(hWnd, (uint)Msg, wParam, pData);
             Marshal.FreeHGlobal(pData);
+            return res;
+        }
+
+        public static nuint SendMessage([In] IntPtr hWnd, WindowsMessage Msg, nuint wParam, nuint lParam)
+        {
+            nuint res = Win32API.SendMessage(hWnd, (uint)Msg, wParam, lParam);
             return res;
         }
 
