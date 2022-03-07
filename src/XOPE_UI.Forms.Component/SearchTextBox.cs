@@ -16,7 +16,7 @@ namespace XOPE_UI.View.Component
             get => _placeholderText;
             set
             {
-                NativeMethods.SendMessage(this.Handle, Win32API.WindowsMessage.EM_SETCUEBANNER, (IntPtr)1, value);
+                NativeMethods.SendMessage(this.Handle, Win32API.WindowsMessage.EM_SETCUEBANNER, 1, value);
                 _placeholderText = value;
             }
         }
