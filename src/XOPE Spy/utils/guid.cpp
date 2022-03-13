@@ -3,8 +3,16 @@
 Guid Guid::newGuid()
 {
 	GUID guid;
-	CoCreateGuid(&guid);
-	return { guid };
+	if (CoCreateGuid(&guid) == S_OK)
+		return { guid };
+	else
+		return defaultGuid();
+}
+
+Guid& Guid::defaultGuid()
+{
+	static Guid instance("{00000000-0000-0000-0000-000000000000}");
+	return instance;
 }
 
 Guid::Guid(GUID guid) : m_guid(guid) { }
@@ -12,8 +20,11 @@ Guid::Guid(GUID guid) : m_guid(guid) { }
 Guid::Guid(std::string guid)
 {
 	std::wstring wguid(guid.begin(), guid.end());
-	wguid.insert(wguid.begin(), '{');
-	wguid.push_back('}');
+	if (wguid.front() != '{')
+		wguid.insert(wguid.begin(), '{');
+
+	if (wguid.back() != '}')
+		wguid.push_back('}');
 
 	HRESULT ret = CLSIDFromString(wguid.data(), &m_guid);
 }
@@ -55,6 +66,8 @@ bool Guid::operator==(const GUID& guid) const
 	return *this == Guid(guid);
 }
 
+// TODO: Instead of doing string compare (which requires heap alloc etc...),
+//			compare data1 to data4 within the GUID struct
 bool Guid::operator==(const Guid& guid) const
 {
 	return this->toString() == guid.toString();
