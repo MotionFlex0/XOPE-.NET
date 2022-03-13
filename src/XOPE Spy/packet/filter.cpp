@@ -1,14 +1,9 @@
 #include "filter.h"
 
-PacketFilter::PacketFilter()
-{
-
-}
-
-boost::uuids::uuid PacketFilter::add(FilterableFunction ff, SOCKET s, const Packet oldVal, const Packet newVal,
+Guid PacketFilter::add(FilterableFunction ff, SOCKET s, const Packet oldVal, const Packet newVal,
 	bool replaceEntirePacket, bool recursiveReplace, bool activated)
 {
-	const boost::uuids::uuid id = generator();
+	const Guid id = Guid::newGuid();
 	filterMap[id] = Data
 	{
 		.socketId = s,
@@ -22,7 +17,7 @@ boost::uuids::uuid PacketFilter::add(FilterableFunction ff, SOCKET s, const Pack
 	return id;
 }
 
-bool PacketFilter::modify(boost::uuids::uuid id, FilterableFunction ff, SOCKET s, const Packet oldVal, const Packet newVal, bool replaceEntirePacket, bool recursiveReplace)
+bool PacketFilter::modify(Guid id, FilterableFunction ff, SOCKET s, const Packet oldVal, const Packet newVal, bool replaceEntirePacket, bool recursiveReplace)
 {
 	const auto it = filterMap.find(id);
 	if (it == filterMap.end())
@@ -40,7 +35,7 @@ bool PacketFilter::modify(boost::uuids::uuid id, FilterableFunction ff, SOCKET s
 	return true;
 }
 
-bool PacketFilter::toggleActivated(boost::uuids::uuid id, bool isActivated)
+bool PacketFilter::toggleActivated(Guid id, bool isActivated)
 {
 	const auto it = filterMap.find(id);
 	if (it == filterMap.end())
@@ -50,7 +45,7 @@ bool PacketFilter::toggleActivated(boost::uuids::uuid id, bool isActivated)
 	return true;
 }
 
-bool PacketFilter::remove(boost::uuids::uuid id)
+bool PacketFilter::remove(Guid id)
 {
 	return filterMap.erase(id) == 1;
 }

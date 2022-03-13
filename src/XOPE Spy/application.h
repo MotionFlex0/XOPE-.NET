@@ -5,8 +5,6 @@
 #include <queue>
 #include <time.h>
 
-#include <boost/lexical_cast.hpp>
-
 #include "hook/hookmgr.hpp"
 #include "pipe/namedpipeclient.h"
 #include "packet/type.h"

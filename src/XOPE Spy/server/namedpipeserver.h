@@ -1,6 +1,5 @@
 #pragma once
 #include <atomic>
-#include <boost/uuid/uuid.hpp>
 #include <queue>
 #include <sstream>
 #include <vector>

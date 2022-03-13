@@ -257,11 +257,11 @@ namespace client
 	{
 		AddPacketFilterResponse(
 			Guid jobId,
-			std::string filterId
+			Guid filterId
 		) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId),
 			filterId(filterId) { }
 
-		std::string filterId;
+		Guid filterId;
 
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(AddPacketFilterResponse,
 			messageType, jobId, filterId);

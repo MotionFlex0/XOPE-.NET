@@ -206,19 +206,19 @@ void Application::processIncomingMessages()
 
             if (type == SpyMessageType::ADD_PACKET_FITLER)
             {
-                boost::uuids::uuid id = _packetFilter.add(packetType,
+                Guid id = _packetFilter.add(packetType,
                     socket, oldPacket, newPacket, false, recursiveReplace, isActivated);
 
                 _namedPipeClient->send(client::AddPacketFilterResponse(
-                    jsonMessage["JobId"].get<std::string>(),
-                    boost::uuids::to_string(id)
+                    jsonMessage["JobId"].get<Guid>(),
+                    id
                 ));
             }
             else if (type == SpyMessageType::MODIFY_PACKET_FILTER)
             {
                 const std::string filterId = jsonMessage["FilterId"].get<std::string>();
 
-                bool success = _packetFilter.modify(boost::lexical_cast<boost::uuids::uuid>(filterId),
+                bool success = _packetFilter.modify(filterId,
                     packetType, socket, oldPacket, newPacket, false, recursiveReplace);
 
                 if (success)
@@ -234,10 +234,10 @@ void Application::processIncomingMessages()
         }
         else if (type == SpyMessageType::TOGGLE_ACTIVATE_FILTER)
         {
-            const std::string filterId = jsonMessage["FilterId"].get<std::string>();
+            const Guid filterId = jsonMessage["FilterId"].get<Guid>();
             const bool isActivated = jsonMessage["Activated"].get<bool>();
 
-            bool success = _packetFilter.toggleActivated(boost::lexical_cast<boost::uuids::uuid>(filterId),
+            bool success = _packetFilter.toggleActivated(filterId,
                 isActivated);
 
             if (success)
@@ -253,9 +253,9 @@ void Application::processIncomingMessages()
         }
         else if (type == SpyMessageType::DELETE_PACKET_FILTER)
         {
-            const std::string filterId = jsonMessage["FilterId"].get<std::string>();
+            const Guid filterId = jsonMessage["FilterId"].get<Guid>();
 
-            _packetFilter.remove(boost::lexical_cast<boost::uuids::uuid>(filterId));
+            _packetFilter.remove(filterId);
 
             _namedPipeClient->send(client::GenericPacketFilterResponse(
                 jsonMessage["JobId"].get<std::string>()
