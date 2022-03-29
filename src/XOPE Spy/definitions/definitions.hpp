@@ -36,9 +36,11 @@ enum class SpyMessageType
 	ERROR_MESSAGE,
 	INJECT_SEND,
 	INJECT_RECV,
+	CLOSE_SOCKET_GRACEFULLY,	// Imitates a socket closing via recv returning 0 or send error being WSAENOTCONN
 	IS_SOCKET_WRITABLE,
 	REQUEST_SOCKET_INFO,
 	TOGGLE_HTTP_TUNNELING,
+	STOP_HTTP_TUNNELING_SOCKET,
 	ADD_PACKET_FITLER,
 	MODIFY_PACKET_FILTER,
 	TOGGLE_ACTIVATE_FILTER,
@@ -223,6 +225,7 @@ namespace client
 		sockaddr_in* sockaddr;
 		int ret;
 		int lastError = -1;
+		bool tunneling = false;
 
 		inline void toJson(json& j) override
 		{
@@ -370,6 +373,7 @@ namespace client
 			j["addrFamily"] = hfcm.sockaddr->sin_family;
 			j["addr"] = std::string("0.0.0.0");
 			j["port"] = ntohs(hfcm.sockaddr->sin_port);
+			j["tunneling"] = hfcm.tunneling;
 		}
 	}
 }
