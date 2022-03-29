@@ -2,9 +2,12 @@
 #define _WINSOCKAPI_
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
+#include <mutex>
 #include <queue>
+#include <set>
 #include <time.h>
 
+#include "definitions/socketdata.h"
 #include "hook/hookmgr.hpp"
 #include "pipe/namedpipeclient.h"
 #include "packet/type.h"
@@ -31,6 +34,23 @@ public:
 
 	HookManager* getHookManager();
 	const PacketFilter& getPacketFilter();
+
+	bool isTunnelingEnabled();
+	bool isPortTunnelable(int port);
+	void startTunnelingSocket(SOCKET socket);
+	void stopTunnelingSocket(SOCKET socket);
+	bool isSocketTunneled(SOCKET socket);
+
+	bool isSocketNonBlocking(SOCKET socket);
+	void setSocketNonBlocking(SOCKET socket);
+
+	// TODO: Use a single object to store all injectable packets...
+	const std::optional<Packet> getNextRecvPacketToInject(SOCKET socket);
+	size_t recvPacketsToInjectCount(SOCKET socket);
+	void removeInjectableRecvPackets(SOCKET socket);
+
+	void closeSocketGracefully(SOCKET socket);
+	bool shouldSocketClose(SOCKET socket);
 	
 	void sendToUI(Util::IMessageDerived auto message);
 	void processIncomingMessages();
@@ -43,6 +63,13 @@ private:
 	NamedPipeServer* _namedPipeServer = nullptr;
 
 	PacketFilter _packetFilter;
+
+	bool _isTunnelingEnabled = false;
+	std::unordered_map<SOCKET, SocketData> _socketsData;
+	std::mutex _socketsDataMutex;
+
+	//TODO: Instead of hardcoded ports, have the UI send them
+	const std::set<int> _tunnelablePorts{ {80, 443} };
 
 	bool _stopApplication = false;
 	HANDLE _applicationThread;

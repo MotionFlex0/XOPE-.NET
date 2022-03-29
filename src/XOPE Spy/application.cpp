@@ -63,7 +63,6 @@ void Application::shutdown()
     delete _namedPipeServer;
 }
 
-
 void Application::run()
 {
     while (!_stopApplication)
@@ -93,6 +92,87 @@ HookManager* Application::getHookManager()
 const PacketFilter& Application::getPacketFilter()
 {
     return _packetFilter;
+}
+
+bool Application::isTunnelingEnabled()
+{
+    return _isTunnelingEnabled;
+}
+
+bool Application::isPortTunnelable(int port)
+{
+    return _tunnelablePorts.contains(port);
+}
+
+void Application::startTunnelingSocket(SOCKET socket)
+{
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+    _socketsData[socket].isTunneled = true;
+
+}
+
+void Application::stopTunnelingSocket(SOCKET socket)
+{
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+    _socketsData[socket].isTunneled = false;
+
+}
+
+bool Application::isSocketTunneled(SOCKET socket)
+{
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+    return _socketsData.contains(socket) && _socketsData[socket].isTunneled;
+}
+
+bool Application::isSocketNonBlocking(SOCKET socket)
+{
+    return _socketsData[socket].isBlocking;
+}
+
+void Application::setSocketNonBlocking(SOCKET socket)
+{
+    _socketsData[socket].isBlocking = true;
+}
+
+size_t Application::recvPacketsToInjectCount(SOCKET socket)
+{
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+    if (_socketsData.contains(socket))
+        return _socketsData[socket].recvPacketsToInject.size();
+    return 0;
+}
+
+void Application::removeInjectableRecvPackets(SOCKET socket)
+{
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+    if (_socketsData.contains(socket))
+        _socketsData[socket].recvPacketsToInject = {};
+}
+
+void Application::closeSocketGracefully(SOCKET socket)
+{
+    _socketsData[socket].closeSocketGracefully = true;
+}
+
+bool Application::shouldSocketClose(SOCKET socket)
+{
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+    return _socketsData.contains(socket) && _socketsData[socket].closeSocketGracefully;
+}
+
+const std::optional<Packet> Application::getNextRecvPacketToInject(SOCKET socket)
+{
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+    if (!_socketsData.contains(socket))
+        return std::nullopt;
+
+    std::queue<Packet>& packetQueue = _socketsData[socket].recvPacketsToInject;
+    if (packetQueue.empty())
+        return std::nullopt;
+
+    Packet packet = packetQueue.front();
+    packetQueue.pop();
+    return packet;
 }
 
 void Application::processIncomingMessages()
@@ -128,14 +208,22 @@ void Application::processIncomingMessages()
             SOCKET socket = jsonMessage["SocketId"].get<SOCKET>();
             std::string data = base64_decode(jsonMessage["Data"].get<std::string>());
 
+            const Packet packetToInject(data.begin(), data.end());
+
             if (data.length() == jsonMessage["Length"].get<int>())
             {
-                _hookManager->get_ofunction<send>()(socket, data.c_str(), data.length(), NULL);
+                std::lock_guard<std::mutex> lock(_socketsDataMutex);
+                _socketsData[socket].recvPacketsToInject.push(packetToInject);
             }
             else
             {
                 _namedPipeClient->send(client::ErrorMessage("INJECT_RECV packet size mismatch"));
             }
+        }
+        else if (type == SpyMessageType::CLOSE_SOCKET_GRACEFULLY)
+        {
+            SOCKET socket = jsonMessage["SocketId"].get<SOCKET>();
+            closeSocketGracefully(socket);
         }
         else if (type == SpyMessageType::REQUEST_SOCKET_INFO)
         {
@@ -178,7 +266,7 @@ void Application::processIncomingMessages()
             timeout.tv_sec = 2;
             timeout.tv_usec = 0;
 
-            int selectRet = select(NULL, nullptr, &fds, nullptr, &timeout);
+            int selectRet = 1;// select(NULL, nullptr, &fds, nullptr, &timeout);
 
             _namedPipeClient->send(client::IsSocketWritableResponse(
                 jsonMessage["JobId"].get<std::string>(),
@@ -187,6 +275,10 @@ void Application::processIncomingMessages()
                 selectRet == SOCKET_ERROR,
                 WSAGetLastError()
             ));
+        }
+        else if (type == SpyMessageType::TOGGLE_HTTP_TUNNELING)
+        {
+            _isTunnelingEnabled = jsonMessage["IsTunnelingEnabled"].get<bool>();
         }
         else if (type == SpyMessageType::ADD_PACKET_FITLER || 
             type == SpyMessageType::MODIFY_PACKET_FILTER)
@@ -284,6 +376,9 @@ void Application::initHooks()
     _hookManager->hookNewFunction(WSAConnect, Functions::Hooked_WSAConnect, DEFAULTPATCHSIZE);
     _hookManager->hookNewFunction(WSASend, Functions::Hooked_WSASend, DEFAULTPATCHSIZE);
     _hookManager->hookNewFunction(WSARecv, Functions::Hooked_WSARecv, DEFAULTPATCHSIZE);
+    _hookManager->hookNewFunction(select, Functions::Hooked_Select, DEFAULTPATCHSIZE);
+    _hookManager->hookNewFunction(ioctlsocket, Functions::Hooked_Ioctlsocket, IOCTLSOCKET_PATCHSIZE);
+    // WSAAsyncSelect & WSAEventSelect have not been hooked but may be needed for non-blocking connects
 }
 
 
