@@ -44,6 +44,8 @@ namespace XOPE_UI.View
 
                 }
             };
+
+            packetTypeComboBox.SelectedIndex = 0;
         }
 
         private void InitializeHexEditor()
@@ -131,30 +133,29 @@ namespace XOPE_UI.View
                 if (s != null && s is Timer) ((Timer)s).Dispose();
                 replayTimer = null;
 
-                IMessage message = new InjectSendPacket
-                {
-                    Data = data,
-                    SocketId = socketId
-                };
+                IMessage message = packetTypeComboBox.SelectedIndex == 0 ?
+                    new InjectSendPacket { Data = data, SocketId = socketId } :
+                    new InjectRecvPacket { Data = data, SocketId = socketId };
 
                 spyManager.MessageDispatcher.Send(message);
-                setUiToReplayState(false);
+                preventUiInteraction(false);
             };
 
-            if (this.delayTimerTextBox.Value >= 1)
+            // Forms.Timer is only accurate to ~55ms
+            if (this.delayTimerTextBox.Value > 55)
             {
                 replayProgressLabel.Text = $"{waitTimer/100:F2}s";
                 replayTimer = new Timer();
                 replayTimer.Tick += func;
                 replayTimer.Interval = 100;
                 replayTimer.Start();
-                setUiToReplayState(true);
+                preventUiInteraction(true);
             }
             else
-                func(this, null); 
+                func(this, EventArgs.Empty); 
         }
 
-        private void setUiToReplayState(bool isReplaying)
+        private void preventUiInteraction(bool isReplaying)
         {
             replayButton.Enabled = !isReplaying;
             stopButton.Enabled = isReplaying;
@@ -174,7 +175,7 @@ namespace XOPE_UI.View
         {
             replayTimer.Stop();
             replayTimer = null;
-            setUiToReplayState(false);
+            preventUiInteraction(false);
         }
 
         private void socketSelectorButton_Click(object sender, EventArgs e)

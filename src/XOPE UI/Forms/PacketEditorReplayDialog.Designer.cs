@@ -29,6 +29,7 @@ namespace XOPE_UI.View
             this.replayProgressLabel = new System.Windows.Forms.Label();
             this.socketSelectorButton = new System.Windows.Forms.Button();
             this.instructionLabel = new System.Windows.Forms.Label();
+            this.packetTypeComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.delayTimerTextBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).BeginInit();
             this.SuspendLayout();
@@ -71,7 +72,7 @@ namespace XOPE_UI.View
             // replayButton
             // 
             this.replayButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.replayButton.Location = new System.Drawing.Point(569, 16);
+            this.replayButton.Location = new System.Drawing.Point(568, 12);
             this.replayButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.replayButton.Name = "replayButton";
             this.replayButton.Size = new System.Drawing.Size(88, 27);
@@ -84,7 +85,7 @@ namespace XOPE_UI.View
             // 
             this.stopButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.stopButton.Enabled = false;
-            this.stopButton.Location = new System.Drawing.Point(664, 16);
+            this.stopButton.Location = new System.Drawing.Point(663, 12);
             this.stopButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(88, 27);
@@ -158,7 +159,7 @@ namespace XOPE_UI.View
             // 
             this.replayProgressLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.replayProgressLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.replayProgressLabel.Location = new System.Drawing.Point(461, 17);
+            this.replayProgressLabel.Location = new System.Drawing.Point(460, 13);
             this.replayProgressLabel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.replayProgressLabel.Name = "replayProgressLabel";
             this.replayProgressLabel.Size = new System.Drawing.Size(100, 25);
@@ -188,11 +189,24 @@ namespace XOPE_UI.View
             this.instructionLabel.Text = "Insert bytes by pressing any character at EOF\r\nPress DELETE to remove a byte";
             this.instructionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // packetTypeComboBox
+            // 
+            this.packetTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.packetTypeComboBox.FormattingEnabled = true;
+            this.packetTypeComboBox.Items.AddRange(new object[] {
+            "[WSA]SEND",
+            "[WSA]RECV"});
+            this.packetTypeComboBox.Location = new System.Drawing.Point(119, 370);
+            this.packetTypeComboBox.Name = "packetTypeComboBox";
+            this.packetTypeComboBox.Size = new System.Drawing.Size(121, 23);
+            this.packetTypeComboBox.TabIndex = 24;
+            // 
             // PacketEditorReplayDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(765, 408);
+            this.Controls.Add(this.packetTypeComboBox);
             this.Controls.Add(this.instructionLabel);
             this.Controls.Add(this.socketSelectorButton);
             this.Controls.Add(this.replayProgressLabel);
@@ -232,5 +246,6 @@ namespace XOPE_UI.View
         private System.Windows.Forms.Label replayProgressLabel;
         private System.Windows.Forms.Button socketSelectorButton;
         private System.Windows.Forms.Label instructionLabel;
+        private System.Windows.Forms.ComboBox packetTypeComboBox;
     }
 }
