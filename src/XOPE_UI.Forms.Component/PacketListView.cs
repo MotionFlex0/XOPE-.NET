@@ -31,7 +31,7 @@ namespace XOPE_UI.View.Component
                 .SetValue(captureListView, true, null);
         }
 
-        public int Add(HookedFuncType type, int socketId, byte[] packet, bool modified = false)
+        public int Add(HookedFuncType type, int socketId, byte[] packet, bool modified = false, bool tunneled = false)
         {
             if (type == HookedFuncType.SEND || 
                 type == HookedFuncType.RECV ||
@@ -50,6 +50,8 @@ namespace XOPE_UI.View.Component
                 listViewItem.SubItems.Add(socketId.ToString());
                 if (modified)
                     listViewItem.SubItems.Add("modified");
+                else if (tunneled)
+                    listViewItem.SubItems.Add("tunneled");
 
                 captureListView.Invoke(new Action(() => 
                 { 
@@ -116,7 +118,11 @@ namespace XOPE_UI.View.Component
 
             if (captureListView.Items.Count > 0 && captureListView.Items[0] != null)
             {
-                int itemsVisible = (int)Math.Floor((decimal)captureListView.Height / captureListView.Items[0].Bounds.Height - 1);
+                int itemHeight = captureListView.Items[0].Bounds.Height;
+                if (itemHeight < 1)
+                    return;
+
+                int itemsVisible = (int)Math.Floor((decimal)captureListView.Height / itemHeight - 1);
 
                 _minAutoScrollOffset = itemsVisible + 2;
             }

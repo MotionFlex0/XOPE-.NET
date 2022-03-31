@@ -14,5 +14,6 @@ namespace XOPE_UI.Model
         public int Length { get; set; }
         public HookedFuncType Type { get; set; }
         public bool Modified { get; set; } = false;
+        public bool Tunneled { get; set; } = false;
     }
 }
