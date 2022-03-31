@@ -15,6 +15,10 @@ namespace XOPE_UI.View
 
         FilterEntry ShowFilterEditorDialog();
         FilterEntry ShowFilterEditorDialog(FilterEntry filterEntry);
+
+        // true = clear filter list
+        bool ShowFilterListClearConfirmation();
+        
         void ShowFailedToAddFilterMessage(string errorMessage);
     }
 }

@@ -10,7 +10,7 @@ namespace XOPE_UI.View
 {
     public partial class FilterEditorDialog : Form, IFilterEditorDialog
     {
-        FilterEditorDialogPresenter _presenter;
+        FilterEditorDialogPresenter Presenter { get; }
         
         static int _filterEntryCounter = 0;
 
@@ -92,10 +92,9 @@ namespace XOPE_UI.View
         {
             InitializeComponent();
             InitializeHexEditor();
+            Presenter = new FilterEditorDialogPresenter(this);
 
             _spyManager = spyManager;
-
-            _presenter = new FilterEditorDialogPresenter(this);
 
             nameTextBox.Text = $"Filter {_filterEntryCounter++}";
 
@@ -156,12 +155,12 @@ namespace XOPE_UI.View
         public void SetFilterEntry(FilterEntry filter)
         {
             Filter = filter;
-            _presenter.SetFilter(filter);
+            Presenter.SetFilter(filter);
         }
 
         private void acceptButton_Click(object sender, EventArgs e)
         {
-            _presenter.SaveFilter();
+            Presenter.SaveFilter();
             this.DialogResult = DialogResult.OK;
         }
 

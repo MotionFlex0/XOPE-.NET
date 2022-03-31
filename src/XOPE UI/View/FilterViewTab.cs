@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using XOPE_UI.Model;
@@ -9,18 +10,19 @@ namespace XOPE_UI.View
 {
     public partial class FilterViewTab : UserControl, IFilterViewTab
     {
+        public FilterViewTabPresenter Presenter { get; }
+
         public BindingList<FilterEntry> Filters { get; } = new BindingList<FilterEntry>();
         public FilterEntry SelectedItem => 
             filterDataGridView.SelectedRows?[0]?.DataBoundItem as FilterEntry;
 
-        FilterViewTabPresenter _presenter;
         SpyManager _spyManager;
         IUserSettings _settings;
 
         public FilterViewTab()
         {
             InitializeComponent();
-            _presenter = new FilterViewTabPresenter(this);
+            Presenter = new FilterViewTabPresenter(this);
 
             this.filterDataGridView.AutoGenerateColumns = false;
 
@@ -29,11 +31,11 @@ namespace XOPE_UI.View
         }
 
         public void AttachSpyManager(SpyManager spyManager) => 
-            _presenter.SpyManager = _spyManager = spyManager;
+            Presenter.SpyManager = _spyManager = spyManager;
 
         public void AttachSettings(IUserSettings settings)
         {
-            _presenter.Settings = settings;
+            Presenter.Settings = settings;
             _settings = settings;
             _settings.Get(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_FILTER).PropertyChanged += (sender, e) =>
             {
@@ -87,6 +89,14 @@ namespace XOPE_UI.View
                 return dialog.Filter;
             }
         }
+        
+        bool IFilterViewTab.ShowFilterListClearConfirmation()
+        {
+            return MessageBox.Show(this, "You're about to load filters from a file.\n" +
+                "This will erase your current filters.\n" +
+                "Are you sure you want to continue?", "Clearing list",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
+        }
 
         private void UpdateRowFilterColumnText(int rowIndex)
         {
@@ -113,12 +123,12 @@ namespace XOPE_UI.View
 
         private void addFilterButton_Click(object sender, EventArgs e)
         {
-            _presenter.AddFilterButtonClicked();
+            Presenter.AddFilterButtonClicked();
         }
 
         private void deleteFilterButton_Click(object sender, EventArgs e)
         {
-            _presenter.DeleteFilterButtonClicked(SelectedItem);
+            Presenter.DeleteFilterButtonClicked(SelectedItem);
         }
 
         private void filterDataGridView_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -130,7 +140,7 @@ namespace XOPE_UI.View
 
             if (e.Button == MouseButtons.Left && !checkbox.ContentBounds.Contains(e.Location))
             {
-                _presenter.ShowFilterEditor(SelectedItem);
+                Presenter.ShowFilterEditor(SelectedItem);
                 this.UpdateRowFilterColumnText(e.RowIndex);
             }
         }
@@ -140,7 +150,7 @@ namespace XOPE_UI.View
             if (this.filterDataGridView.Columns[e.ColumnIndex].Name == "Activated")
             {
                 var filter = this.filterDataGridView.Rows[e.RowIndex].DataBoundItem as FilterEntry;
-                _presenter.ToggleFilterActivated(filter, filter.Activated);
+                Presenter.ToggleFilterActivated(filter, filter.Activated);
             }
         }
 
@@ -174,5 +184,6 @@ namespace XOPE_UI.View
         {
             this.deleteFilterButton.Enabled = filterDataGridView.SelectedRows.Count > 0;
         }
+
     }
 }
