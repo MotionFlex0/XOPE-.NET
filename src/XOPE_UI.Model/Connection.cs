@@ -17,6 +17,8 @@ namespace XOPE_UI.Model
         public AddressFamily IPFamily { get; set; }
         public string IP { get; set; } // original type: IPAddress
         public int Port { get; set; }
+        public WinsockVersion Version { get; set; }
+        public bool IsCurrentlyTunneling { get; set; } = false;
         public Status SocketStatus
         {
             get => status;
@@ -37,9 +39,10 @@ namespace XOPE_UI.Model
             Port = 0;
             SocketStatus = Status.REQUESTING_INFO;
             LastStatusChangeTime = DateTime.Now;
+            Version = WinsockVersion.Version_1;
         }
 
-        public Connection(int id, int protocol, int addrFamily, string ip, int port, Status status)
+        public Connection(int id, int protocol, int addrFamily, string ip, int port, Status status, WinsockVersion version)
         {
             SocketId = id;
             Protocol = protocol;
@@ -48,6 +51,7 @@ namespace XOPE_UI.Model
             Port = port;
             SocketStatus = status;
             LastStatusChangeTime = DateTime.Now;
+            Version = version;
         }
 
         public override bool Equals(object obj)
@@ -69,5 +73,12 @@ namespace XOPE_UI.Model
             ESTABLISHED,
             CLOSED
         }
+
+        public enum WinsockVersion
+        { 
+            Version_1 = 1,
+            Version_2
+        }
+
     }
 }
