@@ -13,10 +13,17 @@ namespace XOPE_UI.View
             get => this.ipTextBox.Text;
             set => this.ipTextBox.Text = value;
         }
-        public string Port 
+
+        public string Port80 
         { 
-            get => this.portTextBox.Text; 
-            set => this.portTextBox.Text = value;
+            get => this.port80TextBox.Text; 
+            set => this.port80TextBox.Text = value;
+        }
+
+        public string Port443
+        {
+            get => this.port443TextBox.Text;
+            set => this.port443TextBox.Text = value;
         }
 
         public HttpTunnelingDialog(SpyManager spyManager)
@@ -27,8 +34,9 @@ namespace XOPE_UI.View
 
             if (spyManager.IsTunneling)
             {
-                IPAddress = spyManager.TunnelIp.ToString();
-                Port = spyManager.TunnelPort.ToString();
+                IPAddress = spyManager.HttpTunnel.TunnelIP.ToString();
+                Port80 = spyManager.HttpTunnel.TunnelPort80.ToString();
+                Port443 = spyManager.HttpTunnel.TunnelPort443.ToString();
                 ShowUiConnectedToProxy();
             }
             else
@@ -59,7 +67,8 @@ namespace XOPE_UI.View
         public void ShowUiConnectedToProxy()
         {
             this.ipTextBox.Enabled = false;
-            this.portTextBox.Enabled = false;
+            this.port80TextBox.Enabled = false;
+            this.port443TextBox.Enabled = false;
             this.startButton.Enabled = false;
             this.stopButton.Enabled = true;
         }
@@ -67,7 +76,8 @@ namespace XOPE_UI.View
         public void ShowUiDisconnectedFromProxy()
         {
             this.ipTextBox.Enabled = true;
-            this.portTextBox.Enabled = true;
+            this.port80TextBox.Enabled = true;
+            this.port443TextBox.Enabled = true;
             this.startButton.Enabled = true;
             this.stopButton.Enabled = false;
         }

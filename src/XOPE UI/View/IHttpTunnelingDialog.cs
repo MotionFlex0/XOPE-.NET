@@ -9,7 +9,8 @@ namespace XOPE_UI.View
     internal interface IHttpTunnelingDialog
     {
         public string IPAddress { get; }
-        public string Port { get; }
+        public string Port80 { get; }
+        public string Port443 { get; }
 
         void ShowUiConnectedToProxy();
         void ShowUiDisconnectedFromProxy();
