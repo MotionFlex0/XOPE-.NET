@@ -3,6 +3,7 @@
 #include "../definitions/definitions.hpp"
 #include <string>
 #include <Windows.h>
+#include <source_location>
 
 #if _DEBUG
 #define x_assert(expr, msg) (!!(expr) || Util::__assert(__FILE__, __LINE__, #expr, msg))
@@ -16,4 +17,9 @@ namespace Util
 
 	template <class T>
 	concept IMessageDerived = std::is_base_of_v<client::IMessage, T>;
+
+	constexpr uint32_t line(std::source_location source = std::source_location::current())
+	{
+		return source.line();
+	}
 };
