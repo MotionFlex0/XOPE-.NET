@@ -15,6 +15,7 @@ using XOPE_UI.View.Component;
 using System.Threading.Tasks;
 using System.Threading;
 using XOPE_UI.Settings;
+using Newtonsoft.Json;
 
 namespace XOPE_UI
 {
@@ -35,7 +36,6 @@ namespace XOPE_UI
         ScriptManager _scriptManager;
         IUserSettings _settings;
         SpyManager _spyManager;
-
 
         SDK.Environment _environment;
 
@@ -133,7 +133,7 @@ namespace XOPE_UI
             {
                 DialogResult shouldClearList = MessageBox.Show("Attaching to a new process will" +
                     " clear your packet list(s)\n" +
-                    "Are ypu sure you want to do this?", "Warning",
+                    "Are you sure you want to do this?", "Warning",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                 if (shouldClearList != DialogResult.Yes)
@@ -499,7 +499,7 @@ namespace XOPE_UI
 
         private void socketCheckerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!_spyManager.IsAttached && _spyManager.MessageDispatcher != null)
+            if (!_spyManager.IsAttached || _spyManager.MessageDispatcher == null)
             {
                 MessageBox.Show("Not currently attached to a process.");
                 return;
@@ -576,6 +576,40 @@ namespace XOPE_UI
             using (SettingsDialog settingsDialog = new SettingsDialog(_settings))
             {
                 settingsDialog.ShowDialog();
+            }
+        }
+
+        private void loadFiltersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void saveFiltersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "XOPE Filters (*.xof)|*.xof";
+                DialogResult dialogResult = saveFileDialog.ShowDialog();
+                if (dialogResult == DialogResult.OK)
+                {
+                    string content = filterViewTab.Presenter.GetFiltersAsJson();
+                    MessageBox.Show($"File name: {saveFileDialog.FileName}\nJson:\n{content}");
+                }
+            }
+        }
+
+        private void httpTunnelingModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!IsAttached())
+                return;
+
+            using (HttpTunnelingDialog dialog = new HttpTunnelingDialog(_spyManager))
+            {
+                dialog.ShowDialog();
+                if (_spyManager.IsTunneling)
+                    this.httpTunnelingModeToolStripMenuItem.Checked = true;
+                else
+                    this.httpTunnelingModeToolStripMenuItem.Checked = false;
             }
         }
     }
