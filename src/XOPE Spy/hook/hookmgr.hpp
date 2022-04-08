@@ -2,12 +2,16 @@
 #include <any>
 #include <functional>
 #include <iostream>
+#include <intrin.h>
+#include <source_location>
 #include <sstream>
 #include <unordered_map>
 #include <typeindex>
-#include <intrin.h>
 #include "../utils/definition.hpp"
 #include "../utils/util.h"
+
+#define HOOK_NEW_FUNCTION(hookManager, func, hookedFunc, patchSize) \
+	hookManager->hookNewFunction<Util::line()>(func, hookedFunc, patchSize);
 
 struct IHookedFuncWrapper;
 
@@ -58,23 +62,23 @@ struct IHookedFuncWrapper
 	virtual int getReferenceCount() = 0;
 };
 
-template <class F>
+template <uint32_t line, class F>
 struct HookedFuncWrapper;
 
-template <class R, class... Args>
-struct HookedFuncWrapper<R(__cdecl *)(Args...)> : public IHookedFuncWrapper
+template <uint32_t line, class R, class... Args>
+struct HookedFuncWrapper<line, R(__cdecl *)(Args...)> : public IHookedFuncWrapper
 {
 	using Type = R(__cdecl *)(Args...);
 
-	static HookedFuncWrapper<Type>* getInstance()
+	static HookedFuncWrapper<line, Type>* getInstance()
 	{
-		static HookedFuncWrapper<Type> instance;
+		static HookedFuncWrapper<line, Type> instance;
 		return &instance;
 	}
 
 	static R invoke(Args... args)
 	{
-		HookedFuncWrapper<Type>* this_ = getInstance();
+		HookedFuncWrapper<line, Type>* this_ = getInstance();
 		this_->increaseRefCount();
 		R ret = _function(args...);
 		this_->decreaseRefCount();
@@ -106,20 +110,20 @@ private:
 #ifndef _WIN64
 // TODO: Add a more permanant fix for this instead of 2 specialisation with 
 //		with different calling conventions
-template <class R, class... Args>
-struct HookedFuncWrapper<R(__stdcall*)(Args...)> : public IHookedFuncWrapper
+template <uint32_t line, class R, class... Args>
+struct HookedFuncWrapper<line, R(__stdcall*)(Args...)> : public IHookedFuncWrapper
 {
 	using Type = R(__stdcall *)(Args...);
 
-	static HookedFuncWrapper<Type>* getInstance()
+	static HookedFuncWrapper<line, Type>* getInstance()
 	{
-		static HookedFuncWrapper<Type> instance;
+		static HookedFuncWrapper<line, Type> instance;
 		return &instance;
 	}
 
 	static R invoke(Args... args)
 	{
-		HookedFuncWrapper<Type>* this_ = getInstance();
+		HookedFuncWrapper<line, Type>* this_ = getInstance();
 		this_->increaseRefCount();
 		R ret = _function(args...);
 		this_->decreaseRefCount();
@@ -150,12 +154,12 @@ private:
 #endif
 
 // Definition for static class variable HookedFuncWrapper<..>::_function
-template <class R, class... Args>
-R(__cdecl *HookedFuncWrapper<R(__cdecl *)(Args...)>::_function)(Args...) = nullptr;
+template <uint32_t line, class R, class... Args>
+R(__cdecl *HookedFuncWrapper<line, R(__cdecl *)(Args...)>::_function)(Args...) = nullptr;
 
 #ifndef _WIN64
-template <class R, class... Args>
-R(__stdcall *HookedFuncWrapper<R(__stdcall *)(Args...)>::_function)(Args...) = nullptr;
+template <uint32_t line, class R, class... Args>
+R(__stdcall *HookedFuncWrapper<line, R(__stdcall *)(Args...)>::_function)(Args...) = nullptr;
 #endif
 
 class HookManager
@@ -194,18 +198,21 @@ public:
 		}
 	}
 
-	template <class T>
+	// line is used to create unique class based on template class which have 
+	//  identical T function arguments
+	template <uint32_t line, class T>
 	bool hookNewFunction(T* func, T* hookedFunc, int patchSize)
 	{
 		if (m_hooks.contains((uintptr_t)func))
 			return true;
 
-		IHookedFuncWrapper* hookedFuncWrapper = HookedFuncWrapper<T*>::getInstance();
-		HookedFuncWrapper<T*>::_function = hookedFunc;
+		IHookedFuncWrapper* hookedFuncWrapper = HookedFuncWrapper<line, T*>::getInstance();
+		HookedFuncWrapper<line, T*>::_function = hookedFunc;
 		HookedFuncData hookedFuncData;
 		hookedFuncData.hookedFunction = hookedFuncWrapper;
-		hookedFuncData.detour = new Detour(HookedFuncWrapper<T*>::invoke, func, patchSize);
+		hookedFuncData.detour = new Detour(HookedFuncWrapper<line, T*>::invoke, func, patchSize);
 		hookedFuncData.oFunc = static_cast<T*>(hookedFuncData.detour->patch());
+		hookedFuncData.hookedWrapperId = line;
 
 		std::stringstream ss;
 		ss << "Failed to hook function with type: " << typeid(func).name();
@@ -233,7 +240,7 @@ public:
 
 		std::stringstream ss;
 		ss << "call_ofunction _F did not match type of stored original function\n";
-		ss << "\n_F_t type: " << typeid(_F_t).name() << "\n\nsearch->second.oFunc type: " << 
+		ss << "\n_F_t TYPE: " << typeid(_F_t).name() << "\n\nsearch->second.oFunc TYPE: " << 
 			search->second.oFunc.type().name();
 		x_assert(typeid(_F_t) == search->second.oFunc.type(), ss.str().c_str());
 		
@@ -259,7 +266,7 @@ public:
 		
 		std::stringstream ss;
 		ss << "call_ofunction _F did not match type of stored original function\n";
-		ss << "_F_t type: " << typeid(_F_t).name() << " | search->second.oFunc type: " << search->second.oFunc.type().name();
+		ss << "_F TYPE: " << typeid(_F_t).name() << " | search->second.oFunc TYPE: " << search->second.oFunc.type().name();
 		x_assert(typeid(_F_t) == search->second.oFunc.type(), ss.str().c_str());
 
 		auto oFunc = std::any_cast<_F_t>(search->second.oFunc);
@@ -270,6 +277,7 @@ private:
 	struct HookedFuncData
 	{
 		IHookedFuncWrapper* hookedFunction;
+		uint32_t hookedWrapperId;
 		Detour* detour;
 		std::any oFunc;
 	};
