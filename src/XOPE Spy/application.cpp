@@ -67,7 +67,7 @@ void Application::run()
 {
     while (!_stopApplication)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(30));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
         processIncomingMessages();
         if (_stopApplication || _namedPipeServer->isPipeBroken())
@@ -108,6 +108,7 @@ void Application::startTunnelingSocket(SOCKET socket)
 {
     std::lock_guard<std::mutex> lock(_socketsDataMutex);
     _socketsData[socket].isTunneled = true;
+    _socketsData[socket].socketIdSentToSink = false;
 
 }
 
@@ -122,6 +123,18 @@ bool Application::isSocketTunneled(SOCKET socket)
 {
     std::lock_guard<std::mutex> lock(_socketsDataMutex);
     return _socketsData.contains(socket) && _socketsData[socket].isTunneled;
+}
+
+bool Application::wasSocketIdSentToSink(SOCKET socket)
+{
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+    return _socketsData[socket].socketIdSentToSink;
+}
+
+void Application::socketIdSentToSink(SOCKET socket)
+{
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+    _socketsData[socket].socketIdSentToSink = true;
 }
 
 bool Application::isSocketNonBlocking(SOCKET socket)
@@ -151,6 +164,7 @@ void Application::removeInjectableRecvPackets(SOCKET socket)
 
 void Application::closeSocketGracefully(SOCKET socket)
 {
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
     _socketsData[socket].closeSocketGracefully = true;
 }
 
@@ -158,6 +172,24 @@ bool Application::shouldSocketClose(SOCKET socket)
 {
     std::lock_guard<std::mutex> lock(_socketsDataMutex);
     return _socketsData.contains(socket) && _socketsData[socket].closeSocketGracefully;
+}
+
+void Application::removeSocketFromSet(SOCKET socket)
+{
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+    _socketsData.erase(socket);
+}
+
+void Application::setSocketIpVersion(SOCKET socket, int ipVersion)
+{
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+    _socketsData[socket].ipVersion = ipVersion;
+}
+
+int Application::getSocketIpVersion(SOCKET socket)
+{
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+    return _socketsData[socket].ipVersion;
 }
 
 const std::optional<Packet> Application::getNextRecvPacketToInject(SOCKET socket)
@@ -230,22 +262,47 @@ void Application::processIncomingMessages()
             std::string jobId = jsonMessage["JobId"].get<std::string>();
             SOCKET socket = jsonMessage["SocketId"].get<SOCKET>();
 
-            sockaddr_in sin;
+            sockaddr_storage sin;
             int sinSize = sizeof(sin);
             if (getpeername(socket, (sockaddr*)&sin, &sinSize) == 0 
-                && (sin.sin_family == AF_INET || sin.sin_family == AF_INET6))
+                && (sin.ss_family == AF_INET || sin.ss_family == AF_INET6))
             {
-                int port = ntohs(sin.sin_port);
+                if (sin.ss_family == AF_INET)
+                {
+                    sockaddr_in* sa = reinterpret_cast<sockaddr_in*>(&sin);
+                    int port = ntohs(sa->sin_port);
 
-                char addr[32];
-                int addrSize = sizeof(addr);
-                WSAAddressToStringA((LPSOCKADDR)&sin, sinSize, NULL, addr, (LPDWORD)&addrSize);
+                    char addr[INET_ADDRSTRLEN];
+                    int addrSize = sizeof(addr);
+                    int sinSize = sizeof(sockaddr_in);
 
-                std::replace(addr, addr + sizeof(addr), ':', '\x00');
+                    WSAAddressToStringA((LPSOCKADDR)sa, sinSize, NULL, addr, (LPDWORD)&addrSize);
+                    std::replace(addr, addr + sizeof(addr), ':', '\x00');
 
-                _namedPipeClient->send(
-                    client::SocketInfoResponse(jobId, addr, port, sin.sin_family, -1)
-                );
+                    _namedPipeClient->send(
+                        client::SocketInfoResponse(jobId, addr, port, sa->sin_family, -1)
+                    );
+                }
+                else if (sin.ss_family == AF_INET6)
+                {
+                    sockaddr_in6* sa = reinterpret_cast<sockaddr_in6*>(&sin);
+                    int port = ntohs(sa->sin6_port);
+
+                    char addr[INET6_ADDRSTRLEN];
+                    int addrSize = sizeof(addr);
+                    int sinSize = sizeof(sockaddr_in6);
+
+                    WSAAddressToStringA((LPSOCKADDR)sa, sinSize, NULL, addr, (LPDWORD)&addrSize);
+
+                    std::string formattedAddr{ addr };
+                    auto colonPos = formattedAddr.find_last_of(':');
+                    if (colonPos != std::string::npos)
+                        formattedAddr.erase(colonPos);
+
+                    _namedPipeClient->send(
+                        client::SocketInfoResponse(jobId, formattedAddr, port, sa->sin6_family, -1)
+                    );
+                }
             }
             else
             {
@@ -369,15 +426,21 @@ void Application::initHooks()
 {
     _hookManager = new HookManager();
 
-    _hookManager->hookNewFunction(connect, Functions::Hooked_Connect, DEFAULTPATCHSIZE);
-    _hookManager->hookNewFunction(send, Functions::Hooked_Send, DEFAULTPATCHSIZE);
-    _hookManager->hookNewFunction(recv, Functions::Hooked_Recv, DEFAULTPATCHSIZE);
-    _hookManager->hookNewFunction(closesocket, Functions::Hooked_CloseSocket, CLOSEPATCHSIZE);
-    _hookManager->hookNewFunction(WSAConnect, Functions::Hooked_WSAConnect, DEFAULTPATCHSIZE);
-    _hookManager->hookNewFunction(WSASend, Functions::Hooked_WSASend, DEFAULTPATCHSIZE);
-    _hookManager->hookNewFunction(WSARecv, Functions::Hooked_WSARecv, DEFAULTPATCHSIZE);
-    _hookManager->hookNewFunction(select, Functions::Hooked_Select, DEFAULTPATCHSIZE);
-    _hookManager->hookNewFunction(ioctlsocket, Functions::Hooked_Ioctlsocket, IOCTLSOCKET_PATCHSIZE);
+    // Not the biggest fan of macros but unable to find a better way to do this
+    // TODO: Improve - Also remove the patch size and use capstone throughout
+    HOOK_NEW_FUNCTION(_hookManager, connect, Functions::Hooked_Connect, DEFAULTPATCHSIZE);
+    HOOK_NEW_FUNCTION(_hookManager, send, Functions::Hooked_Send, DEFAULTPATCHSIZE);
+    HOOK_NEW_FUNCTION(_hookManager, recv, Functions::Hooked_Recv, DEFAULTPATCHSIZE);
+    HOOK_NEW_FUNCTION(_hookManager, closesocket, Functions::Hooked_CloseSocket, CLOSEPATCHSIZE);
+    HOOK_NEW_FUNCTION(_hookManager, WSAConnect, Functions::Hooked_WSAConnect, DEFAULTPATCHSIZE);
+    HOOK_NEW_FUNCTION(_hookManager, WSASend, Functions::Hooked_WSASend, DEFAULTPATCHSIZE);
+    HOOK_NEW_FUNCTION(_hookManager, WSARecv, Functions::Hooked_WSARecv, DEFAULTPATCHSIZE);
+    HOOK_NEW_FUNCTION(_hookManager, select, Functions::Hooked_Select, SELECT_PATCHSIZE);
+    HOOK_NEW_FUNCTION(_hookManager, ioctlsocket, Functions::Hooked_Ioctlsocket, IOCTLSOCKET_PATCHSIZE);
+    HOOK_NEW_FUNCTION(_hookManager, socket, Functions::Hooked_Socket, DEFAULTPATCHSIZE);
+    HOOK_NEW_FUNCTION(_hookManager, WSASocketA, Functions::Hooked_WSASocketA, WSASOCKETA_PATCHSIZE);
+    HOOK_NEW_FUNCTION(_hookManager, WSASocketW, Functions::Hooked_WSASocketW, CLOSEPATCHSIZE);
+;
     // WSAAsyncSelect & WSAEventSelect have not been hooked but may be needed for non-blocking connects
 }
 

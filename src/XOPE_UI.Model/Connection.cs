@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace XOPE_UI.Model
 {
+    // TODO: Use INotifyChanged
     public class Connection : EventArgs
     {
         private Status status;

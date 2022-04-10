@@ -176,11 +176,16 @@
     <ClCompile Include="packet\filter.cpp" />
     <ClCompile Include="patches\close.cpp" />
     <ClCompile Include="patches\connect.cpp" />
+    <ClCompile Include="patches\ioctlsocket.cpp" />
     <ClCompile Include="patches\recv.cpp" />
+    <ClCompile Include="patches\select.cpp" />
     <ClCompile Include="patches\send.cpp" />
+    <ClCompile Include="patches\socket.cpp" />
     <ClCompile Include="patches\wsaconnect.cpp" />
     <ClCompile Include="patches\wsarecv.cpp" />
     <ClCompile Include="patches\wsasend.cpp" />
+    <ClCompile Include="patches\wsasocketa.cpp" />
+    <ClCompile Include="patches\wsasocketw.cpp" />
     <ClCompile Include="pipe\namedpipeclient.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="hook\detour.cpp" />
@@ -193,6 +198,7 @@
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="definitions\definitions.hpp" />
+    <ClInclude Include="definitions\socketdata.h" />
     <ClInclude Include="patches\functions.h" />
     <ClInclude Include="server\incomingmessage.h" />
     <ClInclude Include="packet\filter.h" />

@@ -35,11 +35,15 @@ public:
 	HookManager* getHookManager();
 	const PacketFilter& getPacketFilter();
 
+	// TODO: Refactor this mess
 	bool isTunnelingEnabled();
 	bool isPortTunnelable(int port);
 	void startTunnelingSocket(SOCKET socket);
 	void stopTunnelingSocket(SOCKET socket);
 	bool isSocketTunneled(SOCKET socket);
+
+	bool wasSocketIdSentToSink(SOCKET socket);
+	void socketIdSentToSink(SOCKET socket);
 
 	bool isSocketNonBlocking(SOCKET socket);
 	void setSocketNonBlocking(SOCKET socket);
@@ -51,6 +55,10 @@ public:
 
 	void closeSocketGracefully(SOCKET socket);
 	bool shouldSocketClose(SOCKET socket);
+	void removeSocketFromSet(SOCKET socket);
+
+	void setSocketIpVersion(SOCKET socket, int ipVersion);
+	int getSocketIpVersion(SOCKET socket);
 	
 	void sendToUI(Util::IMessageDerived auto message);
 	void processIncomingMessages();

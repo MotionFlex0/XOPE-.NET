@@ -9,8 +9,5 @@ SOCKET WSAAPI Functions::Hooked_WSASocketW(int af, int type, int protocol, LPWSA
     if (ret != INVALID_SOCKET)
         app.setSocketIpVersion(ret, af);
 
-    app.sendToUI(client::ErrorMessage("Hooked_WSASocketA called"));
-
-
     return ret;
 }

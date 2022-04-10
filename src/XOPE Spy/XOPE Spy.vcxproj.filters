@@ -67,6 +67,9 @@
     <Filter Include="Header Files\patches">
       <UniqueIdentifier>{3826195e-19b5-4639-b2f6-d1a8642e5a82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\definitions">
+      <UniqueIdentifier>{138836f0-94c1-42e8-bbab-d0fe2a999961}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -119,6 +122,21 @@
     </ClCompile>
     <ClCompile Include="utils\guid.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\select.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\ioctlsocket.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\socket.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\wsasocketa.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\wsasocketw.cpp">
+      <Filter>Source Files\patches</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +196,9 @@
     </ClInclude>
     <ClInclude Include="utils\guid.h">
       <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="definitions\socketdata.h">
+      <Filter>Header Files\definitions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
