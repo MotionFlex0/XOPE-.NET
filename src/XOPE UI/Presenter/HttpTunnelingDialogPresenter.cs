@@ -26,13 +26,13 @@ namespace XOPE_UI.Presenter
             if (_spyManager.IsTunneling)
                 return;
 
-            // Validate IP:Port
+            // Validates IP:Port
 
-            if (_view.IPAddress == "" || _view.Port == "")
+            if (_view.IPAddress == "" || _view.Port80 == "")
                 _view.ShowErrorMessage("One of the field(s) is blank");
 
             bool shouldContinue = _view.ShowUnstableWarningYesNo("Please note - This tunneling feature may be very unstable.\n" +
-                "It may result in crashes or improper send/receives.\n" +
+                "It may result in crashes or improper network requests/responses.\n" +
                 "Once started, it may not be possible to properly stop tunneling.\n\n" +
                 "Are you sure you want to continue?");
 
@@ -50,10 +50,12 @@ namespace XOPE_UI.Presenter
                 return;
             }
 
-            int port;
+            int port80;
+            int port443;
             try
             {
-                port = int.Parse(_view.Port);
+                port80 = int.Parse(_view.Port80);
+                port443 = int.Parse(_view.Port443);
             }
             catch
             {
@@ -63,14 +65,23 @@ namespace XOPE_UI.Presenter
 
             try
             {
-                TcpClient tcpClient = new TcpClient();
+                TcpClient tcpClient80 = new TcpClient();
+                TcpClient tcpClient443 = new TcpClient();
 
-                tcpClient.Connect(ip, port);
-                if (!tcpClient.Connected)
+                tcpClient80.Connect(ip, port80);
+                if (!tcpClient80.Connected)
                     throw new SocketException();
-                tcpClient.Close();
-                _spyManager.EnableHttpTunneling(ip, port);
-                _view.ShowUiConnectedToProxy();
+                tcpClient80.Close();
+
+                tcpClient443.Connect(ip, port443);
+                if (!tcpClient443.Connected)
+                    throw new SocketException();
+                tcpClient443.Close();
+
+                _spyManager.EnableHttpTunneling(ip, port80, port443);
+
+                if (_spyManager.IsTunneling)
+                    _view.ShowUiConnectedToProxy();
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -79,7 +90,7 @@ namespace XOPE_UI.Presenter
             catch (SocketException ex)
             {
                 _view.ShowErrorMessage("Error when trying to connect to that IP/Port combination\n" +
-                    "Please make sure they're correct and try again.\n" +
+                    "Please make sure they're correct and try again.\n\n" +
                     $"Message:\n{ex.Message}");
             }
             catch (Exception ex)
