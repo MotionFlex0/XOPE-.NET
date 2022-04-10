@@ -16,6 +16,7 @@ using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI
 {
+    // TODO: Refactor!
     public class SpyManager
     {
         public event EventHandler<Packet> NewPacket;
@@ -25,14 +26,18 @@ namespace XOPE_UI
         public event EventHandler<Connection> ConnectionStatusChanged;
         public event EventHandler<Connection> ConnectionPropUpdated;
 
-        public SpyData SpyData { get; private set; } = null;
+        public SpyData SpyData { get; private set; }
         public bool IsAttached { get => _attachedProcess != null; }
+        public bool IsTunneling { get; private set; }
+        public HttpTunnelingHandler HttpTunnel { get; private set; }
 
-        public NamedPipeDispatcher MessageDispatcher { get; private set; } = null;
-        NamedPipeReceiver MessageReceiver { get; set; } = null;
+        public NamedPipeDispatcher MessageDispatcher { get; private set; }
+        NamedPipeReceiver MessageReceiver { get; set; }
 
         CancellationTokenSource _cancellationTokenSource = null;
         Task _spyThread = null;
+
+       
 
         Dictionary<Guid, IMessageWithResponse> _jobs; // This contains Messages that are expecting a response
 
@@ -41,6 +46,7 @@ namespace XOPE_UI
         public SpyManager()
         {
             SpyData = new SpyData();
+            IsTunneling = false;
             MessageReceiver = new NamedPipeReceiver();
             _jobs = new Dictionary<Guid, IMessageWithResponse>();
         }
@@ -60,6 +66,31 @@ namespace XOPE_UI
             _attachedProcess = null;
         }
 
+        public void DisableHttpTunneling()
+        {
+            HttpTunnel.Dispose();
+            HttpTunnel = null;
+            IsTunneling = false;
+            if (MessageDispatcher != null)
+                MessageDispatcher.Send(new ToggleHttpTunneling() { IsTunnelingEnabled = false });
+        }
+
+        public void EnableHttpTunneling(IPAddress ip, int port80, int port443)
+        {
+            if (MessageDispatcher == null)
+            {
+                Console.WriteLine("Cannot connect to spy as MessageDispatcher is null.");
+                return;
+            }
+
+            HttpTunnel = new HttpTunnelingHandler(this, ip, port80, port443);
+            if (MessageDispatcher != null && HttpTunnel.SinkConnected)
+            {
+                MessageDispatcher.Send(new ToggleHttpTunneling() { IsTunnelingEnabled = true });
+                IsTunneling = true;
+            }
+        }
+
         // TODO: Refactor this method
         public void RunAsync()
         {
@@ -72,8 +103,8 @@ namespace XOPE_UI
 
             _spyThread = Task.Factory.StartNew(() =>
             {
-                while ((MessageDispatcher == null || MessageDispatcher.IsConnected) 
-                && MessageReceiver.IsConnectingOrConnected && !_cancellationTokenSource.IsCancellationRequested)
+                while ((MessageDispatcher == null || MessageDispatcher.IsConnected) && 
+                    MessageReceiver.IsConnectingOrConnected && !_cancellationTokenSource.IsCancellationRequested)
                 {
                     IncomingMessage incomingMessage = MessageReceiver.GetIncomingMessage();
                     if (incomingMessage != null)
@@ -96,7 +127,7 @@ namespace XOPE_UI
                             Console.WriteLine($"Received message before CONNECTED_SUCCESS." +
                                 $"Dropping message {incomingMessage.Type}");
                     }
-                    Thread.Sleep(30);
+                    Thread.Sleep(1);
                 }
 
                 Console.WriteLine("SpyManager loop ended");
@@ -124,7 +155,6 @@ namespace XOPE_UI
             if (messageType == UiMessageType.HOOKED_FUNCTION_CALL)
             {
                 HookedFuncType hookedFuncType = (HookedFuncType)json.Value<Int32>("functionName");
-
                 if (hookedFuncType == HookedFuncType.CONNECT || hookedFuncType == HookedFuncType.WSACONNECT)
                 {
                     int socket = json.Value<Int32>("socket");
@@ -134,7 +164,10 @@ namespace XOPE_UI
                         json.Value<Int32>("addrFamily"),
                         json.Value<string>("addr"),
                         json.Value<Int32>("port"),
-                        Connection.Status.ESTABLISHED
+                        Connection.Status.ESTABLISHED,
+                        hookedFuncType == HookedFuncType.CONNECT ?
+                            Connection.WinsockVersion.Version_1 :
+                            Connection.WinsockVersion.Version_2
                     );
 
                     int connectRet = json.Value<int>("ret");
@@ -143,12 +176,29 @@ namespace XOPE_UI
                     {
                         SpyData.Connections.TryAdd(socket, connection);
                         ConnectionEstablished?.Invoke(this, connection);
-                        Console.WriteLine($"Socket {socket} has been opened");
+                        Console.WriteLine($"Socket {socket} has been opened.");
+
+                        bool isTunneling = json.Value<bool>("tunneling");
+                        if (isTunneling)
+                        {
+                            if (HttpTunnel == null)
+                                throw new NullReferenceException($"_httpTunnelingHandler is null but socket is tunnelable.W");
+                            HttpTunnel.TunnelNewConnection(connection);
+                        }
                     }
                     else if (connectRet == -1 && connectLastError == 10035) // ret == SOCKET_ERROR and error == WSAEWOULDBLOCK
                     {
                         connection.SocketStatus = Connection.Status.CONNECTING;
                         SpyData.Connections.TryAdd(json.Value<Int32>("socket"), connection);
+                        ConnectionConnecting?.Invoke(this, connection);
+
+                        bool isTunneling = json.Value<bool>("tunneling");
+                        if (isTunneling)
+                        {
+                            if (HttpTunnel == null)
+                                throw new NullReferenceException($"_httpTunnelingHandler is null but socket is tunnelable.W");
+                            HttpTunnel.TunnelNewConnection(connection);
+                        }
 
                         int counter = 0;
                         System.Timers.Timer timer = new System.Timers.Timer();
@@ -156,9 +206,12 @@ namespace XOPE_UI
                         {
                             EventHandler<IncomingMessage> callback = (object o, IncomingMessage resp) =>
                             {
+                                if (connection.SocketStatus == Connection.Status.CLOSED)
+                                    return;
+
                                 if (++counter >= 5)
                                 {
-                                    Console.WriteLine($"Socket never became writable. Socket: {connection.SocketId}");
+                                    Console.WriteLine($"Socket never became writable. Socket: {connection.SocketId}.");
                                     RemoveExistingConnection(connection.SocketId);
                                 }
                                 else if (resp.Type == UiMessageType.JOB_RESPONSE_SUCCESS)
@@ -166,7 +219,10 @@ namespace XOPE_UI
                                     if (resp.Json.Value<bool>("writable") == false)
                                         timer.Start();
                                     else // writable == true
+                                    {
                                         connection.SocketStatus = Connection.Status.ESTABLISHED;
+                                        ConnectionEstablished?.Invoke(this, connection);
+                                    }
                                 }
                             };
 
@@ -226,11 +282,11 @@ namespace XOPE_UI
                                 connection.SocketStatus = Connection.Status.ESTABLISHED;
 
                                 ConnectionEstablished?.Invoke(this, connection); // 
-                                Console.WriteLine($"Added previously opened socket {socket}");
+                                Console.WriteLine($"Added previously opened socket {socket}.");
                             }
                             else if (resp.Type == UiMessageType.JOB_RESPONSE_ERROR)
                             {
-                                Console.WriteLine($"Failed to find info on socket {socket}");
+                                Console.WriteLine($"Failed to find info on socket {socket}.");
                                 RemoveExistingConnection(connection.SocketId);
                             }
 
@@ -245,11 +301,12 @@ namespace XOPE_UI
                         if (json.Value<int>("ret") == 0)
                         {
                             RemoveExistingConnection(socket);
-                            Console.WriteLine($"Socket {socket} closed gracefully");
+                            Console.WriteLine($"Socket {socket} closed gracefully.");
                         }
                         else if (json.Value<int>("ret") == -1)
                         {
-                            Console.WriteLine($"Socket {socket} returned WSAError {json.Value<int>("lastError")}");
+                            if (json.Value<int>("lastError") != 10035) // if WSAGetLastError() != WSAEWOULDBLOCK
+                                Console.WriteLine($"Socket {socket} returned WSAError {json.Value<int>("lastError")}.");
                         }
                         else
                         {
@@ -264,6 +321,14 @@ namespace XOPE_UI
                                 Socket = socket,
                                 Modified = modified
                             };
+                            if (HttpTunnel != null && 
+                                HttpTunnel.IsTunnelingSocket(socket))
+                            {
+                                if (hookedFuncType == HookedFuncType.SEND)
+                                    HttpTunnel.Send(packet);
+                                packet.Tunneled = true;
+                            }
+
                             NewPacket?.Invoke(this, packet);
                         }
                     }
@@ -272,18 +337,25 @@ namespace XOPE_UI
                     {
                         int bufferCount = json.Value<int>("bufferCount");
                         int lastError = json.Value<int>("lastError");
-                        bool isSocketClosed = lastError == 10101 || lastError == 10054 || bufferCount == 0;
+                        bool isSocketClosed = (bufferCount == -1 && (lastError == 10101 || lastError == 10054));
 
                         if (hookedFuncType == HookedFuncType.WSARECV && isSocketClosed)
                         {
                             RemoveExistingConnection(socket);
-                            Console.WriteLine($"Socket {socket} closed gracefully");
+                            Console.WriteLine($"Socket {socket} closed gracefully.");
                         }
                         else
                         {
                             JArray buffers = json.Value<JArray>("buffers");
                             for (int i = 0; i < bufferCount; i++)
                             {
+                                if (hookedFuncType == HookedFuncType.WSARECV && buffers[i].Value<int>("length") == 0)
+                                {
+                                    RemoveExistingConnection(socket);
+                                    Console.WriteLine($"Socket {socket} closed gracefully.");
+                                    break;
+                                }
+
                                 byte[] data = Convert.FromBase64String(buffers[i].Value<String>("dataB64"));
                                 bool modified = buffers[i].Value<bool>("modified");
                                 Packet packet = new Packet
@@ -295,12 +367,18 @@ namespace XOPE_UI
                                     Socket = socket,
                                     Modified = modified
                                 };
+                                if (HttpTunnel != null && 
+                                    HttpTunnel.IsTunnelingSocket(socket))
+                                {
+                                    if (hookedFuncType == HookedFuncType.WSASEND)
+                                        HttpTunnel.Send(packet);
+                                    packet.Tunneled = true;
+                                }
                                 NewPacket?.Invoke(this, packet);
                             }
                         }
                     }
                 }
-
             }
             else if (messageType == UiMessageType.JOB_RESPONSE_SUCCESS || 
                 messageType == UiMessageType.JOB_RESPONSE_ERROR)
@@ -333,7 +411,7 @@ namespace XOPE_UI
                 _cancellationTokenSource.Cancel();
                 bool completed = _spyThread.Wait(7000);
                 if (!completed)
-                    Console.WriteLine("App.Shutdown waited for SpyManager Thread to exit but it timed-out");
+                    Console.WriteLine("App.Shutdown waited for SpyManager Thread to exit but it timed-out.");
                 ResetState();
             }
         }
@@ -346,12 +424,22 @@ namespace XOPE_UI
 
             _spyThread = null;
             MessageDispatcher = null;
+
+            if (IsTunneling)
+            {
+                HttpTunnel.Dispose();
+                HttpTunnel = null;
+                IsTunneling = false;
+            }
         }
 
         private void RemoveExistingConnection(int socket)
         {
             if (SpyData.Connections.ContainsKey(socket))
             {
+                if (HttpTunnel != null && HttpTunnel.IsTunnelingSocket(socket))
+                    HttpTunnel.ConnectionClosedExternally(socket);
+
                 ConnectionClosed?.Invoke(this, SpyData.Connections[socket]);
                 SpyData.Connections.Remove(socket, out _);
             }
