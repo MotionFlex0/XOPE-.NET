@@ -1,6 +1,7 @@
 #pragma once
 
 #include <WinSock2.h>
+#include <WS2tcpip.h>
 #include <Windows.h>
 #include "../nlohmann/json.hpp"
 #include "../utils/base64.h"
@@ -222,7 +223,7 @@ namespace client
 
 		HookedFunction functionName;
 		SOCKET socket;
-		sockaddr_in* sockaddr;
+		const sockaddr_storage* sockaddr;
 		int ret;
 		int lastError = -1;
 		bool tunneling = false;
@@ -320,11 +321,11 @@ namespace client
 			addr:scr/byte,
 			addrType:int
 		}*/
-
-		from_json(j, (IMessage&)hfcm);
+		throw std::exception("HookedFunctionCallSocketMessage_from_json not implemented");
+		/*from_json(j, (IMessage&)hfcm);
 		j.at("functionName").get_to(hfcm.functionName);
 		j.at("socket").get_to(hfcm.socket);
-		j.at("port").get_to(hfcm.sockaddr->sin_port);
+		j.at("port").get_to(hfcm.sockaddr->sin_port);*/
 		//j.at("protocol").
 		//hfcm.packetData = new char[hfcm.packetLen];
 		//memcpy(hfcm.packetData, base64_decode(j.at("packetData").get<std::string>()).c_str(), hfcm.packetLen);
@@ -362,6 +363,8 @@ namespace client
 			addrType:int
 		}*/
 
+		int oldWsaErrorCode = WSAGetLastError();
+
 		to_json(j, (IMessage)hfcm);
 		j["functionName"] = hfcm.functionName;
 		j["socket"] = hfcm.socket;
@@ -369,11 +372,43 @@ namespace client
 		j["lastError"] = hfcm.lastError;
 		if (hfcm.functionName != HookedFunction::CLOSE)
 		{
-			j["protocol"] = -1;
-			j["addrFamily"] = hfcm.sockaddr->sin_family;
-			j["addr"] = std::string("0.0.0.0");
-			j["port"] = ntohs(hfcm.sockaddr->sin_port);
 			j["tunneling"] = hfcm.tunneling;
+			j["protocol"] = -1;
+			j["addrFamily"] = hfcm.sockaddr->ss_family;
+
+			if (hfcm.sockaddr->ss_family == AF_INET)
+			{
+				const sockaddr_in* sa = reinterpret_cast<const sockaddr_in*>(hfcm.sockaddr);
+
+				char addr[INET_ADDRSTRLEN];
+				int addrSize = sizeof(addr);
+				int sinSize = sizeof(sockaddr_in);
+				
+				WSAAddressToStringA((LPSOCKADDR)sa, sinSize, NULL, addr, (LPDWORD)&addrSize);
+				std::replace(addr, addr + sizeof(addr), ':', '\x00');
+				j["addr"] = addr;
+				j["port"] = ntohs(sa->sin_port);
+			}
+			else if (hfcm.sockaddr->ss_family == AF_INET6)
+			{
+				const sockaddr_in6* sa = reinterpret_cast<const sockaddr_in6*>(hfcm.sockaddr);
+
+				char addr[INET6_ADDRSTRLEN];
+				int addrSize = sizeof(addr);
+				int sinSize = sizeof(sockaddr_in6);
+
+				WSAAddressToStringA((LPSOCKADDR)sa, sinSize, NULL, addr, (LPDWORD)&addrSize);
+
+				std::string address{ addr };
+				auto colonPos = address.find_last_of(':');
+				if (colonPos != std::string::npos)
+					address.erase(colonPos);
+
+				j["addr"] = address;
+				j["port"] = ntohs(sa->sin6_port);
+			}	
 		}
+
+		WSASetLastError(oldWsaErrorCode);
 	}
 }
