@@ -1,7 +1,7 @@
 #include "functions.h"
 #include "../application.h"
 
-int WINAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesRecvd, LPDWORD lpFlags, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine)
+int WSAAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesRecvd, LPDWORD lpFlags, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine)
 {
     Application& app = Application::getInstance();
     int ret = app.getHookManager()->get_ofunction<WSARecv>()(s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpOverlapped, lpCompletionRoutine);
@@ -16,12 +16,14 @@ int WINAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
 
     for (DWORD i = 0; i < dwBufferCount; i++)
     {
-        Packet packet(lpBuffers[i].buf, lpBuffers[i].buf + lpBuffers[i].len);
+        DWORD bytesRead = lpNumberOfBytesRecvd[i];
+        Packet packet(lpBuffers[i].buf, lpBuffers[i].buf + bytesRead);
         bool modified = app.getPacketFilter().findAndReplace(FilterableFunction::WSARECV, s, packet);
 
+        // Sends the original packet data to UI
         message.buffers.push_back({
-            .length = (size_t)lpBuffers[i].len,
-            .dataB64 = client::IMessage::convertBytesToB64String(lpBuffers[i].buf, lpBuffers[i].len),
+            .length = bytesRead,
+            .dataB64 = client::IMessage::convertBytesToB64String(lpBuffers[i].buf, bytesRead),
             .modified = modified
         });
 
@@ -31,13 +33,16 @@ int WINAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
             CHAR* newBuf = new CHAR[packet.size()];
             memcpy(newBuf, packet.data(), packet.size());
             lpBuffers[i].buf = reinterpret_cast<CHAR*>(newBuf);
-            lpBuffers[i].len = static_cast<size_t>(packet.size());
+            lpBuffers[i].len = static_cast<ULONG>(packet.size());
             
-            delete[] oldBuf;
+            free(oldBuf);
         }
     }
 
     app.sendToUI(message);
+
+    if (message.ret == SOCKET_ERROR && message.lastError != WSAEWOULDBLOCK)
+        app.removeSocketFromSet(s);
 
     return ret;
 }

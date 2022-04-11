@@ -1,10 +1,13 @@
 #include "functions.h"
 #include "../application.h"
 
-int WINAPI Functions::Hooked_CloseSocket(SOCKET s)
+int WSAAPI Functions::Hooked_CloseSocket(SOCKET s)
 {
     Application& app = Application::getInstance();
     int ret = app.getHookManager()->get_ofunction<closesocket>()(s);
+
+    app.removeSocketFromSet(s);
+
 
     client::HookedFunctionCallSocketMessage hfcm;
     hfcm.functionName = HookedFunction::CLOSE;

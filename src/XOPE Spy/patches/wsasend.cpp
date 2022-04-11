@@ -1,7 +1,7 @@
 #include "functions.h"
 #include "../application.h"
 
-int WINAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesSent, DWORD dwFlags, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine)
+int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesSent, DWORD dwFlags, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine)
 {
     Application& app = Application::getInstance();
     
@@ -37,17 +37,40 @@ int WINAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
         });
     }
 
-    int ret = app.getHookManager()->get_ofunction<WSASend>()(s, updatedBuffers.data(), dwBufferCount, 
-        lpNumberOfBytesSent, dwFlags, lpOverlapped, lpCompletionRoutine);
-    
-    message.ret = ret;
-    for (DWORD i = 0; i < dwBufferCount; i++)
-        message.buffers[i].bytesSent = lpNumberOfBytesSent[i];
+    if (app.shouldSocketClose(s))
+    {
+        message.ret = SOCKET_ERROR;
+        WSASetLastError(WSAECONNRESET);
+    }
+    else if (app.isSocketTunneled(s))
+    {
+        if (!app.wasSocketIdSentToSink(s))
+        {
+            int32_t s32 = s & 0xFFFFFFFF;
+            app.getHookManager()->get_ofunction<send>()(s, (char*)&s32, sizeof(s32), NULL);
+            app.socketIdSentToSink(s);
+        }
 
-    if (ret == SOCKET_ERROR)
+        message.ret = 0;
+        for (DWORD i = 0; i < dwBufferCount; i++)
+            lpNumberOfBytesSent[i] = lpBuffers[i].len;
+    }
+    else
+        message.ret = app.getHookManager()->get_ofunction<WSASend>()(s, updatedBuffers.data(), dwBufferCount, 
+            lpNumberOfBytesSent, dwFlags, lpOverlapped, lpCompletionRoutine);
+
+    if (message.ret == 0)
+    {
+        for (DWORD i = 0; i < dwBufferCount; i++)
+            message.buffers[i].bytesSent = lpNumberOfBytesSent[i];
+    }
+    else if (message.ret == SOCKET_ERROR)
         message.lastError = WSAGetLastError();
 
     app.sendToUI(message);
 
-    return ret;
+    if (message.ret == SOCKET_ERROR && message.lastError != WSAEWOULDBLOCK)
+        app.removeSocketFromSet(s);
+
+    return message.ret;
 }
