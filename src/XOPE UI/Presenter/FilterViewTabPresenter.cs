@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using XOPE_UI.Model;
 using XOPE_UI.Settings;
 using XOPE_UI.Spy.DispatcherMessageType;
@@ -11,7 +13,7 @@ namespace XOPE_UI.Presenter
     {
         IFilterViewTab _view;
         IUserSettings _settings;
-        SpyManager _spyManager; // Never use this. Use SpyManager instead
+        SpyManager _spyManager; // Never use this directly. Use SpyManager instead
 
         public SpyManager SpyManager
         {
@@ -89,6 +91,30 @@ namespace XOPE_UI.Presenter
                     });
                 }
                 _view.RemoveFilter(filter);
+            }
+        }
+
+        public string GetFiltersAsJson()
+        {
+            int filterCount = _view.Filters.Count;
+            FilterEntry[] filterEntries = new FilterEntry[filterCount];
+
+            this._view.Filters.CopyTo(filterEntries, 0);
+
+            return JsonConvert.SerializeObject(filterEntries);
+        }
+
+        public void LoadFilters(IEnumerable<FilterEntry> filterEntries)
+        {
+            if (_view.Filters.Count > 0)
+                if (!_view.ShowFilterListClearConfirmation())
+                    return;
+
+            _view.Filters.Clear();
+            foreach (FilterEntry filterEntry in filterEntries)
+            {
+                filterEntry.Activated = false;
+                _view.Filters.Add(filterEntry);
             }
         }
 

@@ -282,12 +282,13 @@ namespace XOPE_UI
                     stopRecToolStripButton.PerformClick();
 
                 this.Text = _windowTitle;
-                detachToolStripButton.Enabled = false;
-                detachToolStripMenuItem.Enabled = false;
-                recordToolStripButton.Enabled = false;
-                pauseRecToolStripButton.Enabled = false;
-                stopRecToolStripButton.Enabled = false;
-                filterViewTab.Enabled = false;
+                this.detachToolStripButton.Enabled = false;
+                this.detachToolStripMenuItem.Enabled = false;
+                this.recordToolStripButton.Enabled = false;
+                this.pauseRecToolStripButton.Enabled = false;
+                this.stopRecToolStripButton.Enabled = false;
+                this.filterViewTab.Enabled = false;
+                this.httpTunnelingModeToolStripMenuItem.Checked = false;
             }));
         }
 
