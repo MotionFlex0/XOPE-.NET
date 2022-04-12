@@ -76,6 +76,7 @@
             // 
             this.socket_id.Tag = "socket_id";
             this.socket_id.Text = "Socket ID";
+            this.socket_id.Width = 70;
             // 
             // ip_family
             // 
@@ -86,7 +87,7 @@
             // 
             this.ip_address.Tag = "ip_address";
             this.ip_address.Text = "IP Address";
-            this.ip_address.Width = 67;
+            this.ip_address.Width = 130;
             // 
             // port
             // 
@@ -97,7 +98,7 @@
             // 
             this.status.Tag = "status";
             this.status.Text = "Status";
-            this.status.Width = 120;
+            this.status.Width = 110;
             // 
             // refreshButton
             // 

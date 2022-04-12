@@ -63,7 +63,7 @@ namespace XOPE_UI.Spy
                             Win32API.PeekNamedPipe((IntPtr)receiverStream.SafePipeHandle.DangerousGetHandle(), out _, 0, out _, out bytesAvailable, out _);
                             if (bytesAvailable > 0)
                             {
-                                int len = receiverStream.Read(buffer, 0, 65536);
+                                int len = receiverStream.Read(buffer, 0, 65535);
                                 if (len > 0)
                                 {
                                     try
@@ -83,7 +83,7 @@ namespace XOPE_UI.Spy
                                     }
                                 }
                             }
-                            Thread.Sleep(30); 
+                            Thread.Sleep(1); 
                         }
                         Console.WriteLine("Closing receiver...");
                     }

@@ -33,7 +33,7 @@ namespace XOPE_UI.View
             this.processesListView.Columns[0].Width = 400;//processesView.Width;
             is64bitText.Text = Environment.Is64BitProcess.ToString();
 
-            this.processesListView.SmallImageList = getImageListFromCache();
+            this.processesListView.SmallImageList = GetImageListFromCache();
 
             this.processesListView
             .GetType()
@@ -49,7 +49,7 @@ namespace XOPE_UI.View
         public static void PrecacheResources()
         {
             ObjectCache objectCache = MemoryCache.Default;
-            ImageList imageList = getImageListFromCache();
+            ImageList imageList = GetImageListFromCache();
 
             Process[] ps = Process.GetProcesses();
             foreach (Process p in ps)
@@ -72,10 +72,10 @@ namespace XOPE_UI.View
         //TODO: fix threading issue https://stackoverflow.com/questions/38423472/what-is-the-difference-between-task-run-and-task-factory-startnew
         private void ProcessDialog_Load(object sender, EventArgs e)
         {
-            updateProcessListView();
+            UpdateProcessListView();
         }
 
-        private void updateProcessListView()
+        private void UpdateProcessListView()
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -143,7 +143,7 @@ namespace XOPE_UI.View
             this.Text = $"Process Selector - Loaded in {stopwatch.Elapsed.Milliseconds}ms";
         }
 
-        private static ImageList getImageListFromCache()
+        private static ImageList GetImageListFromCache()
         {
             ObjectCache objectCache = MemoryCache.Default;
             if (objectCache.Contains("PROCESS_SMALL_IMAGE_LIST"))
@@ -237,7 +237,7 @@ namespace XOPE_UI.View
         {
             if (keyData == Keys.F5)
             {
-                updateProcessListView();
+                UpdateProcessListView();
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);

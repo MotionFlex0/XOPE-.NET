@@ -24,7 +24,7 @@ void NamedPipeServer::run()
 
 	auto isEndOfJson = [](const char& a, const char& b) { return a == '}' && b == '\x00'; };
 
-	const int storageSize = 65536;
+	const int storageSize = 65535;
 	std::vector<char> storageBuf(storageSize, 0xFF);
 	int offset = 0;
 	while (!_stopServer)
@@ -71,7 +71,7 @@ void NamedPipeServer::run()
 					offset = 0;
 			}
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(30));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	CloseHandle(_pipe);
