@@ -7,12 +7,6 @@
 #include "../utils/base64.h"
 #include "../utils/guid.h"
 
-//#define KV(J, VAR) J[#VAR] = VAR
-//#define KV(VAR) {#VAR, VAR}
-//#define KNV(NAME, VAR) {#NAME,  VAR}
-//#define KNV(J, NAME, VAR) J[#NAME] = VAR
-//#define B64BYTES(STR, LEN) base64_encode(std::string(STR, LEN))
-
 #pragma warning(disable: 4996)
 
 using nlohmann::json;
@@ -299,57 +293,10 @@ namespace client
 		j.at("messageType").get_to(hfcm.messageType);
 	}
 
-
-	/*inline void from_json(const json& j, HookedFunctionCallPacketMessage& hfcm)
-	{
-		from_json(j, (IMessage&)hfcm);
-		j.at("functionName").get_to(hfcm.functionName);
-		j.at("socket").get_to(hfcm.socket);
-		j.at("packetLen").get_to(hfcm.packetLen);
-		hfcm.packetData = new char[hfcm.packetLen];
-		memcpy(hfcm.packetData, base64_decode(j.at("packetData").get<std::string>()).c_str(), hfcm.packetLen);
-	}*/
-
-	inline void from_json(const json& j, HookedFunctionCallSocketMessage& hfcm)
-	{
-		/* json
-		{
-			functionName:int,
-			socket:int,
-			port:int,
-			protocol:int,
-			addr:scr/byte,
-			addrType:int
-		}*/
-		throw std::exception("HookedFunctionCallSocketMessage_from_json not implemented");
-		/*from_json(j, (IMessage&)hfcm);
-		j.at("functionName").get_to(hfcm.functionName);
-		j.at("socket").get_to(hfcm.socket);
-		j.at("port").get_to(hfcm.sockaddr->sin_port);*/
-		//j.at("protocol").
-		//hfcm.packetData = new char[hfcm.packetLen];
-		//memcpy(hfcm.packetData, base64_decode(j.at("packetData").get<std::string>()).c_str(), hfcm.packetLen);
-	}
-
 	inline void to_json(json& j, const IMessage& hfcm)
 	{
 		j["messageType"] = hfcm.messageType;
 	}
-
-	//inline void to_json(json& j, const HookedFunctionCallPacketMessage& hfcm)
-	//{
-	//	to_json(j, (IMessage)hfcm);
-	//	j["functionName"] = hfcm.functionName;
-	//	j["socket"] = hfcm.socket;
-	//	if (hfcm.functionName != HookedFunction::CLOSE
-	//		&& hfcm.functionName != HookedFunction::CONNECT
-	//		&& hfcm.functionName != HookedFunction::WSACONNECT)
-	//	{
-	//		j["packetLen"] = hfcm.packetLen;
-	//		j["packetData"] = base64_encode(std::string(hfcm.packetData, hfcm.packetLen));
-
-	//	}
-	//}
 
 	static void to_json(json& j, const HookedFunctionCallSocketMessage& hfcm)
 	{
