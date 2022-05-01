@@ -7,6 +7,13 @@ namespace XOPE_UI.Injection
 {
     class CreateRemoteThread
     {
+        public static bool Inject(IntPtr hProcess, string modulePath)
+        {
+            return (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(hProcess))
+                ? Inject32(hProcess, modulePath)
+                : Inject64(hProcess, modulePath);
+        }
+
         public static bool InjectSpy(IntPtr hProcess)
         {
             return (!Environment.Is64BitProcess || NativeMethods.IsWow64Process(hProcess))
