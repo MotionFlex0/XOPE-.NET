@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using XOPE_UI.Extensions;
 
@@ -18,7 +19,7 @@ namespace XOPE_UI.View.Component
 
         const int WM_KEYDOWN = 0x100;
         const int WM_KEYUP = 0x101;
-
+        
         public Color CellBackColor { get; set; } = Color.White;
         public Color SelectionBackColor { get; set; } = Color.FromArgb(70, Color.Blue);
         public Color SelectionForeColor { get; set; } = Color.Black;
@@ -36,12 +37,12 @@ namespace XOPE_UI.View.Component
         {
             InitializeComponent();
 
-            //// Events
+            // Events
             this.byteGridView.ColumnHeadersHeightChanged += (object sender, System.EventArgs e) =>
                 this.textGridView.ColumnHeadersHeight = this.byteGridView.ColumnHeadersHeight;
 
             this.textGridView.Scroll += byteGridView_Scroll;
-
+            
             this.textGridView.CellMouseEnter += byteGridView_CellMouseEnter;
             this.textGridView.CellMouseLeave += byteGridView_CellMouseLeave;
             this.textGridView.CellPainting += byteGridView_CellPainting;
@@ -127,19 +128,18 @@ namespace XOPE_UI.View.Component
                 textDataTable.Columns.Add(new DataColumn($"0x{i:X}"));
             }
 
-
             byte[] bytesInRow = new byte[16];
             for (int i = 0; i < _data.Length; i += 16)
             {
                 DataRow byteRow = byteDataTable.NewRow();
                 DataRow textRow = textDataTable.NewRow();
-                
+
                 int bytesRead = _data.Read(bytesInRow, 0, 16);
 
                 for (int j = 0; j < bytesRead; j++)
                 {     
                     byteRow[$"0x{j:X}"] = bytesInRow[j].ToString(BYTE_FORMAT);
-
+                    
                     if (bytesInRow[j] >= 0x20 && bytesInRow[j] < 0x80)
                         textRow[$"0x{j:X}"] = (char)bytesInRow[j];
                     else
@@ -498,6 +498,30 @@ namespace XOPE_UI.View.Component
         private void byteGridView_MouseUp(object sender, MouseEventArgs e)
         {
             _currentlyMouseDragging = false;
+        }
+
+        private void byteGridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.C)
+            {
+                DataGridView dataGridView = sender as DataGridView;
+                DataObject dataObject = dataGridView.GetClipboardContent();
+                string content = Regex.Replace(dataObject.GetText().Trim(), @"\s+", " "); // Changes default delimiter (\t) to a single space
+                Clipboard.SetText(content);
+                e.Handled = true;
+            }
+        }
+
+        private void textGridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.C)
+            {
+                DataGridView dataGridView = sender as DataGridView;
+                DataObject dataObject = dataGridView.GetClipboardContent();
+                string content = Regex.Replace(dataObject.GetText().Trim(), @"\s+", "");
+                Clipboard.SetText(content);
+                e.Handled = true;
+            }
         }
     }
 }
