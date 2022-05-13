@@ -10,7 +10,7 @@ namespace XOPE_UI.View
         public AutoInjectorEntry SelectedItem => 
             this.dllListView.SelectedItems.Count > 0 ? this.dllListView.SelectedItems[0].Tag as AutoInjectorEntry : null;
 
-        public bool IsAnyActivate
+        public bool IsAnyActive
         {
             get
             {

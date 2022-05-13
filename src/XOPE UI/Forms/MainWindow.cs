@@ -16,6 +16,9 @@ using System.Threading.Tasks;
 using System.Threading;
 using XOPE_UI.Settings;
 using Newtonsoft.Json;
+using System.Runtime.Caching;
+using System.Collections.Generic;
+using System.IO;
 
 namespace XOPE_UI
 {
@@ -194,7 +197,7 @@ namespace XOPE_UI
                         }
                     }
 
-                    Console.WriteLine($"Injecting into ${selectedProcess.ProcessName}.exe - {selectedProcess.Id}");
+                    Console.WriteLine($"Injecting into [{selectedProcess.Id}]{selectedProcess.ProcessName}.exe...");
 
                     _spyManager.RunAsync();
 
@@ -209,6 +212,19 @@ namespace XOPE_UI
                         _attachedProcess.Exited += attachedProcess_Exited;
                         _spyManager.AttachedToProcess(_attachedProcess);
                         _environment.NotifyProcessAttached(_attachedProcess);
+
+                        // Auto-inject other dlls | TODO: temporary solution
+                        ObjectCache objectCache = MemoryCache.Default;
+                        Dictionary<string, AutoInjectorEntry> dllsToInject = objectCache.Get(
+                            XOPE_UI.Presenter.AutoInjectorDialogPresenter.CACHE_KEY) as Dictionary<string, AutoInjectorEntry>;
+                        if (dllsToInject != null)
+                        {
+                            foreach (AutoInjectorEntry entry in dllsToInject.Values)
+                            {
+                                if (entry.IsActivated)
+                                    CreateRemoteThread.Inject(_attachedProcess.Handle, entry.FilePath);
+                            }
+                        }
                     }
                     else
                         MessageBox.Show($"Error when AttachToProcess");
@@ -264,7 +280,7 @@ namespace XOPE_UI
             {
                 string processName = _attachedProcess.MainModule.ModuleName;
 
-                Console.WriteLine($"Successfully injected into ${processName}.exe - {_attachedProcess.Id}");
+                Console.WriteLine($"Successfully injected into [{_attachedProcess.Id}]{processName}. Waiting for Spy to connect to Receiver...");
                 this.Text = $"{_windowTitle} - [{_attachedProcess.Id}] {_attachedProcess.MainModule.ModuleName}";
                 detachToolStripButton.Enabled = true;
                 detachToolStripMenuItem.Enabled = true;
@@ -291,6 +307,10 @@ namespace XOPE_UI
                 this.httpTunnelingModeToolStripMenuItem.Checked = false;
             }));
         }
+
+        /*
+         * Events
+         */
 
         private void CreditsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -596,6 +616,15 @@ namespace XOPE_UI
                     string content = filterViewTab.Presenter.GetFiltersAsJson();
                     MessageBox.Show($"File name: {saveFileDialog.FileName}\nJson:\n{content}");
                 }
+            }
+        }
+
+        private void autoInjectorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (AutoInjectorDialog dialog = new AutoInjectorDialog())
+            {
+                dialog.ShowDialog();
+                this.autoInjectorToolStripMenuItem.Checked = dialog.IsAnyActive;
             }
         }
 

@@ -90,6 +90,7 @@
             this.filterViewTab = new XOPE_UI.View.FilterViewTab();
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
+            this.autoInjectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -275,6 +276,7 @@
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.autoInjectorToolStripMenuItem,
             this.httpTunnelingModeToolStripMenuItem,
             this.toolStripSeparator7,
             this.settingsToolStripMenuItem});
@@ -314,19 +316,19 @@
             // runScriptToolStripMenuItem
             // 
             this.runScriptToolStripMenuItem.Name = "runScriptToolStripMenuItem";
-            this.runScriptToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.runScriptToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.runScriptToolStripMenuItem.Text = "Run Script";
             this.runScriptToolStripMenuItem.Click += new System.EventHandler(this.runScriptToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(151, 6);
             // 
             // scriptManagerToolStripMenuItem
             // 
             this.scriptManagerToolStripMenuItem.Name = "scriptManagerToolStripMenuItem";
-            this.scriptManagerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.scriptManagerToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.scriptManagerToolStripMenuItem.Text = "Script Manager";
             this.scriptManagerToolStripMenuItem.Click += new System.EventHandler(this.scriptManagerToolStripMenuItem_Click);
             // 
@@ -549,7 +551,6 @@
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Cursor = System.Windows.Forms.Cursors.Default;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -613,7 +614,7 @@
             this.hexPreviewPanel.Location = new System.Drawing.Point(5, 1);
             this.hexPreviewPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 136);
+            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 135);
             this.hexPreviewPanel.TabIndex = 6;
             // 
             // packetCaptureHexPreview
@@ -628,7 +629,7 @@
             this.packetCaptureHexPreview.Name = "packetCaptureHexPreview";
             this.packetCaptureHexPreview.SelectionBackColor = System.Drawing.Color.Blue;
             this.packetCaptureHexPreview.SelectionForeColor = System.Drawing.Color.White;
-            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 91);
+            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 90);
             this.packetCaptureHexPreview.TabIndex = 0;
             // 
             // filterViewTabPage
@@ -674,6 +675,13 @@
             this.label2.Size = new System.Drawing.Size(112, 15);
             this.label2.TabIndex = 1;
             this.label2.Text = "NOT IMPLEMENTED";
+            // 
+            // autoInjectorToolStripMenuItem
+            // 
+            this.autoInjectorToolStripMenuItem.Name = "autoInjectorToolStripMenuItem";
+            this.autoInjectorToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.autoInjectorToolStripMenuItem.Text = "Auto DLL Injector";
+            this.autoInjectorToolStripMenuItem.Click += new System.EventHandler(this.autoInjectorToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -778,6 +786,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem httpTunnelingModeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem autoInjectorToolStripMenuItem;
     }
 }
 
