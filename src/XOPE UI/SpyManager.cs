@@ -112,7 +112,7 @@ namespace XOPE_UI
                         if (incomingMessage.Type == UiMessageType.CONNECTED_SUCCESS)
                         {
                             JObject json = incomingMessage.Json;
-                            Console.WriteLine($"Connection success: {json}");
+                            Console.WriteLine($"Success! Received CONNECTED_SUCCESS.");
                             string spyPipeServerName = json.Value<string>("spyPipeServerName");
                             MessageDispatcher = new NamedPipeDispatcher(spyPipeServerName, _jobs);
                             if (!MessageDispatcher.IsConnected)
@@ -189,7 +189,7 @@ namespace XOPE_UI
                     else if (connectRet == -1 && connectLastError == 10035) // ret == SOCKET_ERROR and error == WSAEWOULDBLOCK
                     {
                         connection.SocketStatus = Connection.Status.CONNECTING;
-                        SpyData.Connections.TryAdd(json.Value<Int32>("socket"), connection);
+                        SpyData.Connections.TryAdd(connection.SocketId, connection);
                         ConnectionConnecting?.Invoke(this, connection);
 
                         bool isTunneling = json.Value<bool>("tunneling");
@@ -335,17 +335,26 @@ namespace XOPE_UI
                     else if (hookedFuncType == HookedFuncType.WSASEND ||
                         hookedFuncType == HookedFuncType.WSARECV)
                     {
-                        int bufferCount = json.Value<int>("bufferCount");
+                        int ret = json.Value<int>("ret");
                         int lastError = json.Value<int>("lastError");
-                        bool isSocketClosed = (bufferCount == -1 && (lastError == 10101 || lastError == 10054));
+                        bool isSocketClosed = (ret == -1 && (lastError == 10101 || lastError == 10054));
 
                         if (hookedFuncType == HookedFuncType.WSARECV && isSocketClosed)
                         {
                             RemoveExistingConnection(socket);
                             Console.WriteLine($"Socket {socket} closed gracefully.");
                         }
+                        else if (hookedFuncType == HookedFuncType.WSARECV && ret == -1)
+                        {
+                            if (lastError != 997) // WSA_IO_PENDING
+                            {
+                                Console.WriteLine($"Socket {socket} returned SOCKET_ERROR with the code {lastError}.");
+                                RemoveExistingConnection(socket);
+                            }
+                        }
                         else
                         {
+                            int bufferCount = json.Value<int>("bufferCount");
                             JArray buffers = json.Value<JArray>("buffers");
                             for (int i = 0; i < bufferCount; i++)
                             {
@@ -392,6 +401,14 @@ namespace XOPE_UI
                 }
                 else
                     Console.WriteLine($"Received JOB_RESPONSE for id '{guid}' but it does not appear to be a valid id.");
+            }
+            else if (messageType == UiMessageType.INFO_MESSAGE)
+            {
+                Console.WriteLine($"[Spy-Info] {json.Value<String>("infoMessage")}");
+            }
+            else if (messageType == UiMessageType.EXTERNAL_MESSAGE)
+            {
+                Console.WriteLine($"[Spy-External] {json.Value<String>("externalMessage")}");
             }
             else if (messageType == UiMessageType.ERROR_MESSAGE)
             {

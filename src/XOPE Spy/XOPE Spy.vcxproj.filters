@@ -138,6 +138,9 @@
     <ClCompile Include="patches\wsasocketw.cpp">
       <Filter>Source Files\patches</Filter>
     </ClCompile>
+    <ClCompile Include="exports.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pipe\namedpipeclient.h">

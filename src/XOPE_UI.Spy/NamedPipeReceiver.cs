@@ -49,7 +49,7 @@ namespace XOPE_UI.Spy
                 using (NamedPipeServerStream receiverStream = new NamedPipeServerStream("xopeui"))
                 {
                     receiverStream.WaitForConnection();
-                    Console.WriteLine("Spy connected to Receiver");
+                    Console.WriteLine("Spy connected to Receiver. Waiting for CONNECTION_SUCCESS message...");
 
                     try
                     {

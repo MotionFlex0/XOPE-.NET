@@ -173,6 +173,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application.cpp" />
+    <ClCompile Include="exports.cpp" />
     <ClCompile Include="packet\filter.cpp" />
     <ClCompile Include="patches\close.cpp" />
     <ClCompile Include="patches\connect.cpp" />

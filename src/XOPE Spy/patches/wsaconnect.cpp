@@ -28,21 +28,21 @@ int WSAAPI Functions::Hooked_WSAConnect(SOCKET s, const sockaddr* name, int name
         sockaddr_storage sinkService;
         if (app.getSocketIpVersion(s) == AF_INET6)
         {
-            sockaddr_in6* originalSockAddr = (sockaddr_in6*)name;
+            sockaddr_in6* originalName = (sockaddr_in6*)name;
 
             sockaddr_in6* sink = (sockaddr_in6*)&sinkService;
             sink->sin6_family = AF_INET6;
             inet_pton(AF_INET6, "::1", &sink->sin6_addr);
             sink->sin6_port = htons(10102);
-            sink->sin6_scope_id = originalSockAddr->sin6_scope_id;
-            sink->sin6_flowinfo = originalSockAddr->sin6_flowinfo;
-            sink->sin6_scope_struct = originalSockAddr->sin6_scope_struct;
+            sink->sin6_scope_id = originalName->sin6_scope_id;
+            sink->sin6_flowinfo = originalName->sin6_flowinfo;
+            sink->sin6_scope_struct = originalName->sin6_scope_struct;
         }
         else
         {
             sockaddr_in* sink = (sockaddr_in*)&sinkService;
             sink->sin_family = AF_INET;
-            sink->sin_addr.s_addr = inet_addr("127.0.0.1");
+            inet_pton(AF_INET, "127.0.0.1", &sink->sin_addr);
             sink->sin_port = htons(10101);
         }
 
