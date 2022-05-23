@@ -11,6 +11,8 @@ namespace XOPE_UI.Model
         INVALID_MESSAGE,
         PING,
         PONG,
+        INFO_MESSAGE,
+        EXTERNAL_MESSAGE,
         ERROR_MESSAGE,
         CONNECTED_SUCCESS,
         HOOKED_FUNCTION_CALL,

@@ -16,6 +16,8 @@ enum class UiMessageType
 	INVALID_MESSAGE,
 	PING,
 	PONG,
+	INFO_MESSAGE,
+	EXTERNAL_MESSAGE,
 	ERROR_MESSAGE,
 	CONNECTED_SUCCESS,
 	HOOKED_FUNCTION_CALL,
@@ -163,6 +165,25 @@ namespace client
 			buffers,
 			ret,
 			lastError);
+	};
+
+	struct InfoMessage : IMessage
+	{
+		InfoMessage(std::string info) : IMessage(UiMessageType::INFO_MESSAGE), infoMessage(info) { }
+
+		std::string infoMessage;
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(InfoMessage, messageType, infoMessage);
+	};
+
+	// Only use for messages passed to extern SendMessageToLog
+	struct ExternalMessage : IMessage
+	{
+		ExternalMessage(std::string info) : IMessage(UiMessageType::EXTERNAL_MESSAGE), externalMessage(info) { }
+
+		std::string externalMessage;
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ExternalMessage, messageType, externalMessage);
 	};
 
 	struct ErrorMessage : IMessage
