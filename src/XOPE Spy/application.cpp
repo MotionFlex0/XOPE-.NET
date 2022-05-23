@@ -428,18 +428,18 @@ void Application::initHooks()
 
     // Not the biggest fan of macros but unable to find a better way to do this
     // TODO: Improve - Also remove the patch size and use capstone throughout
-    HOOK_NEW_FUNCTION(_hookManager, connect, Functions::Hooked_Connect, DEFAULTPATCHSIZE);
-    HOOK_NEW_FUNCTION(_hookManager, send, Functions::Hooked_Send, DEFAULTPATCHSIZE);
-    HOOK_NEW_FUNCTION(_hookManager, recv, Functions::Hooked_Recv, DEFAULTPATCHSIZE);
-    HOOK_NEW_FUNCTION(_hookManager, closesocket, Functions::Hooked_CloseSocket, CLOSEPATCHSIZE);
-    HOOK_NEW_FUNCTION(_hookManager, WSAConnect, Functions::Hooked_WSAConnect, DEFAULTPATCHSIZE);
-    HOOK_NEW_FUNCTION(_hookManager, WSASend, Functions::Hooked_WSASend, DEFAULTPATCHSIZE);
-    HOOK_NEW_FUNCTION(_hookManager, WSARecv, Functions::Hooked_WSARecv, DEFAULTPATCHSIZE);
-    HOOK_NEW_FUNCTION(_hookManager, select, Functions::Hooked_Select, SELECT_PATCHSIZE);
-    HOOK_NEW_FUNCTION(_hookManager, ioctlsocket, Functions::Hooked_Ioctlsocket, IOCTLSOCKET_PATCHSIZE);
-    HOOK_NEW_FUNCTION(_hookManager, socket, Functions::Hooked_Socket, DEFAULTPATCHSIZE);
-    HOOK_NEW_FUNCTION(_hookManager, WSASocketA, Functions::Hooked_WSASocketA, WSASOCKETA_PATCHSIZE);
-    HOOK_NEW_FUNCTION(_hookManager, WSASocketW, Functions::Hooked_WSASocketW, CLOSEPATCHSIZE);
+    HOOK_FUNCTION_NO_SIZE(_hookManager, connect, Functions::Hooked_Connect);
+    HOOK_FUNCTION_NO_SIZE(_hookManager, send, Functions::Hooked_Send);
+    HOOK_FUNCTION_NO_SIZE(_hookManager, recv, Functions::Hooked_Recv);
+    HOOK_FUNCTION_NO_SIZE(_hookManager, closesocket, Functions::Hooked_CloseSocket);
+    HOOK_FUNCTION_NO_SIZE(_hookManager, WSAConnect, Functions::Hooked_WSAConnect);
+    HOOK_FUNCTION_NO_SIZE(_hookManager, WSASend, Functions::Hooked_WSASend);
+    HOOK_FUNCTION_NO_SIZE(_hookManager, WSARecv, Functions::Hooked_WSARecv);
+    HOOK_FUNCTION_NO_SIZE(_hookManager, select, Functions::Hooked_Select);
+    HOOK_FUNCTION_NO_SIZE(_hookManager, ioctlsocket, Functions::Hooked_Ioctlsocket);
+    HOOK_FUNCTION_NO_SIZE(_hookManager, socket, Functions::Hooked_Socket);
+    HOOK_FUNCTION_NO_SIZE(_hookManager, WSASocketA, Functions::Hooked_WSASocketA);
+    HOOK_FUNCTION_NO_SIZE(_hookManager, WSASocketW, Functions::Hooked_WSASocketW);
 ;
     // WSAAsyncSelect & WSAEventSelect have not been hooked but may be needed for non-blocking connects
 }

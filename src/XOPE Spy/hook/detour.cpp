@@ -1,22 +1,28 @@
 #include "detour.h"
 
-Detour32::Detour32(void* hookFunc, void* targetFunc, int bytesToPatch)
+Detour32::Detour32(void* detourFunc, void* targetFunc)
 {
-	if (bytesToPatch < 5)
-		return;
+	m_targetFunc = (uint8_t*)targetFunc;
+	m_detourFunc = (uint8_t*)detourFunc;
+	m_bytesToPatch = -1;
+}
+
+Detour32::Detour32(void* detourFunc, void* targetFunc, int bytesToPatch)
+{
+	assert(bytesToPatch >= MINIMUM_PATCH_SIZE_X86);
 
 	m_targetFunc = (uint8_t*)targetFunc;
-	m_detourFunc = (uint8_t*)hookFunc;
+	m_detourFunc = (uint8_t*)detourFunc;
 	m_bytesToPatch = bytesToPatch;
 }
 
 void* Detour32::patch()
 {
-	if (m_bytesToPatch < 5)
-		return nullptr;
-
 	if (m_patched)
 		return m_trampoline;
+
+	if (m_bytesToPatch == -1)
+		m_bytesToPatch = calculateBytesToPatch();
 
 	m_trampoline = new uint8_t[m_bytesToPatch + 5];
 
@@ -71,9 +77,40 @@ void Detour32::unpatch()
 	m_patched = false;
 }
 
+int Detour32::getPatchSize()
+{
+	return m_bytesToPatch;
+}
+
+int Detour32::calculateBytesToPatch()
+{
+	csh csHandle;
+	cs_insn* inst;
+	cs_err csRes = cs_open(CS_ARCH_X86, CS_MODE_32, &csHandle);
+	x_assert(csRes == CS_ERR_OK, "cs_open failed in Detour32::calculateBytesToPatch");
+
+	cs_option(csHandle, CS_OPT_DETAIL, CS_OPT_ON);
+
+	size_t instCount = cs_disasm(csHandle, m_targetFunc, 0x40, (uint64_t)m_targetFunc, 0, &inst);
+	x_assert(instCount > 0, "cs_disasm failed to disassemble code in Detour32::calculateBytesToPatch");
+
+	int requiredBytes = 0;
+	for (int i = 0; i < instCount && requiredBytes < MINIMUM_PATCH_SIZE_X64; i++)
+		requiredBytes += (&(inst[i]))->size;
+	return requiredBytes;
+}
+
+Detour64::Detour64(void* detourFunc, void* targetFunc)
+{
+	m_targetFunc = (uint8_t*)targetFunc;
+	m_detourFunc = (uint8_t*)detourFunc;
+	m_bytesToPatch = -1;
+	m_originalBytes = nullptr; //new uint8_t[m_bytesToPatch];
+}
+
 Detour64::Detour64(void* detourFunc, void* targetFunc, int bytesToPatch)
 {
-	assert(bytesToPatch >= 14);
+	assert(bytesToPatch >= MINIMUM_PATCH_SIZE_X64);
 
 	m_targetFunc = (uint8_t*)targetFunc;
 	m_detourFunc = (uint8_t*)detourFunc;
@@ -86,8 +123,6 @@ void* Detour64::patch()
 	if (m_patched)
 		return m_trampoline;
 
-	memcpy(m_originalBytes, m_targetFunc, m_bytesToPatch);
-
 	csh csHandle;
 	cs_insn* inst;
 	cs_err csRes = cs_open(CS_ARCH_X86, CS_MODE_64, &csHandle);
@@ -95,20 +130,30 @@ void* Detour64::patch()
 
 	cs_option(csHandle, CS_OPT_DETAIL, CS_OPT_ON);
 
-	size_t count = cs_disasm(csHandle, m_targetFunc, m_bytesToPatch, (uint64_t)m_targetFunc, 0, &inst);
-	x_assert(count > 0, "cs_disasm failed to disassemble code in Detour64::patch");
+	if (m_bytesToPatch == -1)
+	{
+		m_bytesToPatch = calculateBytesToPatch(csHandle);
+		m_originalBytes = new uint8_t[m_bytesToPatch];
+	}
 
-	m_trampolineSize = calculateTrampolineSize(inst, count);
+	size_t instCount = cs_disasm(csHandle, m_targetFunc, m_bytesToPatch, (uint64_t)m_targetFunc, 0, &inst);
+	x_assert(instCount > 0, "cs_disasm failed to disassemble code in Detour64::patch");
+
+	m_trampolineSize = calculateTrampolineSize(inst, instCount);
 
 	m_trampoline = new uint8_t[m_trampolineSize];
 	MemoryProtect ignore(m_trampoline, m_trampolineSize, PAGE_EXECUTE_READWRITE, false);
+
+	// Backup original code
+	memcpy(m_originalBytes, m_targetFunc, m_bytesToPatch);
+
 
 	/*
 	* Copies bytes to patch to trampoline and fixes instruction which rely on 
 	*	relative disp positioning. (e.g. MOV RAX [EIP+40FC])
 	*/
 	int offset = 0;
-	for (int i = 0; i < count; i++)
+	for (int i = 0; i < instCount; i++)
 	{
 		cs_insn* currentInstr = &(inst[i]);
 		bool keepOriginalInstr = true;
@@ -132,7 +177,26 @@ void* Detour64::patch()
 
 					offset += 10;
 					keepOriginalInstr = false;
+					break;
 				}
+			}
+		}
+		else if (currentInstr->bytes[0] == 0xE9u && currentInstr->size == 5)
+		{
+			if (currentInstr->detail->x86.op_count == 1 &&
+				currentInstr->detail->x86.operands[0].type == x86_op_type::X86_OP_IMM)
+			{
+				// assume we are too far to use a normal 0xE9 jump with +/-2GB displacement
+				int64_t disp = currentInstr->detail->x86.operands[0].imm;
+				uint64_t absoluteAddr = (currentInstr->address + currentInstr->size) + disp;
+
+				m_trampoline[offset] = (uint8_t)0xFF; //JMP
+				m_trampoline[offset+1] = (uint8_t)0x25; //[RIP]
+				*(uint32_t*)&m_trampoline[offset+2] = 0; // +0
+				*(uint64_t*)&m_trampoline[offset+6] = (uint64_t)absoluteAddr;
+
+				offset += 14;
+				keepOriginalInstr = false;
 			}
 		}
 		
@@ -148,7 +212,7 @@ void* Detour64::patch()
 	*(uint32_t*)&m_trampoline[offset + 2] = 0;
 	*(uint64_t*)&m_trampoline[offset + 6] = (uint64_t)m_targetFunc + m_bytesToPatch;
 
-	cs_free(inst, count);
+	cs_free(inst, instCount);
 	cs_close(&csHandle);
 
 	/*
@@ -167,6 +231,8 @@ void* Detour64::patch()
 	}
 
 	m_patched = true;
+	MemoryProtect ignore2(m_trampoline, m_trampolineSize, PAGE_EXECUTE_READ, false);
+
 	return m_trampoline;
 }
 
@@ -207,6 +273,27 @@ void Detour64::unpatch()
 	m_patched = false;
 }
 
+int Detour64::getPatchSize()
+{
+	return m_bytesToPatch;
+}
+
+
+
+int Detour64::calculateBytesToPatch(csh csHandle)
+{
+	cs_insn* inst;
+	size_t instCount = cs_disasm(csHandle, m_targetFunc, 0x40, (uint64_t)m_targetFunc, 0, &inst);
+	x_assert(instCount > 0, "cs_disasm failed to disassemble code in Detour64::calculateBytesToPatch");
+
+	int requiredBytes = 0;
+	for (int i = 0; i < instCount && requiredBytes < MINIMUM_PATCH_SIZE_X64; i++)
+		requiredBytes += (&(inst[i]))->size;
+
+	cs_free(inst, instCount);
+	return requiredBytes;
+}
+
 int Detour64::calculateTrampolineSize(cs_insn* inst, size_t instCount)
 {
 	int tSize = 0;
@@ -227,7 +314,18 @@ int Detour64::calculateTrampolineSize(cs_insn* inst, size_t instCount)
 					// Add 10 bytes. MOV RAX [RIP+DISP] or MOV [RIP+DISP] RAX
 					keepOriginalInstr = false;
 					tSize += 10;
+					break;
 				}
+			}
+		}
+		else if (currentInstr->bytes[0] == 0xE9u && currentInstr->size == 5) // 5 is a jmp + 4 byte displacement
+		{
+			if (currentInstr->detail->x86.op_count == 1 && 
+				currentInstr->detail->x86.operands[0].type == x86_op_type::X86_OP_IMM)
+			{
+				// assume we are too far to use a normal 0xE9 jump with +/-2GB displacement
+				keepOriginalInstr = false;
+				tSize += 14;
 			}
 		}
 

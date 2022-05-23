@@ -10,7 +10,10 @@
 #include "../utils/definition.hpp"
 #include "../utils/util.h"
 
-#define HOOK_NEW_FUNCTION(hookManager, func, hookedFunc, patchSize) \
+#define HOOK_FUNCTION_NO_SIZE(hookManager, func, hookedFunc) \
+	hookManager->hookNewFunction<Util::line()>(func, hookedFunc, -1);
+
+#define HOOK_FUNCTION_SIZE(hookManager, func, hookedFunc, patchSize) \
 	hookManager->hookNewFunction<Util::line()>(func, hookedFunc, patchSize);
 
 struct IHookedFuncWrapper;
@@ -210,7 +213,11 @@ public:
 		HookedFuncWrapper<line, T*>::_function = hookedFunc;
 		HookedFuncData hookedFuncData;
 		hookedFuncData.hookedFunction = hookedFuncWrapper;
-		hookedFuncData.detour = new Detour(HookedFuncWrapper<line, T*>::invoke, func, patchSize);
+		if (patchSize == -1)
+			hookedFuncData.detour = new Detour(HookedFuncWrapper<line, T*>::invoke, func);
+		else
+			hookedFuncData.detour = new Detour(HookedFuncWrapper<line, T*>::invoke, func, patchSize);
+		
 		hookedFuncData.oFunc = static_cast<T*>(hookedFuncData.detour->patch());
 		hookedFuncData.hookedWrapperId = line;
 
