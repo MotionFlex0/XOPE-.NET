@@ -5,16 +5,17 @@
 #include <intrin.h>
 #include <source_location>
 #include <sstream>
-#include <unordered_map>
+#include <thread>
 #include <typeindex>
+#include <unordered_map>
 #include "../utils/definition.hpp"
 #include "../utils/util.h"
 
-#define HOOK_FUNCTION_NO_SIZE(hookManager, func, hookedFunc) \
-	hookManager->hookNewFunction<Util::line()>(func, hookedFunc, -1);
+#define HOOK_FUNCTION_NO_SIZE(hookManager, target, hookedFunc) \
+	hookManager->hookNewFunction<Util::line()>(target, hookedFunc, -1, #target);
 
-#define HOOK_FUNCTION_SIZE(hookManager, func, hookedFunc, patchSize) \
-	hookManager->hookNewFunction<Util::line()>(func, hookedFunc, patchSize);
+#define HOOK_FUNCTION_SIZE(hookManager, target, hookedFunc, patchSize) \
+	hookManager->hookNewFunction<Util::line()>(target, hookedFunc, patchSize, #target);
 
 struct IHookedFuncWrapper;
 
@@ -81,11 +82,8 @@ struct HookedFuncWrapper<line, R(__cdecl *)(Args...)> : public IHookedFuncWrappe
 
 	static R invoke(Args... args)
 	{
-		HookedFuncWrapper<line, Type>* this_ = getInstance();
-		this_->increaseRefCount();
-		R ret = _function(args...);
-		this_->decreaseRefCount();
-		return ret;
+		ScopedReferenceCounter refCounter(getInstance());
+		return _function(args...);
 	}
 
 	int getReferenceCount() override
@@ -108,6 +106,22 @@ private:
 	HookedFuncWrapper() { }
 
 	std::atomic_int _callRefCount = 0;
+
+	class ScopedReferenceCounter
+	{
+	public:
+		ScopedReferenceCounter(HookedFuncWrapper<line, Type>* funcWrapper)
+		{
+			_funcWrapper = funcWrapper;
+			_funcWrapper->increaseRefCount();
+		}
+		~ScopedReferenceCounter()
+		{
+			_funcWrapper->decreaseRefCount();
+		}
+	private:
+		HookedFuncWrapper<line, Type>* _funcWrapper;
+	};
 };
 
 #ifndef _WIN64
@@ -173,6 +187,7 @@ public:
 	~HookManager()
 	{
 		destroy();
+		//m_destroyed = true;
 	}
 
 	void destroy() {
@@ -184,7 +199,7 @@ public:
 			for (auto& [_, v] : m_hooks)
 			{
 				while (v.hookedFunction->getReferenceCount() > 0)
-					Sleep(20);
+					std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			}
 
 			for (auto& [_, v] : m_hooks)
@@ -204,9 +219,9 @@ public:
 	// line is used to create unique class based on template class which have 
 	//  identical T function arguments
 	template <uint32_t line, class T>
-	bool hookNewFunction(T* func, T* hookedFunc, int patchSize)
+	bool hookNewFunction(T* target, T* hookedFunc, int patchSize, const char* targetName = "")
 	{
-		if (m_hooks.contains((uintptr_t)func))
+		if (m_hooks.contains((uintptr_t)target))
 			return true;
 
 		IHookedFuncWrapper* hookedFuncWrapper = HookedFuncWrapper<line, T*>::getInstance();
@@ -214,18 +229,19 @@ public:
 		HookedFuncData hookedFuncData;
 		hookedFuncData.hookedFunction = hookedFuncWrapper;
 		if (patchSize == -1)
-			hookedFuncData.detour = new Detour(HookedFuncWrapper<line, T*>::invoke, func);
+			hookedFuncData.detour = new Detour(HookedFuncWrapper<line, T*>::invoke, target);
 		else
-			hookedFuncData.detour = new Detour(HookedFuncWrapper<line, T*>::invoke, func, patchSize);
+			hookedFuncData.detour = new Detour(HookedFuncWrapper<line, T*>::invoke, target, patchSize);
 		
 		hookedFuncData.oFunc = static_cast<T*>(hookedFuncData.detour->patch());
 		hookedFuncData.hookedWrapperId = line;
+		hookedFuncData.funcName = targetName;
 
 		std::stringstream ss;
-		ss << "Failed to hook function with type: " << typeid(func).name();
+		ss << "Failed to hook function with type: " << typeid(target).name();
 		x_assert(std::any_cast<T*>(hookedFuncData.oFunc) != 0x00, ss.str().c_str());
 		
-		return m_hooks.insert({ (uintptr_t)func, std::move(hookedFuncData) }).second;
+		return m_hooks.insert({ (uintptr_t)target, std::move(hookedFuncData) }).second;
 	}
 
 	//Returns original function _F with the correct type
@@ -287,6 +303,7 @@ private:
 		uint32_t hookedWrapperId;
 		Detour* detour;
 		std::any oFunc;
+		const char* funcName;
 	};
 
 	bool m_destroyed = false;

@@ -25,7 +25,9 @@ void Application::init(HMODULE dllModule)
 
     std::string name = pipeServerName.str();
     initServer("\\\\.\\pipe\\"+name);
-    initClient(name);
+    bool success = initClient(name);
+    if (!success)
+        _stopApplication = true;
 }
 
 void Application::start()
@@ -41,7 +43,32 @@ void Application::start()
 
 void Application::shutdown()
 {
-    // This block is only entered if shutdown() is called from outside of this class (e.g. DLL_PROCESS_DETACH)
+    // This block is only entered if shutdown() is called from outside of this class (e.g. DllMain with DLL_PROCESS_DETACH)
+    if (!_stopApplication)
+    {
+        _stopApplication = true;
+        WaitForSingleObject(_applicationThread, INFINITE);
+    }
+
+    if (_namedPipeServer != nullptr && _serverThread.joinable())
+    {
+        _namedPipeServer->shutdownServer();
+        _serverThread.join();
+    }
+
+    if (_hookManager != nullptr)
+        _hookManager->destroy();
+
+    if (_namedPipeClient != nullptr)
+        _namedPipeClient->close();
+
+    delete _hookManager;
+    delete _namedPipeClient;
+    delete _namedPipeServer;
+}
+
+void Application::programTerminatingShutdown()
+{
     if (!_stopApplication)
     {
         _stopApplication = true;
@@ -54,13 +81,7 @@ void Application::shutdown()
         _serverThread.join();
     }
 
-    _hookManager->destroy();
-
     _namedPipeClient->close();
-
-    delete _hookManager;
-    delete _namedPipeClient;
-    delete _namedPipeServer;
 }
 
 void Application::run()
@@ -323,7 +344,7 @@ void Application::processIncomingMessages()
             timeout.tv_sec = 2;
             timeout.tv_usec = 0;
 
-            int selectRet = 1;// select(NULL, nullptr, &fds, nullptr, &timeout);
+            int selectRet = select(NULL, nullptr, &fds, nullptr, &timeout);
 
             _namedPipeClient->send(client::IsSocketWritableResponse(
                 jsonMessage["JobId"].get<std::string>(),
@@ -427,7 +448,6 @@ void Application::initHooks()
     _hookManager = new HookManager();
 
     // Not the biggest fan of macros but unable to find a better way to do this
-    // TODO: Improve - Also remove the patch size and use capstone throughout
     HOOK_FUNCTION_NO_SIZE(_hookManager, connect, Functions::Hooked_Connect);
     HOOK_FUNCTION_NO_SIZE(_hookManager, send, Functions::Hooked_Send);
     HOOK_FUNCTION_NO_SIZE(_hookManager, recv, Functions::Hooked_Recv);
@@ -440,24 +460,22 @@ void Application::initHooks()
     HOOK_FUNCTION_NO_SIZE(_hookManager, socket, Functions::Hooked_Socket);
     HOOK_FUNCTION_NO_SIZE(_hookManager, WSASocketA, Functions::Hooked_WSASocketA);
     HOOK_FUNCTION_NO_SIZE(_hookManager, WSASocketW, Functions::Hooked_WSASocketW);
-;
+//;
     // WSAAsyncSelect & WSAEventSelect have not been hooked but may be needed for non-blocking connects
 }
 
 
 bool Application::initClient(std::string spyServerPipeName)
 {
-    const char* pipePath = "\\\\.\\pipe\\xopeui";
+    std::string pipePath = "\\\\.\\pipe\\xopeui_" + std::to_string(GetCurrentProcessId());
 
-    _namedPipeClient = new NamedPipeClient(pipePath);
+    _namedPipeClient = new NamedPipeClient(pipePath.c_str());
     if (!_namedPipeClient->isPipeBroken())
     {
         std::cout << "successfully connected to pipe: " << pipePath << '\n';
         _namedPipeClient->send(client::ConnectedSuccessMessage(spyServerPipeName));
         _namedPipeClient->flushOutBuffer();
     }
-    else
-        MessageBoxA(NULL, "Failed to connect to named pipe!", "ERROR", MB_OK);
 
     return !_namedPipeClient->isPipeBroken();
 }

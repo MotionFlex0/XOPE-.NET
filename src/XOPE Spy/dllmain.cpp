@@ -1,6 +1,7 @@
 //Uncommect the line below to show Debug Console on process injection
 //#define SHOW_DEBUG_CONSOLE
 
+#include <csignal>
 #include <iostream>
 #include "application.h"
 
@@ -15,7 +16,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
     {
     case DLL_PROCESS_ATTACH:
     {
-        Sleep(1000); //temp
+        DisableThreadLibraryCalls(hModule);
+        Sleep(100); //temp
         InitConsole();
         Application& app = Application::getInstance();
         app.init(hModule);
@@ -25,7 +27,14 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
     case DLL_PROCESS_DETACH:
     {
         Application& app = Application::getInstance();
-        if (app.isRunning()) app.shutdown();
+        if (app.isRunning())
+        {
+            // If DLL is unloaded dynamically
+            if (lpReserved == NULL)
+                app.shutdown();
+            else
+                app.programTerminatingShutdown();
+        }
         RemoveConsole();
         break;
     }
@@ -67,10 +76,3 @@ void RemoveConsole()
         MessageBoxA(NULL, "Failed to free console!", "ERROR", MB_OK);
 #endif
 }
-
-//void PipeThread(LPVOID module)
-//{
-//
-//    if (shouldFreeLibrary)
-//        FreeLibraryAndExitThread((HMODULE)module, 0);
-//}

@@ -31,6 +31,8 @@ public:
 	void init(HMODULE dllModule);
 	void start();
 	void shutdown();
+	// Only use this shutdown if the program is closing/terminating, otherwise use shutdown()
+	void programTerminatingShutdown();
 
 	HookManager* getHookManager();
 	const PacketFilter& getPacketFilter();
@@ -91,5 +93,6 @@ private:
 
 void Application::sendToUI(Util::IMessageDerived auto message)
 {
-	_namedPipeClient->send(message);
+	if (_namedPipeClient != nullptr)
+		_namedPipeClient->send(message);
 }
