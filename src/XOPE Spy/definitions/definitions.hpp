@@ -179,11 +179,12 @@ namespace client
 	// Only use for messages passed to extern SendMessageToLog
 	struct ExternalMessage : IMessage
 	{
-		ExternalMessage(std::string info) : IMessage(UiMessageType::EXTERNAL_MESSAGE), externalMessage(info) { }
+		ExternalMessage(std::string info, std::string moduleName = "") : IMessage(UiMessageType::EXTERNAL_MESSAGE), externalMessage(info), moduleName(moduleName) { }
 
 		std::string externalMessage;
+		std::string moduleName;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ExternalMessage, messageType, externalMessage);
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ExternalMessage, messageType, externalMessage, moduleName);
 	};
 
 	struct ErrorMessage : IMessage
