@@ -12,5 +12,7 @@ namespace XOPE_UI.Config
 
         public static int SinkPortIPv4 => 10101;
         public static int SinkPortIPv6 => 10102;
+
+        public static string ReceiverPipeNamePrefix => "xopeui_";
     }
 }

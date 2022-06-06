@@ -34,7 +34,7 @@ namespace XOPE_UI.Spy
             return success ? message : null;
         }
 
-        public void RunAsync() 
+        public void RunAsync(string receiverName) 
         {
             if (receiverThread != null)
             {
@@ -46,7 +46,7 @@ namespace XOPE_UI.Spy
 
             setIsConnectingState();
             receiverThread = Task.Factory.StartNew(() => {
-                using (NamedPipeServerStream receiverStream = new NamedPipeServerStream("xopeui"))
+                using (NamedPipeServerStream receiverStream = new NamedPipeServerStream(receiverName))
                 {
                     receiverStream.WaitForConnection();
                     Console.WriteLine("Spy connected to Receiver. Waiting for CONNECTION_SUCCESS message...");

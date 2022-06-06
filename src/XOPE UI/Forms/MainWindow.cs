@@ -187,19 +187,18 @@ namespace XOPE_UI
 
                             if (loadingDialog.CancellationToken.IsCancellationRequested || selectedProcess.HasExited)
                             {
-                                Console.WriteLine("Cancelling injecting into processes.");
+                                Console.WriteLine($"Cancelling injecting into {selectedProcess.ProcessName}.");
                                 loadingDialog.CloseDialog();
                                 return;
                             }
-
 
                             Thread.Sleep(1000);
                         }
                     }
 
-                    Console.WriteLine($"Injecting into [{selectedProcess.Id}]{selectedProcess.ProcessName}.exe...");
+                    Console.WriteLine($"Injecting into [{selectedProcess.Id}] - {selectedProcess.ProcessName}.exe...");
 
-                    _spyManager.RunAsync();
+                    _spyManager.RunAsync($"{Config.Spy.ReceiverPipeNamePrefix}{selectedProcess.Id}");
 
                     bool res = CreateRemoteThread.InjectSpy(selectedProcess.Handle);
 

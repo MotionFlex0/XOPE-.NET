@@ -8,7 +8,8 @@ namespace XOPE_UI.Spy
     {
         bool IsConnected { get; }
 
-        void RunAsync();
+        // Not sure where to put this paramater
+        void RunAsync(string receiverName);
         void ShutdownAndWait();
     }
 }

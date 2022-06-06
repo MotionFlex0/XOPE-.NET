@@ -17,6 +17,7 @@ using XOPE_UI.Spy.Type;
 namespace XOPE_UI
 {
     // TODO: Refactor!
+    // TODO: Add a filter for the Log/Log dialog, allowing for more granular control of messages
     public class SpyManager
     {
         public event EventHandler<Packet> NewPacket;
@@ -92,14 +93,14 @@ namespace XOPE_UI
         }
 
         // TODO: Refactor this method
-        public void RunAsync()
+        public void RunAsync(string receiverPipeName)
         {
             if (_spyThread != null)
                 return;
 
             _cancellationTokenSource = new CancellationTokenSource();
 
-            MessageReceiver.RunAsync();
+            MessageReceiver.RunAsync(receiverPipeName);
 
             _spyThread = Task.Factory.StartNew(() =>
             {
@@ -176,7 +177,7 @@ namespace XOPE_UI
                     {
                         SpyData.Connections.TryAdd(socket, connection);
                         ConnectionEstablished?.Invoke(this, connection);
-                        Console.WriteLine($"Socket {socket} has been opened.");
+                        Debug.WriteLine($"Socket {socket} has been opened.");
 
                         bool isTunneling = json.Value<bool>("tunneling");
                         if (isTunneling)
@@ -211,7 +212,7 @@ namespace XOPE_UI
 
                                 if (++counter >= 5)
                                 {
-                                    Console.WriteLine($"Socket never became writable. Socket: {connection.SocketId}.");
+                                    Debug.WriteLine($"Socket never became writable. Socket: {connection.SocketId}.");
                                     RemoveExistingConnection(connection.SocketId);
                                 }
                                 else if (resp.Type == UiMessageType.JOB_RESPONSE_SUCCESS)
@@ -237,7 +238,7 @@ namespace XOPE_UI
                     }
                     else
                     {
-                        Console.WriteLine($"Socket connected failed. Socket: {connection.SocketId} | " +
+                        Debug.WriteLine($"Socket connected failed. Socket: {connection.SocketId} | " +
                             $"Connect Ret: {connectRet} | " +
                             $"WSALastError: {connectLastError}");
                     }
@@ -261,7 +262,7 @@ namespace XOPE_UI
 
                     if (!SpyData.Connections.ContainsKey(socket))
                     {
-                        Console.WriteLine($"Missed Connect/WSAConnect for socket {socket}. Reqesting info...");
+                        Debug.WriteLine($"Missed Connect/WSAConnect for socket {socket}. Reqesting info...");
 
                         Connection connection = new Connection(socket);
                         SpyData.Connections.TryAdd(connection.SocketId, connection);
@@ -282,11 +283,11 @@ namespace XOPE_UI
                                 connection.SocketStatus = Connection.Status.ESTABLISHED;
 
                                 ConnectionEstablished?.Invoke(this, connection); // 
-                                Console.WriteLine($"Added previously opened socket {socket}.");
+                                Debug.WriteLine($"Added previously opened socket {socket}.");
                             }
                             else if (resp.Type == UiMessageType.JOB_RESPONSE_ERROR)
                             {
-                                Console.WriteLine($"Failed to find info on socket {socket}.");
+                                Debug.WriteLine($"Failed to find info on socket {socket}.");
                                 RemoveExistingConnection(connection.SocketId);
                             }
 
@@ -301,12 +302,12 @@ namespace XOPE_UI
                         if (json.Value<int>("ret") == 0)
                         {
                             RemoveExistingConnection(socket);
-                            Console.WriteLine($"Socket {socket} closed gracefully.");
+                            Debug.WriteLine($"Socket {socket} closed gracefully.");
                         }
                         else if (json.Value<int>("ret") == -1)
                         {
                             if (json.Value<int>("lastError") != 10035) // if WSAGetLastError() != WSAEWOULDBLOCK
-                                Console.WriteLine($"Socket {socket} returned WSAError {json.Value<int>("lastError")}.");
+                                Debug.WriteLine($"Socket {socket} returned WSAError {json.Value<int>("lastError")}.");
                         }
                         else
                         {
@@ -342,13 +343,13 @@ namespace XOPE_UI
                         if (hookedFuncType == HookedFuncType.WSARECV && isSocketClosed)
                         {
                             RemoveExistingConnection(socket);
-                            Console.WriteLine($"Socket {socket} closed gracefully.");
+                            Debug.WriteLine($"Socket {socket} closed gracefully.");
                         }
                         else if (hookedFuncType == HookedFuncType.WSARECV && ret == -1)
                         {
                             if (lastError != 997) // WSA_IO_PENDING
                             {
-                                Console.WriteLine($"Socket {socket} returned SOCKET_ERROR with the code {lastError}.");
+                                Debug.WriteLine($"Socket {socket} returned SOCKET_ERROR with the code {lastError}.");
                                 RemoveExistingConnection(socket);
                             }
                         }
@@ -361,7 +362,7 @@ namespace XOPE_UI
                                 if (hookedFuncType == HookedFuncType.WSARECV && buffers[i].Value<int>("length") == 0)
                                 {
                                     RemoveExistingConnection(socket);
-                                    Console.WriteLine($"Socket {socket} closed gracefully.");
+                                    Debug.WriteLine($"Socket {socket} closed gracefully.");
                                     break;
                                 }
 
@@ -408,7 +409,7 @@ namespace XOPE_UI
             }
             else if (messageType == UiMessageType.EXTERNAL_MESSAGE)
             {
-                Console.WriteLine($"[Spy-External] {json.Value<String>("externalMessage")}");
+                Console.WriteLine($"[{json.Value<String>("moduleName")}] {json.Value<String>("externalMessage")}");
             }
             else if (messageType == UiMessageType.ERROR_MESSAGE)
             {

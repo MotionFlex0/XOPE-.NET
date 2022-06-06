@@ -3,8 +3,6 @@
 NamedPipeClient::NamedPipeClient(const char* pipePath)
 {
     HANDLE h = CreateFileA(pipePath, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-    if (h == INVALID_HANDLE_VALUE)
-        MessageBoxA(NULL, "COULD NOT CONNECT TO PIPE", "ERROR", MB_OK);
     this->_pipe = h;
 }
 
