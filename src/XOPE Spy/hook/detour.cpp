@@ -190,14 +190,28 @@ void* Detour64::patch()
 				int64_t disp = currentInstr->detail->x86.operands[0].imm;
 				uint64_t absoluteAddr = (currentInstr->address + currentInstr->size) + disp;
 
-				m_trampoline[offset] = (uint8_t)0xFF; //JMP
-				m_trampoline[offset+1] = (uint8_t)0x25; //[RIP]
+				m_trampoline[offset] = (uint8_t)0xFF; //JMP [RIP]
+				m_trampoline[offset+1] = (uint8_t)0x25;
 				*(uint32_t*)&m_trampoline[offset+2] = 0; // +0
 				*(uint64_t*)&m_trampoline[offset+6] = (uint64_t)absoluteAddr;
 
 				offset += 14;
 				keepOriginalInstr = false;
 			}
+		}
+		else if (currentInstr->bytes[0] == 0xE8u) // TODO: Check to make sure this works properly
+		{
+			// assume we are too far to use a normal 0xE9 jump with +/-2GB displacement
+			int64_t disp = currentInstr->detail->x86.operands[0].imm;
+			uint64_t absoluteAddr = (currentInstr->address + currentInstr->size) + disp;
+
+			m_trampoline[offset] = 0xFFu; //CALL [RIP]
+			m_trampoline[offset + 1] = 0x15u; 
+			*(uint32_t*)&m_trampoline[offset + 2] = 0; // +0
+			*(uint64_t*)&m_trampoline[offset + 6] = (uint64_t)absoluteAddr;
+
+			offset += 14;
+			keepOriginalInstr = false;
 		}
 		
 		if (keepOriginalInstr)
@@ -219,7 +233,7 @@ void* Detour64::patch()
 	* Patches target function with a JMP and replace the remaining bytes with NOP
 	*/
 	MemoryProtect mp(m_targetFunc, m_bytesToPatch, PAGE_EXECUTE_READWRITE);
-	m_targetFunc[0] = (uint8_t)0xFF; //JMP
+	*m_targetFunc = 0xFFu; //JMP
 	m_targetFunc[1] = (uint8_t)0x25; //[RIP]
 	*(uint32_t*)&m_targetFunc[2] = 0; // +0
 	*(uint64_t*)&m_targetFunc[6] = (uint64_t)m_detourFunc;
@@ -231,7 +245,6 @@ void* Detour64::patch()
 	}
 
 	m_patched = true;
-	MemoryProtect ignore2(m_trampoline, m_trampolineSize, PAGE_EXECUTE_READ, false);
 
 	return m_trampoline;
 }
@@ -318,7 +331,7 @@ int Detour64::calculateTrampolineSize(cs_insn* inst, size_t instCount)
 				}
 			}
 		}
-		else if (currentInstr->bytes[0] == 0xE9u && currentInstr->size == 5) // 5 is a jmp + 4 byte displacement
+		else if (currentInstr->bytes[0] == 0xE9u && currentInstr->size == 5) // mnemonic == JMP | [0]:JMP + 4 byte displacement
 		{
 			if (currentInstr->detail->x86.op_count == 1 && 
 				currentInstr->detail->x86.operands[0].type == x86_op_type::X86_OP_IMM)
@@ -327,6 +340,11 @@ int Detour64::calculateTrampolineSize(cs_insn* inst, size_t instCount)
 				keepOriginalInstr = false;
 				tSize += 14;
 			}
+		}
+		else if (currentInstr->bytes[0] == 0xE8u) // mnemonic == CALL
+		{
+			keepOriginalInstr = false;
+			tSize += 14;
 		}
 
 		if (keepOriginalInstr)
