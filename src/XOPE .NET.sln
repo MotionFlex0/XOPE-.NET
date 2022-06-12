@@ -167,7 +167,6 @@ Global
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Debug|x64 binding (UI-Spy) [Part 1].ActiveCfg = Debug|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Debug|x64 binding (UI-Spy) [Part 1].Build.0 = Debug|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Debug|x86 binding (Spy) [Part 2].ActiveCfg = Debug|Any CPU
-		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Debug|x86 binding (Spy) [Part 2].Build.0 = Debug|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Debug|x86 build.ActiveCfg = Debug|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Debug|x86 build.Build.0 = Debug|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Release|Any CPU (Samples-Controls).ActiveCfg = Release|Any CPU

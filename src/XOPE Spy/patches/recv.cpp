@@ -78,9 +78,9 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
 
     if (modified)
     {
-        size_t newBytesRead = min(packet.size(), len);
+        size_t newBytesRead = min(packet.size(), static_cast<size_t>(len));
         memcpy(buf, packet.data(), newBytesRead);
-        return newBytesRead;
+        return static_cast<int>(newBytesRead);
     }
     else
         return bytesRead;

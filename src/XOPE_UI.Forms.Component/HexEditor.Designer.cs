@@ -29,7 +29,7 @@ namespace XOPE_UI.View.Component
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.byteGridView = new System.Windows.Forms.DataGridView();
             this.Column0 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -83,6 +83,7 @@ namespace XOPE_UI.View.Component
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.byteGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleVertical;
+            this.byteGridView.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.byteGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.byteGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column0,
@@ -101,7 +102,6 @@ namespace XOPE_UI.View.Component
             this.Column13,
             this.Column14,
             this.Column15});
-            this.byteGridView.Cursor = System.Windows.Forms.Cursors.Default;
             this.byteGridView.Location = new System.Drawing.Point(0, 0);
             this.byteGridView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.byteGridView.Name = "byteGridView";
@@ -119,6 +119,7 @@ namespace XOPE_UI.View.Component
             this.byteGridView.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.byteGridView_RowLeave);
             this.byteGridView.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.byteGridView_RowPrePaint);
             this.byteGridView.Scroll += new System.Windows.Forms.ScrollEventHandler(this.byteGridView_Scroll);
+            this.byteGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.byteGridView_KeyDown);
             this.byteGridView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.byteGridView_MouseUp);
             // 
             // Column0
@@ -259,6 +260,7 @@ namespace XOPE_UI.View.Component
             this.textGridView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.textGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+            this.textGridView.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.textGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.textGridView.ColumnHeadersHeight = 21;
             this.textGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
@@ -279,19 +281,19 @@ namespace XOPE_UI.View.Component
             this.dataGridViewTextBoxColumn14,
             this.dataGridViewTextBoxColumn15,
             this.dataGridViewTextBoxColumn16});
-            this.textGridView.Cursor = System.Windows.Forms.Cursors.Default;
             this.textGridView.Location = new System.Drawing.Point(2, 0);
             this.textGridView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textGridView.Name = "textGridView";
             this.textGridView.ReadOnly = true;
             this.textGridView.RowHeadersVisible = false;
             this.textGridView.RowHeadersWidth = 5;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.textGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
             this.textGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.textGridView.Size = new System.Drawing.Size(308, 102);
             this.textGridView.TabIndex = 2;
+            this.textGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textGridView_KeyDown);
             // 
             // dataGridViewTextBoxColumn1
             // 

@@ -60,7 +60,7 @@ namespace XOPE_UI.View
                 int closestCharIndex = editingControl.GetCharIndexFromPosition(mousePosRelToControl);
                 Point closestCharPoint = editingControl.GetPositionFromCharIndex(closestCharIndex);
 
-                // Could calculate the pixel length of the last character instead of a magic number
+                // TODO: Could calculate the pixel length of the last character instead of a magic number
                 if (closestCharIndex == editingControl.TextLength-1 && mousePosRelToControl.X > closestCharPoint.X + 7) 
                     closestCharIndex += 1;
 

@@ -67,7 +67,7 @@ namespace XOPE_UI.View.Component
         
         public int Add(Packet packet)
         {
-            return Add(packet.Type, packet.Socket, packet.Data, packet.Modified);
+            return Add(packet.Type, packet.Socket, packet.Data, packet.Modified, packet.Tunneled);
         }
 
         public void Clear()
