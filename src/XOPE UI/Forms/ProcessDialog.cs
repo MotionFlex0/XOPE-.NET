@@ -4,7 +4,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Management;
 using System.Runtime.Caching;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using XOPE_UI.Native;
 
@@ -17,9 +19,14 @@ namespace XOPE_UI.View
 
         private SortedDictionary<int, Process> processes;
 
-        private List<ListViewItem> shadowProcessListItems;
+        // Use this if you need to go through the process list, instead of "processes"
+        //   as "processes" contains elevated processes
+        // <processId, listViewItem>
+        private Dictionary<int, ListViewItem> shadowProcessListItems;
 
         private bool isElevated;
+
+        private Guid currentListId;
 
         public ProcessDialog(bool isElevated)
         {
@@ -28,7 +35,7 @@ namespace XOPE_UI.View
             this.isElevated = isElevated;
 
             processes = new SortedDictionary<int, Process>();
-            shadowProcessListItems = new List<ListViewItem>();
+            shadowProcessListItems = new Dictionary<int, ListViewItem>();
 
             this.processesListView.Columns[0].Width = 400;//processesView.Width;
             is64bitText.Text = Environment.Is64BitProcess.ToString();
@@ -84,6 +91,7 @@ namespace XOPE_UI.View
 
             this.confirmButton.Enabled = false;
 
+            currentListId = Guid.NewGuid();
             processes.Clear();
             shadowProcessListItems.Clear();
 
@@ -93,6 +101,33 @@ namespace XOPE_UI.View
 
             this.processesListView.BeginUpdate();
             this.processesListView.Items.Clear();
+
+            // Get command-line arguments on sepearate thread due to taking >100ms
+            Task.Factory.StartNew(() =>
+            {
+                Guid listToUpdate = currentListId;
+                using (ManagementObjectSearcher mos =
+                    new($"SELECT CommandLine, ProcessId FROM Win32_Process"))
+                {
+                    if (this.IsDisposed || listToUpdate != currentListId)
+                        return;
+
+
+                    foreach (ManagementObject mo in mos.Get())
+                    {
+                        if (listToUpdate != currentListId)
+                            break;
+
+                        int pid = Convert.ToInt32(mo["ProcessId"]);
+                        if (!shadowProcessListItems.ContainsKey(pid))
+                            continue;
+
+                        this.Invoke(() => shadowProcessListItems[pid].ToolTipText = mo["CommandLine"] as string);
+                    }
+
+                    //Console.WriteLine(;
+                }
+            });
 
             foreach (KeyValuePair<int, Process> kv in processes)
             { 
@@ -109,17 +144,20 @@ namespace XOPE_UI.View
 
                     string processFilePath = NativeMethods.GetFullProcessName(p.Handle, 0);
                     string processName = Path.GetFileName(processFilePath);
+
                     ListViewItem listViewItem = new ListViewItem($"[{pid}] {processName} ({arch})", processName)
                     {
-                        Tag = p.Id
+                        Tag = p.Id,
                     };
+
+
 
                     this.Invoke(new Action(() =>
                     {
                         if (!this.processesListView.SmallImageList.Images.ContainsKey(processName))
                             this.processesListView.SmallImageList.Images.Add(processName, Icon.ExtractAssociatedIcon(processFilePath));
                         this.processesListView.Items.Add(listViewItem);
-                        shadowProcessListItems.Add(listViewItem);
+                        shadowProcessListItems.Add(p.Id, listViewItem);
                     }));
                 }
                 catch (Win32Exception)
@@ -131,6 +169,40 @@ namespace XOPE_UI.View
 
                 }
             }
+
+            //Add a * if process was the first to start with that name
+            HashSet<string> processNamesChecked = new HashSet<string>();
+            for (int i = 0; i < this.processesListView.Items.Count; i++)
+            {
+                ListViewItem listViewItem = this.processesListView.Items[i];
+                Process process = processes[(int)listViewItem.Tag];
+
+                if (processNamesChecked.Contains(process.ProcessName))
+                    continue;
+
+                bool wasEarliestStartedProcess = true;
+                foreach (ListViewItem processItem in shadowProcessListItems.Values)
+                {
+                    Process p = processes[(int)processItem.Tag];
+                    if (p.Id == process.Id || p.ProcessName != process.ProcessName)
+                        continue;
+
+                    // process started after another p with the same name
+                    if (process.StartTime >= p.StartTime)
+                    {
+                        wasEarliestStartedProcess = false;
+                        break;
+                    }
+                }
+
+                if (wasEarliestStartedProcess)
+                {
+                    listViewItem.Text += " *";
+                    processNamesChecked.Add(process.ProcessName);
+                }
+
+            }
+
             this.processesListView.EndUpdate();
 
             UpdateProcessListLabel();
@@ -140,7 +212,7 @@ namespace XOPE_UI.View
 
             stopwatch.Stop();
 
-            this.Text = $"Process Selector - Loaded in {stopwatch.Elapsed.Milliseconds}ms";
+            this.Text = $"Process Selector - Loaded in {stopwatch.Elapsed.TotalMilliseconds:F0}ms";
         }
 
         private static ImageList GetImageListFromCache()
@@ -166,7 +238,7 @@ namespace XOPE_UI.View
             this.processesListView.BeginUpdate();
             this.processesListView.Items.Clear();
 
-            foreach (ListViewItem processItem in shadowProcessListItems)
+            foreach (ListViewItem processItem in shadowProcessListItems.Values)
             {
                 Process process = processes[(int)processItem.Tag];
                 if (process.ProcessName.IndexOf(searchQuery, StringComparison.OrdinalIgnoreCase) != -1)

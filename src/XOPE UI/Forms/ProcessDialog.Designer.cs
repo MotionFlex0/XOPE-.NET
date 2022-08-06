@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.processesListView = new System.Windows.Forms.ListView();
-            this.dummyHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.dummyHeader = new System.Windows.Forms.ColumnHeader();
             this.label1 = new System.Windows.Forms.Label();
             this.is64bitText = new System.Windows.Forms.TextBox();
             this.cancelButton = new System.Windows.Forms.Button();
@@ -49,11 +49,12 @@
             this.processesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.dummyHeader});
             this.processesListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.processesListView.HideSelection = false;
-            this.processesListView.Location = new System.Drawing.Point(12, 12);
+            this.processesListView.Location = new System.Drawing.Point(14, 14);
+            this.processesListView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.processesListView.MultiSelect = false;
             this.processesListView.Name = "processesListView";
-            this.processesListView.Size = new System.Drawing.Size(644, 306);
+            this.processesListView.ShowItemToolTips = true;
+            this.processesListView.Size = new System.Drawing.Size(751, 352);
             this.processesListView.TabIndex = 1;
             this.processesListView.UseCompatibleStateImageBehavior = false;
             this.processesListView.View = System.Windows.Forms.View.Details;
@@ -69,27 +70,30 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 330);
+            this.label1.Location = new System.Drawing.Point(10, 381);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(80, 13);
+            this.label1.Size = new System.Drawing.Size(84, 15);
             this.label1.TabIndex = 2;
             this.label1.Text = "Is64BitProcess:";
             // 
             // is64bitText
             // 
             this.is64bitText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.is64bitText.Location = new System.Drawing.Point(95, 326);
+            this.is64bitText.Location = new System.Drawing.Point(111, 376);
+            this.is64bitText.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.is64bitText.Name = "is64bitText";
             this.is64bitText.ReadOnly = true;
-            this.is64bitText.Size = new System.Drawing.Size(77, 20);
+            this.is64bitText.Size = new System.Drawing.Size(89, 23);
             this.is64bitText.TabIndex = 3;
             // 
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(581, 325);
+            this.cancelButton.Location = new System.Drawing.Point(678, 375);
+            this.cancelButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.Size = new System.Drawing.Size(88, 27);
             this.cancelButton.TabIndex = 4;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
@@ -99,9 +103,10 @@
             // 
             this.confirmButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.confirmButton.Enabled = false;
-            this.confirmButton.Location = new System.Drawing.Point(500, 325);
+            this.confirmButton.Location = new System.Drawing.Point(583, 375);
+            this.confirmButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.confirmButton.Name = "confirmButton";
-            this.confirmButton.Size = new System.Drawing.Size(75, 23);
+            this.confirmButton.Size = new System.Drawing.Size(88, 27);
             this.confirmButton.TabIndex = 5;
             this.confirmButton.Text = "Confirm";
             this.confirmButton.UseVisualStyleBackColor = true;
@@ -111,9 +116,10 @@
             // 
             this.processListTotalLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.processListTotalLabel.BackColor = System.Drawing.Color.White;
-            this.processListTotalLabel.Location = new System.Drawing.Point(552, 283);
+            this.processListTotalLabel.Location = new System.Drawing.Point(644, 327);
+            this.processListTotalLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.processListTotalLabel.Name = "processListTotalLabel";
-            this.processListTotalLabel.Size = new System.Drawing.Size(70, 13);
+            this.processListTotalLabel.Size = new System.Drawing.Size(82, 15);
             this.processListTotalLabel.TabIndex = 7;
             this.processListTotalLabel.Text = "0/0";
             this.processListTotalLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -121,18 +127,19 @@
             // searchTextBox
             // 
             this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.searchTextBox.Location = new System.Drawing.Point(242, 326);
+            this.searchTextBox.Location = new System.Drawing.Point(282, 376);
+            this.searchTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.searchTextBox.Name = "searchTextBox";
             this.searchTextBox.PlaceholderText = null;
-            this.searchTextBox.Size = new System.Drawing.Size(178, 20);
+            this.searchTextBox.Size = new System.Drawing.Size(207, 23);
             this.searchTextBox.TabIndex = 0;
             this.searchTextBox.TextChanged += new System.EventHandler(this.searchTextBox_TextChanged);
             // 
             // ProcessDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(668, 359);
+            this.ClientSize = new System.Drawing.Size(779, 414);
             this.Controls.Add(this.searchTextBox);
             this.Controls.Add(this.processListTotalLabel);
             this.Controls.Add(this.confirmButton);
@@ -140,6 +147,7 @@
             this.Controls.Add(this.is64bitText);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.processesListView);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ProcessDialog";
             this.Text = "Process Selector";
             this.Load += new System.EventHandler(this.ProcessDialog_Load);
