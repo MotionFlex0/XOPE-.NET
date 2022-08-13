@@ -152,7 +152,7 @@ bool Application::wasSocketIdSentToSink(SOCKET socket)
     return _socketsData[socket].socketIdSentToSink;
 }
 
-void Application::socketIdSentToSink(SOCKET socket)
+void Application::emitSocketIdSentToSink(SOCKET socket)
 {
     std::lock_guard<std::mutex> lock(_socketsDataMutex);
     _socketsData[socket].socketIdSentToSink = true;

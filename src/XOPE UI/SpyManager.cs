@@ -100,7 +100,7 @@ namespace XOPE_UI
 
             _cancellationTokenSource = new CancellationTokenSource();
 
-            MessageReceiver.RunAsync(receiverPipeName);
+            _ = MessageReceiver.RunAsync(receiverPipeName);
 
             _spyThread = Task.Factory.StartNew(() =>
             {
@@ -313,6 +313,7 @@ namespace XOPE_UI
                         {
                             byte[] data = Convert.FromBase64String(json.Value<String>("packetDataB64"));
                             bool modified = json.Value<bool>("modified");
+                            bool tunneled = json.Value<bool>("tunneled");
                             Packet packet = new Packet
                             {
                                 Id = Guid.NewGuid(),
@@ -320,15 +321,10 @@ namespace XOPE_UI
                                 Data = data,
                                 Length = data.Length,
                                 Socket = socket,
-                                Modified = modified
+                                Modified = modified,
+                                Tunneled = tunneled,
+                                UnderlyingEvent = json
                             };
-                            if (HttpTunnel != null && 
-                                HttpTunnel.IsTunnelingSocket(socket))
-                            {
-                                if (hookedFuncType == HookedFuncType.SEND)
-                                    HttpTunnel.Send(packet);
-                                packet.Tunneled = true;
-                            }
 
                             NewPacket?.Invoke(this, packet);
                         }
@@ -368,6 +364,7 @@ namespace XOPE_UI
 
                                 byte[] data = Convert.FromBase64String(buffers[i].Value<String>("dataB64"));
                                 bool modified = buffers[i].Value<bool>("modified");
+                                bool tunneled = json.Value<bool>("tunneled");
                                 Packet packet = new Packet
                                 {
                                     Id = Guid.NewGuid(),
@@ -375,15 +372,10 @@ namespace XOPE_UI
                                     Data = data,
                                     Length = data.Length,
                                     Socket = socket,
-                                    Modified = modified
+                                    Modified = modified,
+                                    Tunneled = tunneled,
+                                    UnderlyingEvent = json
                                 };
-                                if (HttpTunnel != null && 
-                                    HttpTunnel.IsTunnelingSocket(socket))
-                                {
-                                    if (hookedFuncType == HookedFuncType.WSASEND)
-                                        HttpTunnel.Send(packet);
-                                    packet.Tunneled = true;
-                                }
                                 NewPacket?.Invoke(this, packet);
                             }
                         }

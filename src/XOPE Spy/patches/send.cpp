@@ -14,18 +14,27 @@ int WSAAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
         bytesSent = SOCKET_ERROR;
         WSASetLastError(WSAECONNRESET);
     }
-    else if (app.isSocketTunneled(s))
+    //else if (app.isSocketTunneled(s))
+    //{
+    //    if (!app.wasSocketIdSentToSink(s))
+    //    {
+    //        int32_t s32 = s & 0xFFFFFFFF;
+    //        app.getHookManager()->get_ofunction<send>()(s, (char*)&s32, sizeof(s32), NULL);
+    //        app.emitSocketIdSentToSink(s);
+    //    }
+    //    bytesSent = len;
+    //}
+    else
     {
-        if (!app.wasSocketIdSentToSink(s))
+        if (app.isSocketTunneled(s) && !app.wasSocketIdSentToSink(s))
         {
             int32_t s32 = s & 0xFFFFFFFF;
-            app.getHookManager()->get_ofunction<send>()(s, (char*)&s32, sizeof(s32), NULL);
-            app.socketIdSentToSink(s);
+            app.getHookManager()->get_ofunction<send>()(s, (char*)&s32, 4, NULL);
+            app.emitSocketIdSentToSink(s);
         }
-        bytesSent = len;
-    }
-    else 
+
         bytesSent = app.getHookManager()->get_ofunction<send>()(s, (char*)packet.data(), static_cast<int>(packet.size()), flags);
+    }
 
     client::HookedFunctionCallPacketMessage hfcm;
     hfcm.functionName = HookedFunction::SEND;
@@ -33,6 +42,7 @@ int WSAAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
     hfcm.packetLen = len;
     hfcm.modified = modified;
     hfcm.ret = bytesSent;
+    hfcm.tunneled = app.isSocketTunneled(s);
 
     if (bytesSent == SOCKET_ERROR)
         hfcm.lastError = WSAGetLastError();

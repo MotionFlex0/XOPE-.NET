@@ -9,6 +9,7 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
     message.functionName = HookedFunction::WSASEND;
     message.socket = s;
     message.bufferCount = dwBufferCount;
+    message.tunneled = app.isSocketTunneled(s);
     
     // Required for the lifetime of WSASend(...)
     std::vector<Packet> modifiedPackets{ dwBufferCount };
@@ -42,22 +43,31 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
         message.ret = SOCKET_ERROR;
         WSASetLastError(WSAECONNRESET);
     }
-    else if (app.isSocketTunneled(s))
+    //else if (app.isSocketTunneled(s))
+    //{
+    //    if (!app.wasSocketIdSentToSink(s))
+    //    {
+    //        int32_t s32 = s & 0xFFFFFFFF;
+    //        app.getHookManager()->get_ofunction<send>()(s, (char*)&s32, sizeof(s32), NULL);
+    //        app.emitSocketIdSentToSink(s);
+    //    }
+
+    //    message.ret = 0;
+    //    for (DWORD i = 0; i < dwBufferCount; i++)
+    //        lpNumberOfBytesSent[i] = lpBuffers[i].len;
+    //}
+    else
     {
-        if (!app.wasSocketIdSentToSink(s))
+        if (app.isSocketTunneled(s) && !app.wasSocketIdSentToSink(s))
         {
             int32_t s32 = s & 0xFFFFFFFF;
             app.getHookManager()->get_ofunction<send>()(s, (char*)&s32, sizeof(s32), NULL);
-            app.socketIdSentToSink(s);
+            app.emitSocketIdSentToSink(s);
         }
 
-        message.ret = 0;
-        for (DWORD i = 0; i < dwBufferCount; i++)
-            lpNumberOfBytesSent[i] = lpBuffers[i].len;
-    }
-    else
         message.ret = app.getHookManager()->get_ofunction<WSASend>()(s, updatedBuffers.data(), dwBufferCount, 
             lpNumberOfBytesSent, dwFlags, lpOverlapped, lpCompletionRoutine);
+    }
 
     if (message.ret == 0)
     {
@@ -68,6 +78,9 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
         message.lastError = WSAGetLastError();
 
     app.sendToUI(message);
+
+    if (message.ret == SOCKET_ERROR && message.lastError == WSAEWOULDBLOCK)
+        app.sendToUI(client::InfoMessage(std::to_string(s) + " wsasend returned WSAEWOULDBLOCK"));
 
     if (message.ret == SOCKET_ERROR && message.lastError != WSAEWOULDBLOCK)
         app.removeSocketFromSet(s);

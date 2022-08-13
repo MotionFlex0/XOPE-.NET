@@ -11,6 +11,7 @@ int WSAAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
     message.socket = s;
     message.bufferCount = dwBufferCount;
     message.ret = ret;
+    message.tunneled = app.isSocketTunneled(s);
     if (ret == SOCKET_ERROR)
         message.lastError = WSAGetLastError();
 

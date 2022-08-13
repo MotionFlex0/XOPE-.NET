@@ -99,6 +99,7 @@ namespace client
 		std::string packetDataB64;
 		int ret;
 		bool modified = false;
+		bool tunneled = false;
 		int lastError = -1;
 
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(HookedFunctionCallPacketMessage, messageType, functionName,
@@ -107,6 +108,7 @@ namespace client
 			packetDataB64,
 			ret,
 			modified,
+			tunneled,
 			lastError);
 	};
 
@@ -129,6 +131,7 @@ namespace client
 		std::vector<Buffer> buffers;
 		int bufferCount;
 		int ret;
+		bool tunneled = false;
 		int lastError = -1;
 
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(WSASendFunctionCallMessage, messageType, functionName,
@@ -136,6 +139,7 @@ namespace client
 			bufferCount,
 			buffers,
 			ret,
+			tunneled,
 			lastError);
 	};
 
@@ -157,12 +161,14 @@ namespace client
 		std::vector<Buffer> buffers;
 		int bufferCount;
 		int ret;
+		bool tunneled = false;
 		int lastError = -1;
 
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(WSARecvFunctionCallMessage, messageType, functionName,
 			socket,
 			bufferCount,
 			buffers,
+			tunneled,
 			ret,
 			lastError);
 	};

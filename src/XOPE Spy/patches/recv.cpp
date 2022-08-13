@@ -49,13 +49,14 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
     //} while (true);
 
     bytesRead = app.getHookManager()->get_ofunction<recv>()(s, buf, len, flags);
-        
 
+        
     client::HookedFunctionCallPacketMessage hfcm;
     hfcm.functionName = HookedFunction::RECV;
     hfcm.socket = s;
     hfcm.packetLen = bytesRead;
     hfcm.ret = bytesRead;
+    hfcm.tunneled = app.isSocketTunneled(s);
 
     if (bytesRead < 1)
     {
@@ -66,6 +67,7 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
                 app.removeSocketFromSet(s);
         }
         app.sendToUI(hfcm);
+
         return bytesRead;
     }
 
@@ -75,6 +77,9 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
     hfcm.packetDataB64 = client::IMessage::convertBytesToB64String(buf, bytesRead);
     hfcm.modified = modified;
     app.sendToUI(hfcm);
+
+    //if (hfcm.ret == SOCKET_ERROR && hfcm.lastError == WSAEWOULDBLOCK)
+        //app.sendToUI(client::InfoMessage(std::to_string(s) + " recv returned WSAEWOULDBLOCK"));
 
     if (modified)
     {

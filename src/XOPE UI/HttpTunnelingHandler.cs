@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -15,69 +16,49 @@ namespace XOPE_UI
 {
     public class HttpTunnelingHandler : IDisposable
     {
-        internal class Data
-        {
-            public TcpClient Sink { get; set; } = null;
-            public TcpClient Tunnel { get; set; } = null;
-            public CancellationTokenSource TokenSource { get; } = new CancellationTokenSource();
-        }
+        public bool Disposed { get; private set; } = false;
 
         public bool SinkConnected { get; private set; }
         public IPAddress TunnelIP { get; }
         public int TunnelPort80 { get; }
         public int TunnelPort443 { get; }
-        public bool IsTunnelingAnySockets => _tunnelsData.Count > 0;
+        public bool IsTunnelingAnySockets => _tunneledConns.Count > 0;
 
-        ConcurrentDictionary<int, Data> _tunnelsData = new ConcurrentDictionary<int, Data>();
+        ConcurrentDictionary<int, SocketData> _tunneledConns = new ConcurrentDictionary<int, SocketData>();
 
-        CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        CancellationTokenSource _sinkCancelTokenSource = new CancellationTokenSource();
+        CancellationTokenSource _cancellationSource;
 
-        SpyManager _spyManager;
-
-        TcpListener _ipv4TcpListener;
-        TcpListener _ipv6TcpListener;
-        Task _ipv4SinkTask;
-        Task _ipv6SinkTask;
 
         public HttpTunnelingHandler(SpyManager spyManager, IPAddress ip, int port80, int port443)
         {
             if (ip == null || port80 < 0 || port80 > ushort.MaxValue)
                 throw new ArgumentException("ip must be non-null and port needs to be between 0 and 65535");
-            
-            _spyManager = spyManager;
+
+            _cancellationSource = new CancellationTokenSource();
+            _cancellationSource.Token.Register(Dispose);
+
             TunnelIP = ip;
             TunnelPort80 = port80;
             TunnelPort443 = port443;
 
-            (_ipv4SinkTask, _ipv4TcpListener) = SetupSinkListener(IPAddress.Loopback, Config.Spy.SinkPortIPv4);
-            (_ipv6SinkTask, _ipv6TcpListener) = SetupSinkListener(IPAddress.IPv6Loopback, Config.Spy.SinkPortIPv6);
-            SinkConnected = _ipv4SinkTask != null && _ipv6SinkTask != null;
+            bool ipv4Success = StartSinkListener(IPAddress.Loopback, Config.Spy.SinkPortIPv4);
+            bool ipv6Success = StartSinkListener(IPAddress.IPv6Loopback, Config.Spy.SinkPortIPv6);
+            SinkConnected = ipv4Success && ipv6Success;
         }
 
         public void Dispose()
         {
-            _cancellationTokenSource.Cancel();
-            _sinkCancelTokenSource.Cancel();
+            if (Disposed)
+                return;
 
-            if (_ipv4SinkTask != null)
-            {
-                _ipv4TcpListener.Stop();
-                _ipv4SinkTask.Wait(2000);
-            }
+            if (!_cancellationSource.IsCancellationRequested)
+                _cancellationSource.Cancel();
 
-            if (_ipv6SinkTask != null)
-            {
-                _ipv6TcpListener.Stop();
-                _ipv6SinkTask.Wait(2000);
-            }
-
-            foreach (var kvp in _tunnelsData)
-                kvp.Value.TokenSource.Cancel();
             SinkConnected = false;
+            Disposed = true;
         }
 
-        public bool IsTunnelingSocket(int socket) => _tunnelsData.ContainsKey(socket);
+        public bool IsTunnelingSocket(int socket) => _tunneledConns.ContainsKey(socket);
 
         public bool TunnelNewConnection(Connection connection)
         {
@@ -101,69 +82,82 @@ namespace XOPE_UI
                 return false;
             }
 
-            Task.Factory.StartNew(() => 
-            {
-                Data socketData = _tunnelsData[connection.SocketId];
-                byte[] outBuffer = new byte[65535];
-                while (tunnelClient.Connected && !_cancellationTokenSource.IsCancellationRequested && 
-                    !socketData.TokenSource.Token.IsCancellationRequested)
-                {
-                    if (!tunnelClient.GetStream().DataAvailable || socketData.Sink == null)
-                    {
-                        Thread.Sleep(10);
-                        continue;
-                    }
+            SocketData socketData = _tunneledConns.GetOrAdd(connection.SocketId, new SocketData());
+            socketData.Tunnel = tunnelClient;
+            socketData.Connection = connection;
 
-                    int bytesReceived = tunnelClient.GetStream().Read(outBuffer);
-
-                    if (bytesReceived == 0)
-                    {
-                        socketData.Sink.Close();
-                        break;
-                    }
-
-                    socketData.Sink.GetStream().Write(outBuffer, 0, bytesReceived);
-                }
-
-                if (tunnelClient.Connected)
-                    tunnelClient.Close();
-
-                if (socketData.Sink != null && socketData.Sink.Connected)
-                    socketData.Sink.Close();
-
-                RemoveTunneledConnection(connection);
-            }, _cancellationTokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-
-            _tunnelsData.GetOrAdd(connection.SocketId, new Data()).Tunnel = tunnelClient;
+            _ = HandleTunnelClient(socketData);
             return true;
-        }
-
-        public void Send(Packet packet)
-        {
-            int socketId = packet.Socket;
-            if (!_spyManager.SpyData.Connections.ContainsKey(socketId))
-            {
-                Console.WriteLine($"Cannot forward packet to socket {socketId} because " +
-                    $"XOPE does not have information about that connection.");
-            }
-
-            if (!_tunnelsData.ContainsKey(socketId))
-                return;
-
-            if (_tunnelsData[socketId].Tunnel.Connected)
-                _tunnelsData[socketId].Tunnel.GetStream().Write(packet.Data);
         }
 
         public void ConnectionClosedExternally(int socket)
         {
-            if (_tunnelsData.ContainsKey(socket))
-                _tunnelsData[socket].TokenSource.Cancel(); ;
+            if (_tunneledConns.ContainsKey(socket))
+                _tunneledConns[socket].TokenSource.Cancel(); ;
         }
 
+        //private void StartTunnelService()
+        //{
+        //    _tunnelServiceTask = Task.Factory.StartNew(() =>
+        //    {
+        //        byte[] inBuffer = new byte[65536];
+        //        while (!_cancellationSource.IsCancellationRequested)
+        //        {
+        //            Thread.Sleep(10);
+        //            foreach (var tc in _tunneledConns.Values)
+        //            {
+
+
+        //            }
+        //        }
+        //    }, _cancellationSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        //}
+
+        //private void StartSinkService()
+        //{
+        //    _sinkServiceTask = Task.Factory.StartNew(() =>
+        //    {
+        //        byte[] inBuffer = new byte[65536];
+        //        while (!_cancellationSource.IsCancellationRequested)
+        //        {
+        //            Thread.Sleep(10);
+        //            foreach (var tc in _tunneledConns.Values)
+        //            {
+        //                try
+        //                {
+        //                    if (tc.Tunnel == null || tc.Sink == null || /*!tc.Sink.GetStream().DataAvailable*/)
+        //                        continue;
+
+        //                    // The TunnelService is responsible for closing and removing the socket if disconnect/canceled 
+        //                    if (!tc.Tunnel.Connected || tc.TokenSource.Token.IsCancellationRequested)
+        //                        continue; 
+
+        //                    //int bytesReceived = tc.Sink.GetStream().Read(inBuffer, 0, inBuffer.Length).;
+        //                    tc.Sink.GetStream().ReadAsync(inBuffer, 0, inBuffer.Length, _cancellationSource.Token).ContinueWith(bytesRead =>
+        //                    {
+
+        //                    });
+
+        //                    if (bytesReceived == 0)
+        //                    {
+        //                        CloseAndRemoveTunneledConnection(tc);
+        //                        continue;
+        //                    }
+        //                    Console.WriteLine($"bytesReceived: {bytesReceived}");
+        //                    tc.Tunnel.GetStream().Write(inBuffer, 0, bytesReceived);
+        //                }
+        //                catch (ObjectDisposedException e)
+        //                {
+        //                    CloseAndRemoveTunneledConnection(tc);
+        //                }
+        //            }
+        //        }
+        //    }, _cancellationSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        //}
+
         // The sink is only used to provide a valid socket for tunneled connections
-        private (Task, TcpListener) SetupSinkListener(IPAddress ip, int port)
+        private bool StartSinkListener(IPAddress ip, int port)
         {
-            Task listenerTask = null;
             TcpListener tcpListener = null;
             try
             {
@@ -175,40 +169,183 @@ namespace XOPE_UI
                 Console.Write($"HttpTunnelingHandler sink error. SocketException: {ex.Message}");
                 if (tcpListener != null)
                     tcpListener.Stop();
-                return (null, null);
+                return false;
             }
 
-            listenerTask = Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    while (!_sinkCancelTokenSource.IsCancellationRequested)
-                        SetupSinkServer(tcpListener.AcceptTcpClient());
-                }
-                catch (SocketException) { }
-                tcpListener.Stop();
-            }, _sinkCancelTokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-            return (listenerTask, tcpListener);
+            _ = HandleSinkListener(tcpListener);
+            return true;
         }
 
-        private void SetupSinkServer(TcpClient client)
+        private async Task HandleSinkListener(TcpListener tcpListener)
         {
-            Task.Factory.StartNew(() =>
+            _cancellationSource.Token.Register(() => tcpListener.Stop());
+            try
             {
-                byte[] data = new byte[1024];
-                client.GetStream().Read(data, 0, data.Length);
-                int socketId = BitConverter.ToInt32(data, 0);
-                
-                Data socketData = _tunnelsData.GetOrAdd(socketId, new Data());
-                socketData.Sink = client;
-            }, _sinkCancelTokenSource.Token, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
+                while (!_cancellationSource.IsCancellationRequested)
+                    _ = HandleSinkServer(await tcpListener.AcceptTcpClientAsync());
+            }
+            catch (SocketException) { }
+
+            if (!_cancellationSource.IsCancellationRequested)
+                _cancellationSource.Cancel();
         }
-        
+
+        private async Task HandleSinkServer(TcpClient client)
+        {
+            byte[] inBuffer = new byte[65536];
+            client.GetStream().Read(inBuffer, 0, 4);
+            int socketId = BitConverter.ToInt32(inBuffer, 0);
+                
+            SocketData socketData = _tunneledConns.GetOrAdd(socketId, new SocketData());
+            socketData.Sink = client;
+
+            _cancellationSource.Token.Register(() => socketData.Dispose(true));
+
+            try
+            {
+                while (!_cancellationSource.IsCancellationRequested && 
+                    !socketData.TokenSource.Token.IsCancellationRequested)
+                {
+                    if (socketData.Tunnel == null || socketData.Sink == null)
+                    {
+                        await Task.Delay(10);
+                        continue;
+                    }
+
+                    // The TunnelService is responsible for closing and removing the socket if disconnect/canceled 
+                    if (!socketData.Tunnel.Connected || socketData.TokenSource.Token.IsCancellationRequested)
+                        break;
+
+                    int bytesReceived = await socketData.Sink.GetStream().ReadAsync(inBuffer, 0, inBuffer.Length, _cancellationSource.Token);
+
+                    if (bytesReceived == 0)
+                    {
+                        socketData.MarkSinkAsDone();
+                        break;
+                    }
+                    await socketData.Tunnel.GetStream().WriteAsync(inBuffer, 0, bytesReceived, _cancellationSource.Token);
+                }
+            }
+            catch (ObjectDisposedException) { }
+            catch (IOException e) 
+            {
+                //Console.WriteLine($"IOException thrown by Sink on socket {socketId}. Message: {e.Message}");
+
+                if (!socketData.TokenSource.IsCancellationRequested)
+                    socketData.MarkSinkAsDone();
+            }
+        }
+
+        private async Task HandleTunnelClient(SocketData socketData)
+        {
+            _cancellationSource.Token.Register(() => socketData.Dispose(true));
+
+            byte[] inBuffer = new byte[65536];
+            try
+            {
+                while (!_cancellationSource.IsCancellationRequested &&
+                    !socketData.TokenSource.Token.IsCancellationRequested)
+                {
+                    // connection made to Sink before TunnelNewConnection was called
+                    if (socketData.Tunnel == null || socketData.Sink == null)
+                    {
+                        await Task.Delay(50);
+                        //Console.WriteLine("HandleTunnelClient .Delay() called");
+                        continue;
+                    }
+
+                    if (!socketData.Tunnel.Connected)
+                        break;
+
+                    int bytesReceived = await socketData.Tunnel.GetStream().ReadAsync(inBuffer, 0, inBuffer.Length, _cancellationSource.Token);
+
+                    if (bytesReceived == 0)
+                        break;
+
+                    await socketData.Sink.GetStream().WriteAsync(inBuffer, 0, bytesReceived, _cancellationSource.Token);
+                }
+
+            }
+            catch (ObjectDisposedException) { }
+            catch (IOException e) 
+            { 
+                Console.WriteLine($"IOException thrown by Tunnel on socket {socketData.Connection.SocketId}. Message: {e.Message}"); 
+            }
+
+            socketData.MarkTunnelAsDone();
+        }
+
+        private SocketData CreateOrGetSocketData(Connection connection)
+        {
+            bool found = _tunneledConns.TryGetValue(connection.SocketId, out SocketData socketData);
+            if (!found)
+            {
+                socketData = new SocketData();
+                socketData.OnDisposed += (s, e) => this.RemoveTunneledConnection(connection);
+            }
+            return socketData;
+        }
+
+        //private void CloseAndRemoveTunneledConnection(SocketData tc)
+        //{
+        //    if (!_tunneledConns.ContainsKey(tc.Connection.SocketId))
+        //        return;
+
+        //    tc.TokenSource.Cancel();
+
+        //    RemoveTunneledConnection(tc.Connection);
+        //}
+
         private void RemoveTunneledConnection(Connection connection)
         {
             int socketId = connection.SocketId;
-            if (_tunnelsData.ContainsKey(socketId))
-                _tunnelsData.Remove(socketId, out _);
+            if (_tunneledConns.ContainsKey(socketId))
+                _tunneledConns.TryRemove(socketId, out _);
+        }
+
+        internal class SocketData : IDisposable
+        {
+            public event EventHandler<Connection> OnDisposed;
+
+            public Connection Connection { get; set; } = null;
+            public TcpClient Sink { get; set; } = null;
+            public TcpClient Tunnel { get; set; } = null;
+            public CancellationTokenSource TokenSource { get; } = null;
+
+            private bool _tunnelDone = false;
+            private bool _sinkDone = false;
+
+            public SocketData()
+            {
+                TokenSource = new CancellationTokenSource();
+                TokenSource.Token.Register(() => this.Dispose(true));
+            }
+
+            public void Dispose() =>
+                Dispose(false);
+
+            public void Dispose(bool force)
+            {
+                if ((_tunnelDone && _sinkDone) || force)
+                {
+                    TokenSource.Cancel();
+                    Sink?.Close();
+                    Tunnel?.Close();
+                    OnDisposed?.Invoke(this, Connection);
+                }
+            }
+
+            public void MarkTunnelAsDone()
+            {
+                _tunnelDone = true;
+                Dispose();
+            }
+
+            public void MarkSinkAsDone()
+            {
+                _sinkDone = true;
+                Dispose();
+            }
         }
     }
 }

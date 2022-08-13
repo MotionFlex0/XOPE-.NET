@@ -45,7 +45,7 @@ public:
 	bool isSocketTunneled(SOCKET socket);
 
 	bool wasSocketIdSentToSink(SOCKET socket);
-	void socketIdSentToSink(SOCKET socket);
+	void emitSocketIdSentToSink(SOCKET socket);
 
 	bool isSocketNonBlocking(SOCKET socket);
 	void setSocketNonBlocking(SOCKET socket);
