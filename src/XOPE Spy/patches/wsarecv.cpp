@@ -24,7 +24,7 @@ int WSAAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
         // Sends the original packet data to UI
         message.buffers.push_back({
             .length = bytesRead,
-            .dataB64 = client::IMessage::convertBytesToB64String(lpBuffers[i].buf, bytesRead),
+            .dataB64 = client::IMessage::convertBytesToCompressedB64(lpBuffers[i].buf, bytesRead),
             .modified = modified
         });
 

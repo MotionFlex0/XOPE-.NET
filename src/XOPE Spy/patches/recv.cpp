@@ -74,7 +74,7 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
     Packet packet(buf, buf + bytesRead);
     bool modified = app.getPacketFilter().findAndReplace(FilterableFunction::RECV, s, packet);
     
-    hfcm.packetDataB64 = client::IMessage::convertBytesToB64String(buf, bytesRead);
+    hfcm.packetDataB64 = client::IMessage::convertBytesToCompressedB64(buf, bytesRead);
     hfcm.modified = modified;
     app.sendToUI(hfcm);
 

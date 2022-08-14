@@ -107,28 +107,31 @@ namespace XOPE_UI
                 while ((MessageDispatcher == null || MessageDispatcher.IsConnected) && 
                     MessageReceiver.IsConnectingOrConnected && !_cancellationTokenSource.IsCancellationRequested)
                 {
-                    IncomingMessage incomingMessage = MessageReceiver.GetIncomingMessage();
-                    if (incomingMessage != null)
+                    IncomingMessage[] incomingMessages = MessageReceiver.GetIncomingMessages();
+                    if (incomingMessages != null)
                     {
-                        if (incomingMessage.Type == UiMessageType.CONNECTED_SUCCESS)
+                        foreach (IncomingMessage im in incomingMessages)
                         {
-                            JObject json = incomingMessage.Json;
-                            Console.WriteLine($"Success! Received CONNECTED_SUCCESS.");
-                            string spyPipeServerName = json.Value<string>("spyPipeServerName");
-                            MessageDispatcher = new NamedPipeDispatcher(spyPipeServerName, _jobs);
-                            if (!MessageDispatcher.IsConnected)
+                            if (im.Type == UiMessageType.CONNECTED_SUCCESS)
                             {
-                                Console.WriteLine("Unable to connect to Spy's Server. Aborting...");
-                                break;
+                                JObject json = im.Json;
+                                Console.WriteLine($"Success! Received CONNECTED_SUCCESS.");
+                                string spyPipeServerName = json.Value<string>("spyPipeServerName");
+                                MessageDispatcher = new NamedPipeDispatcher(spyPipeServerName, _jobs);
+                                if (!MessageDispatcher.IsConnected)
+                                {
+                                    Console.WriteLine("Unable to connect to Spy's Server. Aborting...");
+                                    break;
+                                }
                             }
+                            else if (MessageDispatcher != null)
+                                ProcessIncomingMessage(im);
+                            else
+                                Console.WriteLine($"Received message before CONNECTED_SUCCESS." +
+                                    $"Dropping message {im.Type}");
                         }
-                        else if (MessageDispatcher != null)
-                            ProcessIncomingMessage(incomingMessage);
-                        else
-                            Console.WriteLine($"Received message before CONNECTED_SUCCESS." +
-                                $"Dropping message {incomingMessage.Type}");
                     }
-                    Thread.Sleep(1);
+                    Thread.Sleep(10);
                 }
 
                 Console.WriteLine("SpyManager loop ended");
@@ -311,7 +314,7 @@ namespace XOPE_UI
                         }
                         else
                         {
-                            byte[] data = Convert.FromBase64String(json.Value<String>("packetDataB64"));
+                            byte[] data = Packet.ConvertB64CompressedToByteArray(json.Value<String>("packetDataB64"));
                             bool modified = json.Value<bool>("modified");
                             bool tunneled = json.Value<bool>("tunneled");
                             Packet packet = new Packet
@@ -362,7 +365,7 @@ namespace XOPE_UI
                                     break;
                                 }
 
-                                byte[] data = Convert.FromBase64String(buffers[i].Value<String>("dataB64"));
+                                byte[] data = Packet.ConvertB64CompressedToByteArray(buffers[i].Value<String>("dataB64"));
                                 bool modified = buffers[i].Value<bool>("modified");
                                 bool tunneled = json.Value<bool>("tunneled");
                                 Packet packet = new Packet

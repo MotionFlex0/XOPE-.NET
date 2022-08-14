@@ -34,7 +34,7 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
         message.buffers.push_back(
         { 
             .length = (size_t)lpBuffers[i].len,
-            .dataB64 = client::IMessage::convertBytesToB64String(lpBuffers[i].buf, lpBuffers[i].len) 
+            .dataB64 = client::IMessage::convertBytesToCompressedB64(lpBuffers[i].buf, lpBuffers[i].len) 
         });
     }
 

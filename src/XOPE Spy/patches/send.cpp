@@ -47,7 +47,7 @@ int WSAAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
     if (bytesSent == SOCKET_ERROR)
         hfcm.lastError = WSAGetLastError();
     else if (bytesSent > 0)
-        hfcm.packetDataB64 = client::IMessage::convertBytesToB64String(buf, len);
+        hfcm.packetDataB64 = client::IMessage::convertBytesToCompressedB64(buf, len);
 
     app.sendToUI(hfcm);
 
