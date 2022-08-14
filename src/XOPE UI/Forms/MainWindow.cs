@@ -436,21 +436,21 @@ namespace XOPE_UI
             }
         }
 
-        private void PacketListView_ItemDoubleClicked(object sender, ListViewItem e)
+        private void PacketListView_ItemDoubleClicked(object sender, Packet e)
         {
             using (PacketEditorReplayDialog packetEditorReplay = new PacketEditorReplayDialog(_spyManager))
             {
                 //[4] is the socket id. TODO: Store info about a packet in a proper structure
-                packetEditorReplay.SocketId = Convert.ToInt32(e.SubItems[4].Text);
-                packetEditorReplay.Data = (byte[])e.Tag;
+                packetEditorReplay.SocketId = e.Socket;
+                packetEditorReplay.Data = e.Data;
                 packetEditorReplay.Editible = true;
                 packetEditorReplay.ShowDialog();
             }
         }
 
-        private void PacketListView_ItemSelectedChanged(object sender, ListViewItem e)
+        private void PacketListView_ItemSelectedChanged(object sender, Packet e)
         {
-            this.packetCaptureHexPreview.SetBytes((byte[])e.Tag);
+            this.packetCaptureHexPreview.SetBytes(e.Data);
         }
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
