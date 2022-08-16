@@ -3,9 +3,11 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
+#include <zlib.h>
 #include "../nlohmann/json.hpp"
 #include "../utils/base64.h"
 #include "../utils/guid.h"
+#include "../utils/assert.h"
 
 #pragma warning(disable: 4996)
 
@@ -76,9 +78,17 @@ namespace client
 		inline virtual void fromJson(json& j) { };
 
 
-		inline static std::string convertBytesToB64String(const char* bytes, const unsigned int len)
+		inline static std::string convertBytesToCompressedB64(const char* bytes, const unsigned int len)
 		{
-			return base64_encode(std::string(bytes, len));
+			if (len < 1)
+				return { };
+
+			std::array<Bytef, 32768> compressedBuf;
+			uLong compressedBufSize = sizeof(compressedBuf);
+			int err = compress(compressedBuf.data(), &compressedBufSize, reinterpret_cast<const unsigned char*>(bytes), len);
+			x_assert(err == Z_OK, "failed to compress bytes");
+
+			return base64_encode(std::string(reinterpret_cast<const char*>(compressedBuf.data()), compressedBufSize));
 		}
 	};
 
