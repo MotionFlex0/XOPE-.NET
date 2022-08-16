@@ -1,4 +1,4 @@
-#include "util.h"
+#include "assert.h"
 
 bool Util::__assert(const char* file, int line, const char* exprStr, const char* msg)
 {
@@ -7,7 +7,7 @@ bool Util::__assert(const char* file, int line, const char* exprStr, const char*
 
 	char output[2048];
 	sprintf_s(output, "Assertion failed!\n\nProgram: %s\nFile: %s\nLine: %d\n\nExpression: %s\n\nMessage: %s\n\n[End Message]", moduleName, file, line, exprStr, msg);
-	
+
 	int res = MessageBoxA(NULL, output, "Assertion failed", MB_ICONERROR | MB_ABORTRETRYIGNORE);
 	switch (res)
 	{

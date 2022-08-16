@@ -8,6 +8,7 @@
 #include <thread>
 #include <typeindex>
 #include <unordered_map>
+#include "../utils/assert.h"
 #include "../utils/definition.hpp"
 #include "../utils/util.h"
 
