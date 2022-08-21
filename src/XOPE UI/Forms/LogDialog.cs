@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 using XOPE_UI.Util;
 
@@ -8,8 +8,11 @@ namespace XOPE_UI.View
 {
     public partial class LogDialog : Form
     {
-        Logger _logger;
         static LogDialog instance = null;
+        Logger _logger;
+
+        Timer _updateTimer;
+        StringBuilder _textStreamtQueued;
 
         public static void ShowOrBringToFront(Logger logger)
         {
@@ -34,10 +37,30 @@ namespace XOPE_UI.View
 
             this.ActiveControl = null;
 
-            this._logger = logger;
-            this._logger.TextWritten += Logger_TextWritten; 
+            _textStreamtQueued = new StringBuilder();
+
+            _logger = logger;
+            _logger.TextWritten += Logger_TextWritten; 
 
             this.logTextBox.Text = this._logger.ToString();
+            _updateTimer = new Timer();
+            _updateTimer.Interval = 100;
+            _updateTimer.Tick += (s, e) =>
+            {
+                if (_textStreamtQueued.Length < 1)
+                    return;
+
+                int lastCharVisible = logTextBox.GetCharIndexFromPosition((Point)logTextBox.Size);
+                int bottomMostVisibleLine = logTextBox.GetLineFromCharIndex(lastCharVisible);
+
+                bool shouldScroll = (bottomMostVisibleLine >= logTextBox.Lines.Length - 2);
+
+                logTextBox.AppendText(_textStreamtQueued.ToString());
+                if (shouldScroll)
+                    logTextBox.ScrollToCaret();
+
+                _textStreamtQueued.Clear();
+            };
         }
 
         protected override void Dispose(bool disposing)
@@ -48,36 +71,26 @@ namespace XOPE_UI.View
             }
             base.Dispose(disposing);
 
-            this._logger.TextWritten -= Logger_TextWritten;
+            _logger.TextWritten -= Logger_TextWritten;
+            _updateTimer.Stop();
             instance = null;
         }
 
         private void Logger_TextWritten(object sender, string value)
         {
-            if (this.IsHandleCreated && this.Visible)
-            {
-                //Fixes deadlocked related to Invoke but not great for efficiency on UI thread
-                logTextBox.BeginInvoke(new Action(() =>
-                {
-                    int lastCharVisible = logTextBox.GetCharIndexFromPosition((Point)logTextBox.Size);
-                    int bottomMostVisibleLine = logTextBox.GetLineFromCharIndex(lastCharVisible);
-
-                    bool shouldScroll = (bottomMostVisibleLine >= logTextBox.Lines.Length - 2);
-
-                    logTextBox.AppendText(value);
-                    if (shouldScroll)
-                        logTextBox.ScrollToCaret();
-                }));
-            }
+            _textStreamtQueued.Append(value);
         }
 
         private void LogDialog_VisibleChanged(object sender, EventArgs e)
         {
             if (this.Visible)
             {
-                this.logTextBox.Select(logTextBox.Text.Length-1, 1);
+                this.logTextBox.Select(logTextBox.Text.Length - 1, 1);
                 this.logTextBox.ScrollToCaret();
+                _updateTimer.Start();
             }
+            else
+                _updateTimer.Stop();
         }
 
         private void closeButton_Click(object sender, EventArgs e)
