@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.captureListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
@@ -35,6 +36,9 @@
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
+            this.packetItemContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.underlyingEventToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.packetItemContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // captureListView
@@ -60,8 +64,11 @@
             this.captureListView.TabIndex = 1;
             this.captureListView.UseCompatibleStateImageBehavior = false;
             this.captureListView.View = System.Windows.Forms.View.Details;
+            this.captureListView.VirtualMode = true;
             this.captureListView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.captureListView_ItemSelectionChanged);
+            this.captureListView.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.captureListView_RetrieveVirtualItem);
             this.captureListView.DoubleClick += new System.EventHandler(this.captureListView_DoubleClick);
+            this.captureListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.captureListView_MouseClick);
             this.captureListView.Resize += new System.EventHandler(this.captureListView_Resize);
             // 
             // columnHeader1
@@ -91,6 +98,20 @@
             // 
             this.columnHeader6.Text = "Modified";
             // 
+            // packetItemContextMenuStrip
+            // 
+            this.packetItemContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.underlyingEventToolStripMenuItem});
+            this.packetItemContextMenuStrip.Name = "packetItemContextMenuStrip";
+            this.packetItemContextMenuStrip.Size = new System.Drawing.Size(165, 26);
+            // 
+            // underlyingEventToolStripMenuItem
+            // 
+            this.underlyingEventToolStripMenuItem.Name = "underlyingEventToolStripMenuItem";
+            this.underlyingEventToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.underlyingEventToolStripMenuItem.Text = "Underlying Event";
+            this.underlyingEventToolStripMenuItem.Click += new System.EventHandler(this.underlyingEventToolStripMenuItem_Click);
+            // 
             // PacketListView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -99,6 +120,7 @@
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "PacketListView";
             this.Size = new System.Drawing.Size(779, 316);
+            this.packetItemContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -112,5 +134,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader6;
+        private System.Windows.Forms.ContextMenuStrip packetItemContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem underlyingEventToolStripMenuItem;
     }
 }

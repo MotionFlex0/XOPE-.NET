@@ -13,13 +13,16 @@ namespace XOPE_UI.View.Component
         public event EventHandler<Packet> ItemSelectedChanged;
         public event EventHandler<Packet> ItemDoubleClicked;
 
-        public int Count { get => captureListView.Items.Count; }
+        public int Count { get => _listViewItemStore.Count; }
 
         int _packetCounter = 0;
 
         int _minAutoScrollOffset = 20;
 
         int _maxPacketLength = 30;
+
+        ConcurrentDictionary<int, ListViewItem> _listViewItemStore;
+        ListViewItem _defaultListViewItem;
 
         Timer _batchListViewUpdateTimer;
         ConcurrentQueue<ListViewItem> _batchListViewItemQueue;
@@ -38,9 +41,14 @@ namespace XOPE_UI.View.Component
                 .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
                 .SetValue(captureListView, true, null);
 
+
+            _listViewItemStore = new ConcurrentDictionary<int, ListViewItem>();
+            _defaultListViewItem = new ListViewItem();
+            _defaultListViewItem.SubItems.AddRange(new string[5]);
+
             _batchListViewItemQueue = new ConcurrentQueue<ListViewItem>();
             _batchListViewUpdateTimer = new Timer();
-            _batchListViewUpdateTimer.Interval = 300;
+            _batchListViewUpdateTimer.Interval = 100;
             _batchListViewUpdateTimer.Tick += batchListViewUpdateTimer_Tick;
             _batchListViewUpdateTimer.Start();
         }
@@ -53,15 +61,20 @@ namespace XOPE_UI.View.Component
             if (lvi == null)
                 return -1;
 
-            EnqueueListViewItem(lvi);
+            //EnqueueListViewItem(lvi);
+            _listViewItemStore.TryAdd(_packetCounter, lvi);
+            
+            //if (captureListView.TopItem.Index >= captureListView.Items.Count - _minAutoScrollOffset)
+            //    lvi.EnsureVisible();
             return _packetCounter++;
         }
 
         public void Clear()
         {
             lock(_batchQueueLock) _batchListViewItemQueue.Clear();
-            captureListView.Items.Clear();
             _packetCounter = 0;
+            _listViewItemStore.Clear();
+            this.captureListView.VirtualListSize = 0;
         }
         
         public void ChangeBytesLength(int newLen)
@@ -107,6 +120,8 @@ namespace XOPE_UI.View.Component
                 listViewItem.SubItems.Add("modified");
             else if (tunneled)
                 listViewItem.SubItems.Add("tunneled");
+            else
+                listViewItem.SubItems.Add("");
 
             return listViewItem;
         }
@@ -116,34 +131,49 @@ namespace XOPE_UI.View.Component
             lock (_batchQueueLock) _batchListViewItemQueue.Enqueue(lvi);
         }
 
+        private ListViewItem GetFirstSelectedCaptureItem()
+        {
+            var selectedIndics = this.captureListView.SelectedIndices;
+            if (selectedIndics.Count == 0)
+                return null;
+            return _listViewItemStore[selectedIndics[0]];
+        }
+
         private void batchListViewUpdateTimer_Tick(object sender, EventArgs e)
         {
-            if (_batchListViewItemQueue.Count < 1)
-                return;
+            //if (_batchListViewItemQueue.Count < 1)
+            //    return;
 
-            //Stopwatch sw = Stopwatch.StartNew();
+            //ListViewItem[] lvis = null;
+            //lock (_batchQueueLock)
+            //{
+            //    lvis = _batchListViewItemQueue.ToArray();
+            //    _batchListViewItemQueue.Clear();
+            //}
 
-            ListViewItem[] lvis = null;
-            lock (_batchQueueLock)
+            ////this.captureListView.BeginUpdate();
+
+            //this.captureListView.Items.AddRange(lvis);
+
+
+            if (_listViewItemStore.Count != this.captureListView.VirtualListSize)
             {
-                lvis = _batchListViewItemQueue.ToArray();
-                _batchListViewItemQueue.Clear();
+                int additionalItemsCount = _listViewItemStore.Count - this.captureListView.VirtualListSize;
+
+                this.captureListView.VirtualListSize = _listViewItemStore.Count;
+                if (this.captureListView.TopItem.Index >= (_listViewItemStore.Count - additionalItemsCount) - _minAutoScrollOffset)
+                    this.captureListView.EnsureVisible(_listViewItemStore.Count - 1);
+
             }
-
-            //this.captureListView.BeginUpdate();
-
-            this.captureListView.Items.AddRange(lvis);
-            if (captureListView.TopItem.Index >= (captureListView.Items.Count-lvis.Length) - _minAutoScrollOffset)
-                lvis[lvis.Length - 1].EnsureVisible();
 
             //this.captureListView.EndUpdate();
         }
 
         private void captureListView_DoubleClick(object sender, EventArgs e)
         {
-            ListView.SelectedListViewItemCollection selectedItems = this.captureListView.SelectedItems;
-            if (selectedItems.Count > 0)
-                ItemDoubleClicked?.Invoke(this, selectedItems[0].Tag as Packet);
+            ListViewItem selectedItem = GetFirstSelectedCaptureItem();
+            if (selectedItem != null)
+                ItemDoubleClicked?.Invoke(this, selectedItem.Tag as Packet);
         }
 
         private void captureListView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -157,9 +187,9 @@ namespace XOPE_UI.View.Component
             if (!captureListView.Visible)
                 return;
 
-            if (captureListView.Items.Count > 0 && captureListView.Items[0] != null)
+            if (_listViewItemStore.Count > 0 && _listViewItemStore[0] != null)
             {
-                int itemHeight = captureListView.Items[0].Bounds.Height;
+                int itemHeight = _listViewItemStore[0].Bounds.Height;
                 if (itemHeight < 1)
                     return;
 
@@ -170,23 +200,21 @@ namespace XOPE_UI.View.Component
             else
             {
                 // Adds an ListViewItem, to calculate the bounds of each item.
-                ListViewItem item = new ListViewItem("DEFAULT_ITEM");
-                captureListView.Items.Add(item);
-                int itemsVisible = (int)Math.Floor((decimal)captureListView.Height / item.Bounds.Height - 1);
-                _minAutoScrollOffset = itemsVisible + 2;
-                item.Remove();
+                //_listViewItemStore.TryAdd(0, _defaultListViewItem);
+                //int itemsVisible = (int)Math.Floor((decimal)captureListView.Height / _defaultListViewItem.Bounds.Height - 1);
+                //_minAutoScrollOffset = itemsVisible + 2;
+                //_defaultListViewItem.Remove();
             }
         }
 
         private void underlyingEventToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.captureListView.SelectedItems.Count < 1)
+            ListViewItem lvi = GetFirstSelectedCaptureItem();
+            if (lvi == null)
                 return;
 
-            ListViewItem lvi = this.captureListView.SelectedItems[0];
-
             MessageBox.Show(this.ParentForm, 
-                $"Message Event Sent by Spy\n{(lvi.Tag as Packet).UnderlyingEvent.ToString()}",
+                $"Message Event Sent by Spy\n{(lvi.Tag as Packet).UnderlyingEvent}",
                 "Event message sent by Spy", 
                 MessageBoxButtons.OK, MessageBoxIcon.None);
         }
@@ -195,11 +223,24 @@ namespace XOPE_UI.View.Component
         {
             if (e.Button == MouseButtons.Right)
             {
-                if (this.captureListView.SelectedItems.Count < 1)
+                if (GetFirstSelectedCaptureItem() == null)
                     return;
 
                 this.packetItemContextMenuStrip.Show(this.captureListView, e.Location);
             }
+        }
+
+        private void captureListView_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            if (e.ItemIndex < 0 || e.ItemIndex > _listViewItemStore.Count - 1)
+            {
+                e.Item = _defaultListViewItem;
+                return;
+            }
+
+            
+            e.Item = _listViewItemStore[e.ItemIndex];
+
         }
     }
 }

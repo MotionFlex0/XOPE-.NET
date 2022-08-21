@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using XOPE_UI.Model;
 using XOPE_UI.Spy.DispatcherMessageType;
 
@@ -9,7 +10,7 @@ namespace XOPE_UI.Spy
         bool IsConnected { get; }
 
         // Not sure where to put this paramater
-        void RunAsync(string receiverName);
+        Task RunAsync(string receiverName);
         void ShutdownAndWait();
     }
 }
