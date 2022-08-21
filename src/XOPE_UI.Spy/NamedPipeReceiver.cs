@@ -1,22 +1,23 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+using Newtonsoft.Json.Linq;
 using PeterO.Cbor;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
 using XOPE_UI.Model;
-using XOPE_UI.Native;
 using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI.Spy
 {
     public class NamedPipeReceiver : IMessageReceiver
     {
-        ConcurrentQueue<IncomingMessage> incomingMessageQueue;
-        CancellationTokenSource cancellationTokenSource;
-        Task receiverThread;
+        Object _incomingMessageQueueLock;
+        ConcurrentQueue<IncomingMessage> _incomingMessageQueue;
+        CancellationTokenSource _cancellationTokenSource;
 
         public bool IsConnecting { get; private set; }
         public bool IsConnected { get; private set; }
@@ -24,94 +25,112 @@ namespace XOPE_UI.Spy
 
         public NamedPipeReceiver()
         {
-            incomingMessageQueue = new ConcurrentQueue<IncomingMessage>();
+            _incomingMessageQueueLock = new Object();
+            _incomingMessageQueue = new ConcurrentQueue<IncomingMessage>();
         }
 
 
         public IncomingMessage GetIncomingMessage()
         {
-            bool success = incomingMessageQueue.TryDequeue(out var message);
+            // GetIncomingMessage does not need the _incomingMessageQueueLock
+            //  as the normal locking ability of ConcurrentQueue will suffice
+            bool success = _incomingMessageQueue.TryDequeue(out var message);
             return success ? message : null;
         }
 
-        public void RunAsync(string receiverName) 
+        public IncomingMessage[] GetIncomingMessages()
         {
-            if (receiverThread != null)
+            if (_incomingMessageQueue.Count < 1) return null;
+
+            lock (_incomingMessageQueueLock)
+            {
+                IncomingMessage[] ims = _incomingMessageQueue.ToArray();
+                _incomingMessageQueue.Clear();
+                return ims;
+            }
+        }
+
+        public async Task RunAsync(string receiverName) 
+        {
+            if (IsConnectingOrConnected)
             {
                 Console.WriteLine("Cannot start new receiver thread, as one already exists");
                 return;
             }
 
-            cancellationTokenSource = new CancellationTokenSource();
+            _cancellationTokenSource = new CancellationTokenSource();
 
             setIsConnectingState();
-            receiverThread = Task.Factory.StartNew(() => {
-                using (NamedPipeServerStream receiverStream = new NamedPipeServerStream(receiverName))
+            using (NamedPipeServerStream receiverStream = new NamedPipeServerStream(receiverName))
+            {
+                _cancellationTokenSource.Token.Register(() => receiverStream.Close());
+
+                await receiverStream.WaitForConnectionAsync(_cancellationTokenSource.Token);
+                setIsConnectedState();
+                Console.WriteLine("Spy connected to Receiver. Waiting for CONNECTION_SUCCESS message...");
+
+                try
                 {
-                    receiverStream.WaitForConnection();
-                    Console.WriteLine("Spy connected to Receiver. Waiting for CONNECTION_SUCCESS message...");
-
-                    try
+                    byte[] inBuffer = new byte[65536];
+                    while (receiverStream.IsConnected && !_cancellationTokenSource.IsCancellationRequested)
                     {
-                        setIsConnectedState();
-
-                        byte[] buffer = new byte[65536];
-                        while (receiverStream.IsConnected && !cancellationTokenSource.IsCancellationRequested)
+                        int bytesReceived = await receiverStream.ReadAsync(inBuffer, 0, inBuffer.Length, _cancellationTokenSource.Token);
+                        if (bytesReceived == 0)
                         {
-                            int bytesAvailable;
-
-                            Win32API.PeekNamedPipe((IntPtr)receiverStream.SafePipeHandle.DangerousGetHandle(), out _, 0, out _, out bytesAvailable, out _);
-                            if (bytesAvailable > 0)
-                            {
-                                int len = receiverStream.Read(buffer, 0, 65535);
-                                if (len > 0)
-                                {
-                                    try
-                                    {
-                                        CBORObject cbor = CBORObject.DecodeFromBytes((new ArraySegment<byte>(buffer, 0, len)).ToArray());
-                                        JObject json = JObject.Parse(cbor.ToString());
-                                        //Console.WriteLine($"Incoming message: {(UiMessageType)json.Value<Int32>("messageType")}");
-
-                                        UiMessageType messageType = (UiMessageType)json.Value<Int32>("messageType");
-                                        incomingMessageQueue.Enqueue(new IncomingMessage(messageType, json));
-                                    }
-                                    catch (CBORException ex)
-                                    {
-                                        Console.WriteLine($"[ui-receiver] Error occurred when decoding message from spy. " +
-                                            $"Message: {ex.Message}. " +
-                                            $"Dropping message...");
-                                    }
-                                }
-                            }
-                            Thread.Sleep(1); 
+                            _cancellationTokenSource.Cancel();
+                            break;
                         }
-                        Console.WriteLine("Closing receiver...");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Receiver error. Aborting receiver! Message: {ex.Message}");
-                        Debug.WriteLine($"Receiver error. Message: {ex.Message}");
-                        Debug.WriteLine($"Stacktrack:\n{ex.StackTrace}");
-                    }
-                    finally
-                    {
-                        Console.WriteLine("Receiver closed!");
-                    }
+                        
+                        try
+                        {
+                            MemoryStream outputStream = new MemoryStream();
+                            using (MemoryStream memoryStream = new MemoryStream(new ArraySegment<byte>(inBuffer, 0, bytesReceived).ToArray()))
+                            using (var inflater = new InflaterInputStream(memoryStream))
+                            {
+                                inflater.CopyTo(outputStream);
+                            }
+                            
+                            CBORObject cbor = CBORObject.DecodeFromBytes(outputStream.ToArray());
+                            JObject json = JObject.Parse(cbor.ToJSONString());
 
-                    setNoConnectionState();
+                            UiMessageType messageType = (UiMessageType)json.Value<Int32>("messageType");
+
+                            //if (json.ContainsKey("packetDataB64") && json.Value<string>("packetDataB64").Length > 0)
+                            //{
+                            //    Console.WriteLine($"JSON Size / CBOR Size / bytesReceived / Real Packet Len: {cbor.ToJSONString().Length} / {cbor.EncodeToBytes().Length} / {bytesReceived} / {json.Value<string>("packetLen")}");
+                            //}
+
+                            lock (_incomingMessageQueueLock) _incomingMessageQueue.Enqueue(new IncomingMessage(messageType, json));
+                        }
+                        catch (CBORException ex)
+                        {
+                            Console.WriteLine($"[ui-receiver] Error occurred when decoding message from spy. " +
+                                $"Message: {ex.Message}. " +
+                                $"Dropping message...");
+                        }
+                    }
+                    Console.WriteLine("Closing receiver...");
+                }
+                catch (ObjectDisposedException) { }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Receiver error. Aborting receiver! Message: {ex.Message}");
+                    Debug.WriteLine($"Receiver error. Message: {ex.Message}");
+                    Debug.WriteLine($"Stacktrack:\n{ex.StackTrace}");
+                    _cancellationTokenSource.Cancel();
+                }
+                finally
+                {
+                    Console.WriteLine("Receiver closed!");
                 }
 
-            }, cancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                setNoConnectionState();
+            }
         }
 
         public void ShutdownAndWait()
         {
-            if (receiverThread == null)
-                return;
-
-            cancellationTokenSource.Cancel();
-            receiverThread.Wait(5000);
-            receiverThread = null;
+            _cancellationTokenSource.Cancel();
             setNoConnectionState();
         }
 

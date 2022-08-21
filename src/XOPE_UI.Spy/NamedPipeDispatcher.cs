@@ -9,26 +9,26 @@ namespace XOPE_UI.Spy
 {
     public class NamedPipeDispatcher : IMessageDispatcher
     {
-        private NamedPipeClientStream namedPipeClient;
-        private bool pipeBroken = false;
+        private NamedPipeClientStream _namedPipeClient;
+        private bool _pipeBroken = false;
 
-        private Dictionary<Guid, IMessageWithResponse> jobs; // 
+        private Dictionary<Guid, IMessageWithResponse> _jobs; // 
 
-        private object pipeWriteLock = new object();
+        private object _pipeWriteLock = new object();
 
-        public bool IsConnected => namedPipeClient != null && !pipeBroken;
+        public bool IsConnected => _namedPipeClient != null && !_pipeBroken;
 
         public NamedPipeDispatcher(String pipeName, Dictionary<Guid, IMessageWithResponse> jobs)
         {
             try
             {
-                namedPipeClient = new NamedPipeClientStream(pipeName);
-                namedPipeClient.Connect(2000);
-                this.jobs = jobs;
+                _namedPipeClient = new NamedPipeClientStream(pipeName);
+                _namedPipeClient.Connect(2000);
+                this._jobs = jobs;
             }
             catch (Exception)
             {
-                namedPipeClient = null;
+                _namedPipeClient = null;
             }
         }
 
@@ -41,15 +41,15 @@ namespace XOPE_UI.Spy
             {
                 byte[] bytes = Encoding.ASCII.GetBytes(message.ToJson().ToString());
 
-                lock (pipeWriteLock)
+                lock (_pipeWriteLock)
                 {
-                    namedPipeClient.Write(bytes, 0, bytes.Length);
-                    namedPipeClient.WriteByte(0);
+                    _namedPipeClient.Write(bytes, 0, bytes.Length);
+                    _namedPipeClient.WriteByte(0);
                 }
             }
             catch (Exception ex) when (ex is IOException || ex is ObjectDisposedException)
             {
-                pipeBroken = true;
+                _pipeBroken = true;
             }
         }
 
@@ -62,17 +62,17 @@ namespace XOPE_UI.Spy
             {
                 byte[] bytes = Encoding.ASCII.GetBytes(message.ToJson().ToString());
 
-                lock(pipeWriteLock)
+                lock(_pipeWriteLock)
                 {
-                    namedPipeClient.Write(bytes, 0, bytes.Length);
-                    namedPipeClient.WriteByte(0);
+                    _namedPipeClient.Write(bytes, 0, bytes.Length);
+                    _namedPipeClient.WriteByte(0);
                 }
 
-                jobs.Add(message.JobId, message);
+                _jobs.Add(message.JobId, message);
             }
             catch (Exception ex) when (ex is IOException || ex is ObjectDisposedException)
             {
-                pipeBroken = true;
+                _pipeBroken = true;
             }
         }
 
@@ -81,9 +81,8 @@ namespace XOPE_UI.Spy
             if (!IsConnected)
                 return;
 
-            namedPipeClient.Close();
-            namedPipeClient.Dispose();
-            pipeBroken = true;
+            _namedPipeClient.Close();
+            _pipeBroken = true;
         }
     }
 }
