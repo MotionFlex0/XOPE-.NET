@@ -191,6 +191,7 @@ namespace XOPE_UI.View
             // 
             // packetTypeComboBox
             // 
+            this.packetTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.packetTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.packetTypeComboBox.FormattingEnabled = true;
             this.packetTypeComboBox.Items.AddRange(new object[] {

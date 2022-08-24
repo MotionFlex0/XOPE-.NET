@@ -38,8 +38,6 @@ namespace XOPE_UI
         CancellationTokenSource _cancellationTokenSource = null;
         Task _spyThread = null;
 
-       
-
         Dictionary<Guid, IMessageWithResponse> _jobs; // This contains Messages that are expecting a response
 
         Process _attachedProcess = null;
@@ -96,7 +94,7 @@ namespace XOPE_UI
         public void RunAsync(string receiverPipeName)
         {
             if (_spyThread != null)
-                return;
+                new InvalidOperationException("Cannot start SpyManager thread because there is already an instance running.");
 
             _cancellationTokenSource = new CancellationTokenSource();
 

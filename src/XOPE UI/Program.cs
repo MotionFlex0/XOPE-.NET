@@ -37,16 +37,15 @@ namespace XOPE_UI
 
             SDK.Environment environment = SDK.Environment.GetEnvironment();
 
-            Task.Run(() => PrecacheResources());
+            PrecacheResources();
 
             Application.EnableVisualStyles();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainWindow(new UserSettings()));
-            //Application.Run(new ProcessDialog());
         }
 
-        static void PrecacheResources()
+        static async Task PrecacheResources()
         {
             ProcessDialog.PrecacheResources();
             Console.WriteLine("Finished precaching resources.");

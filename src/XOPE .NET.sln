@@ -38,7 +38,6 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
-		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|Any CPU (Samples-Controls).Build.0 = Debug|Any CPU
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|x64 binding (UI-Spy) [Part 1].ActiveCfg = Debug|Any CPU
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|x64 binding (UI-Spy) [Part 1].Build.0 = Debug|Any CPU
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Debug|x86 binding (Spy) [Part 2].ActiveCfg = Debug|Any CPU
@@ -90,7 +89,6 @@ Global
 		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x86 build.Build.0 = Release|Any CPU
 		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
-		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Debug|Any CPU (Samples-Controls).Build.0 = Debug|Any CPU
 		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Debug|x64 binding (UI-Spy) [Part 1].ActiveCfg = Debug|Any CPU
 		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Debug|x64 binding (UI-Spy) [Part 1].Build.0 = Debug|Any CPU
 		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Debug|x86 binding (Spy) [Part 2].ActiveCfg = Debug|Any CPU
@@ -118,7 +116,6 @@ Global
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|x86 build.Build.0 = Release|Any CPU
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
-		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Debug|Any CPU (Samples-Controls).Build.0 = Debug|Any CPU
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Debug|x64 binding (UI-Spy) [Part 1].ActiveCfg = Debug|Any CPU
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Debug|x64 binding (UI-Spy) [Part 1].Build.0 = Debug|Any CPU
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Debug|x86 binding (Spy) [Part 2].ActiveCfg = Debug|Any CPU
@@ -133,7 +130,6 @@ Global
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Release|x86 build.Build.0 = Release|Any CPU
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
-		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|Any CPU (Samples-Controls).Build.0 = Debug|Any CPU
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|x64 binding (UI-Spy) [Part 1].ActiveCfg = Debug|Any CPU
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|x64 binding (UI-Spy) [Part 1].Build.0 = Debug|Any CPU
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|x86 binding (Spy) [Part 2].ActiveCfg = Debug|Any CPU
@@ -148,7 +144,6 @@ Global
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 build.Build.0 = Release|Any CPU
 		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
-		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|Any CPU (Samples-Controls).Build.0 = Debug|Any CPU
 		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|x64 binding (UI-Spy) [Part 1].ActiveCfg = Debug|Any CPU
 		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|x64 binding (UI-Spy) [Part 1].Build.0 = Debug|Any CPU
 		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|x86 binding (Spy) [Part 2].ActiveCfg = Debug|Any CPU
@@ -163,7 +158,6 @@ Global
 		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x86 build.Build.0 = Release|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
-		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Debug|Any CPU (Samples-Controls).Build.0 = Debug|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Debug|x64 binding (UI-Spy) [Part 1].ActiveCfg = Debug|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Debug|x64 binding (UI-Spy) [Part 1].Build.0 = Debug|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Debug|x86 binding (Spy) [Part 2].ActiveCfg = Debug|Any CPU

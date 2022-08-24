@@ -14,30 +14,30 @@ namespace XOPE_UI.View
         public bool Editible { get; set; } = false;
         public int SocketId { get; set; } = 0;
 
-        private ElementHost elementHost;
-        private HexEditor hexEditor;
+        private ElementHost _elementHost;
+        private HexEditor _hexEditor;
 
-        private SpyManager spyManager;
+        private SpyManager _spyManager;
 
-        private Stream internalStream = null;
+        private Stream _internalStream = null;
 
-        private Timer replayTimer = null;
+        private Timer _replayTimer = null;
 
         public PacketEditorReplayDialog(SpyManager spyManager)
         {
             InitializeComponent();
             InitializeHexEditor();
 
-            this.spyManager = spyManager;
-            hexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
-            hexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
-            hexEditor.StringByteWidth = 8;
-            hexEditor.CanInsertAnywhere = true;
-            hexEditor.AllowExtend = true;
-            hexEditor.HideByteDeleted = true;
-            hexEditor.AppendNeedConfirmation = false;
+            this._spyManager = spyManager;
+            _hexEditor.ForegroundSecondColor = System.Windows.Media.Brushes.Blue;
+            _hexEditor.StatusBarVisibility = System.Windows.Visibility.Hidden;
+            _hexEditor.StringByteWidth = 8;
+            _hexEditor.CanInsertAnywhere = true;
+            _hexEditor.AllowExtend = true;
+            _hexEditor.HideByteDeleted = true;
+            _hexEditor.AppendNeedConfirmation = false;
 
-            hexEditor.KeyDown += (object sender, System.Windows.Input.KeyEventArgs e) =>
+            _hexEditor.KeyDown += (object sender, System.Windows.Input.KeyEventArgs e) =>
             {
                 if (e.Key == System.Windows.Input.Key.Insert)
                 {
@@ -50,18 +50,18 @@ namespace XOPE_UI.View
 
         private void InitializeHexEditor()
         {
-            hexEditor = new HexEditor();
-            elementHost = new ElementHost();
-            elementHost.Anchor = ~AnchorStyles.None;
-            elementHost.Location = this.hexEditorPlaceholder.Location;
-            elementHost.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            elementHost.Name = "elementHost1";
-            elementHost.Size = this.hexEditorPlaceholder.Size;
-            elementHost.TabIndex = 8;
-            elementHost.Text = "elementHost1";
-            elementHost.Child = hexEditor;
+            _hexEditor = new HexEditor();
+            _elementHost = new ElementHost();
+            _elementHost.Anchor = ~AnchorStyles.None;
+            _elementHost.Location = this.hexEditorPlaceholder.Location;
+            _elementHost.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            _elementHost.Name = "elementHost1";
+            _elementHost.Size = this.hexEditorPlaceholder.Size;
+            _elementHost.TabIndex = 8;
+            _elementHost.Text = "elementHost1";
+            _elementHost.Child = _hexEditor;
             this.Controls.Remove(hexEditorPlaceholder);
-            this.Controls.Add(elementHost);
+            this.Controls.Add(_elementHost);
         }
 
         protected override void Dispose(bool disposing)
@@ -72,10 +72,10 @@ namespace XOPE_UI.View
             }
             base.Dispose(disposing);
 
-            if (replayTimer != null)
+            if (_replayTimer != null)
             {
-                replayTimer.Stop();
-                replayTimer.Dispose();
+                _replayTimer.Stop();
+                _replayTimer.Dispose();
             }
         }
 
@@ -83,20 +83,20 @@ namespace XOPE_UI.View
         {
             if (this.Visible)
             {
-                hexEditor.ReadOnlyMode = !Editible;
+                _hexEditor.ReadOnlyMode = !Editible;
                 if (Data != null)
                 {
-                    internalStream = new MemoryStream(Data.Length);
-                    internalStream.Write(Data, 0, Data.Length);
-                    hexEditor.Stream = internalStream;
+                    _internalStream = new MemoryStream(Data.Length);
+                    _internalStream.Write(Data, 0, Data.Length);
+                    _hexEditor.Stream = _internalStream;
 
                     socketIdTextBox.Text = SocketId.ToString(); //Technically not a TextBox but a NumericUpDown instead
                 }
                 else
                 {
-                    internalStream = new MemoryStream(1);
-                    internalStream.WriteByte(0x00);
-                    hexEditor.Stream = internalStream;
+                    _internalStream = new MemoryStream(1);
+                    _internalStream.WriteByte(0x00);
+                    _hexEditor.Stream = _internalStream;
                 }
             }
         }
@@ -108,13 +108,13 @@ namespace XOPE_UI.View
 
         private void replayButton_Click(object sender, EventArgs e)
         {
-            if (spyManager.MessageDispatcher == null)
+            if (_spyManager.MessageDispatcher == null)
             {
                 MessageBox.Show("Cannot replay packet because the UI is not connected to the Spy.");
                 return;
             }
 
-            byte[] data = hexEditor.GetAllBytes(true);
+            byte[] data = _hexEditor.GetAllBytes(true);
             int socketId = Convert.ToInt32(socketIdTextBox.Value);
             double waitTimer = Convert.ToDouble(this.delayTimerTextBox.Value);
             DateTime timeToReplay = DateTime.Now + TimeSpan.FromMilliseconds(waitTimer);
@@ -131,13 +131,13 @@ namespace XOPE_UI.View
                 replayProgressLabel.Text = "Sending...";
 
                 if (s != null && s is Timer) ((Timer)s).Dispose();
-                replayTimer = null;
+                _replayTimer = null;
 
                 IMessage message = packetTypeComboBox.SelectedIndex == 0 ?
                     new InjectSendPacket { Data = data, SocketId = socketId } :
                     new InjectRecvPacket { Data = data, SocketId = socketId };
 
-                spyManager.MessageDispatcher.Send(message);
+                _spyManager.MessageDispatcher.Send(message);
                 preventUiInteraction(false);
             };
 
@@ -145,10 +145,10 @@ namespace XOPE_UI.View
             if (this.delayTimerTextBox.Value > 55)
             {
                 replayProgressLabel.Text = $"{waitTimer/100:F2}s";
-                replayTimer = new Timer();
-                replayTimer.Tick += func;
-                replayTimer.Interval = 100;
-                replayTimer.Start();
+                _replayTimer = new Timer();
+                _replayTimer.Tick += func;
+                _replayTimer.Interval = 100;
+                _replayTimer.Start();
                 preventUiInteraction(true);
             }
             else
@@ -162,7 +162,7 @@ namespace XOPE_UI.View
             replayProgressLabel.Visible = isReplaying;
             socketIdTextBox.Enabled = !isReplaying;
             delayTimerTextBox.Enabled = !isReplaying;
-            hexEditor.IsEnabled = !isReplaying;
+            _hexEditor.IsEnabled = !isReplaying;
             socketSelectorButton.Enabled = !isReplaying;
         }
 
@@ -173,15 +173,15 @@ namespace XOPE_UI.View
 
         private void stopButton_Click(object sender, EventArgs e)
         {
-            replayTimer.Stop();
-            replayTimer = null;
+            _replayTimer.Stop();
+            _replayTimer = null;
             preventUiInteraction(false);
         }
 
         private void socketSelectorButton_Click(object sender, EventArgs e)
         {
             using (SocketSelectorDialog socketSelectorDialog = 
-                new SocketSelectorDialog(spyManager))
+                new SocketSelectorDialog(_spyManager))
             {
                 DialogResult result = socketSelectorDialog.ShowDialog();
                 if (result == DialogResult.OK)

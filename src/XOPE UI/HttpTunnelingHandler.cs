@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using XOPE_UI.Model;
-using XOPE_UI.Spy.DispatcherMessageType;
 
 namespace XOPE_UI
 {
@@ -82,7 +78,8 @@ namespace XOPE_UI
                 return false;
             }
 
-            SocketData socketData = _tunneledConns.GetOrAdd(connection.SocketId, new SocketData());
+
+            SocketData socketData = CreateOrGetSocketData(connection.SocketId);
             socketData.Tunnel = tunnelClient;
             socketData.Connection = connection;
 
@@ -196,7 +193,7 @@ namespace XOPE_UI
             client.GetStream().Read(inBuffer, 0, 4);
             int socketId = BitConverter.ToInt32(inBuffer, 0);
                 
-            SocketData socketData = _tunneledConns.GetOrAdd(socketId, new SocketData());
+            SocketData socketData = CreateOrGetSocketData(socketId);
             socketData.Sink = client;
 
             _cancellationSource.Token.Register(() => socketData.Dispose(true));
@@ -275,13 +272,13 @@ namespace XOPE_UI
             socketData.MarkTunnelAsDone();
         }
 
-        private SocketData CreateOrGetSocketData(Connection connection)
+        private SocketData CreateOrGetSocketData(int socketId)
         {
-            bool found = _tunneledConns.TryGetValue(connection.SocketId, out SocketData socketData);
+            bool found = _tunneledConns.TryGetValue(socketId, out SocketData socketData);
             if (!found)
             {
                 socketData = new SocketData();
-                socketData.OnDisposed += (s, e) => this.RemoveTunneledConnection(connection);
+                socketData.OnDisposed += (s, e) => this.RemoveTunneledConnection(socketId);
             }
             return socketData;
         }
@@ -296,9 +293,8 @@ namespace XOPE_UI
         //    RemoveTunneledConnection(tc.Connection);
         //}
 
-        private void RemoveTunneledConnection(Connection connection)
+        private void RemoveTunneledConnection(int socketId)
         {
-            int socketId = connection.SocketId;
             if (_tunneledConns.ContainsKey(socketId))
                 _tunneledConns.TryRemove(socketId, out _);
         }
