@@ -37,7 +37,7 @@
             this.confirmButton = new System.Windows.Forms.Button();
             this.processListTotalLabel = new System.Windows.Forms.Label();
             this.processDialogBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.searchTextBox = new XOPE_UI.View.Component.SearchTextBox(this.components);
+            this.searchTextBoxPlaceholder = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.processDialogBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -124,23 +124,23 @@
             this.processListTotalLabel.Text = "0/0";
             this.processListTotalLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // searchTextBox
+            // searchTextBoxPlaceholder
             // 
-            this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.searchTextBox.Location = new System.Drawing.Point(282, 376);
-            this.searchTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.searchTextBox.Name = "searchTextBox";
-            this.searchTextBox.PlaceholderText = null;
-            this.searchTextBox.Size = new System.Drawing.Size(207, 23);
-            this.searchTextBox.TabIndex = 0;
-            this.searchTextBox.TextChanged += new System.EventHandler(this.searchTextBox_TextChanged);
+            this.searchTextBoxPlaceholder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.searchTextBoxPlaceholder.Font = new System.Drawing.Font("Segoe UI", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.searchTextBoxPlaceholder.Location = new System.Drawing.Point(260, 376);
+            this.searchTextBoxPlaceholder.Name = "searchTextBoxPlaceholder";
+            this.searchTextBoxPlaceholder.Size = new System.Drawing.Size(270, 23);
+            this.searchTextBoxPlaceholder.TabIndex = 8;
+            this.searchTextBoxPlaceholder.Text = "Component.SearchTextBox\r\n### DO NOT REMOVE ###";
+            this.searchTextBoxPlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ProcessDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(779, 414);
-            this.Controls.Add(this.searchTextBox);
+            this.Controls.Add(this.searchTextBoxPlaceholder);
             this.Controls.Add(this.processListTotalLabel);
             this.Controls.Add(this.confirmButton);
             this.Controls.Add(this.cancelButton);
@@ -166,6 +166,6 @@
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button confirmButton;
         private System.Windows.Forms.Label processListTotalLabel;
-        private Component.SearchTextBox searchTextBox;
+        private System.Windows.Forms.Label searchTextBoxPlaceholder;
     }
 }

@@ -6,9 +6,11 @@ using System.Drawing;
 using System.IO;
 using System.Management;
 using System.Runtime.Caching;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using XOPE_UI.Native;
+using XOPE_UI.View.Component;
 
 namespace XOPE_UI.View
 {
@@ -17,25 +19,42 @@ namespace XOPE_UI.View
         public Process SelectedProcess { get; private set; }
         public string SelectedProcessName { get; private set; }
 
-        private SortedDictionary<int, Process> processes;
+        private SearchTextBox _searchTextBox;
+
+        private SortedDictionary<int, Process> _processes;
 
         // Use this if you need to go through the process list, instead of "processes"
         //   as "processes" contains elevated processes
         // <processId, listViewItem>
-        private Dictionary<int, ListViewItem> shadowProcessListItems;
+        private Dictionary<int, ListViewItem> _shadowProcessListItems;
 
-        private bool isElevated;
+        private bool _isElevated;
 
-        private Guid currentListId;
+        private Guid _currentListId;
 
         public ProcessDialog(bool isElevated)
         {
             InitializeComponent();
 
-            this.isElevated = isElevated;
+            _searchTextBox = new SearchTextBox()
+            {
+                Anchor = (AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom),
+                Location = searchTextBoxPlaceholder.Location,
+                Margin = new Padding(4, 3, 4, 3),
+                Name = "searchTextBox",
+                PlaceholderText = "Search here or F5 to refresh | Args: /c",
+                Size = searchTextBoxPlaceholder.Size,
+                TabIndex = 0,
+                Text = ""
+            };
+            _searchTextBox.TextChanged += new EventHandler(this.searchTextBox_TextChanged);
+            this.Controls.Add(_searchTextBox);
+            this.Controls.Remove(searchTextBoxPlaceholder);
 
-            processes = new SortedDictionary<int, Process>();
-            shadowProcessListItems = new Dictionary<int, ListViewItem>();
+            this._isElevated = isElevated;
+
+            _processes = new SortedDictionary<int, Process>();
+            _shadowProcessListItems = new Dictionary<int, ListViewItem>();
 
             this.processesListView.Columns[0].Width = 400;//processesView.Width;
             is64bitText.Text = Environment.Is64BitProcess.ToString();
@@ -43,11 +62,11 @@ namespace XOPE_UI.View
             this.processesListView.SmallImageList = GetImageListFromCache();
 
             this.processesListView
-            .GetType()
-            .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-            .SetValue(this.processesListView, true, null);
+                .GetType()
+                .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(this.processesListView, true, null);
 
-            this.searchTextBox.PlaceholderText = "Search here or F5 to refresh";
+            _searchTextBox.AddQueryOperator("/c", "Search commandline arguments");
         }
 
         /// <summary>
@@ -91,51 +110,49 @@ namespace XOPE_UI.View
 
             this.confirmButton.Enabled = false;
 
-            currentListId = Guid.NewGuid();
-            processes.Clear();
-            shadowProcessListItems.Clear();
+            _currentListId = Guid.NewGuid();
+            _processes.Clear();
+            _shadowProcessListItems.Clear();
 
             Process[] ps = Process.GetProcesses();
             foreach (Process p in ps)
-                processes.Add(p.Id, p);
+                _processes.Add(p.Id, p);
 
             this.processesListView.BeginUpdate();
             this.processesListView.Items.Clear();
 
-            // Get command-line arguments on sepearate thread due to taking >100ms
+            // Get command-line arguments on sepearate thread due to delay of >100ms
             Task.Factory.StartNew(() =>
             {
-                Guid listToUpdate = currentListId;
+                Guid listToUpdate = _currentListId;
                 using (ManagementObjectSearcher mos =
                     new($"SELECT CommandLine, ProcessId FROM Win32_Process"))
                 {
-                    if (this.IsDisposed || listToUpdate != currentListId)
+                    if (this.IsDisposed || listToUpdate != _currentListId)
                         return;
 
 
                     foreach (ManagementObject mo in mos.Get())
                     {
-                        if (listToUpdate != currentListId)
+                        if (listToUpdate != _currentListId)
                             break;
 
                         int pid = Convert.ToInt32(mo["ProcessId"]);
-                        if (!shadowProcessListItems.ContainsKey(pid))
+                        if (!_shadowProcessListItems.ContainsKey(pid))
                             continue;
 
-                        this.Invoke(() => shadowProcessListItems[pid].ToolTipText = mo["CommandLine"] as string);
+                        this.Invoke(() => _shadowProcessListItems[pid].ToolTipText = mo["CommandLine"] as string);
                     }
-
-                    //Console.WriteLine(;
                 }
             });
 
-            foreach (KeyValuePair<int, Process> kv in processes)
+            foreach (KeyValuePair<int, Process> kv in _processes)
             { 
                 Process p = kv.Value;
                 int pid = p.Id;
                 
                 string cacheKey = $"PROCESS_BLACKLIST_{pid}_{p.ProcessName}";
-                if (objectCache.Contains(cacheKey) || (!isElevated && p.SessionId == 0))
+                if (objectCache.Contains(cacheKey) || (!_isElevated && p.SessionId == 0))
                     continue;
                 
                 try
@@ -157,7 +174,7 @@ namespace XOPE_UI.View
                         if (!this.processesListView.SmallImageList.Images.ContainsKey(processName))
                             this.processesListView.SmallImageList.Images.Add(processName, Icon.ExtractAssociatedIcon(processFilePath));
                         this.processesListView.Items.Add(listViewItem);
-                        shadowProcessListItems.Add(p.Id, listViewItem);
+                        _shadowProcessListItems.Add(p.Id, listViewItem);
                     }));
                 }
                 catch (Win32Exception)
@@ -175,17 +192,21 @@ namespace XOPE_UI.View
             for (int i = 0; i < this.processesListView.Items.Count; i++)
             {
                 ListViewItem listViewItem = this.processesListView.Items[i];
-                Process process = processes[(int)listViewItem.Tag];
+                Process process = _processes[(int)listViewItem.Tag];
 
                 if (processNamesChecked.Contains(process.ProcessName))
                     continue;
 
                 bool wasEarliestStartedProcess = true;
-                foreach (ListViewItem processItem in shadowProcessListItems.Values)
+                bool singleInstance = true;
+                foreach (ListViewItem processItem in _shadowProcessListItems.Values)
                 {
-                    Process p = processes[(int)processItem.Tag];
+                    Process p = _processes[(int)processItem.Tag];
                     if (p.Id == process.Id || p.ProcessName != process.ProcessName)
                         continue;
+
+                    if (singleInstance)
+                        singleInstance = false;
 
                     // process started after another p with the same name
                     if (process.StartTime >= p.StartTime)
@@ -195,7 +216,7 @@ namespace XOPE_UI.View
                     }
                 }
 
-                if (wasEarliestStartedProcess)
+                if (wasEarliestStartedProcess && !singleInstance)
                 {
                     listViewItem.Text += " *";
                     processNamesChecked.Add(process.ProcessName);
@@ -207,7 +228,7 @@ namespace XOPE_UI.View
 
             UpdateProcessListLabel();
 
-            if (this.searchTextBox.Text != "")
+            if (_searchTextBox.Text != "")
                 UpdateListViewWithSearchQuery();
 
             stopwatch.Stop();
@@ -233,15 +254,17 @@ namespace XOPE_UI.View
 
         private void UpdateListViewWithSearchQuery()
         {
-            string searchQuery = this.searchTextBox.Text;
-
+            string processNameQuery = _searchTextBox.FormattedText;
+            string commandlineQuery = _searchTextBox.GetQueryOperatorValue("/c");
+            
             this.processesListView.BeginUpdate();
             this.processesListView.Items.Clear();
 
-            foreach (ListViewItem processItem in shadowProcessListItems.Values)
+            foreach (ListViewItem processItem in _shadowProcessListItems.Values)
             {
-                Process process = processes[(int)processItem.Tag];
-                if (process.ProcessName.IndexOf(searchQuery, StringComparison.OrdinalIgnoreCase) != -1)
+                Process process = _processes[(int)processItem.Tag];
+                if (process.ProcessName.IndexOf(processNameQuery, StringComparison.OrdinalIgnoreCase) != -1 &&
+                    (commandlineQuery is null || processItem.ToolTipText.IndexOf(commandlineQuery, StringComparison.OrdinalIgnoreCase) != -1))
                 {
                     this.processesListView.Items.Add(processItem);
                 }
@@ -249,22 +272,22 @@ namespace XOPE_UI.View
 
             this.processesListView.EndUpdate();
 
-            if (searchQuery != "")
+            if (_searchTextBox.Text != "")
             {
                 if (this.processesListView.Items.Count > 0)
-                    this.searchTextBox.BackColor = Color.LightGreen;
+                    _searchTextBox.BackColor = Color.LightGreen;
                 else
-                    this.searchTextBox.BackColor = Color.FromArgb(255, 100, 100);
+                    _searchTextBox.BackColor = Color.FromArgb(255, 100, 100);
             }
             else
-                this.searchTextBox.BackColor = Color.White;
+                _searchTextBox.BackColor = Color.White;
 
             UpdateProcessListLabel();
         }
 
         private void UpdateProcessListLabel()
         {
-            int totalProcessCount = shadowProcessListItems.Count;
+            int totalProcessCount = _shadowProcessListItems.Count;
             int processesListCount = this.processesListView.Items.Count;
             this.processListTotalLabel.Text = $"{processesListCount}/{totalProcessCount}";
         }
@@ -284,7 +307,7 @@ namespace XOPE_UI.View
         private void confirmButton_Click(object sender, EventArgs e)
         {
             SelectedProcessName = processesListView.SelectedItems[0].ImageKey;
-            SelectedProcess = processes[(int)processesListView.SelectedItems[0].Tag];
+            SelectedProcess = _processes[(int)processesListView.SelectedItems[0].Tag];
             this.DialogResult = DialogResult.OK;
         }
 
