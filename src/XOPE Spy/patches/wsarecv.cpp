@@ -24,7 +24,7 @@ int WSAAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
         // Sends the original packet data to UI
         message.buffers.push_back({
             .length = bytesRead,
-            .dataB64 = client::IMessage::convertBytesToCompressedB64(lpBuffers[i].buf, bytesRead),
+            .dataB64 = PacketDataJsonWrapper{ lpBuffers[i].buf, bytesRead },
             .modified = modified
         });
 
@@ -40,7 +40,7 @@ int WSAAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
         }
     }
 
-    app.sendToUI(message);
+    app.sendToUI(std::move(message));
 
     if (message.ret == SOCKET_ERROR && message.lastError != WSAEWOULDBLOCK)
         app.removeSocketFromSet(s);

@@ -13,6 +13,6 @@ int WSAAPI Functions::Hooked_CloseSocket(SOCKET s)
     hfcm.functionName = HookedFunction::CLOSE;
     hfcm.socket = s;
     hfcm.ret = ret;
-    app.sendToUI(hfcm);
+    app.sendToUI(std::move(hfcm));
     return ret;
 }

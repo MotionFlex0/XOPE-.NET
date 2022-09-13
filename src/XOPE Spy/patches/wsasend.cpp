@@ -34,7 +34,7 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
         message.buffers.push_back(
         { 
             .length = (size_t)lpBuffers[i].len,
-            .dataB64 = client::IMessage::convertBytesToCompressedB64(lpBuffers[i].buf, lpBuffers[i].len) 
+            .dataB64 = Packet(lpBuffers[i].buf, lpBuffers[i].buf+lpBuffers[i].len) 
         });
     }
 
@@ -77,10 +77,7 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
     else if (message.ret == SOCKET_ERROR)
         message.lastError = WSAGetLastError();
 
-    app.sendToUI(message);
-
-    if (message.ret == SOCKET_ERROR && message.lastError == WSAEWOULDBLOCK)
-        app.sendToUI(client::InfoMessage(std::to_string(s) + " wsasend returned WSAEWOULDBLOCK"));
+    app.sendToUI(std::move(message));
 
     if (message.ret == SOCKET_ERROR && message.lastError != WSAEWOULDBLOCK)
         app.removeSocketFromSet(s);

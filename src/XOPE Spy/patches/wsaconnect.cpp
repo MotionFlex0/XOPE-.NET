@@ -9,16 +9,18 @@ int WSAAPI Functions::Hooked_WSAConnect(SOCKET s, const sockaddr* name, int name
 {
     Application& app = Application::getInstance();
 
+    const auto sockaddrStorage = reinterpret_cast<const sockaddr_storage*>(name);
+
     client::HookedFunctionCallSocketMessage hfcm;
     hfcm.functionName = HookedFunction::WSACONNECT;
     hfcm.socket = s;
-    hfcm.sockaddr = reinterpret_cast<const sockaddr_storage*>(name);
+    hfcm.populateWithSockaddr(sockaddrStorage);
 
     int port{ 0 };
-    if (hfcm.sockaddr->ss_family == AF_INET)
-        port = ntohs(reinterpret_cast<const sockaddr_in*>(hfcm.sockaddr)->sin_port);
-    else if (hfcm.sockaddr->ss_family == AF_INET6)
-        port = ntohs(reinterpret_cast<const sockaddr_in6*>(hfcm.sockaddr)->sin6_port);
+    if (sockaddrStorage->ss_family == AF_INET)
+        port = ntohs(reinterpret_cast<const sockaddr_in*>(sockaddrStorage)->sin_port);
+    else if (sockaddrStorage->ss_family == AF_INET6)
+        port = ntohs(reinterpret_cast<const sockaddr_in6*>(sockaddrStorage)->sin6_port);
 
     if (app.isTunnelingEnabled() && app.isPortTunnelable(port))
     {
@@ -59,7 +61,7 @@ int WSAAPI Functions::Hooked_WSAConnect(SOCKET s, const sockaddr* name, int name
     if (hfcm.ret == SOCKET_ERROR)
         hfcm.lastError = WSAGetLastError();
 
-    app.sendToUI(hfcm);
+    app.sendToUI(std::move(hfcm));
 
     return hfcm.ret;
 }

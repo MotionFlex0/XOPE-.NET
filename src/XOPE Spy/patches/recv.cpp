@@ -66,7 +66,7 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
             if (hfcm.lastError != WSAEWOULDBLOCK)
                 app.removeSocketFromSet(s);
         }
-        app.sendToUI(hfcm);
+        app.sendToUI(std::move(hfcm));
 
         return bytesRead;
     }
@@ -74,12 +74,9 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
     Packet packet(buf, buf + bytesRead);
     bool modified = app.getPacketFilter().findAndReplace(FilterableFunction::RECV, s, packet);
     
-    hfcm.packetDataB64 = client::IMessage::convertBytesToCompressedB64(buf, bytesRead);
+    hfcm.packetDataB64 = { buf, bytesRead };
     hfcm.modified = modified;
-    app.sendToUI(hfcm);
-
-    //if (hfcm.ret == SOCKET_ERROR && hfcm.lastError == WSAEWOULDBLOCK)
-        //app.sendToUI(client::InfoMessage(std::to_string(s) + " recv returned WSAEWOULDBLOCK"));
+    app.sendToUI(std::move(hfcm));
 
     if (modified)
     {
