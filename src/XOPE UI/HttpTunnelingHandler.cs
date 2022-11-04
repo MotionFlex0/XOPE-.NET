@@ -274,13 +274,12 @@ namespace XOPE_UI
 
         private SocketData CreateOrGetSocketData(int socketId)
         {
-            bool found = _tunneledConns.TryGetValue(socketId, out SocketData socketData);
-            if (!found)
+            return _tunneledConns.GetOrAdd(socketId, (id) =>
             {
-                socketData = new SocketData();
+                SocketData socketData = new SocketData();
                 socketData.OnDisposed += (s, e) => this.RemoveTunneledConnection(socketId);
-            }
-            return socketData;
+                return socketData;
+            });
         }
 
         //private void CloseAndRemoveTunneledConnection(SocketData tc)

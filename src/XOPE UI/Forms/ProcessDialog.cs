@@ -8,6 +8,7 @@ using System.Management;
 using System.Runtime.Caching;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Automation.Text;
 using System.Windows.Forms;
 using XOPE_UI.Native;
 using XOPE_UI.View.Component;
@@ -121,31 +122,6 @@ namespace XOPE_UI.View
             this.processesListView.BeginUpdate();
             this.processesListView.Items.Clear();
 
-            // Get command-line arguments on sepearate thread due to delay of >100ms
-            Task.Factory.StartNew(() =>
-            {
-                Guid listToUpdate = _currentListId;
-                using (ManagementObjectSearcher mos =
-                    new($"SELECT CommandLine, ProcessId FROM Win32_Process"))
-                {
-                    if (this.IsDisposed || listToUpdate != _currentListId)
-                        return;
-
-
-                    foreach (ManagementObject mo in mos.Get())
-                    {
-                        if (listToUpdate != _currentListId)
-                            break;
-
-                        int pid = Convert.ToInt32(mo["ProcessId"]);
-                        if (!_shadowProcessListItems.ContainsKey(pid))
-                            continue;
-
-                        this.Invoke(() => _shadowProcessListItems[pid].ToolTipText = mo["CommandLine"] as string);
-                    }
-                }
-            });
-
             foreach (KeyValuePair<int, Process> kv in _processes)
             { 
                 Process p = kv.Value;
@@ -166,8 +142,6 @@ namespace XOPE_UI.View
                     {
                         Tag = p.Id,
                     };
-
-
 
                     this.Invoke(new Action(() =>
                     {
@@ -224,12 +198,15 @@ namespace XOPE_UI.View
 
             }
 
-            this.processesListView.EndUpdate();
-
             UpdateProcessListLabel();
+
+            this.processesListView.EndUpdate();
 
             if (_searchTextBox.Text != "")
                 UpdateListViewWithSearchQuery();
+
+            _ = UpdateCommandlineTooltips();
+
 
             stopwatch.Stop();
 
@@ -290,6 +267,31 @@ namespace XOPE_UI.View
             int totalProcessCount = _shadowProcessListItems.Count;
             int processesListCount = this.processesListView.Items.Count;
             this.processListTotalLabel.Text = $"{processesListCount}/{totalProcessCount}";
+        }
+
+        private async Task UpdateCommandlineTooltips()
+        {
+            // Get command-line arguments on sepearate thread due to delay of >100ms
+
+            Guid listToUpdate = _currentListId;
+            using (var mos = 
+                await Task.Run(() => new ManagementObjectSearcher($"SELECT CommandLine, ProcessId FROM Win32_Process")))
+            {
+                if (this.IsDisposed || listToUpdate != _currentListId)
+                    return;
+
+                foreach (ManagementObject mo in mos.Get())
+                {
+                    if (listToUpdate != _currentListId)
+                        break;
+
+                    int pid = Convert.ToInt32(mo["ProcessId"]);
+                    if (!_shadowProcessListItems.ContainsKey(pid))
+                        continue;
+
+                    this.Invoke(() => _shadowProcessListItems[pid].ToolTipText = mo["CommandLine"] as string);
+                }
+            }
         }
 
         private void processesView_SelectedIndexChanged(object sender, EventArgs e)
