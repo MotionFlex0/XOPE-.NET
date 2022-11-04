@@ -8,6 +8,7 @@
 #include "../utils/base64.h"
 #include "../utils/guid.h"
 #include "../utils/assert.h"
+#include "../utils/packetjsonwrapper.h"
 
 #pragma warning(disable: 4996)
 
@@ -74,28 +75,45 @@ namespace client
 		IMessage(UiMessageType m) { messageType = m; }
 		UiMessageType messageType;
 
-		inline virtual void toJson(json& j) { };
-		inline virtual void fromJson(json& j) { };
-
-
-		inline static std::string convertBytesToCompressedB64(const char* bytes, const unsigned int len)
+		virtual void serializeToJson(json& j)
 		{
-			if (len < 1)
-				return { };
-
-			std::array<Bytef, 32768> compressedBuf;
-			uLong compressedBufSize = sizeof(compressedBuf);
-			int err = compress(compressedBuf.data(), &compressedBufSize, reinterpret_cast<const unsigned char*>(bytes), len);
-			x_assert(err == Z_OK, "failed to compress bytes");
-
-			return base64_encode(std::string(reinterpret_cast<const char*>(compressedBuf.data()), compressedBufSize));
+			to_json(j, *this);
 		}
+
+		//NLOHMANN_DEFINE_TYPE_INTRUSIVE(IMessage, messageType);
+
+		friend void to_json(json& j, IMessage& mes)
+		{
+			j["messageType"] = mes.messageType;
+		}
+
+		//static std::string convertBytesToCompressedB64(const char* bytes, const unsigned int len)
+		//{
+		//	if (len < 1)
+		//		return { };
+
+		//	std::array<Bytef, 32768> compressedBuf;
+		//	uLong compressedBufSize = sizeof(compressedBuf);
+		//	int err = compress(compressedBuf.data(), &compressedBufSize, reinterpret_cast<const unsigned char*>(bytes), len);
+		//	x_assert(err == Z_OK, "failed to compress bytes");
+
+		//	//return base64_encode(std::string(reinterpret_cast<const char*>(compressedBuf.data()), compressedBufSize));
+		//	return { reinterpret_cast<const char*>(compressedBuf.data()), compressedBufSize };
+		//}
 	};
 
 	struct IMessageResponse : IMessage
 	{
 		IMessageResponse(UiMessageType m, Guid jobId) : IMessage(m), jobId(jobId) { }
 		Guid jobId;
+
+		void serializeToJson(json& j) override
+		{
+			IMessage::serializeToJson(j);
+			to_json(j, *this);
+		}
+
+		//NLOHMANN_DEFINE_TYPE_INTRUSIVE(IMessageResponse, jobId);
 	};
 
 	struct HookedFunctionCallPacketMessage : IMessage
@@ -106,13 +124,19 @@ namespace client
 		HookedFunction functionName;
 		SOCKET socket;
 		int packetLen;
-		std::string packetDataB64;
+		PacketDataJsonWrapper packetDataB64;
 		int ret;
 		bool modified = false;
 		bool tunneled = false;
 		int lastError = -1;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(HookedFunctionCallPacketMessage, messageType, functionName,
+		void serializeToJson(json& j) override
+		{
+			IMessage::serializeToJson(j);
+			to_json(j, *this);
+		}
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(HookedFunctionCallPacketMessage, functionName,
 			socket, 
 			packetLen, 
 			packetDataB64,
@@ -127,7 +151,7 @@ namespace client
 		struct Buffer 
 		{
 			size_t length;
-			std::string dataB64;
+			PacketDataJsonWrapper dataB64;
 			size_t bytesSent;
 			bool modified = false;
 
@@ -144,7 +168,13 @@ namespace client
 		bool tunneled = false;
 		int lastError = -1;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(WSASendFunctionCallMessage, messageType, functionName,
+		void serializeToJson(json& j) override
+		{
+			IMessage::serializeToJson(j);
+			to_json(j, *this);
+		}
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(WSASendFunctionCallMessage, functionName,
 			socket,
 			bufferCount,
 			buffers,
@@ -158,7 +188,7 @@ namespace client
 		struct Buffer
 		{
 			size_t length;
-			std::string dataB64;
+			PacketDataJsonWrapper dataB64;
 			bool modified = false;
 
 			NLOHMANN_DEFINE_TYPE_INTRUSIVE(Buffer, length, dataB64, modified);
@@ -174,7 +204,13 @@ namespace client
 		bool tunneled = false;
 		int lastError = -1;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(WSARecvFunctionCallMessage, messageType, functionName,
+		void serializeToJson(json& j) override
+		{
+			IMessage::serializeToJson(j);
+			to_json(j, *this);
+		}
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(WSARecvFunctionCallMessage, functionName,
 			socket,
 			bufferCount,
 			buffers,
@@ -188,8 +224,14 @@ namespace client
 		InfoMessage(std::string info) : IMessage(UiMessageType::INFO_MESSAGE), infoMessage(info) { }
 
 		std::string infoMessage;
+		
+		void serializeToJson(json& j) override
+		{
+			IMessage::serializeToJson(j);
+			to_json(j, *this);
+		}
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(InfoMessage, messageType, infoMessage);
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(InfoMessage, infoMessage);
 	};
 
 	// Only use for messages passed to extern SendMessageToLog
@@ -200,7 +242,13 @@ namespace client
 		std::string externalMessage;
 		std::string moduleName;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ExternalMessage, messageType, externalMessage, moduleName);
+		void serializeToJson(json& j) override
+		{
+			IMessage::serializeToJson(j);
+			to_json(j, *this);
+		}
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ExternalMessage, externalMessage, moduleName);
 	};
 
 	struct ErrorMessage : IMessage
@@ -208,8 +256,14 @@ namespace client
 		ErrorMessage(std::string errMsg) : IMessage(UiMessageType::ERROR_MESSAGE), errorMessage(errMsg) { }
 		
 		std::string errorMessage;
+
+		void serializeToJson(json& j) override
+		{
+			IMessage::serializeToJson(j);
+			to_json(j, *this);
+		}
 		
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ErrorMessage, messageType, errorMessage);
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ErrorMessage, errorMessage);
 	};
 
 	struct ErrorMessageResponse : IMessageResponse
@@ -219,7 +273,13 @@ namespace client
 
 		std::string errorMessage;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ErrorMessageResponse, messageType, jobId, errorMessage);
+		void serializeToJson(json& j) override
+		{
+			IMessageResponse::serializeToJson(j);
+			to_json(j, *this);
+		}
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ErrorMessageResponse, jobId, errorMessage);
 	};
 
 	struct PongMessageResponse : IMessageResponse
@@ -228,7 +288,13 @@ namespace client
 
 		std::string data = "PONG!";
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(PongMessageResponse, messageType, jobId, data);
+		void serializeToJson(json& j) override
+		{
+			IMessageResponse::serializeToJson(j);
+			to_json(j, *this);
+		}
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(PongMessageResponse, jobId, data);
 	};
 
 	struct SocketInfoResponse : IMessageResponse
@@ -246,7 +312,13 @@ namespace client
 		int addrFamily;
 		int protocol;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(SocketInfoResponse, messageType, jobId, addr, port, addrFamily, protocol);
+		void serializeToJson(json& j) override
+		{
+			IMessageResponse::serializeToJson(j);
+			to_json(j, *this);
+		}
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(SocketInfoResponse, jobId, addr, port, addrFamily, protocol);
 	};
 
 	struct HookedFunctionCallSocketMessage : IMessage
@@ -255,15 +327,88 @@ namespace client
 
 		HookedFunction functionName;
 		SOCKET socket;
-		const sockaddr_storage* sockaddr;
 		int ret;
 		int lastError = -1;
 		bool tunneling = false;
 
-		inline void toJson(json& j) override
+		uint16_t addrFamily = -1;
+		std::string addr = "";
+		uint16_t port = -1;
+
+		void serializeToJson(json& j) override
 		{
-			IMessage::toJson(j);
-				
+			IMessage::serializeToJson(j);
+			to_json(j, *this);
+		}
+
+		void populateWithSockaddr(const sockaddr_storage* sockaddr)
+		{
+			int oldWsaErrorCode = WSAGetLastError();
+
+			addrFamily = sockaddr->ss_family;
+
+			if (sockaddr->ss_family == AF_INET)
+			{
+				const sockaddr_in* sa = reinterpret_cast<const sockaddr_in*>(sockaddr);
+
+				char addr[INET_ADDRSTRLEN];
+				int addrSize = sizeof(addr);
+				int sinSize = sizeof(sockaddr_in);
+
+				WSAAddressToStringA((LPSOCKADDR)sa, sinSize, NULL, addr, (LPDWORD)&addrSize);
+				std::replace(addr, addr + sizeof(addr), ':', '\x00');
+				this->addr = addr;
+				port = ntohs(sa->sin_port);
+			}
+			else if (sockaddr->ss_family == AF_INET6)
+			{
+				const sockaddr_in6* sa = reinterpret_cast<const sockaddr_in6*>(sockaddr);
+
+				char addr[INET6_ADDRSTRLEN];
+				int addrSize = sizeof(addr);
+				int sinSize = sizeof(sockaddr_in6);
+
+				WSAAddressToStringA((LPSOCKADDR)sa, sinSize, NULL, addr, (LPDWORD)&addrSize);
+
+				std::string address{ addr };
+				auto colonPos = address.find_last_of(':');
+				if (colonPos != std::string::npos)
+					address.erase(colonPos);
+
+				this->addr = address;
+				port = ntohs(sa->sin6_port);
+			}
+			WSASetLastError(oldWsaErrorCode);
+
+		}
+
+		friend void to_json(json& j, const HookedFunctionCallSocketMessage& hfcm)
+		{
+			/* json
+			{
+				functionName:int,
+				socket:int,
+				protocol:int, //TODO: currently not implemented. need to call getsockopt(..) to get the type
+				port:int,
+				addr:scr/byte,
+				addrType:int
+			}*/
+
+
+			to_json(j, (IMessage&)hfcm);
+			j["functionName"] = hfcm.functionName;
+			j["socket"] = hfcm.socket;
+			j["ret"] = hfcm.ret;
+			j["lastError"] = hfcm.lastError;
+			if (hfcm.functionName != HookedFunction::CLOSE)
+			{
+				j["protocol"] = -1;
+				j["addrFamily"] = hfcm.addrFamily;
+				j["addr"] = hfcm.addr;
+				j["port"] = hfcm.port;
+				j["tunneling"] = hfcm.tunneling;
+
+			}
 		}
 	};
 
@@ -286,8 +431,14 @@ namespace client
 		bool error = false;
 		int lastError = -1;
 
+		void serializeToJson(json& j) override
+		{
+			IMessageResponse::serializeToJson(j);
+			to_json(j, *this);
+		}
+
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(IsSocketWritableResponse, 
-			messageType, jobId, writable, timedOut, error, lastError);
+			jobId, writable, timedOut, error, lastError);
 	};
 
 	struct AddPacketFilterResponse : IMessageResponse
@@ -300,8 +451,14 @@ namespace client
 
 		Guid filterId;
 
+		void serializeToJson(json& j) override
+		{
+			IMessageResponse::serializeToJson(j);
+			to_json(j, *this);
+		}
+
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(AddPacketFilterResponse,
-			messageType, jobId, filterId);
+			jobId, filterId);
 	};
 
 	struct GenericPacketFilterResponse : IMessageResponse
@@ -311,8 +468,14 @@ namespace client
 		) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId)
 		{ }
 
+		void serializeToJson(json& j) override
+		{
+			IMessageResponse::serializeToJson(j);
+			to_json(j, *this);
+		}
+
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(GenericPacketFilterResponse,
-			messageType, jobId);
+			jobId);
 	};
 
 	struct ConnectedSuccessMessage : IMessage
@@ -321,79 +484,13 @@ namespace client
 
 		std::string spyPipeServerName;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ConnectedSuccessMessage,
-			messageType,
-			spyPipeServerName);
-	};
-
-	inline void from_json(const json& j, IMessage& hfcm)
-	{
-		j.at("messageType").get_to(hfcm.messageType);
-	}
-
-	inline void to_json(json& j, const IMessage& hfcm)
-	{
-		j["messageType"] = hfcm.messageType;
-	}
-
-	static void to_json(json& j, const HookedFunctionCallSocketMessage& hfcm)
-	{
-		/* json
+		void serializeToJson(json& j) override
 		{
-			functionName:int,
-			socket:int,
-			protocol:int, //TODO: currently not implemented. need to call getsockopt(..) to get the type
-			port:int,
-			addr:scr/byte,
-			addrType:int
-		}*/
-
-		int oldWsaErrorCode = WSAGetLastError();
-
-		to_json(j, (IMessage)hfcm);
-		j["functionName"] = hfcm.functionName;
-		j["socket"] = hfcm.socket;
-		j["ret"] = hfcm.ret;
-		j["lastError"] = hfcm.lastError;
-		if (hfcm.functionName != HookedFunction::CLOSE)
-		{
-			j["tunneling"] = hfcm.tunneling;
-			j["protocol"] = -1;
-			j["addrFamily"] = hfcm.sockaddr->ss_family;
-
-			if (hfcm.sockaddr->ss_family == AF_INET)
-			{
-				const sockaddr_in* sa = reinterpret_cast<const sockaddr_in*>(hfcm.sockaddr);
-
-				char addr[INET_ADDRSTRLEN];
-				int addrSize = sizeof(addr);
-				int sinSize = sizeof(sockaddr_in);
-				
-				WSAAddressToStringA((LPSOCKADDR)sa, sinSize, NULL, addr, (LPDWORD)&addrSize);
-				std::replace(addr, addr + sizeof(addr), ':', '\x00');
-				j["addr"] = addr;
-				j["port"] = ntohs(sa->sin_port);
-			}
-			else if (hfcm.sockaddr->ss_family == AF_INET6)
-			{
-				const sockaddr_in6* sa = reinterpret_cast<const sockaddr_in6*>(hfcm.sockaddr);
-
-				char addr[INET6_ADDRSTRLEN];
-				int addrSize = sizeof(addr);
-				int sinSize = sizeof(sockaddr_in6);
-
-				WSAAddressToStringA((LPSOCKADDR)sa, sinSize, NULL, addr, (LPDWORD)&addrSize);
-
-				std::string address{ addr };
-				auto colonPos = address.find_last_of(':');
-				if (colonPos != std::string::npos)
-					address.erase(colonPos);
-
-				j["addr"] = address;
-				j["port"] = ntohs(sa->sin6_port);
-			}	
+			IMessage::serializeToJson(j);
+			to_json(j, *this);
 		}
 
-		WSASetLastError(oldWsaErrorCode);
-	}
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(ConnectedSuccessMessage,
+			spyPipeServerName);
+	};
 }
