@@ -2,6 +2,7 @@
 #define _WINSOCKAPI_
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
+#include <BS_thread_pool.hpp>
 #include <mutex>
 #include <queue>
 #include <set>
@@ -62,10 +63,9 @@ public:
 	void setSocketIpVersion(SOCKET socket, int ipVersion);
 	int getSocketIpVersion(SOCKET socket);
 	
-	void sendToUI(Util::IMessageDerived auto message);
-	void processIncomingMessages();
+	void sendToUI(Util::IMessageDerived auto&& message);
 private:
-	Application() { }
+	Application();
 
 	HMODULE _dllModule = NULL;
 	HookManager* _hookManager = nullptr;
@@ -84,15 +84,18 @@ private:
 	bool _stopApplication = false;
 	HANDLE _applicationThread;
 	std::thread _serverThread;
+	std::shared_ptr<BS::thread_pool> _pool;
 
 	void initHooks();
 	bool initClient(std::string spyServerPipeName);
 	void initServer(std::string spyServerPipeName);
 	void run();
+	void processIncomingMessages();
+
 };
 
-void Application::sendToUI(Util::IMessageDerived auto message)
+void Application::sendToUI(Util::IMessageDerived auto&& message)
 {
 	if (_namedPipeClient != nullptr)
-		_namedPipeClient->send(message);
+		_namedPipeClient->send(std::make_unique<std::remove_reference_t<decltype(message)>>(message));
 }

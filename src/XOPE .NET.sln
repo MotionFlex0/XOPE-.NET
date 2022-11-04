@@ -48,7 +48,6 @@ Global
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Release|x64 binding (UI-Spy) [Part 1].ActiveCfg = Release|Any CPU
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Release|x64 binding (UI-Spy) [Part 1].Build.0 = Release|Any CPU
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Release|x86 binding (Spy) [Part 2].ActiveCfg = Release|Any CPU
-		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Release|x86 binding (Spy) [Part 2].Build.0 = Release|Any CPU
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{3B3F2902-E528-4D39-975F-C7900B7AB7DE}.Release|x86 build.Build.0 = Release|Any CPU
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Win32
@@ -60,6 +59,7 @@ Global
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Debug|x86 build.Build.0 = Debug|Win32
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Release|Any CPU (Samples-Controls).ActiveCfg = Release|Win32
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Release|x64 binding (UI-Spy) [Part 1].ActiveCfg = Release|x64
+		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Release|x64 binding (UI-Spy) [Part 1].Build.0 = Release|x64
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Release|x86 binding (Spy) [Part 2].ActiveCfg = Release|Win32
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Release|x86 binding (Spy) [Part 2].Build.0 = Release|Win32
 		{2C41E95E-9A4A-4982-AB4B-C151CD4DF3CB}.Release|x86 build.ActiveCfg = Release|Win32
@@ -69,7 +69,7 @@ Global
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Debug|x86 binding (Spy) [Part 2].Build.0 = Debug|Win32
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Debug|x86 build.ActiveCfg = Debug|Win32
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|Any CPU (Samples-Controls).ActiveCfg = Release|Win32
-		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x64 binding (UI-Spy) [Part 1].ActiveCfg = Release|x64
+		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x64 binding (UI-Spy) [Part 1].ActiveCfg = Release|Win32
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x86 binding (Spy) [Part 2].ActiveCfg = Release|Win32
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x86 binding (Spy) [Part 2].Build.0 = Release|Win32
 		{3DE5F825-C491-469C-967C-0769F6D0A1B3}.Release|x86 build.ActiveCfg = Release|Win32
@@ -85,7 +85,6 @@ Global
 		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x64 binding (UI-Spy) [Part 1].ActiveCfg = Release|Any CPU
 		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x64 binding (UI-Spy) [Part 1].Build.0 = Release|Any CPU
 		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x86 binding (Spy) [Part 2].ActiveCfg = Release|Any CPU
-		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x86 binding (Spy) [Part 2].Build.0 = Release|Any CPU
 		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{9733E795-8047-4DC6-B5DF-40A5C81897D4}.Release|x86 build.Build.0 = Release|Any CPU
 		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
@@ -99,7 +98,6 @@ Global
 		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Release|x64 binding (UI-Spy) [Part 1].ActiveCfg = Release|Any CPU
 		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Release|x64 binding (UI-Spy) [Part 1].Build.0 = Release|Any CPU
 		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Release|x86 binding (Spy) [Part 2].ActiveCfg = Release|Any CPU
-		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Release|x86 binding (Spy) [Part 2].Build.0 = Release|Any CPU
 		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{5FBEA3F1-33F0-458A-9316-5FD71B4BE8EB}.Release|x86 build.Build.0 = Release|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
@@ -112,7 +110,6 @@ Global
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|Any CPU (Samples-Controls).Build.0 = Release|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|x64 binding (UI-Spy) [Part 1].ActiveCfg = Release|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|x86 binding (Spy) [Part 2].ActiveCfg = Release|Any CPU
-		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|x86 binding (Spy) [Part 2].Build.0 = Release|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{D76434B8-685A-48C6-A6CB-B90016AA3C76}.Release|x86 build.Build.0 = Release|Any CPU
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
@@ -126,7 +123,6 @@ Global
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Release|x64 binding (UI-Spy) [Part 1].ActiveCfg = Release|Any CPU
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Release|x64 binding (UI-Spy) [Part 1].Build.0 = Release|Any CPU
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Release|x86 binding (Spy) [Part 2].ActiveCfg = Release|Any CPU
-		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Release|x86 binding (Spy) [Part 2].Build.0 = Release|Any CPU
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{275F1D60-7E19-4466-8624-00EC9EA768CD}.Release|x86 build.Build.0 = Release|Any CPU
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
@@ -140,7 +136,6 @@ Global
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x64 binding (UI-Spy) [Part 1].ActiveCfg = Release|Any CPU
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x64 binding (UI-Spy) [Part 1].Build.0 = Release|Any CPU
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 binding (Spy) [Part 2].ActiveCfg = Release|Any CPU
-		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 binding (Spy) [Part 2].Build.0 = Release|Any CPU
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{0E0549F8-3B40-429F-B109-942B3E253047}.Release|x86 build.Build.0 = Release|Any CPU
 		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
@@ -154,7 +149,6 @@ Global
 		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x64 binding (UI-Spy) [Part 1].ActiveCfg = Release|Any CPU
 		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x64 binding (UI-Spy) [Part 1].Build.0 = Release|Any CPU
 		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x86 binding (Spy) [Part 2].ActiveCfg = Release|Any CPU
-		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x86 binding (Spy) [Part 2].Build.0 = Release|Any CPU
 		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{EBE6B541-68AA-4A86-B56E-DF562244C6EC}.Release|x86 build.Build.0 = Release|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Debug|Any CPU (Samples-Controls).ActiveCfg = Debug|Any CPU
@@ -168,7 +162,6 @@ Global
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Release|x64 binding (UI-Spy) [Part 1].ActiveCfg = Release|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Release|x64 binding (UI-Spy) [Part 1].Build.0 = Release|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Release|x86 binding (Spy) [Part 2].ActiveCfg = Release|Any CPU
-		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Release|x86 binding (Spy) [Part 2].Build.0 = Release|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Release|x86 build.ActiveCfg = Release|Any CPU
 		{5B45B5FB-5231-4BFD-8FED-EE06B0851110}.Release|x86 build.Build.0 = Release|Any CPU
 	EndGlobalSection
