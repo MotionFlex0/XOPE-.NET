@@ -1,15 +1,16 @@
 #pragma once
+
 #include <algorithm>
+#include <BS_thread_pool.hpp>
 #include <concepts>
 #include <iostream>
 #include <memory>
 #include <mutex>
 #include <queue>
+
 #include "../definitions/definitions.hpp"
 #include "../nlohmann/json.hpp"
 #include "../utils/util.h"
-
-//TODO: Change the folder name from 'comms' to something more descriptive
 
 class NamedPipeClient
 {
@@ -22,41 +23,31 @@ class NamedPipeClient
 public:
 
 	//Should be run at the beginning of the program.
-	NamedPipeClient(const char* pipePath);
+	NamedPipeClient(const char* pipePath, std::shared_ptr<BS::thread_pool> pool);
 
 	bool isPipeBroken();
 
-	bool send(Util::IMessageDerived auto mes);
+	bool send(std::unique_ptr<client::IMessage> mes);
 	
 	void flushOutBuffer();
 	void close();
 
+	// Thread pool is enabled by default but when calls are made by the thread that calls 
+	//  DllMain it needs to be disabled or else the program will deadlock
+	void disableThreadPool(bool disable);
+
 private:
+
+	using OutMessage_P = std::unique_ptr<OutMessage>;
 
 	bool pipeBroken = false;
 	HANDLE _pipe = INVALID_HANDLE_VALUE;
-	std::queue<OutMessage> _outBuffer;
+	//std::queue<OutMessage> _outBuffer;
+	std::queue <std::unique_ptr<client::IMessage>> _outBuffer;
 	std::mutex _mutex;
+
+	std::weak_ptr<BS::thread_pool> _pool;
+	std::atomic<bool> _disablePool = false;
+
+	OutMessage_P serializeMessage(std::unique_ptr<client::IMessage> message);
 };
-
-bool NamedPipeClient::send(Util::IMessageDerived auto mes)
-{
-	if (isPipeBroken())
-		return false;
-
-	std::lock_guard<std::mutex> lock(_mutex);
-
-	DWORD bytesWritten{ 0 };
-	json j = mes;
-
-	std::vector<std::uint8_t> cbor = json::to_cbor(j);
-
-	int len = static_cast<int>(cbor.size());
-	auto buffer = std::make_unique<uint8_t[]>(len);
-	memcpy(buffer.get(), cbor.data(), len);
-
-	_outBuffer.push({ .data = std::move(buffer), .length = len });
-
-	return true;
-}
-
