@@ -43,9 +43,6 @@
     <Filter Include="Source Files\comms">
       <UniqueIdentifier>{c68c3e27-3902-4c3d-8d1a-356c202873bf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\zlib">
-      <UniqueIdentifier>{9cdd5527-0ebf-4292-8146-3fe72dd80222}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\definitions">
       <UniqueIdentifier>{ed9f45a2-4ca6-45d7-85a9-8db6b5c4fbcb}</UniqueIdentifier>
     </Filter>
@@ -85,9 +82,6 @@
       <Filter>Source Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="utils\base64.cpp">
-      <Filter>Source Files\utils</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\util.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="packet\filter.cpp">
@@ -141,6 +135,12 @@
     <ClCompile Include="exports.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="utils\assert.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\packetjsonwrapper.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pipe\namedpipeclient.h">
@@ -163,12 +163,6 @@
     </ClInclude>
     <ClInclude Include="nlohmann\json.hpp">
       <Filter>Source Files\nlohmann</Filter>
-    </ClInclude>
-    <ClInclude Include="zlib\zconf.h">
-      <Filter>Header Files\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="zlib\zlib.h">
-      <Filter>Header Files\zlib</Filter>
     </ClInclude>
     <ClInclude Include="utils\util.h">
       <Filter>Header Files\utils</Filter>
@@ -202,6 +196,12 @@
     </ClInclude>
     <ClInclude Include="definitions\socketdata.h">
       <Filter>Header Files\definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\assert.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\packetjsonwrapper.h">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
