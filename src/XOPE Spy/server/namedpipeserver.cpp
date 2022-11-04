@@ -17,8 +17,6 @@ bool NamedPipeServer::isPipeBroken()
 
 void NamedPipeServer::run()
 {
-	ConnectNamedPipe(_pipe, NULL);
-	
 	DWORD bytesRead{ 0 };
 	DWORD bytesAvailable{ 0 };
 
@@ -27,6 +25,17 @@ void NamedPipeServer::run()
 	const int storageSize = 65535;
 	std::vector<char> storageBuf(storageSize, 0xFF);
 	int offset = 0;
+
+	BOOL connected = ConnectNamedPipe(_pipe, NULL);
+	if (!connected)
+	{
+		MessageBoxA(NULL, "CANCELLED", "TEST", MB_OK);
+		CloseHandle(_pipe);
+		_stopServer = true;
+		_pipeBroken = true;
+		return;
+	}
+
 	while (!_stopServer)
 	{
 		if (!PeekNamedPipe(_pipe, NULL, NULL, NULL, &bytesAvailable, NULL))
@@ -50,12 +59,18 @@ void NamedPipeServer::run()
 	
 				do
 				{
-					json message = json::parse(storageBuf.data() + offset);
+					try
+					{
+						json message = json::parse(storageBuf.data() + offset);
 
-					SpyMessageType type = message["Type"].get<SpyMessageType>();
-
-					std::lock_guard lock(_lock);
-					_incomingMessages.push({ type, message });
+						SpyMessageType type = message["Type"].get<SpyMessageType>();
+						std::lock_guard lock(_lock);
+						_incomingMessages.push({ type, message });
+					}
+					catch (std::exception e)
+					{
+						// TODO: Send an error message to the UI
+					}
 
 					*(endOfJsonIt + 1) = '\xff'; // 0x00 -> 0xff so the sequence "}\x00" cannot be found again
 					offset = (((endOfJsonIt+2) - storageBuf.begin()));
@@ -81,7 +96,9 @@ void NamedPipeServer::run()
 
 void NamedPipeServer::shutdownServer()
 {
+	CancelSynchronousIo(GetCurrentThread());
 	_stopServer = true;
+	_pipeBroken = true;
 }
 
 std::optional<IncomingMessage> NamedPipeServer::getIncomingMessage()
