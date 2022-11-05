@@ -36,7 +36,7 @@
   <PropertyGroup>
     <StartupObject>XOPE_UI.Program</StartupObject>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <BaseOutputPath>C:\Users\Nathaniel\source\repos\XOPE .NET\bin\mixed</BaseOutputPath>
+    <BaseOutputPath>$(SolutionDir)..\bin\mixed</BaseOutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

@@ -5,7 +5,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <BaseOutputPath>C:\Users\Nathaniel\source\repos\XOPE .NET\bin\mixed</BaseOutputPath>
+    <BaseOutputPath>$(SolutionDir)..\bin\mixed</BaseOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="HexEditor.cs">
