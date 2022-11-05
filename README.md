@@ -5,7 +5,7 @@ A packet view/editor for Windows with per-application capture/filtering. It also
 
 ### Requirements
 
-vcpkg is used to install the required dependencies.
+[`vcpkg`](https://vcpkg.io/en/getting-started.html) is used to install the required dependencies.
 
 * bshoshany thread pool
 ```bat
