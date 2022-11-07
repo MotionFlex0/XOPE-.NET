@@ -14,16 +14,6 @@ int WSAAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
         bytesSent = SOCKET_ERROR;
         WSASetLastError(WSAECONNRESET);
     }
-    //else if (app.isSocketTunneled(s))
-    //{
-    //    if (!app.wasSocketIdSentToSink(s))
-    //    {
-    //        int32_t s32 = s & 0xFFFFFFFF;
-    //        app.getHookManager()->get_ofunction<send>()(s, (char*)&s32, sizeof(s32), NULL);
-    //        app.emitSocketIdSentToSink(s);
-    //    }
-    //    bytesSent = len;
-    //}
     else
     {
         if (app.isSocketTunneled(s) && !app.wasSocketIdSentToSink(s))
