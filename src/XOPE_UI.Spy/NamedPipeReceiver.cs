@@ -50,7 +50,7 @@ namespace XOPE_UI.Spy
             }
         }
 
-        public async Task RunAsync(string receiverName) 
+        public async Task StartReceiver(string receiverName)
         {
             if (IsConnectingOrConnected)
             {
@@ -58,16 +58,28 @@ namespace XOPE_UI.Spy
                 return;
             }
 
+            setIsConnectingState();
+
+            NamedPipeServerStream receiver = new NamedPipeServerStream(receiverName);
             _cancellationTokenSource = new CancellationTokenSource();
 
-            setIsConnectingState();
-            using (NamedPipeServerStream receiverStream = new NamedPipeServerStream(receiverName))
+            await receiver.WaitForConnectionAsync(_cancellationTokenSource.Token);
+            setIsConnectedState();
+            Console.WriteLine("Spy connected to Receiver. Waiting for CONNECTION_SUCCESS message...");
+            _ = ProcessAsync(receiver);
+        }
+
+        public void ShutdownAndWait()
+        {
+            _cancellationTokenSource.Cancel();
+            setNoConnectionState();
+        }
+
+        private async Task ProcessAsync(NamedPipeServerStream receiverStream) 
+        {
+            using (receiverStream)
             {
                 _cancellationTokenSource.Token.Register(() => receiverStream.Close());
-
-                await receiverStream.WaitForConnectionAsync(_cancellationTokenSource.Token);
-                setIsConnectedState();
-                Console.WriteLine("Spy connected to Receiver. Waiting for CONNECTION_SUCCESS message...");
 
                 try
                 {
@@ -126,12 +138,6 @@ namespace XOPE_UI.Spy
 
                 setNoConnectionState();
             }
-        }
-
-        public void ShutdownAndWait()
-        {
-            _cancellationTokenSource.Cancel();
-            setNoConnectionState();
         }
 
         private void setIsConnectingState()
