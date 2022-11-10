@@ -28,7 +28,7 @@ namespace XOPE_UI
         public event EventHandler<Connection> ConnectionPropUpdated;
 
         public SpyData SpyData { get; private set; }
-        public bool IsAttached { get => _attachedProcess != null; }
+        public bool IsAttached => _attachedProcess != null;
         public bool IsTunneling { get; private set; }
         public HttpTunnelingHandler HttpTunnel { get; private set; }
 
@@ -91,14 +91,14 @@ namespace XOPE_UI
         }
 
         // TODO: Refactor this method
-        public void RunAsync(string receiverPipeName)
+        public async void RunAsync(string receiverPipeName)
         {
             if (_spyThread != null)
                 new InvalidOperationException("Cannot start SpyManager thread because there is already an instance running.");
 
             _cancellationTokenSource = new CancellationTokenSource();
 
-            _ = MessageReceiver.RunAsync(receiverPipeName);
+            await MessageReceiver.StartReceiver(receiverPipeName);
 
             _spyThread = Task.Factory.StartNew(() =>
             {
@@ -423,8 +423,8 @@ namespace XOPE_UI
                 bool completed = _spyThread.Wait(7000);
                 if (!completed)
                     Console.WriteLine("App.Shutdown waited for SpyManager Thread to exit but it timed-out.");
-                ResetState();
             }
+            ResetState();
         }
 
         private void ResetState()
