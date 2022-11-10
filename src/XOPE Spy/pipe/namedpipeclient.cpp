@@ -45,7 +45,7 @@ void NamedPipeClient:: flushOutBuffer()
         if (!res)
         {
             DWORD lastError = GetLastError();
-            if (lastError == ERROR_PIPE_NOT_CONNECTED || lastError == ERROR_BAD_PIPE)
+            if (lastError == ERROR_NO_DATA || lastError == ERROR_PIPE_NOT_CONNECTED || lastError == ERROR_BAD_PIPE)
             {
                 pipeBroken = true;
                 return;
