@@ -30,5 +30,6 @@ private:
 
 	std::mutex _lock;
 	std::queue<IncomingMessage> _incomingMessages;
+	HANDLE _pipeServerThreadId;
 
 };

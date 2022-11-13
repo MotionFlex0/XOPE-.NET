@@ -26,10 +26,11 @@ void NamedPipeServer::run()
 	std::vector<char> storageBuf(storageSize, 0xFF);
 	int offset = 0;
 
+	_pipeServerThreadId = GetCurrentThread();
+
 	BOOL connected = ConnectNamedPipe(_pipe, NULL);
 	if (!connected)
 	{
-		MessageBoxA(NULL, "CANCELLED", "TEST", MB_OK);
 		CloseHandle(_pipe);
 		_stopServer = true;
 		_pipeBroken = true;
@@ -96,7 +97,7 @@ void NamedPipeServer::run()
 
 void NamedPipeServer::shutdownServer()
 {
-	CancelSynchronousIo(GetCurrentThread());
+	CancelSynchronousIo(_pipeServerThreadId);
 	_stopServer = true;
 	_pipeBroken = true;
 }
