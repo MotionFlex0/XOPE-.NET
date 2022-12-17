@@ -11,6 +11,9 @@ using XOPE_UI.Extensions;
 namespace XOPE_UI.View.Component
 {
     // Read-only ; TODO: Add write functionality
+    // TODO: Maybe move to 1 single DataGridView
+    //      as WinForms doesn't seem to like 2 DataGridView being repainted at the same time -
+    //      especially during scrolling. 
     // TODO: Override DataGridView and implement drawing directly inside
     public partial class HexEditor : UserControl
     {
@@ -429,8 +432,9 @@ namespace XOPE_UI.View.Component
                         otherCell.Selected = e.Cell.Selected;
                         _prevSelectedCell = e.Cell;
 
-                        //((DataGridView)sender).Invalidate();
-                        //otherGridView.Invalidate();
+                        // Invalidate all visible cells to highlight cells with the same value as the selected cell
+                        this.byteGridView.Invalidate();
+                        this.textGridView.Invalidate();
                     }
                 }
             }
