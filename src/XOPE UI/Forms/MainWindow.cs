@@ -538,7 +538,8 @@ namespace XOPE_UI
                 MessageBox.Show("This process is already running as admin.", "Already Admin", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
             {
-                if (MessageBox.Show("Are you sure you would like to restart process as Admin?\nYour progress will NOT be saved.",
+                if (MessageBox.Show("Are you sure you would like to restart XOPE as an Admin?\nYour progress will NOT be saved.\n\n" +
+                    "Note: The target process needs to also be run as an admin.",
                     "Warning",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning) == DialogResult.No)
