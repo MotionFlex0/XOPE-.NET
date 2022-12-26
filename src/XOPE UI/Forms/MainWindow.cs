@@ -51,8 +51,8 @@ namespace XOPE_UI
 
             _settings = settings;
             this.livePacketListView.ChangeBytesLength(
-                _settings.GetValue<int>(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_PACKET_VIEW));
-            _settings.Get(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_PACKET_VIEW).PropertyChanged += (o, e) =>
+                _settings.GetValue<int>(UserSettingsKey.MAX_BYTES_SHOWN_FOR_PACKET_VIEW));
+            _settings.Get(UserSettingsKey.MAX_BYTES_SHOWN_FOR_PACKET_VIEW).PropertyChanged += (o, e) =>
             {
                 if (e.PropertyName == nameof(SettingsEntry.Value))
                 {

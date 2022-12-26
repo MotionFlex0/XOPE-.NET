@@ -43,7 +43,7 @@ namespace XOPE_UI.Presenter
             if (filter == null)
                 return;
 
-            filter.Activated = Settings.GetValue<bool>(IUserSettings.Keys.FILTER_ENABLED_BY_DEFAULT);
+            filter.Activated = Settings.GetValue<bool>(UserSettingsKey.FILTER_ENABLED_BY_DEFAULT);
 
             EventHandler<IncomingMessage> addPacketFilterCallback = (object sender, IncomingMessage response) =>
             {
