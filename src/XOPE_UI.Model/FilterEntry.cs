@@ -16,14 +16,15 @@ namespace XOPE_UI.Model
         int _socketId;
         ReplayableFunction _packetType;
         bool _recursiveReplace;
+        bool _blockPacket;
         bool _activated = true;
 
         public int FilterNumber { get => _filterNumber; }
         public string FilterId { get; set; }
 
-        public string Name 
-        { 
-            get => _name; 
+        public string Name
+        {
+            get => _name;
             set
             {
                 if (_name == value) return;
@@ -33,8 +34,8 @@ namespace XOPE_UI.Model
             }
         }
 
-        public byte[] OldValue 
-        { 
+        public byte[] OldValue
+        {
             get => _oldValue;
             set
             {
@@ -45,9 +46,9 @@ namespace XOPE_UI.Model
             }
         }
 
-        public byte[] NewValue 
-        { 
-            get => _newValue; 
+        public byte[] NewValue
+        {
+            get => _newValue;
             set
             {
                 if (_newValue == value) return;
@@ -57,21 +58,21 @@ namespace XOPE_UI.Model
             }
         }
 
-        public int SocketId 
-        { 
-            get => _socketId; 
+        public int SocketId
+        {
+            get => _socketId;
             set
             {
                 if (_socketId == value) return;
 
                 _socketId = value;
                 NotifyPropertyChanged();
-            } 
+            }
         }
 
-        public ReplayableFunction PacketType 
-        { 
-            get => _packetType; 
+        public ReplayableFunction PacketType
+        {
+            get => _packetType;
             set
             {
                 if (_packetType == value) return;
@@ -81,14 +82,26 @@ namespace XOPE_UI.Model
             }
         }
 
-        public bool RecursiveReplace 
-        { 
-            get => _recursiveReplace; 
+        public bool RecursiveReplace
+        {
+            get => _recursiveReplace;
             set
             {
                 if (_recursiveReplace == value) return;
 
                 _recursiveReplace = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool DropPacket
+        {
+            get => _blockPacket;
+            set
+            {
+                if (_blockPacket == value) return;
+
+                _blockPacket = value;
                 NotifyPropertyChanged();
             }
         }
