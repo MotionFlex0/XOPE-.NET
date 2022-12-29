@@ -95,6 +95,7 @@
             this.descriptionTextBox.Location = new System.Drawing.Point(174, 328);
             this.descriptionTextBox.Multiline = true;
             this.descriptionTextBox.Name = "descriptionTextBox";
+            this.descriptionTextBox.ReadOnly = true;
             this.descriptionTextBox.Size = new System.Drawing.Size(528, 62);
             this.descriptionTextBox.TabIndex = 2;
             // 
