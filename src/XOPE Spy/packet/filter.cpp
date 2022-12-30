@@ -17,7 +17,7 @@ Guid PacketFilter::add(FilterableFunction ff, SOCKET s, const Packet oldVal, con
 	return id;
 }
 
-bool PacketFilter::modify(Guid id, FilterableFunction ff, SOCKET s, const Packet oldVal, const Packet newVal, bool replaceEntirePacket, bool recursiveReplace)
+bool PacketFilter::modify(Guid id, FilterableFunction ff, SOCKET s, const Packet oldVal, const Packet newVal, bool replaceEntirePacket, bool recursiveReplace, bool dropPacket)
 {
 	const auto it = filterMap.find(id);
 	if (it == filterMap.end())
@@ -30,7 +30,8 @@ bool PacketFilter::modify(Guid id, FilterableFunction ff, SOCKET s, const Packet
 		.newVal = newVal,
 		.replaceEntirePacket = replaceEntirePacket,
 		.recursiveReplace = recursiveReplace,
-		.filterableFunction = ff
+		.filterableFunction = ff,
+		.dropPacket = dropPacket
 	};
 	return true;
 }
@@ -68,7 +69,7 @@ bool PacketFilter::find(FilterableFunction ff, SOCKET s, const Packet packet) co
 	return false;
 }
 
-bool PacketFilter::findAndReplace(FilterableFunction ff, SOCKET s, Packet& packet) const
+PacketFilter::ReplaceState PacketFilter::findAndReplace(FilterableFunction ff, SOCKET s, Packet& packet) const
 {
 	bool modified = false;
 
@@ -81,6 +82,9 @@ bool PacketFilter::findAndReplace(FilterableFunction ff, SOCKET s, Packet& packe
 		if ((filterData.socketId == -1 || filterData.socketId == s) && oldVal.size() <= packet.size())
 		{
 			auto found = std::search(packet.begin(), packet.end(), oldVal.begin(), oldVal.end());
+			if (found != packet.end() && filterData.dropPacket)
+				return PacketFilter::ReplaceState::DROP_PACKET;
+
 			while (found != packet.end())
 			{
 				const Packet& newVal = filterData.newVal;
@@ -111,5 +115,7 @@ bool PacketFilter::findAndReplace(FilterableFunction ff, SOCKET s, Packet& packe
 				break;
 		}
 	}
-	return modified;
+	return modified ? 
+		PacketFilter::ReplaceState::MODIFIED_PACKET : 
+		PacketFilter::ReplaceState::NO_CHANGE;
 }
