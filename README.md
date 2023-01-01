@@ -33,4 +33,4 @@ Built using VS2022 with .NET6 and c++20.
         nuget restore YourSolution.sln
         ```
 
-* Make sure the XOPE UI project is set as startup project
+* Make sure the _XOPE UI_ project is set as startup project
