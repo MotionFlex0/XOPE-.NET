@@ -128,6 +128,7 @@ namespace client
 		int ret;
 		bool modified = false;
 		bool tunneled = false;
+		bool dropPacket = false;
 		int lastError = -1;
 
 		void serializeToJson(json& j) override
@@ -143,6 +144,7 @@ namespace client
 			ret,
 			modified,
 			tunneled,
+			dropPacket,
 			lastError);
 	};
 
@@ -154,8 +156,9 @@ namespace client
 			PacketDataJsonWrapper dataB64;
 			size_t bytesSent;
 			bool modified = false;
+			bool dropPacket = false;
 
-			NLOHMANN_DEFINE_TYPE_INTRUSIVE(Buffer, length, dataB64, modified);
+			NLOHMANN_DEFINE_TYPE_INTRUSIVE(Buffer, length, dataB64, modified, dropPacket);
 		};
 
 		WSASendFunctionCallMessage() : IMessage(UiMessageType::HOOKED_FUNCTION_CALL) { };
@@ -190,8 +193,9 @@ namespace client
 			size_t length;
 			PacketDataJsonWrapper dataB64;
 			bool modified = false;
+			bool dropPacket = false;
 
-			NLOHMANN_DEFINE_TYPE_INTRUSIVE(Buffer, length, dataB64, modified);
+			NLOHMANN_DEFINE_TYPE_INTRUSIVE(Buffer, length, dataB64, modified, dropPacket);
 		};
 
 		WSARecvFunctionCallMessage() : IMessage(UiMessageType::HOOKED_FUNCTION_CALL) { };
