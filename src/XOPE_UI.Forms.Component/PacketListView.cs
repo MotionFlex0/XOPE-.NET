@@ -120,6 +120,8 @@ namespace XOPE_UI.View.Component
                 listViewItem.SubItems.Add("modified");
             else if (tunneled)
                 listViewItem.SubItems.Add("tunneled");
+            else if (packet.DropPacket)
+                listViewItem.SubItems.Add("dropped");
             else
                 listViewItem.SubItems.Add("");
 

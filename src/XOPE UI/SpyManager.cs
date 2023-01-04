@@ -315,6 +315,7 @@ namespace XOPE_UI
                             byte[] data = Packet.ConvertB64CompressedToByteArray(json.Value<String>("packetDataB64"));
                             bool modified = json.Value<bool>("modified");
                             bool tunneled = json.Value<bool>("tunneled");
+                            bool dropPacket = json.Value<bool>("dropPacket");
                             Packet packet = new Packet
                             {
                                 Id = Guid.NewGuid(),
@@ -324,6 +325,7 @@ namespace XOPE_UI
                                 Socket = socket,
                                 Modified = modified,
                                 Tunneled = tunneled,
+                                DropPacket = dropPacket,
                                 UnderlyingEvent = json
                             };
 
