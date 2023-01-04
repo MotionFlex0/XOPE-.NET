@@ -21,6 +21,7 @@ namespace XOPE_UI.Presenter
             _view.PacketType = filter.PacketType;
             _view.ShouldRecursiveReplace = filter.RecursiveReplace;
             _view.AllSockets = filter.SocketId == -1;
+            _view.DropPacket = filter.DropPacket;
         }
 
         public void SaveFilter()
@@ -34,6 +35,7 @@ namespace XOPE_UI.Presenter
             _view.Filter.SocketId = _view.SocketId;
             _view.Filter.PacketType = _view.PacketType;
             _view.Filter.RecursiveReplace = _view.ShouldRecursiveReplace;
+            _view.Filter.DropPacket = _view.DropPacket;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
@@ -76,6 +77,12 @@ namespace XOPE_UI.View
         {
             get => allSocketsCheckBox.Checked;
             set => allSocketsCheckBox.Checked = value;
+        }
+
+        public bool DropPacket
+        {
+            get => dropPacketCheckBox.Checked;
+            set => dropPacketCheckBox.Checked = value;
         }
 
         /// <summary>
@@ -197,6 +204,24 @@ namespace XOPE_UI.View
                     socketIdTextBox.Value = socketSelectorDialog.SelectedSocketId;
                 }
             }
+        }
+
+        private void blockPacketCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (dropPacketCheckBox.Checked)
+            {
+                _afterHexEditor.UnSelectAll();
+                _afterHexEditor.Background = System.Windows.Media.Brushes.LightGray;
+                _afterHexEditor.IsEnabled = false;
+                //afterGroupBox.Enabled = false;
+            }
+            else
+            {
+                _afterHexEditor.Background = System.Windows.Media.Brushes.White;
+                _afterHexEditor.IsEnabled = true;
+                //afterGroupBox.Enabled =!true;    
+             }
+
         }
     }
 }

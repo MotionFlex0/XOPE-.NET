@@ -16,6 +16,7 @@ namespace XOPE_UI.View
         ReplayableFunction PacketType { get; set; }
         bool ShouldRecursiveReplace { get; set; }
         bool AllSockets { get; set; }
+        bool DropPacket { get; set; }
         FilterEntry Filter { get; set; }
     }
 }

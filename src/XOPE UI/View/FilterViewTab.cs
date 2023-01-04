@@ -37,7 +37,7 @@ namespace XOPE_UI.View
         {
             Presenter.Settings = settings;
             _settings = settings;
-            _settings.Get(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_FILTER).PropertyChanged += (sender, e) =>
+            _settings.Get(UserSettingsKey.MAX_BYTES_SHOWN_FOR_FILTER).PropertyChanged += (sender, e) =>
             {
                 if (e.PropertyName == nameof(SettingsEntry.Value))
                 {
@@ -108,7 +108,13 @@ namespace XOPE_UI.View
             if (filter == null)
                 return;
             
-            int maxBytesShown = _settings.GetValue<int>(IUserSettings.Keys.MAX_BYTES_SHOWN_FOR_FILTER);
+            if (filter.DropPacket)
+            {
+                row.Cells["Filter"].Value = $"N/A - This packet will be blocked.";
+                return;
+            }
+
+            int maxBytesShown = _settings.GetValue<int>(UserSettingsKey.MAX_BYTES_SHOWN_FOR_FILTER);
 
             string beforeStr = BitConverter.ToString(filter.OldValue, 0).Replace("-", " ");
             string beforeFormatted = beforeStr.Substring(0, Math.Min((maxBytesShown * 3) - 1, beforeStr.Length));

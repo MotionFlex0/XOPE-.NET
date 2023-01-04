@@ -5,6 +5,8 @@ using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
+    // TODO: Remove all the props from this class and instead get them from the underlying 
+    //       filter object, like ModifyPacketFilter does
     public class AddPacketFilter : IMessageWithResponse
     {
         public int SocketId { get; set; }
@@ -14,6 +16,7 @@ namespace XOPE_UI.Spy.DispatcherMessageType
         public bool RecursiveReplace { get; set; } 
         public bool ReplaceEntirePacket { get; set; } = false; // true = replaces entire packet with NewValue, if OldValue is found. (default is false)
         public bool Activated { get; set; } = true;
+        public bool DropPacket { get; set; } = false;
 
         public AddPacketFilter()
         {

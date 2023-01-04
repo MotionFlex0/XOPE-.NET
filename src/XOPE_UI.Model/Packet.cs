@@ -18,6 +18,7 @@ namespace XOPE_UI.Model
         public HookedFuncType Type { get; set; }
         public bool Modified { get; set; } = false;
         public bool Tunneled { get; set; } = false;
+        public bool DropPacket { get; set; } = false;
         public JObject UnderlyingEvent { get; set; }
 
         public static byte[] ConvertB64CompressedToByteArray(string b64String)

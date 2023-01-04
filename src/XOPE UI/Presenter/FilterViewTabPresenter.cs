@@ -66,7 +66,8 @@ namespace XOPE_UI.Presenter
                 NewValue = filter.NewValue,
                 ReplaceEntirePacket = false,
                 RecursiveReplace = filter.RecursiveReplace,
-                Activated = filter.Activated
+                Activated = filter.Activated,
+                DropPacket = filter.DropPacket
             });
         }
 

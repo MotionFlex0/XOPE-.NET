@@ -44,6 +44,7 @@ namespace XOPE_UI.View
             this.recursiveReplaceCheckBox = new System.Windows.Forms.CheckBox();
             this.allSocketsCheckBox = new System.Windows.Forms.CheckBox();
             this.socketSelectorButton = new System.Windows.Forms.Button();
+            this.dropPacketCheckBox = new System.Windows.Forms.CheckBox();
             this.beforeGroupBox.SuspendLayout();
             this.afterGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.socketIdTextBox)).BeginInit();
@@ -82,7 +83,7 @@ namespace XOPE_UI.View
             this.afterGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.afterGroupBox.Controls.Add(this.afterHexEditorPlaceholder);
-            this.afterGroupBox.Location = new System.Drawing.Point(14, 246);
+            this.afterGroupBox.Location = new System.Drawing.Point(14, 288);
             this.afterGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.afterGroupBox.Name = "afterGroupBox";
             this.afterGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -107,7 +108,7 @@ namespace XOPE_UI.View
             // acceptButton
             // 
             this.acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.acceptButton.Location = new System.Drawing.Point(508, 429);
+            this.acceptButton.Location = new System.Drawing.Point(508, 471);
             this.acceptButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.acceptButton.Name = "acceptButton";
             this.acceptButton.Size = new System.Drawing.Size(88, 27);
@@ -119,7 +120,7 @@ namespace XOPE_UI.View
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(604, 429);
+            this.cancelButton.Location = new System.Drawing.Point(604, 471);
             this.cancelButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(88, 27);
@@ -177,7 +178,7 @@ namespace XOPE_UI.View
             // instructionLabel
             // 
             this.instructionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.instructionLabel.Location = new System.Drawing.Point(21, 414);
+            this.instructionLabel.Location = new System.Drawing.Point(21, 456);
             this.instructionLabel.Name = "instructionLabel";
             this.instructionLabel.Size = new System.Drawing.Size(262, 42);
             this.instructionLabel.TabIndex = 21;
@@ -224,11 +225,23 @@ namespace XOPE_UI.View
             this.socketSelectorButton.UseVisualStyleBackColor = true;
             this.socketSelectorButton.Click += new System.EventHandler(this.socketSelectorButton_Click);
             // 
+            // dropPacketCheckBox
+            // 
+            this.dropPacketCheckBox.AutoSize = true;
+            this.dropPacketCheckBox.Location = new System.Drawing.Point(21, 263);
+            this.dropPacketCheckBox.Name = "dropPacketCheckBox";
+            this.dropPacketCheckBox.Size = new System.Drawing.Size(90, 19);
+            this.dropPacketCheckBox.TabIndex = 26;
+            this.dropPacketCheckBox.Text = "Drop Packet";
+            this.dropPacketCheckBox.UseVisualStyleBackColor = true;
+            this.dropPacketCheckBox.CheckedChanged += new System.EventHandler(this.blockPacketCheckBox_CheckedChanged);
+            // 
             // FilterEditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 469);
+            this.ClientSize = new System.Drawing.Size(704, 511);
+            this.Controls.Add(this.dropPacketCheckBox);
             this.Controls.Add(this.socketSelectorButton);
             this.Controls.Add(this.allSocketsCheckBox);
             this.Controls.Add(this.recursiveReplaceCheckBox);
@@ -269,5 +282,6 @@ namespace XOPE_UI.View
         private System.Windows.Forms.CheckBox recursiveReplaceCheckBox;
         private System.Windows.Forms.CheckBox allSocketsCheckBox;
         private System.Windows.Forms.Button socketSelectorButton;
+        private System.Windows.Forms.CheckBox dropPacketCheckBox;
     }
 }
