@@ -1,7 +1,7 @@
 #include "filter.h"
 
 Guid PacketFilter::add(FilterableFunction ff, SOCKET s, const Packet oldVal, const Packet newVal,
-	bool replaceEntirePacket, bool recursiveReplace, bool activated)
+	bool replaceEntirePacket, bool recursiveReplace, bool activated, bool dropPacket)
 {
 	const Guid id = Guid::newGuid();
 	filterMap[id] = Data
@@ -12,7 +12,8 @@ Guid PacketFilter::add(FilterableFunction ff, SOCKET s, const Packet oldVal, con
 		.replaceEntirePacket = replaceEntirePacket,
 		.recursiveReplace = recursiveReplace,
 		.filterableFunction = ff,
-		.activated = activated
+		.activated = activated,
+		.dropPacket = dropPacket
 	};
 	return id;
 }

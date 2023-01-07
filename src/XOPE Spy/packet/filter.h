@@ -16,7 +16,7 @@ public:
 	PacketFilter() { };
 
 	Guid add(FilterableFunction ff, SOCKET s, const Packet oldVal, 
-		const Packet newVal, bool replaceEntirePacket, bool recursiveReplace, bool activated);
+		const Packet newVal, bool replaceEntirePacket, bool recursiveReplace, bool activated, bool dropPacket);
 	bool modify(Guid id, FilterableFunction ff, SOCKET s,
 		const Packet oldVal, const Packet newVal, bool replaceEntirePacket, bool recursiveReplace, bool dropPacket);
 	bool toggleActivated(Guid id, bool isActivated);
