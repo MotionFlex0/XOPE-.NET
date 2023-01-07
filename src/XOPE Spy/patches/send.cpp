@@ -6,7 +6,9 @@ int WSAAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
     Application& app = Application::getInstance();
     
     Packet packet(buf, buf + len);
-    bool modified = app.getPacketFilter().findAndReplace(FilterableFunction::SEND, s, packet);
+    PacketFilter::ReplaceState replaceState = app.getPacketFilter().findAndReplace(FilterableFunction::SEND, s, packet);
+    bool modified = replaceState == PacketFilter::ReplaceState::MODIFIED_PACKET;
+    bool dropPacket = replaceState == PacketFilter::ReplaceState::DROP_PACKET;
     
     int bytesSent{ 0 };
     if (app.shouldSocketClose(s))
@@ -23,7 +25,8 @@ int WSAAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
             app.emitSocketIdSentToSink(s);
         }
 
-        bytesSent = app.getHookManager()->get_ofunction<send>()(s, (char*)packet.data(), static_cast<int>(packet.size()), flags);
+        if (!dropPacket)
+            bytesSent = app.getHookManager()->get_ofunction<send>()(s, (char*)packet.data(), static_cast<int>(packet.size()), flags);
     }
 
     client::HookedFunctionCallPacketMessage hfcm;
@@ -33,6 +36,7 @@ int WSAAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
     hfcm.modified = modified;
     hfcm.ret = bytesSent;
     hfcm.tunneled = app.isSocketTunneled(s);
+    hfcm.dropPacket = dropPacket;
 
     if (bytesSent == SOCKET_ERROR)
         hfcm.lastError = WSAGetLastError();
@@ -44,7 +48,7 @@ int WSAAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
     if (hfcm.ret == SOCKET_ERROR && hfcm.lastError != WSAEWOULDBLOCK)
         app.removeSocketFromSet(s);
 
-    if (!modified || bytesSent < 1)
+    if (!dropPacket && (!modified || bytesSent < 1))
         return bytesSent;
     else
         return len;

@@ -5,51 +5,49 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
 {
     Application& app = Application::getInstance();
 
+    Packet packet;
     int bytesRead { 0 };
+    PacketFilter::ReplaceState replaceState;
 
-    //Loop runs once if socket is non-blocking or indifinately if it is blocking
-    //do
-    //{
-    //    if (app.shouldSocketClose(s))
-    //    {
-    //        bytesRead = 0;
-    //        break;
-    //    }
-    //    else if (app.recvPacketsToInjectCount(s) > 0)
-    //    {
-    //        Packet packet = *app.getNextRecvPacketToInject(s);
-    //        size_t bytesToCopy = min(packet.size(), len);
-    //        std::copy_n(packet.begin(), bytesToCopy, buf);
-    //        bytesRead = bytesToCopy;
-    //        break;
-    //    }
-
-    //    fd_set fds;
-    //    FD_ZERO(&fds);
-    //    FD_SET(s, &fds);
-
-    //    TIMEVAL timeout;
-    //    timeout.tv_sec = 0;
-    //    timeout.tv_usec = 10000;
-
-    //    int selectRet = select(0, &fds, nullptr, nullptr, &timeout);
-    //    if (selectRet > 0)
-    //    {
-    //        bytesRead = app.getHookManager()->get_ofunction<recv>()(s, buf, len, flags);
-    //        break;
-    //    }
-
-    //    if (app.isSocketNonBlocking(s))
-    //    {
-    //        bytesRead = SOCKET_ERROR;
-    //        WSASetLastError(WSAEWOULDBLOCK);
-    //        break;
-    //    }
-
-    //} while (true);
-
-    bytesRead = app.getHookManager()->get_ofunction<recv>()(s, buf, len, flags);
-
+    // BUG: Currently, it is only possible to inject packets after "recv" has return at least once
+    //      when using a blocking socket. This will not be an issue for non-blocking sockets using 
+    //      "select", as the readibility of the socket has been spoofed when a packet needs to be injecetd.         
+    if (app.recvPacketsToInjectCount(s) > 0)
+    {
+        packet = *app.getNextRecvPacketToInject(s);
+        size_t bytesToCopy = min(packet.size(), len);
+        std::copy_n(packet.begin(), bytesToCopy, buf);
+        bytesRead = static_cast<int>(bytesToCopy);
+    }
+    else
+    {
+        do
+        {
+            bytesRead = app.getHookManager()->get_ofunction<recv>()(s, buf, len, flags);
+            if (bytesRead > 0)
+            {
+                packet.assign(buf, buf + bytesRead);
+                replaceState = app.getPacketFilter().findAndReplace(FilterableFunction::RECV, s, packet);
+                if (replaceState == PacketFilter::ReplaceState::DROP_PACKET) // If the packet has been dropped, then continue loop
+                {
+                    client::HookedFunctionCallPacketMessage hfcm;
+                    hfcm.functionName = HookedFunction::RECV;
+                    hfcm.socket = s;
+                    hfcm.packetLen = bytesRead;
+                    hfcm.ret = bytesRead;
+                    hfcm.tunneled = app.isSocketTunneled(s);
+                    hfcm.packetDataB64 = std::move(packet);
+                    hfcm.modified = false;
+                    hfcm.dropPacket = true;
+                    app.sendToUI(std::move(hfcm));
+                }
+                else
+                {
+                    break;
+                }
+            }
+        } while (bytesRead > 0); // If bytesRead == 0 (socket closed) or -1 (wsa error), end loop.
+    }
         
     client::HookedFunctionCallPacketMessage hfcm;
     hfcm.functionName = HookedFunction::RECV;
@@ -70,15 +68,13 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
 
         return bytesRead;
     }
-
-    Packet packet(buf, buf + bytesRead);
-    bool modified = app.getPacketFilter().findAndReplace(FilterableFunction::RECV, s, packet);
     
     hfcm.packetDataB64 = { buf, bytesRead };
-    hfcm.modified = modified;
+    hfcm.modified = replaceState == PacketFilter::ReplaceState::MODIFIED_PACKET;
+    hfcm.dropPacket = replaceState == PacketFilter::ReplaceState::DROP_PACKET;
     app.sendToUI(std::move(hfcm));
 
-    if (modified)
+    if (replaceState == PacketFilter::ReplaceState::MODIFIED_PACKET)
     {
         size_t newBytesRead = min(packet.size(), static_cast<size_t>(len));
         memcpy(buf, packet.data(), newBytesRead);
