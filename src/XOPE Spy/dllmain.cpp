@@ -1,5 +1,6 @@
 //Uncommect the line below to show Debug Console on process injection
 //#define SHOW_DEBUG_CONSOLE
+#define JSON_DIAGNOSTICS 1
 
 #include <csignal>
 #include <iostream>
