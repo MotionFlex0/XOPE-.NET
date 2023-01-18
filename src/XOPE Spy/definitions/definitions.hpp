@@ -36,7 +36,7 @@ enum class SpyMessageType
 	ERROR_MESSAGE,
 	INJECT_SEND,
 	INJECT_RECV,
-	CLOSE_SOCKET_GRACEFULLY,	// Imitates a socket closing via recv returning 0 or send error being WSAENOTCONN
+	CLOSE_SOCKET,	// Imitates a socket closing via recv returning 0 or send error being WSAENOTCONN
 	IS_SOCKET_WRITABLE,
 	REQUEST_SOCKET_INFO,
 	TOGGLE_HTTP_TUNNELING,

@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
-    public class CloseSocketGracefully : IMessage
+    // This now calls closesocket directly
+    public class CloseSocket : IMessage
     {
         public int SocketId { get; set; }
 
-        public CloseSocketGracefully()
+        public CloseSocket()
         {
-            Type = Model.SpyMessageType.CLOSE_SOCKET_GRACEFULLY;
+            Type = Model.SpyMessageType.CLOSE_SOCKET;
         }
     }
 }
