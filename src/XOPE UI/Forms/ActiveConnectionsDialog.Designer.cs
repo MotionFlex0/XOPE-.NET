@@ -32,6 +32,8 @@
             this.copyIPPortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyPortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copySocketIdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.closeConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectionContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -120,49 +122,63 @@
             this.copyIPToolStripMenuItem,
             this.copyIPPortToolStripMenuItem,
             this.copyPortToolStripMenuItem,
-            this.copySocketIdToolStripMenuItem});
+            this.copySocketIdToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.closeConnectionToolStripMenuItem});
             this.connectionContextMenu.Name = "connectionContextMenu";
-            this.connectionContextMenu.Size = new System.Drawing.Size(154, 120);
+            this.connectionContextMenu.Size = new System.Drawing.Size(181, 170);
             // 
             // dNSLookupToolStripMenuItem
             // 
             this.dNSLookupToolStripMenuItem.Name = "dNSLookupToolStripMenuItem";
-            this.dNSLookupToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.dNSLookupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dNSLookupToolStripMenuItem.Text = "DNS Lookup";
             this.dNSLookupToolStripMenuItem.Click += new System.EventHandler(this.dNSLookupToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(150, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // copyIPToolStripMenuItem
             // 
             this.copyIPToolStripMenuItem.Name = "copyIPToolStripMenuItem";
-            this.copyIPToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.copyIPToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.copyIPToolStripMenuItem.Text = "Copy IP";
             this.copyIPToolStripMenuItem.Click += new System.EventHandler(this.copyIPToolStripMenuItem_Click);
             // 
             // copyIPPortToolStripMenuItem
             // 
             this.copyIPPortToolStripMenuItem.Name = "copyIPPortToolStripMenuItem";
-            this.copyIPPortToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.copyIPPortToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.copyIPPortToolStripMenuItem.Text = "Copy IP:Port";
             this.copyIPPortToolStripMenuItem.Click += new System.EventHandler(this.copyIPPortToolStripMenuItem_Click);
             // 
             // copyPortToolStripMenuItem
             // 
             this.copyPortToolStripMenuItem.Name = "copyPortToolStripMenuItem";
-            this.copyPortToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.copyPortToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.copyPortToolStripMenuItem.Text = "Copy Port";
             this.copyPortToolStripMenuItem.Click += new System.EventHandler(this.copyPortToolStripMenuItem_Click);
             // 
             // copySocketIdToolStripMenuItem
             // 
             this.copySocketIdToolStripMenuItem.Name = "copySocketIdToolStripMenuItem";
-            this.copySocketIdToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.copySocketIdToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.copySocketIdToolStripMenuItem.Text = "Copy Socket Id";
             this.copySocketIdToolStripMenuItem.Click += new System.EventHandler(this.copySocketIdToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            // 
+            // closeConnectionToolStripMenuItem
+            // 
+            this.closeConnectionToolStripMenuItem.Name = "closeConnectionToolStripMenuItem";
+            this.closeConnectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeConnectionToolStripMenuItem.Text = "Close Connection";
+            this.closeConnectionToolStripMenuItem.Click += new System.EventHandler(this.closeConnectionToolStripMenuItem_Click);
             // 
             // ActiveConnectionsDialog
             // 
@@ -197,5 +213,7 @@
         private System.Windows.Forms.ToolStripMenuItem copyIPPortToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyPortToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copySocketIdToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem closeConnectionToolStripMenuItem;
     }
 }

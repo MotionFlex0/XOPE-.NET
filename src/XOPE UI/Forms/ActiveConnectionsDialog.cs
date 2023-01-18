@@ -6,16 +6,17 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using XOPE_UI.Model;
 using XOPE_UI.Spy;
+using XOPE_UI.Spy.DispatcherMessageType;
 
 namespace XOPE_UI.View
 {
     public partial class ActiveConnectionsDialog : Form
     {
-        SpyManager spyManager;
+        SpyManager _spyManager;
         public ActiveConnectionsDialog(SpyManager spyManager)
         {
             InitializeComponent();
-            this.spyManager = spyManager;
+            this._spyManager = spyManager;
 
             this.HandleCreated += ActiveConnectionsDialog_HandleCreated;
 
@@ -33,9 +34,9 @@ namespace XOPE_UI.View
             }
             base.Dispose(disposing);
 
-            this.spyManager.ConnectionConnecting -= SpyManager_ConnectionConnecting;
-            this.spyManager.ConnectionEstablished -= SpyManager_ConnectionEstablished;
-            this.spyManager.ConnectionClosed -= SpyManager_ConnectionClosed;
+            this._spyManager.ConnectionConnecting -= SpyManager_ConnectionConnecting;
+            this._spyManager.ConnectionEstablished -= SpyManager_ConnectionEstablished;
+            this._spyManager.ConnectionClosed -= SpyManager_ConnectionClosed;
         }
 
         public ListViewItem AddOrUpdateConnectionInList(Connection c)
@@ -101,7 +102,7 @@ namespace XOPE_UI.View
         {
             connectionListView.BeginUpdate();
             connectionListView.Items.Clear();
-            foreach (KeyValuePair<int, Connection> kvp in spyManager.SpyData.Connections)
+            foreach (KeyValuePair<int, Connection> kvp in _spyManager.SpyData.Connections)
             {
                 Connection c = kvp.Value;
                 AddOrUpdateConnectionInList(c);
@@ -111,9 +112,9 @@ namespace XOPE_UI.View
 
         private void ActiveConnectionsDialog_HandleCreated(object sender, EventArgs e)
         {
-            this.spyManager.ConnectionConnecting += SpyManager_ConnectionConnecting;
-            this.spyManager.ConnectionEstablished += SpyManager_ConnectionEstablished;
-            this.spyManager.ConnectionClosed += SpyManager_ConnectionClosed;
+            this._spyManager.ConnectionConnecting += SpyManager_ConnectionConnecting;
+            this._spyManager.ConnectionEstablished += SpyManager_ConnectionEstablished;
+            this._spyManager.ConnectionClosed += SpyManager_ConnectionClosed;
 
             UpdateActiveList();
         }
@@ -212,7 +213,7 @@ namespace XOPE_UI.View
                     $"Alias :\n{padding}{ string.Join($"\n{padding}", hostEntry.Aliases)}" : 
                     "";
 
-                MessageBox.Show($"Hostname: {hostEntry.HostName}\n" + addressList + alias);
+                MessageBox.Show($"Hostname: {hostEntry.HostName}\n{addressList}{alias}");
             }
             catch (SocketException ex)
             {
@@ -242,6 +243,23 @@ namespace XOPE_UI.View
         {
             ListViewItem item = connectionContextMenu.Tag as ListViewItem;
             Clipboard.SetText(item.SubItems["socket_id"].Text);
+        }
+
+        private void closeConnectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogResult = MessageBox.Show(this, 
+                "Are you sure you want to close this connection?\nThis may cause instability if the socket is in active use.",
+                "Closing Socket", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                ListViewItem item = connectionContextMenu.Tag as ListViewItem;
+                _spyManager.MessageDispatcher.Send(new CloseSocket()
+                {
+                    SocketId = int.Parse(item.SubItems["socket_id"].Text)
+                });
+                this.connectionListView.SelectedItems.Clear();
+            }
         }
     }
 }
