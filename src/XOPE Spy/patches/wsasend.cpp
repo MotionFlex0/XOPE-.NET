@@ -5,21 +5,33 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
 {
     Application& app = Application::getInstance();
     
-    client::WSASendFunctionCallMessage message;
-    message.functionName = HookedFunction::WSASEND;
-    message.socket = s;
-    message.bufferCount = dwBufferCount;
-    message.tunneled = app.isSocketTunneled(s);
+    client::WSASendFunctionCallMessage hookCallMessage;
+    hookCallMessage.functionName = HookedFunction::WSASEND;
+    hookCallMessage.socket = s;
+    hookCallMessage.bufferCount = dwBufferCount;
+    hookCallMessage.tunneled = app.isSocketTunneled(s);
     
     // Required for the lifetime of WSASend(...)
+    int updatedBufferCount{ 0 };
     std::vector<Packet> modifiedPackets{ dwBufferCount };
     std::vector<WSABUF> updatedBuffers{ dwBufferCount };
     for (DWORD i = 0; i < dwBufferCount; i++)
     {
         Packet packet(lpBuffers[i].buf, lpBuffers[i].buf + lpBuffers[i].len);
-        bool modified = app.getPacketFilter().findAndReplace(FilterableFunction::WSASEND, s, packet);
-        
-        if (modified)
+        PacketFilter::ReplaceState replaceState = app.getPacketFilter().findAndReplace(FilterableFunction::WSASEND, s, packet);
+
+        hookCallMessage.buffers.push_back(
+        {
+            .length = (size_t)lpBuffers[i].len,
+            .dataB64 = Packet(lpBuffers[i].buf, lpBuffers[i].buf + lpBuffers[i].len),
+            .modified = replaceState == PacketFilter::ReplaceState::MODIFIED_PACKET,
+            .dropPacket = replaceState == PacketFilter::ReplaceState::DROP_PACKET
+        });
+
+        if (replaceState == PacketFilter::ReplaceState::DROP_PACKET)
+            continue;
+
+        if (replaceState == PacketFilter::ReplaceState::MODIFIED_PACKET)
         {
             modifiedPackets.push_back(std::move(packet));
             updatedBuffers[i].buf = reinterpret_cast<CHAR*>(modifiedPackets.back().data());
@@ -30,32 +42,15 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
             updatedBuffers[i].buf = lpBuffers[i].buf;
             updatedBuffers[i].len = lpBuffers[i].len;
         }
-        
-        message.buffers.push_back(
-        { 
-            .length = (size_t)lpBuffers[i].len,
-            .dataB64 = Packet(lpBuffers[i].buf, lpBuffers[i].buf+lpBuffers[i].len) 
-        });
+
+        updatedBufferCount++;
     }
 
     if (app.shouldSocketClose(s))
     {
-        message.ret = SOCKET_ERROR;
+        hookCallMessage.ret = SOCKET_ERROR;
         WSASetLastError(WSAECONNRESET);
     }
-    //else if (app.isSocketTunneled(s))
-    //{
-    //    if (!app.wasSocketIdSentToSink(s))
-    //    {
-    //        int32_t s32 = s & 0xFFFFFFFF;
-    //        app.getHookManager()->get_ofunction<send>()(s, (char*)&s32, sizeof(s32), NULL);
-    //        app.emitSocketIdSentToSink(s);
-    //    }
-
-    //    message.ret = 0;
-    //    for (DWORD i = 0; i < dwBufferCount; i++)
-    //        lpNumberOfBytesSent[i] = lpBuffers[i].len;
-    //}
     else
     {
         if (app.isSocketTunneled(s) && !app.wasSocketIdSentToSink(s))
@@ -65,22 +60,37 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
             app.emitSocketIdSentToSink(s);
         }
 
-        message.ret = app.getHookManager()->get_ofunction<WSASend>()(s, updatedBuffers.data(), dwBufferCount, 
+        // updatedBuffers.size() is not necessarily equal to updatedBufferCount as some packets may have been dropped
+        hookCallMessage.ret = app.getHookManager()->get_ofunction<WSASend>()(s, updatedBuffers.data(), updatedBufferCount, 
             lpNumberOfBytesSent, dwFlags, lpOverlapped, lpCompletionRoutine);
     }
 
-    if (message.ret == 0)
+    if (hookCallMessage.ret == 0)
     {
+        int bytesSentIndex = 0;
         for (DWORD i = 0; i < dwBufferCount; i++)
-            message.buffers[i].bytesSent = lpNumberOfBytesSent[i];
+            hookCallMessage.buffers[i].bytesSent = hookCallMessage.buffers[i].dropPacket ? 0 : lpNumberOfBytesSent[bytesSentIndex++];
+
+        // When packets have been dropped, the length and index of values in lpNumberOfBytesSent will not match
+        //  as less packets was sent. So we have to update lpNumberOfBytesSent by copying the values from hookCallMessage.buffers[..].bytesSent
+        if (bytesSentIndex != dwBufferCount)
+        {
+            for (DWORD i = 0; i < dwBufferCount; i++)
+            {
+                if (hookCallMessage.buffers[i].modified || hookCallMessage.buffers[i].dropPacket)
+                    lpNumberOfBytesSent[i] = hookCallMessage.buffers[i].length;
+                else
+                    lpNumberOfBytesSent[i] = hookCallMessage.buffers[i].bytesSent;
+            }
+        }
     }
-    else if (message.ret == SOCKET_ERROR)
-        message.lastError = WSAGetLastError();
+    else if (hookCallMessage.ret == SOCKET_ERROR)
+        hookCallMessage.lastError = WSAGetLastError();
 
-    app.sendToUI(std::move(message));
+    app.sendToUI(std::move(hookCallMessage));
 
-    if (message.ret == SOCKET_ERROR && message.lastError != WSAEWOULDBLOCK)
+    if (hookCallMessage.ret == SOCKET_ERROR && hookCallMessage.lastError != WSAEWOULDBLOCK)
         app.removeSocketFromSet(s);
 
-    return message.ret;
+    return hookCallMessage.ret;
 }
