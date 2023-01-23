@@ -48,8 +48,9 @@ public:
 	bool wasSocketIdSentToSink(SOCKET socket);
 	void emitSocketIdSentToSink(SOCKET socket);
 
-	bool isSocketNonBlocking(SOCKET socket);
-	void setSocketNonBlocking(SOCKET socket);
+	//returns std::nullopt if socket's 'connect' call was not intercepted
+	std::optional<bool> isSocketNonBlocking(SOCKET socket);
+	void setSocketToNonBlocking(SOCKET socket);
 
 	// TODO: Use a single object to store all injectable packets...
 	const std::optional<Packet> getNextRecvPacketToInject(SOCKET socket);

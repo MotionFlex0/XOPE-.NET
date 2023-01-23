@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include <queue>
 #include <WinSock2.h>
 #include <WS2tcpip.h>

@@ -103,7 +103,24 @@ void Application::run()
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-        processIncomingMessages();
+        try 
+        {
+            processIncomingMessages();
+        }
+        catch (json::exception ex)
+        {
+            std::stringstream ss;
+            ss << "JSON Exception thrown when processing incoming message. Exception message: " << ex.what();
+            sendToUI(client::ErrorMessage(ss.str()));
+        }
+        catch (std::exception ex)
+        {
+            std::stringstream ss;
+            ss << "Exception thrown when processing incoming message. Exception message: " << ex.what();
+            sendToUI(client::ErrorMessage(ss.str()));
+        }
+        
+        
         if (_stopApplication || _namedPipeServer->isPipeBroken())
             break;
 
@@ -171,13 +188,20 @@ void Application::emitSocketIdSentToSink(SOCKET socket)
     _socketsData[socket].socketIdSentToSink = true;
 }
 
-bool Application::isSocketNonBlocking(SOCKET socket)
+std::optional<bool> Application::isSocketNonBlocking(SOCKET socket)
 {
-    return _socketsData[socket].isBlocking;
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+
+    if (_socketsData.contains(socket))
+        return _socketsData[socket].isBlocking;
+
+    return std::nullopt;
 }
 
-void Application::setSocketNonBlocking(SOCKET socket)
+void Application::setSocketToNonBlocking(SOCKET socket)
 {
+    std::lock_guard<std::mutex> lock(_socketsDataMutex);
+
     _socketsData[socket].isBlocking = true;
 }
 
@@ -286,10 +310,11 @@ void Application::processIncomingMessages()
                sendToUI(client::ErrorMessage("INJECT_RECV packet size mismatch"));
             }
         }
-        else if (type == SpyMessageType::CLOSE_SOCKET_GRACEFULLY)
+        else if (type == SpyMessageType::CLOSE_SOCKET) // This now calls closesocket directly
         {
             SOCKET socket = jsonMessage["SocketId"].get<SOCKET>();
-            closeSocketGracefully(socket);
+            //closeSocketGracefully(socket);
+            closesocket(socket);
         }
         else if (type == SpyMessageType::REQUEST_SOCKET_INFO)
         {
@@ -337,10 +362,15 @@ void Application::processIncomingMessages()
                         client::SocketInfoResponse(jobId, formattedAddr, port, sa->sin6_family, -1)
                     );
                 }
+                else
+                {
+                    sendToUI(client::ErrorMessageResponse(jobId, "could not find open socket " + std::to_string(socket)));
+                }
             }
             else
             {
-                sendToUI(client::ErrorMessageResponse(jobId, "could not find that socket ID")); 
+                sendToUI(client::ErrorMessageResponse(jobId, "unknown socket family ("+ std::to_string(sin.ss_family) +
+                    ") for socket " + std::to_string(socket)));
             }
         }
         else if (type == SpyMessageType::IS_SOCKET_WRITABLE)
@@ -385,10 +415,12 @@ void Application::processIncomingMessages()
 
             const bool isActivated = jsonMessage["Activated"].get<bool>();
 
+            const bool dropPacket = jsonMessage["DropPacket"].get<bool>();
+
             if (type == SpyMessageType::ADD_PACKET_FITLER)
             {
                 Guid id = _packetFilter.add(packetType,
-                    socket, oldPacket, newPacket, false, recursiveReplace, isActivated);
+                    socket, oldPacket, newPacket, false, recursiveReplace, isActivated, dropPacket);
 
                 sendToUI(client::AddPacketFilterResponse(
                     jsonMessage["JobId"].get<Guid>(),
@@ -400,7 +432,7 @@ void Application::processIncomingMessages()
                 const std::string filterId = jsonMessage["FilterId"].get<std::string>();
 
                 bool success = _packetFilter.modify(filterId,
-                    packetType, socket, oldPacket, newPacket, false, recursiveReplace);
+                    packetType, socket, oldPacket, newPacket, false, recursiveReplace, dropPacket);
 
                 if (success)
                     sendToUI(client::GenericPacketFilterResponse(
