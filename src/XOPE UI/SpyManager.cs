@@ -269,7 +269,7 @@ namespace XOPE_UI
                         SpyData.Connections.TryAdd(connection.SocketId, connection);
                         ConnectionConnecting?.Invoke(this, connection);
 
-                        SocketInfo socketInfo = new SocketInfo()
+                        RequestSocketInfo socketInfo = new RequestSocketInfo()
                         {
                             SocketId = socket
                         };
@@ -313,9 +313,6 @@ namespace XOPE_UI
                         else
                         {
                             byte[] data = Packet.ConvertB64CompressedToByteArray(json.Value<String>("packetDataB64"));
-                            bool modified = json.Value<bool>("modified");
-                            bool tunneled = json.Value<bool>("tunneled");
-                            bool dropPacket = json.Value<bool>("dropPacket");
                             Packet packet = new Packet
                             {
                                 Id = Guid.NewGuid(),
@@ -323,9 +320,9 @@ namespace XOPE_UI
                                 Data = data,
                                 Length = data.Length,
                                 Socket = socket,
-                                Modified = modified,
-                                Tunneled = tunneled,
-                                DropPacket = dropPacket,
+                                Modified = json.Value<bool>("modified"),
+                                Tunneled = json.Value<bool>("tunneled"),
+                                DropPacket = json.Value<bool>("dropPacket"),
                                 UnderlyingEvent = json
                             };
 
@@ -366,8 +363,7 @@ namespace XOPE_UI
                                 }
 
                                 byte[] data = Packet.ConvertB64CompressedToByteArray(buffers[i].Value<String>("dataB64"));
-                                bool modified = buffers[i].Value<bool>("modified");
-                                bool tunneled = json.Value<bool>("tunneled");
+
                                 Packet packet = new Packet
                                 {
                                     Id = Guid.NewGuid(),
@@ -375,8 +371,9 @@ namespace XOPE_UI
                                     Data = data,
                                     Length = data.Length,
                                     Socket = socket,
-                                    Modified = modified,
-                                    Tunneled = tunneled,
+                                    Modified = buffers[i].Value<bool>("modified"),
+                                    Tunneled = json.Value<bool>("tunneled"),
+                                    DropPacket = buffers[i].Value<bool>("dropPacket"),
                                     UnderlyingEvent = json
                                 };
                                 NewPacket?.Invoke(this, packet);

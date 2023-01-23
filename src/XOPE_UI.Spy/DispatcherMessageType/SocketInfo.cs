@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
-    public class SocketInfo : IMessageWithResponse
+    public class RequestSocketInfo : IMessageWithResponse
     {
         public int SocketId { get; set; }
 
-        public SocketInfo()
+        public RequestSocketInfo()
         {
             Type = Model.SpyMessageType.REQUEST_SOCKET_INFO;
         }

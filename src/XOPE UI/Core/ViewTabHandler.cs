@@ -27,7 +27,7 @@ namespace XOPE_UI.Core
         {
             btn.Click += Btn_Click;
 
-            viewTabs.Add(btn, tabPage );
+            viewTabs.Add(btn, tabPage);
         }
 
         private void Btn_Click(object sender, EventArgs e)

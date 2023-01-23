@@ -25,7 +25,7 @@ namespace XOPE_UI.View
                 return;
             }
 
-            SocketInfo socketInfo = new SocketInfo
+            RequestSocketInfo socketInfo = new RequestSocketInfo
             {
                 SocketId = Convert.ToInt32(this.socketIdTextBox.Value)
             };
