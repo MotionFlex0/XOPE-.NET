@@ -52,6 +52,7 @@
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.socketCheckerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.autoInjectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.httpTunnelingModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,6 +78,7 @@
             this.captureViewButton = new System.Windows.Forms.Button();
             this.filterViewButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.liveViewButton = new System.Windows.Forms.Button();
             this.replayViewButton = new System.Windows.Forms.Button();
             this.viewTab = new System.Windows.Forms.TabControl();
             this.captureViewTabPage = new System.Windows.Forms.TabPage();
@@ -90,7 +92,7 @@
             this.filterViewTab = new XOPE_UI.View.FilterViewTab();
             this.replayViewTabPage = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
-            this.autoInjectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.liveViewTabPage = new System.Windows.Forms.TabPage();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -283,6 +285,13 @@
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // autoInjectorToolStripMenuItem
+            // 
+            this.autoInjectorToolStripMenuItem.Name = "autoInjectorToolStripMenuItem";
+            this.autoInjectorToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.autoInjectorToolStripMenuItem.Text = "Auto DLL Injector";
+            this.autoInjectorToolStripMenuItem.Click += new System.EventHandler(this.autoInjectorToolStripMenuItem_Click);
             // 
             // httpTunnelingModeToolStripMenuItem
             // 
@@ -480,7 +489,7 @@
             this.filterViewButton.FlatAppearance.BorderSize = 0;
             this.filterViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.filterViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.filterViewButton.Location = new System.Drawing.Point(1, 39);
+            this.filterViewButton.Location = new System.Drawing.Point(1, 73);
             this.filterViewButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.filterViewButton.Name = "filterViewButton";
             this.filterViewButton.Size = new System.Drawing.Size(130, 27);
@@ -493,6 +502,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.panel1.Controls.Add(this.liveViewButton);
             this.panel1.Controls.Add(this.replayViewButton);
             this.panel1.Controls.Add(this.captureViewButton);
             this.panel1.Controls.Add(this.filterViewButton);
@@ -502,13 +512,27 @@
             this.panel1.Size = new System.Drawing.Size(130, 450);
             this.panel1.TabIndex = 8;
             // 
+            // liveViewButton
+            // 
+            this.liveViewButton.BackColor = System.Drawing.SystemColors.Control;
+            this.liveViewButton.FlatAppearance.BorderSize = 0;
+            this.liveViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.liveViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.liveViewButton.Location = new System.Drawing.Point(1, 39);
+            this.liveViewButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.liveViewButton.Name = "liveViewButton";
+            this.liveViewButton.Size = new System.Drawing.Size(130, 27);
+            this.liveViewButton.TabIndex = 9;
+            this.liveViewButton.Text = "Live View";
+            this.liveViewButton.UseVisualStyleBackColor = false;
+            // 
             // replayViewButton
             // 
             this.replayViewButton.BackColor = System.Drawing.SystemColors.Control;
             this.replayViewButton.FlatAppearance.BorderSize = 0;
             this.replayViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.replayViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.replayViewButton.Location = new System.Drawing.Point(1, 73);
+            this.replayViewButton.Location = new System.Drawing.Point(1, 106);
             this.replayViewButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.replayViewButton.Name = "replayViewButton";
             this.replayViewButton.Size = new System.Drawing.Size(130, 27);
@@ -523,6 +547,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.viewTab.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
             this.viewTab.Controls.Add(this.captureViewTabPage);
+            this.viewTab.Controls.Add(this.liveViewTabPage);
             this.viewTab.Controls.Add(this.filterViewTabPage);
             this.viewTab.Controls.Add(this.replayViewTabPage);
             this.viewTab.ItemSize = new System.Drawing.Size(0, 1);
@@ -614,7 +639,7 @@
             this.hexPreviewPanel.Location = new System.Drawing.Point(5, 1);
             this.hexPreviewPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 135);
+            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 133);
             this.hexPreviewPanel.TabIndex = 6;
             // 
             // packetCaptureHexPreview
@@ -629,7 +654,7 @@
             this.packetCaptureHexPreview.Name = "packetCaptureHexPreview";
             this.packetCaptureHexPreview.SelectionBackColor = System.Drawing.Color.Blue;
             this.packetCaptureHexPreview.SelectionForeColor = System.Drawing.Color.White;
-            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 90);
+            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 88);
             this.packetCaptureHexPreview.TabIndex = 0;
             // 
             // filterViewTabPage
@@ -676,12 +701,14 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "NOT IMPLEMENTED";
             // 
-            // autoInjectorToolStripMenuItem
+            // liveViewTabPage
             // 
-            this.autoInjectorToolStripMenuItem.Name = "autoInjectorToolStripMenuItem";
-            this.autoInjectorToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.autoInjectorToolStripMenuItem.Text = "Auto DLL Injector";
-            this.autoInjectorToolStripMenuItem.Click += new System.EventHandler(this.autoInjectorToolStripMenuItem_Click);
+            this.liveViewTabPage.Location = new System.Drawing.Point(4, 5);
+            this.liveViewTabPage.Name = "liveViewTabPage";
+            this.liveViewTabPage.Size = new System.Drawing.Size(882, 445);
+            this.liveViewTabPage.TabIndex = 3;
+            this.liveViewTabPage.Text = "tabPage1";
+            this.liveViewTabPage.UseVisualStyleBackColor = true;
             // 
             // MainWindow
             // 
@@ -787,6 +814,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem httpTunnelingModeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem autoInjectorToolStripMenuItem;
+        private System.Windows.Forms.Button liveViewButton;
+        private System.Windows.Forms.TabPage liveViewTabPage;
     }
 }
 

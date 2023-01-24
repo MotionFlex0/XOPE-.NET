@@ -76,8 +76,9 @@ namespace XOPE_UI
 
             _viewTabHandler = new ViewTabHandler(viewTab);
             _viewTabHandler.AddView(captureViewButton, captureViewTabPage);
-            _viewTabHandler.AddView(filterViewButton, filterViewTabPage);
+            _viewTabHandler.AddView(liveViewButton, liveViewTabPage);
             _viewTabHandler.AddView(replayViewButton, replayViewTabPage);
+            _viewTabHandler.AddView(filterViewButton, filterViewTabPage);
 
             _scriptManager = new ScriptManager();
 
