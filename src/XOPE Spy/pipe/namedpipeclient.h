@@ -11,8 +11,9 @@
 #include "../definitions/definitions.hpp"
 #include "../nlohmann/json.hpp"
 #include "../utils/util.h"
+#include "../job/jobqueue.h"
 
-class NamedPipeClient
+class NamedPipeDispatcher
 {
 	struct OutMessage
 	{
@@ -23,7 +24,8 @@ class NamedPipeClient
 public:
 
 	//Should be run at the beginning of the program.
-	NamedPipeClient(const char* pipePath, std::shared_ptr<BS::thread_pool> pool);
+	NamedPipeDispatcher(const char* pipePath, std::shared_ptr<BS::thread_pool> pool,
+		JobQueue& jobQueue);
 
 	bool isPipeBroken();
 
@@ -48,6 +50,8 @@ private:
 
 	std::weak_ptr<BS::thread_pool> _pool;
 	std::atomic<bool> _disablePool = false;
+
+	JobQueue& _jobQueue;
 
 	OutMessage_P serializeMessage(std::unique_ptr<client::IMessage> message);
 };
