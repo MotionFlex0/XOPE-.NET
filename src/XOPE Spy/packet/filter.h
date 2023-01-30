@@ -1,5 +1,5 @@
 #pragma once
-#include "../definitions/definitions.hpp"
+#include "../definitions/definitions.h"
 
 #include <unordered_map>
 #include <Windows.h>

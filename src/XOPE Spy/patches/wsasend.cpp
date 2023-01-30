@@ -5,7 +5,7 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
 {
     Application& app = Application::getInstance();
     
-    client::WSASendFunctionCallMessage hookCallMessage;
+    dispatcher::WSASendFunctionCallMessage hookCallMessage;
     hookCallMessage.functionName = HookedFunction::WSASEND;
     hookCallMessage.socket = s;
     hookCallMessage.bufferCount = dwBufferCount;

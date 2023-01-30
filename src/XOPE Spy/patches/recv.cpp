@@ -30,7 +30,7 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
                 replaceState = app.getPacketFilter().findAndReplace(FilterableFunction::RECV, s, packet);
                 if (replaceState == PacketFilter::ReplaceState::DROP_PACKET) // If the packet has been dropped, then continue loop
                 {
-                    client::HookedFunctionCallPacketMessage hfcm;
+                    dispatcher::HookedFunctionCallPacketMessage hfcm;
                     hfcm.functionName = HookedFunction::RECV;
                     hfcm.socket = s;
                     hfcm.packetLen = bytesRead;
@@ -49,7 +49,7 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
         } while (bytesRead > 0); // If bytesRead == 0 (socket closed) or -1 (wsa error), end loop.
     }
         
-    client::HookedFunctionCallPacketMessage hfcm;
+    dispatcher::HookedFunctionCallPacketMessage hfcm;
     hfcm.functionName = HookedFunction::RECV;
     hfcm.socket = s;
     hfcm.packetLen = bytesRead;

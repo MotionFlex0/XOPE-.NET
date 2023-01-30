@@ -9,7 +9,7 @@ int WSAAPI Functions::Hooked_CloseSocket(SOCKET s)
     app.removeSocketFromSet(s);
 
 
-    client::HookedFunctionCallSocketMessage hfcm;
+    dispatcher::HookedFunctionCallSocketMessage hfcm;
     hfcm.functionName = HookedFunction::CLOSE;
     hfcm.socket = s;
     hfcm.ret = ret;

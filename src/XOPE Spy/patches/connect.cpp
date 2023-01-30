@@ -9,7 +9,7 @@ int WSAAPI Functions::Hooked_Connect(SOCKET s, const sockaddr* name, int namelen
 
     const auto sockaddrStorage = reinterpret_cast<const sockaddr_storage*>(name);
 
-    client::HookedFunctionCallSocketMessage hfcm;
+    dispatcher::HookedFunctionCallSocketMessage hfcm;
     hfcm.functionName = HookedFunction::CONNECT;
     hfcm.socket = s;
     hfcm.populateWithSockaddr(sockaddrStorage);

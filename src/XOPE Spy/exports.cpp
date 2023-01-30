@@ -15,5 +15,5 @@ EXTERN_DLL_EXPORT void SendMessageToLog(const char* message, int messageLen)
 	GetModuleFileNameA(static_cast<HMODULE>(baseAddressOfCaller), modulFilePath, sizeof(modulFilePath));
 	moduleFileName = std::filesystem::path(modulFilePath).filename().string();
 
-	Application::getInstance().sendToUI(client::ExternalMessage(str, moduleFileName));
+	Application::getInstance().sendToUI(dispatcher::ExternalMessage(str, moduleFileName));
 }

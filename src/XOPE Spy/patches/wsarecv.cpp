@@ -10,7 +10,7 @@ int WSAAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
     int ret{ 0 };
 
     std::vector<std::pair<CHAR*, size_t>> updatedBuffers;
-    std::unique_ptr<client::WSARecvFunctionCallMessage> message;
+    std::unique_ptr<dispatcher::WSARecvFunctionCallMessage> message;
 
     do
     {
@@ -18,7 +18,7 @@ int WSAAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
 
         DWORD bytesLeftToProcess = *lpNumberOfBytesRecvd;
 
-        message.reset(new client::WSARecvFunctionCallMessage);
+        message.reset(new dispatcher::WSARecvFunctionCallMessage);
         message->functionName = HookedFunction::WSARECV;
         message->socket = s;
         message->bufferCount = dwBufferCount;

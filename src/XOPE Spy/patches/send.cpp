@@ -29,7 +29,7 @@ int WSAAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
             bytesSent = app.getHookManager()->get_ofunction<send>()(s, (char*)packet.data(), static_cast<int>(packet.size()), flags);
     }
 
-    client::HookedFunctionCallPacketMessage hfcm;
+    dispatcher::HookedFunctionCallPacketMessage hfcm;
     hfcm.functionName = HookedFunction::SEND;
     hfcm.socket = s;
     hfcm.packetLen = len;
