@@ -4,6 +4,7 @@
 #include <cassert>
 #include <stdint.h>
 #include <vector>
+#include "../utils/assert.h"
 #include "../utils/util.h"
 #include "../utils/memory.h"
 
