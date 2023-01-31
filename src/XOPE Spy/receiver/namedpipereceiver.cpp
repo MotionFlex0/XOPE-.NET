@@ -1,6 +1,6 @@
-#include "namedpipeserver.h"
+#include "namedpipereceiver.h"
 
-NamedPipeServer::NamedPipeServer(std::string pipeName)
+NamedPipeReceiver::NamedPipeReceiver(std::string pipeName)
 {
 	_pipe = CreateNamedPipeA(pipeName.c_str(), PIPE_ACCESS_DUPLEX, (PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT), 1, 1024 * 4, 65535, NMPWAIT_USE_DEFAULT_WAIT, NULL);
 	if (_pipe == INVALID_HANDLE_VALUE)
@@ -10,12 +10,12 @@ NamedPipeServer::NamedPipeServer(std::string pipeName)
 	}
 }
 
-bool NamedPipeServer::isPipeBroken()
+bool NamedPipeReceiver::isPipeBroken()
 {
 	return _pipeBroken;
 }
 
-void NamedPipeServer::run()
+void NamedPipeReceiver::run()
 {
 	DWORD bytesRead{ 0 };
 	DWORD bytesAvailable{ 0 };
@@ -28,6 +28,8 @@ void NamedPipeServer::run()
 
 	_pipeServerThreadId = GetCurrentThread();
 
+	// BUG: If ConnectNamedPipe does not receive a connection from a client, it will block indefinitely
+	//	 which will prevent the Spy from properly shutting down.
 	BOOL connected = ConnectNamedPipe(_pipe, NULL);
 	if (!connected)
 	{
@@ -97,14 +99,16 @@ void NamedPipeServer::run()
 	_pipeBroken = true;
 }
 
-void NamedPipeServer::shutdownServer()
+void NamedPipeReceiver::shutdownServer()
 {
+	//CloseHandle(_pipe);
+	//CancelIo(_pipe);
 	CancelSynchronousIo(_pipeServerThreadId);
 	_stopServer = true;
 	_pipeBroken = true;
 }
 
-std::optional<IncomingMessage> NamedPipeServer::getIncomingMessage()
+std::optional<IncomingMessage> NamedPipeReceiver::getIncomingMessage()
 {
     std::lock_guard lock(_lock);
     if (_incomingMessages.size() < 1)

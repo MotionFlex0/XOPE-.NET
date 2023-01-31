@@ -3,17 +3,17 @@
 #include <queue>
 #include <sstream>
 #include <vector>
-#include "../definitions/definitions.hpp" // only definitions.hpp will import winsock2/windows to prevent redef errors
+#include "../definitions/definitions.h" // only definitions.h will import winsock2/windows to prevent redef errors
 #include "../hook/hookmgr.hpp"
-#include "../pipe/namedpipeclient.h"
+#include "../dispatcher/namedpipedispatcher.h"
 #include "../packet/type.h"
-#include "iserver.h"
+#include "ireceiver.h"
 
-class NamedPipeServer : IServer
+class NamedPipeReceiver : IReceiver
 {
 
 public:
-	NamedPipeServer(std::string pipeName);
+	NamedPipeReceiver(std::string pipeName);
 
 	bool isPipeBroken();
 	void run();

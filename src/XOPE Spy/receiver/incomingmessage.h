@@ -1,6 +1,6 @@
 #pragma once
 #include "../nlohmann/json.hpp"
-#include "../definitions/definitions.hpp"
+#include "../definitions/definitions.h"
 
 struct IncomingMessage
 {

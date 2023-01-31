@@ -2,7 +2,7 @@
 #include <optional>
 #include "incomingmessage.h"
 
-class IServer
+class IReceiver
 {
 public:
 	virtual std::optional<IncomingMessage> getIncomingMessage() = 0;
