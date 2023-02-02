@@ -111,13 +111,13 @@ void Application::run()
         {
             std::stringstream ss;
             ss << "JSON Exception thrown when processing incoming message. Exception message: " << ex.what();
-            sendToUI(client::ErrorMessage(ss.str()));
+            sendToUI(dispatcher::ErrorMessage(ss.str()));
         }
         catch (std::exception ex)
         {
             std::stringstream ss;
             ss << "Exception thrown when processing incoming message. Exception message: " << ex.what();
-            sendToUI(client::ErrorMessage(ss.str()));
+            sendToUI(dispatcher::ErrorMessage(ss.str()));
         }
         
         
@@ -275,7 +275,7 @@ void Application::processIncomingMessages()
         if (type == SpyMessageType::PING)
         {
             sendToUI(
-                client::PongMessageResponse(jsonMessage["JobId"].get<Guid>())
+                dispatcher::PongMessageResponse(jsonMessage["JobId"].get<Guid>())
             );
         }
         else if (type == SpyMessageType::INJECT_SEND)
@@ -290,7 +290,7 @@ void Application::processIncomingMessages()
             }
             else
             {
-                sendToUI(client::ErrorMessage("INJECT_SEND packet size mismatch"));
+                sendToUI(dispatcher::ErrorMessage("INJECT_SEND packet size mismatch"));
             }
         }
         else if (type == SpyMessageType::INJECT_RECV)
@@ -307,7 +307,7 @@ void Application::processIncomingMessages()
             }
             else
             {
-               sendToUI(client::ErrorMessage("INJECT_RECV packet size mismatch"));
+               sendToUI(dispatcher::ErrorMessage("INJECT_RECV packet size mismatch"));
             }
         }
         else if (type == SpyMessageType::CLOSE_SOCKET) // This now calls closesocket directly
@@ -339,7 +339,7 @@ void Application::processIncomingMessages()
                     std::replace(addr, addr + sizeof(addr), ':', '\x00');
 
                     sendToUI(
-                        client::SocketInfoResponse(jobId, addr, port, sa->sin_family, -1)
+                        dispatcher::SocketInfoResponse(jobId, addr, port, sa->sin_family, -1)
                     );
                 }
                 else if (sin.ss_family == AF_INET6)
@@ -359,17 +359,17 @@ void Application::processIncomingMessages()
                         formattedAddr.erase(colonPos);
 
                     sendToUI(
-                        client::SocketInfoResponse(jobId, formattedAddr, port, sa->sin6_family, -1)
+                        dispatcher::SocketInfoResponse(jobId, formattedAddr, port, sa->sin6_family, -1)
                     );
                 }
                 else
                 {
-                    sendToUI(client::ErrorMessageResponse(jobId, "could not find open socket " + std::to_string(socket)));
+                    sendToUI(dispatcher::ErrorMessageResponse(jobId, "could not find open socket " + std::to_string(socket)));
                 }
             }
             else
             {
-                sendToUI(client::ErrorMessageResponse(jobId, "unknown socket family ("+ std::to_string(sin.ss_family) +
+                sendToUI(dispatcher::ErrorMessageResponse(jobId, "unknown socket family ("+ std::to_string(sin.ss_family) +
                     ") for socket " + std::to_string(socket)));
             }
         }
@@ -387,7 +387,7 @@ void Application::processIncomingMessages()
 
             int selectRet = select(NULL, nullptr, &fds, nullptr, &timeout);
 
-            sendToUI(client::IsSocketWritableResponse(
+            sendToUI(dispatcher::IsSocketWritableResponse(
                 jsonMessage["JobId"].get<std::string>(),
                 selectRet == 1,
                 selectRet == 0,
@@ -422,7 +422,7 @@ void Application::processIncomingMessages()
                 Guid id = _packetFilter.add(packetType,
                     socket, oldPacket, newPacket, false, recursiveReplace, isActivated, dropPacket);
 
-                sendToUI(client::AddPacketFilterResponse(
+                sendToUI(dispatcher::AddPacketFilterResponse(
                     jsonMessage["JobId"].get<Guid>(),
                     id
                 ));
@@ -435,11 +435,11 @@ void Application::processIncomingMessages()
                     packetType, socket, oldPacket, newPacket, false, recursiveReplace, dropPacket);
 
                 if (success)
-                    sendToUI(client::GenericPacketFilterResponse(
+                    sendToUI(dispatcher::GenericPacketFilterResponse(
                         jsonMessage["JobId"].get<std::string>()
                     ));
                 else
-                    sendToUI(client::ErrorMessageResponse(
+                    sendToUI(dispatcher::ErrorMessageResponse(
                         jsonMessage["JobId"].get<std::string>(),
                         "Error when modifying this packet filter."
                     ));
@@ -454,11 +454,11 @@ void Application::processIncomingMessages()
                 isActivated);
 
             if (success)
-                sendToUI(client::GenericPacketFilterResponse(
+                sendToUI(dispatcher::GenericPacketFilterResponse(
                     jsonMessage["JobId"].get<std::string>()
                 ));
             else
-                sendToUI(client::ErrorMessageResponse(
+                sendToUI(dispatcher::ErrorMessageResponse(
                     jsonMessage["JobId"].get<std::string>(),
                     "That packet filter does not seem to exist in Spy."
                 ));
@@ -470,7 +470,7 @@ void Application::processIncomingMessages()
 
             _packetFilter.remove(filterId);
 
-            sendToUI(client::GenericPacketFilterResponse(
+            sendToUI(dispatcher::GenericPacketFilterResponse(
                 jsonMessage["JobId"].get<std::string>()
             ));
         }
@@ -512,12 +512,12 @@ bool Application::initClient(std::string spyServerPipeName)
 {
     std::string pipePath = "\\\\.\\pipe\\xopeui_" + std::to_string(GetCurrentProcessId());
 
-    _namedPipeClient = new NamedPipeClient(pipePath.c_str(), _pool);
+    _namedPipeClient = new NamedPipeDispatcher(pipePath.c_str(), _pool, _jobQueue);
     if (!_namedPipeClient->isPipeBroken())
     {
         std::cout << "successfully connected to pipe: " << pipePath << '\n';
         _namedPipeClient->disableThreadPool(true);
-        sendToUI(client::ConnectedSuccessMessage(spyServerPipeName));
+        sendToUI(dispatcher::ConnectedSuccessMessage(spyServerPipeName));
         _namedPipeClient->flushOutBuffer();
     }
     return !_namedPipeClient->isPipeBroken();
@@ -525,9 +525,9 @@ bool Application::initClient(std::string spyServerPipeName)
 
 void Application::initServer(std::string spyServerPipeName)
 {
-    _namedPipeServer = new NamedPipeServer(spyServerPipeName);
+    _namedPipeServer = new NamedPipeReceiver(spyServerPipeName);
     if (_namedPipeServer->isPipeBroken())
         MessageBoxA(NULL, "could not start named pipe server in Spy.", "ERROR", MB_OK);  // TODO: Temp solution
 
-    _serverThread = std::thread(&NamedPipeServer::run, _namedPipeServer);
+    _serverThread = std::thread(&NamedPipeReceiver::run, _namedPipeServer);
 }

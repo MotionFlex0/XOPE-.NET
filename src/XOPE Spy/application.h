@@ -10,12 +10,12 @@
 
 #include "definitions/socketdata.h"
 #include "hook/hookmgr.hpp"
-#include "pipe/namedpipeclient.h"
+#include "dispatcher/namedpipedispatcher.h"
 #include "packet/type.h"
 #include "packet/filter.h"
 #include "patches/functions.h"
-#include "server/incomingmessage.h"
-#include "server/namedpipeserver.h"
+#include "receiver/incomingmessage.h"
+#include "receiver/namedpipereceiver.h"
 #include "utils/guid.h"
 #include "utils/util.h"
 
@@ -70,8 +70,8 @@ private:
 
 	HMODULE _dllModule = NULL;
 	HookManager* _hookManager = nullptr;
-	NamedPipeClient* _namedPipeClient = nullptr;
-	NamedPipeServer* _namedPipeServer = nullptr;
+	NamedPipeDispatcher* _namedPipeClient = nullptr;
+	NamedPipeReceiver* _namedPipeServer = nullptr;
 
 	PacketFilter _packetFilter;
 
@@ -87,12 +87,13 @@ private:
 	std::thread _serverThread;
 	std::shared_ptr<BS::thread_pool> _pool;
 
+	JobQueue _jobQueue;
+
 	void initHooks();
 	bool initClient(std::string spyServerPipeName);
 	void initServer(std::string spyServerPipeName);
 	void run();
 	void processIncomingMessages();
-
 };
 
 void Application::sendToUI(Util::IMessageDerived auto&& message)
