@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\pipe">
-      <UniqueIdentifier>{49881af1-1171-4cb2-b575-67cdc7ff2e22}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\pipe">
-      <UniqueIdentifier>{9ca97e5d-b822-4562-b5bc-d5f97b48cd34}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{818c0f19-b838-4429-9d84-410cd9b9597a}</UniqueIdentifier>
     </Filter>
@@ -52,12 +46,6 @@
     <Filter Include="Header Files\packet">
       <UniqueIdentifier>{d69d3c1c-d296-4e16-a32b-b6374df8f0f4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\server">
-      <UniqueIdentifier>{a0badf7b-8dab-4835-8e25-7846c9db3920}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\server">
-      <UniqueIdentifier>{912e5d52-0b0a-4753-9f0b-15f4448b94a4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\patches">
       <UniqueIdentifier>{16bb4d62-8d01-48ed-8b69-76bc04f53c80}</UniqueIdentifier>
     </Filter>
@@ -67,13 +55,43 @@
     <Filter Include="Header Files\definitions">
       <UniqueIdentifier>{138836f0-94c1-42e8-bbab-d0fe2a999961}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\job">
+      <UniqueIdentifier>{cdd7891a-b32d-4a55-b82b-a0acf583a230}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\job">
+      <UniqueIdentifier>{fab58088-1d84-4600-b4ed-7d6cc3bb98a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\dispatcher">
+      <UniqueIdentifier>{49881af1-1171-4cb2-b575-67cdc7ff2e22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\receiver">
+      <UniqueIdentifier>{912e5d52-0b0a-4753-9f0b-15f4448b94a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dispatcher">
+      <UniqueIdentifier>{9ca97e5d-b822-4562-b5bc-d5f97b48cd34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\receiver">
+      <UniqueIdentifier>{a0badf7b-8dab-4835-8e25-7846c9db3920}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dispatcher\type">
+      <UniqueIdentifier>{ff2a4ec6-ba3a-4889-8dd3-9dc1a46d3f50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\dispatcher\type">
+      <UniqueIdentifier>{7b6057c0-b03b-467c-b588-1f6424a0e0c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\dispatcher\type\impl">
+      <UniqueIdentifier>{1f1a6f11-8a91-436b-a8c7-7e5e387ec454}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dispatcher\type\impl">
+      <UniqueIdentifier>{ad38bd36-1fd1-499b-a4aa-a06e7bdeb0db}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pipe\namedpipeclient.cpp">
-      <Filter>Source Files\pipe</Filter>
+    <ClCompile Include="dispatcher\namedpipedispatcher.cpp">
+      <Filter>Source Files\dispatcher</Filter>
     </ClCompile>
     <ClCompile Include="hook\detour.cpp">
       <Filter>Source Files\hook</Filter>
@@ -90,8 +108,8 @@
     <ClCompile Include="application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="server\namedpipeserver.cpp">
-      <Filter>Source Files\server</Filter>
+    <ClCompile Include="receiver\namedpipereceiver.cpp">
+      <Filter>Source Files\receiver</Filter>
     </ClCompile>
     <ClCompile Include="patches\connect.cpp">
       <Filter>Source Files\patches</Filter>
@@ -141,10 +159,64 @@
     <ClCompile Include="utils\packetjsonwrapper.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
+    <ClCompile Include="job\jobqueue.cpp">
+      <Filter>Source Files\job</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\addpacketfilterresponse.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\connectedsuccessmessage.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\errormessage.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\errormessageresponse.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\externalmessage.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\genericpacketfilterresponse.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\hookedfunctioncallpacketmessage.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\hookedfunctioncallsocketmessage.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\infomessage.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\issocketwritableresponse.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\pongmessageresponse.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\socketinforesponse.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\wsarecvfunctioncallmessage.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\wsasendfunctioncallmessage.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\impl\imessage.cpp">
+      <Filter>Source Files\dispatcher\type\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\impl\imessageresponse.cpp">
+      <Filter>Source Files\dispatcher\type\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\impl\imessagewithresponse.cpp">
+      <Filter>Source Files\dispatcher\type\impl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pipe\namedpipeclient.h">
-      <Filter>Header Files\pipe</Filter>
+    <ClInclude Include="dispatcher\namedpipedispatcher.h">
+      <Filter>Header Files\dispatcher</Filter>
     </ClInclude>
     <ClInclude Include="hook\detour.h">
       <Filter>Header Files\hook</Filter>
@@ -167,9 +239,6 @@
     <ClInclude Include="utils\util.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="definitions\definitions.hpp">
-      <Filter>Source Files\definitions</Filter>
-    </ClInclude>
     <ClInclude Include="packet\filter.h">
       <Filter>Header Files\packet</Filter>
     </ClInclude>
@@ -179,14 +248,14 @@
     <ClInclude Include="application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="server\iserver.h">
-      <Filter>Header Files\server</Filter>
+    <ClInclude Include="receiver\ireceiver.h">
+      <Filter>Header Files\receiver</Filter>
     </ClInclude>
-    <ClInclude Include="server\namedpipeserver.h">
-      <Filter>Header Files\server</Filter>
+    <ClInclude Include="receiver\namedpipereceiver.h">
+      <Filter>Header Files\receiver</Filter>
     </ClInclude>
-    <ClInclude Include="server\incomingmessage.h">
-      <Filter>Header Files\server</Filter>
+    <ClInclude Include="receiver\incomingmessage.h">
+      <Filter>Header Files\receiver</Filter>
     </ClInclude>
     <ClInclude Include="patches\functions.h">
       <Filter>Header Files\patches</Filter>
@@ -202,6 +271,30 @@
     </ClInclude>
     <ClInclude Include="utils\packetjsonwrapper.h">
       <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="job\jobqueue.h">
+      <Filter>Header Files\job</Filter>
+    </ClInclude>
+    <ClInclude Include="job\jobmessagetype.h">
+      <Filter>Header Files\job</Filter>
+    </ClInclude>
+    <ClInclude Include="dispatcher\uimessagetype.h">
+      <Filter>Header Files\dispatcher</Filter>
+    </ClInclude>
+    <ClInclude Include="receiver\spymessagetype.h">
+      <Filter>Header Files\receiver</Filter>
+    </ClInclude>
+    <ClInclude Include="definitions\definitions.h">
+      <Filter>Header Files\definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="dispatcher\type\impl\imessage.h">
+      <Filter>Header Files\dispatcher\type\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="dispatcher\type\impl\imessageresponse.h">
+      <Filter>Header Files\dispatcher\type\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="dispatcher\type\impl\imessagewithresponse.h">
+      <Filter>Header Files\dispatcher\type\impl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
