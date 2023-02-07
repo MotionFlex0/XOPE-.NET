@@ -9,7 +9,7 @@ using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
-    public abstract class IMessageWithResponse : IMessage
+    public abstract class MessageWithResponseImpl : MessageImpl
     {
         public event EventHandler<IncomingMessage> OnResponse;
 

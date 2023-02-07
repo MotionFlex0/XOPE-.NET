@@ -4,7 +4,7 @@ using System;
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
     // Works with both recv and WSARecv
-    public class InjectRecvPacket : IMessage
+    public class InjectRecvPacket : MessageImpl
     {
         public byte[] Data { get; set; }
         public int SocketId { get; set; }

@@ -4,7 +4,7 @@ using XOPE_UI.Model;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
-    public abstract class IMessage
+    public abstract class MessageImpl
     {
         [JsonProperty]
         protected SpyMessageType Type { get; set; }

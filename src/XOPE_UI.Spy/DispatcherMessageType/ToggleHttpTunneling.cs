@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
-    public class ToggleHttpTunneling : IMessage
+    public class ToggleHttpTunneling : MessageImpl
     {
         public bool IsTunnelingEnabled { get; set; }
 

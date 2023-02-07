@@ -4,7 +4,7 @@ using System;
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
     // Works with both send and WSASend
-    public class InjectSendPacket : IMessage
+    public class InjectSendPacket : MessageImpl
     {
         public byte[] Data { get; set; }
         public int SocketId { get; set; }

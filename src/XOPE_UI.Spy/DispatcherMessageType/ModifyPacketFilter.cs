@@ -9,7 +9,7 @@ using XOPE_UI.Model;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
-    public class ModifyPacketFilter : IMessageWithResponse
+    public class ModifyPacketFilter : MessageWithResponseImpl
     {
         public FilterEntry Filter { get; set; }
 

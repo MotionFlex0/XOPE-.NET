@@ -12,13 +12,13 @@ namespace XOPE_UI.Spy
         private NamedPipeClientStream _namedPipeClient;
         private bool _pipeBroken = false;
 
-        private Dictionary<Guid, IMessageWithResponse> _jobs; // 
+        private Dictionary<Guid, MessageWithResponseImpl> _jobs; // 
 
         private object _pipeWriteLock = new object();
 
         public bool IsConnected => _namedPipeClient != null && !_pipeBroken;
 
-        public NamedPipeDispatcher(String pipeName, Dictionary<Guid, IMessageWithResponse> jobs)
+        public NamedPipeDispatcher(String pipeName, Dictionary<Guid, MessageWithResponseImpl> jobs)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace XOPE_UI.Spy
             }
         }
 
-        public void Send(IMessage message)
+        public void Send(MessageImpl message)
         {
             if (!IsConnected)
                 return;
@@ -53,7 +53,7 @@ namespace XOPE_UI.Spy
             }
         }
 
-        public void Send(IMessageWithResponse message)
+        public void Send(MessageWithResponseImpl message)
         {
             if (!IsConnected)
                 return;

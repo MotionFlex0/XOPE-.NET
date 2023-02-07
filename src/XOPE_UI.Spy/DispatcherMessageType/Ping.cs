@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
-    public class Ping : IMessageWithResponse
+    public class Ping : MessageWithResponseImpl
     {
         public Ping()
         {

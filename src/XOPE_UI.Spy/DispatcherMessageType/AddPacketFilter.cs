@@ -7,7 +7,7 @@ namespace XOPE_UI.Spy.DispatcherMessageType
 {
     // TODO: Remove all the props from this class and instead get them from the underlying 
     //       filter object, like ModifyPacketFilter does
-    public class AddPacketFilter : IMessageWithResponse
+    public class AddPacketFilter : MessageWithResponseImpl
     {
         public int SocketId { get; set; }
         public ReplayableFunction PacketType { get; set; }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
     // This now calls closesocket directly
-    public class CloseSocket : IMessage
+    public class CloseSocket : MessageImpl
     {
         public int SocketId { get; set; }
 

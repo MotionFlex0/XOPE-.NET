@@ -4,7 +4,7 @@ using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
-    public class ToggleActivatePacketFilter : IMessageWithResponse
+    public class ToggleActivatePacketFilter : MessageWithResponseImpl
     {
         public string FilterId { get; set; }
         public bool Activated { get; set; }

@@ -8,7 +8,7 @@ using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
-    public class DeletePacketFilter : IMessageWithResponse
+    public class DeletePacketFilter : MessageWithResponseImpl
     {
         public string FilterId { get; set; }
 

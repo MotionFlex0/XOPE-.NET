@@ -8,7 +8,7 @@ using XOPE_UI.Spy.Type;
 
 namespace XOPE_UI.Spy.DispatcherMessageType
 {
-    public class IsSocketWritable : IMessageWithResponse
+    public class IsSocketWritable : MessageWithResponseImpl
     {
         public int SocketId { get; set; }
 

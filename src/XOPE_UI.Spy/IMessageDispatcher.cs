@@ -11,8 +11,8 @@ namespace XOPE_UI.Spy
     {
         bool IsConnected { get; }
 
-        void Send(IMessage message);
-        void Send(IMessageWithResponse message);
+        void Send(MessageImpl message);
+        void Send(MessageWithResponseImpl message);
         void ShutdownAndWait();
     }
 }
