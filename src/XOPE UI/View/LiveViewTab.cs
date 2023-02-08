@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
-using System.Windows.Markup;
 using WpfHexaEditor;
 using XOPE_UI.Model;
 using XOPE_UI.Presenter;
@@ -24,7 +16,14 @@ namespace XOPE_UI.View
         LiveViewTabPresenter _presenter;
         MemoryStream _internalStream;
 
-        public Packet BytesInEditor => throw new NotImplementedException();
+        SpyManager _spyManager;
+
+        public byte[] BytesInEditor => _internalStream.ToArray();
+        public string JobId 
+        {
+            get => jobIdLabel.Text; 
+            private set => jobIdLabel.Text = value; 
+        }
 
         public LiveViewTab()
         {
@@ -49,16 +48,23 @@ namespace XOPE_UI.View
             this.Controls.Remove(hexEditorPlaceholder);
             this.Controls.Add(_elementHost);
         }
-        
+
+        public void AttachSpyManager(SpyManager spyManager) =>
+            _presenter.SpyManager = _spyManager = spyManager;
+
         public void ClearEditor()
         {
             _hexEditor.DeleteBytesAtPosition(0);
+            forwardButton.Enabled = false;
+            dropPacketButton.Enabled = false;
+            jobIdLabel.Text = "~";
         }
 
-        public void UpdateEditor(byte[] bytes)
+        public void UpdateEditor(Guid jobId, byte[] packet)
         {
-            _internalStream = new MemoryStream(bytes.Length);
-            _internalStream.Write(bytes, 0, bytes.Length);
+            JobId = jobId.ToString();
+            _internalStream = new MemoryStream(packet);
+            _internalStream.Write(packet, 0, packet.Length);
         }
 
         private void forwardButton_Click(object sender, EventArgs e)
