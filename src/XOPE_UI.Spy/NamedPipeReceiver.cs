@@ -19,6 +19,8 @@ namespace XOPE_UI.Spy
         ConcurrentQueue<IncomingMessage> _incomingMessageQueue;
         CancellationTokenSource _cancellationTokenSource;
 
+        Task _currentReceiverTask;
+
         public bool IsConnecting { get; private set; }
         public bool IsConnected { get; private set; }
         public bool IsConnectingOrConnected { get => IsConnecting || IsConnected; }
@@ -66,13 +68,15 @@ namespace XOPE_UI.Spy
             await receiver.WaitForConnectionAsync(_cancellationTokenSource.Token);
             setIsConnectedState();
             Console.WriteLine("Spy connected to Receiver. Waiting for CONNECTION_SUCCESS message...");
-            _ = ProcessAsync(receiver);
+            _currentReceiverTask = ProcessAsync(receiver);
         }
 
         public void ShutdownAndWait()
         {
             _cancellationTokenSource.Cancel();
             setNoConnectionState();
+            _currentReceiverTask.Wait(2500);
+            _currentReceiverTask = null;
         }
 
         private async Task ProcessAsync(NamedPipeServerStream receiverStream) 
@@ -89,7 +93,8 @@ namespace XOPE_UI.Spy
                         int bytesReceived = await receiverStream.ReadAsync(inBuffer, 0, inBuffer.Length, _cancellationTokenSource.Token);
                         if (bytesReceived == 0)
                         {
-                            _cancellationTokenSource.Cancel();
+                            if (receiverStream.IsConnected)
+                                _cancellationTokenSource.Cancel();
                             break;
                         }
                         
