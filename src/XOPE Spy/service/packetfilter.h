@@ -1,10 +1,10 @@
 #pragma once
 #include "../definitions/definitions.h"
+#include "../packet/type.h"
 
 #include <unordered_map>
 #include <Windows.h>
 
-#include "type.h"
 
 class PacketFilter
 {
@@ -33,7 +33,7 @@ public:
 		DROP_PACKET
 	};
 private:
-	std::unordered_map<Guid, Data> filterMap;
+	std::unordered_map<Guid, Data> _filterMap;
 
 	struct Data
 	{

@@ -1,10 +1,10 @@
-#include "filter.h"
+#include "packetfilter.h"
 
 Guid PacketFilter::add(FilterableFunction ff, SOCKET s, const Packet oldVal, const Packet newVal,
 	bool replaceEntirePacket, bool recursiveReplace, bool activated, bool dropPacket)
 {
 	const Guid id = Guid::newGuid();
-	filterMap[id] = Data
+	_filterMap[id] = Data
 	{
 		.socketId = s,
 		.oldVal = oldVal, 
@@ -20,8 +20,8 @@ Guid PacketFilter::add(FilterableFunction ff, SOCKET s, const Packet oldVal, con
 
 bool PacketFilter::modify(Guid id, FilterableFunction ff, SOCKET s, const Packet oldVal, const Packet newVal, bool replaceEntirePacket, bool recursiveReplace, bool dropPacket)
 {
-	const auto it = filterMap.find(id);
-	if (it == filterMap.end())
+	const auto it = _filterMap.find(id);
+	if (it == _filterMap.end())
 		return false;
 
 	it->second = Data
@@ -39,8 +39,8 @@ bool PacketFilter::modify(Guid id, FilterableFunction ff, SOCKET s, const Packet
 
 bool PacketFilter::toggleActivated(Guid id, bool isActivated)
 {
-	const auto it = filterMap.find(id);
-	if (it == filterMap.end())
+	const auto it = _filterMap.find(id);
+	if (it == _filterMap.end())
 		return false;
 
 	it->second.activated = isActivated;
@@ -49,12 +49,12 @@ bool PacketFilter::toggleActivated(Guid id, bool isActivated)
 
 bool PacketFilter::remove(Guid id)
 {
-	return filterMap.erase(id) == 1;
+	return _filterMap.erase(id) == 1;
 }
 
 bool PacketFilter::find(FilterableFunction ff, SOCKET s, const Packet packet) const
 {
-	for (auto& f : filterMap)
+	for (auto& f : _filterMap)
 	{
 		if (f.second.filterableFunction != ff || !f.second.activated)
 			continue;
@@ -74,7 +74,7 @@ PacketFilter::ReplaceState PacketFilter::findAndReplace(FilterableFunction ff, S
 {
 	bool modified = false;
 
-	for (auto& [_, filterData] : filterMap)
+	for (auto& [_, filterData] : _filterMap)
 	{
 		if (filterData.filterableFunction != ff || !filterData.activated)
 			continue;

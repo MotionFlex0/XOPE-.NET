@@ -209,7 +209,7 @@
     <ClCompile Include="dispatcher\type\wsasendfunctioncallmessage.cpp" />
     <ClCompile Include="exports.cpp" />
     <ClCompile Include="job\jobqueue.cpp" />
-    <ClCompile Include="packet\filter.cpp" />
+    <ClCompile Include="service\packetfilter.cpp" />
     <ClCompile Include="patches\close.cpp" />
     <ClCompile Include="patches\connect.cpp" />
     <ClCompile Include="patches\ioctlsocket.cpp" />
@@ -226,6 +226,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="hook\detour.cpp" />
     <ClCompile Include="receiver\namedpipereceiver.cpp" />
+    <ClCompile Include="service\liveviewinterceptor.cpp" />
     <ClCompile Include="utils\assert.cpp" />
     <ClCompile Include="utils\base64.cpp" />
     <ClCompile Include="utils\guid.cpp" />
@@ -244,7 +245,7 @@
     <ClInclude Include="job\jobqueue.h" />
     <ClInclude Include="patches\functions.h" />
     <ClInclude Include="receiver\incomingmessage.h" />
-    <ClInclude Include="packet\filter.h" />
+    <ClInclude Include="service\packetfilter.h" />
     <ClInclude Include="packet\type.h" />
     <ClInclude Include="dispatcher\namedpipedispatcher.h" />
     <ClInclude Include="hook\detour.h" />
@@ -253,6 +254,7 @@
     <ClInclude Include="receiver\namedpipereceiver.h" />
     <ClInclude Include="receiver\ireceiver.h" />
     <ClInclude Include="receiver\spymessagetype.h" />
+    <ClInclude Include="service\liveviewinterceptor.h" />
     <ClInclude Include="utils\assert.h" />
     <ClInclude Include="utils\base64.h" />
     <ClInclude Include="utils\definition.hpp" />
