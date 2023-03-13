@@ -15,9 +15,9 @@ int WSAAPI Functions::Hooked_Select(int nfds, fd_set FAR * readfds, fd_set FAR *
 	int ret = 0;
 	if (readfds != nullptr)
 	{
-		for (int i = 0; i < readfds->fd_count; i++)
+		for (u_int i = 0; i < readfds->fd_count; i++)
 		{
-			if (app.recvPacketsToInjectCount(readfds->fd_array[i]) > 0)
+			if (app.getOpenSocketsRepo()->recvPacketsToInjectCount(readfds->fd_array[i]) > 0)
 				socketsToSpoof.push_back(readfds->fd_array[i]);
 			else
 				FD_SET(readfds->fd_array[i], &newReadfds);

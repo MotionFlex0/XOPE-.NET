@@ -6,7 +6,7 @@ int WSAAPI Functions::Hooked_CloseSocket(SOCKET s)
     Application& app = Application::getInstance();
     int ret = app.getHookManager()->get_ofunction<closesocket>()(s);
 
-    app.removeSocketFromSet(s);
+    app.getOpenSocketsRepo()->remove(s);
 
 
     dispatcher::HookedFunctionCallSocketMessage hfcm;

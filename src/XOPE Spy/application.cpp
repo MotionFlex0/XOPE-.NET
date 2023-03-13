@@ -2,6 +2,13 @@
 
 Application::Application()
 {
+    _openSocketsRepo = std::make_shared<OpenSocketsRepo>();
+
+    _packetFilter = std::make_shared<PacketFilter>();
+    _liveViewInterceptor = std::make_shared<LiveViewInterceptor>();
+
+    _config = std::make_shared<Config>();
+
     _pool = std::make_shared<BS::thread_pool>();
 }
 
@@ -60,21 +67,17 @@ void Application::shutdown()
         WaitForSingleObject(_applicationThread, INFINITE);
     }
 
-    if (_namedPipeServer != nullptr && _serverThread.joinable())
+    if (_namedPipeReceiver != nullptr && _serverThread.joinable())
     {
-        _namedPipeServer->shutdownServer();
+        _namedPipeReceiver->shutdownServer();
         _serverThread.join();
     }
 
     if (_hookManager != nullptr)
         _hookManager->destroy();
 
-    if (_namedPipeClient != nullptr)
-        _namedPipeClient->close();
-
-    delete _hookManager;
-    delete _namedPipeClient;
-    delete _namedPipeServer;
+    if (_namedPipeDispatcher != nullptr)
+        _namedPipeDispatcher->close();
 }
 
 void Application::programTerminatingShutdown()
@@ -87,17 +90,17 @@ void Application::programTerminatingShutdown()
 
     if (_serverThread.joinable())
     {
-        _namedPipeServer->shutdownServer();
+        _namedPipeReceiver->shutdownServer();
         _serverThread.join();
     }
 
-    _namedPipeClient->close();
+    _namedPipeDispatcher->close();
 }
 
 void Application::run()
 {
     // should be safe to re-enable the thread pool
-    _namedPipeClient->disableThreadPool(false);
+    _namedPipeDispatcher->disableThreadPool(false);
 
     while (!_stopApplication)
     {
@@ -121,11 +124,13 @@ void Application::run()
         }
         
         
-        if (_stopApplication || _namedPipeServer->isPipeBroken())
+        if (_stopApplication || _namedPipeReceiver->isPipeBroken())
             break;
 
-        _namedPipeClient->flushOutBuffer();
-        if (_namedPipeClient->isPipeBroken())
+        pingUi();
+
+        _namedPipeDispatcher->flushOutBuffer();
+        if (_namedPipeDispatcher->isPipeBroken())
             break;
     }
 
@@ -135,139 +140,34 @@ void Application::run()
     FreeLibraryAndExitThread(_dllModule, 0);
 }
 
-HookManager* Application::getHookManager()
+std::shared_ptr<const HookManager> Application::getHookManager()
 {
     return _hookManager;
 }
 
-const PacketFilter& Application::getPacketFilter()
+std::shared_ptr<OpenSocketsRepo> Application::getOpenSocketsRepo()
+{
+    return _openSocketsRepo;
+}
+
+std::shared_ptr<const Config> Application::getConfig()
+{
+    return _config;
+}
+
+std::shared_ptr<const PacketFilter> Application::getPacketFilter()
 {
     return _packetFilter;
 }
 
-bool Application::isTunnelingEnabled()
+std::shared_ptr<const LiveViewInterceptor> Application::getLiveViewInterceptor()
 {
-    return _isTunnelingEnabled;
-}
-
-bool Application::isPortTunnelable(int port)
-{
-    return _tunnelablePorts.contains(port);
-}
-
-void Application::startTunnelingSocket(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    _socketsData[socket].isTunneled = true;
-    _socketsData[socket].socketIdSentToSink = false;
-
-}
-
-void Application::stopTunnelingSocket(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    _socketsData[socket].isTunneled = false;
-
-}
-
-bool Application::isSocketTunneled(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    return _socketsData.contains(socket) && _socketsData[socket].isTunneled;
-}
-
-bool Application::wasSocketIdSentToSink(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    return _socketsData[socket].socketIdSentToSink;
-}
-
-void Application::emitSocketIdSentToSink(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    _socketsData[socket].socketIdSentToSink = true;
-}
-
-std::optional<bool> Application::isSocketNonBlocking(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-
-    if (_socketsData.contains(socket))
-        return _socketsData[socket].isBlocking;
-
-    return std::nullopt;
-}
-
-void Application::setSocketToNonBlocking(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-
-    _socketsData[socket].isBlocking = true;
-}
-
-size_t Application::recvPacketsToInjectCount(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    if (_socketsData.contains(socket))
-        return _socketsData[socket].recvPacketsToInject.size();
-    return 0;
-}
-
-void Application::removeInjectableRecvPackets(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    if (_socketsData.contains(socket))
-        _socketsData[socket].recvPacketsToInject = {};
-}
-
-void Application::closeSocketGracefully(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    _socketsData[socket].closeSocketGracefully = true;
-}
-
-bool Application::shouldSocketClose(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    return _socketsData.contains(socket) && _socketsData[socket].closeSocketGracefully;
-}
-
-void Application::removeSocketFromSet(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    _socketsData.erase(socket);
-}
-
-void Application::setSocketIpVersion(SOCKET socket, int ipVersion)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    _socketsData[socket].ipVersion = ipVersion;
-}
-
-int Application::getSocketIpVersion(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    return _socketsData[socket].ipVersion;
-}
-
-const std::optional<Packet> Application::getNextRecvPacketToInject(SOCKET socket)
-{
-    std::lock_guard<std::mutex> lock(_socketsDataMutex);
-    if (!_socketsData.contains(socket))
-        return std::nullopt;
-
-    std::queue<Packet>& packetQueue = _socketsData[socket].recvPacketsToInject;
-    if (packetQueue.empty())
-        return std::nullopt;
-
-    Packet packet = packetQueue.front();
-    packetQueue.pop();
-    return packet;
+    return _liveViewInterceptor;
 }
 
 void Application::processIncomingMessages()
 {
-    while (auto incomingMessage = _namedPipeServer->getIncomingMessage())
+    while (auto incomingMessage = _namedPipeReceiver->getIncomingMessage())
     {
         SpyMessageType type = (*incomingMessage).type;
         json jsonMessage = (*incomingMessage).rawJsonData;
@@ -302,8 +202,7 @@ void Application::processIncomingMessages()
 
             if (data.length() == jsonMessage["Length"].get<int>())
             {
-                std::lock_guard<std::mutex> lock(_socketsDataMutex);
-                _socketsData[socket].recvPacketsToInject.push(packetToInject);
+                _openSocketsRepo->addRecvPacketToInject(socket, packetToInject);
             }
             else
             {
@@ -313,7 +212,6 @@ void Application::processIncomingMessages()
         else if (type == SpyMessageType::CLOSE_SOCKET) // This now calls closesocket directly
         {
             SOCKET socket = jsonMessage["SocketId"].get<SOCKET>();
-            //closeSocketGracefully(socket);
             closesocket(socket);
         }
         else if (type == SpyMessageType::REQUEST_SOCKET_INFO)
@@ -397,7 +295,7 @@ void Application::processIncomingMessages()
         }
         else if (type == SpyMessageType::TOGGLE_HTTP_TUNNELING)
         {
-            _isTunnelingEnabled = jsonMessage["IsTunnelingEnabled"].get<bool>();
+            _config->toggleTunnellingEnabled(jsonMessage["IsTunnelingEnabled"].get<bool>());
         }
         else if (type == SpyMessageType::ADD_PACKET_FITLER || 
             type == SpyMessageType::MODIFY_PACKET_FILTER)
@@ -419,7 +317,7 @@ void Application::processIncomingMessages()
 
             if (type == SpyMessageType::ADD_PACKET_FITLER)
             {
-                Guid id = _packetFilter.add(packetType,
+                Guid id = _packetFilter->add(packetType,
                     socket, oldPacket, newPacket, false, recursiveReplace, isActivated, dropPacket);
 
                 sendToUI(dispatcher::AddPacketFilterResponse(
@@ -431,7 +329,7 @@ void Application::processIncomingMessages()
             {
                 const std::string filterId = jsonMessage["FilterId"].get<std::string>();
 
-                bool success = _packetFilter.modify(filterId,
+                bool success = _packetFilter->modify(filterId,
                     packetType, socket, oldPacket, newPacket, false, recursiveReplace, dropPacket);
 
                 if (success)
@@ -450,7 +348,7 @@ void Application::processIncomingMessages()
             const Guid filterId = jsonMessage["FilterId"].get<Guid>();
             const bool isActivated = jsonMessage["Activated"].get<bool>();
 
-            bool success = _packetFilter.toggleActivated(filterId,
+            bool success = _packetFilter->toggleActivated(filterId,
                 isActivated);
 
             if (success)
@@ -468,7 +366,7 @@ void Application::processIncomingMessages()
         {
             const Guid filterId = jsonMessage["FilterId"].get<Guid>();
 
-            _packetFilter.remove(filterId);
+            _packetFilter->remove(filterId);
 
             sendToUI(dispatcher::GenericPacketFilterResponse(
                 jsonMessage["JobId"].get<std::string>()
@@ -488,7 +386,7 @@ void Application::processIncomingMessages()
 
 void Application::initHooks()
 {
-    _hookManager = new HookManager();
+    _hookManager = std::make_shared<HookManager>();
 
     // Not the biggest fan of macros but unable to find a better way to do this
     HOOK_FUNCTION_NO_SIZE(_hookManager, connect, Functions::Hooked_Connect);
@@ -507,27 +405,37 @@ void Application::initHooks()
     // WSAAsyncSelect & WSAEventSelect have not been hooked but may be needed for non-blocking connects
 }
 
-
 bool Application::initClient(std::string spyServerPipeName)
 {
     std::string pipePath = "\\\\.\\pipe\\xopeui_" + std::to_string(GetCurrentProcessId());
 
-    _namedPipeClient = new NamedPipeDispatcher(pipePath.c_str(), _pool, _jobQueue);
-    if (!_namedPipeClient->isPipeBroken())
+    _namedPipeDispatcher = std::make_shared<NamedPipeDispatcher>(pipePath.c_str(), _pool, _jobQueue);
+    if (!_namedPipeDispatcher->isPipeBroken())
     {
         std::cout << "successfully connected to pipe: " << pipePath << '\n';
-        _namedPipeClient->disableThreadPool(true);
+        _namedPipeDispatcher->disableThreadPool(true);
         sendToUI(dispatcher::ConnectedSuccessMessage(spyServerPipeName));
-        _namedPipeClient->flushOutBuffer();
+        _namedPipeDispatcher->flushOutBuffer();
     }
-    return !_namedPipeClient->isPipeBroken();
+    return !_namedPipeDispatcher->isPipeBroken();
 }
 
 void Application::initServer(std::string spyServerPipeName)
 {
-    _namedPipeServer = new NamedPipeReceiver(spyServerPipeName);
-    if (_namedPipeServer->isPipeBroken())
+    _namedPipeReceiver = std::make_shared<NamedPipeReceiver>(spyServerPipeName);
+    if (_namedPipeReceiver->isPipeBroken())
         MessageBoxA(NULL, "could not start named pipe server in Spy.", "ERROR", MB_OK);  // TODO: Temp solution
 
-    _serverThread = std::thread(&NamedPipeReceiver::run, _namedPipeServer);
+    _serverThread = std::thread(&NamedPipeReceiver::run, _namedPipeReceiver);
+}
+
+void Application::pingUi()
+{
+    static ULONGLONG lastPing = GetTickCount64();
+
+    if (((GetTickCount64() - lastPing) / 1000.0f) > 5.0f)
+    {
+        sendToUI(dispatcher::PingMessage());
+        lastPing = GetTickCount64();
+    }
 }

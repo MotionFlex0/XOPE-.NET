@@ -5,7 +5,7 @@
 int WSAAPI Functions::Hooked_Connect(SOCKET s, const sockaddr* name, int namelen)
 {
     Application& app = Application::getInstance();
-    auto* hookmgr = app.getHookManager();
+    auto hookmgr = app.getHookManager();
 
     const auto sockaddrStorage = reinterpret_cast<const sockaddr_storage*>(name);
 
@@ -16,17 +16,21 @@ int WSAAPI Functions::Hooked_Connect(SOCKET s, const sockaddr* name, int namelen
 
     int port{ 0 };
     if (sockaddrStorage->ss_family == AF_INET)
+    {
         port = ntohs(reinterpret_cast<const sockaddr_in*>(sockaddrStorage)->sin_port);
+        if (!app.getOpenSocketsRepo()->contains(s))
+            app.getOpenSocketsRepo()->add(s);
+    }
     else if (sockaddrStorage->ss_family == AF_INET6)
         port = ntohs(reinterpret_cast<const sockaddr_in6*>(sockaddrStorage)->sin6_port);
 
-    if (app.isTunnelingEnabled() && app.isPortTunnelable(port))
+    if (app.getConfig()->isTunnellingEnabled() && app.getConfig()->isPortTunnelable(port))
     {
-        app.startTunnelingSocket(s);
+        app.getOpenSocketsRepo()->markSocketAsTunnelled(s);
 
         // This will connect to the UI sink instead of the real server
         sockaddr_storage sinkService;
-        if (app.getSocketIpVersion(s) == AF_INET6)
+        if (app.getOpenSocketsRepo()->getSocketIpVersion(s) == AF_INET6)
         {
             sockaddr_in6* originalName = (sockaddr_in6*)name;
 

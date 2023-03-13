@@ -23,7 +23,7 @@ int WSAAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
         message->socket = s;
         message->bufferCount = dwBufferCount;
         message->ret = ret;
-        message->tunneled = app.isSocketTunneled(s);
+        message->tunneled = app.getOpenSocketsRepo()->isSocketTunneled(s);
         if (ret == SOCKET_ERROR)
         {
             message->lastError = WSAGetLastError();
@@ -36,7 +36,7 @@ int WSAAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
             {
                 DWORD bytesToRead = min(bytesLeftToProcess, lpBuffers[i].len);
                 Packet packet(lpBuffers[i].buf, lpBuffers[i].buf + bytesToRead);
-                PacketFilter::ReplaceState replaceState = app.getPacketFilter().findAndReplace(FilterableFunction::WSARECV, s, packet);
+                PacketFilter::ReplaceState replaceState = app.getPacketFilter()->findAndReplace(FilterableFunction::WSARECV, s, packet);
 
                 // Sends the original packet data to UI
                 message->buffers.push_back({
@@ -91,7 +91,7 @@ int WSAAPI Functions::Hooked_WSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
     app.sendToUI(std::move(*message));
 
     if (message->ret == SOCKET_ERROR && message->lastError != WSAEWOULDBLOCK)
-        app.removeSocketFromSet(s);
+        app.getOpenSocketsRepo()->remove(s);
 
     return ret;
 }

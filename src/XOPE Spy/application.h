@@ -12,12 +12,15 @@
 #include "hook/hookmgr.hpp"
 #include "dispatcher/namedpipedispatcher.h"
 #include "packet/type.h"
-#include "packet/filter.h"
 #include "patches/functions.h"
 #include "receiver/incomingmessage.h"
 #include "receiver/namedpipereceiver.h"
+#include "service/liveviewinterceptor.h"
+#include "service/packetfilter.h"
 #include "utils/guid.h"
 #include "utils/util.h"
+#include "config.h"
+#include "data/opensocketrepo.h"
 
 class Application
 {
@@ -35,69 +38,50 @@ public:
 	// Only use this shutdown if the program is closing/terminating, otherwise use shutdown()
 	void programTerminatingShutdown();
 
-	HookManager* getHookManager();
-	const PacketFilter& getPacketFilter();
+	std::shared_ptr<const HookManager> getHookManager();
 
-	// TODO: Refactor this mess
-	bool isTunnelingEnabled();
-	bool isPortTunnelable(int port);
-	void startTunnelingSocket(SOCKET socket);
-	void stopTunnelingSocket(SOCKET socket);
-	bool isSocketTunneled(SOCKET socket);
+	std::shared_ptr<OpenSocketsRepo> getOpenSocketsRepo();
 
-	bool wasSocketIdSentToSink(SOCKET socket);
-	void emitSocketIdSentToSink(SOCKET socket);
-
-	//returns std::nullopt if socket's 'connect' call was not intercepted
-	std::optional<bool> isSocketNonBlocking(SOCKET socket);
-	void setSocketToNonBlocking(SOCKET socket);
-
-	// TODO: Use a single object to store all injectable packets...
-	const std::optional<Packet> getNextRecvPacketToInject(SOCKET socket);
-	size_t recvPacketsToInjectCount(SOCKET socket);
-	void removeInjectableRecvPackets(SOCKET socket);
-
-	void closeSocketGracefully(SOCKET socket);
-	bool shouldSocketClose(SOCKET socket);
-	void removeSocketFromSet(SOCKET socket);
-
-	void setSocketIpVersion(SOCKET socket, int ipVersion);
-	int getSocketIpVersion(SOCKET socket);
+	std::shared_ptr<const PacketFilter> getPacketFilter();
+	std::shared_ptr<const LiveViewInterceptor> getLiveViewInterceptor();
 	
+	std::shared_ptr<const Config> getConfig();
+
 	void sendToUI(Util::IMessageDerived auto&& message);
 private:
 	Application();
 
 	HMODULE _dllModule = NULL;
-	HookManager* _hookManager = nullptr;
-	NamedPipeDispatcher* _namedPipeClient = nullptr;
-	NamedPipeReceiver* _namedPipeServer = nullptr;
 
-	PacketFilter _packetFilter;
+	// make_shared used in init functions
+	std::shared_ptr<HookManager> _hookManager;
+	std::shared_ptr<NamedPipeDispatcher> _namedPipeDispatcher;
+	std::shared_ptr<NamedPipeReceiver> _namedPipeReceiver;
 
-	bool _isTunnelingEnabled = false;
-	std::unordered_map<SOCKET, SocketData> _socketsData;
-	std::mutex _socketsDataMutex;
+	std::shared_ptr<OpenSocketsRepo> _openSocketsRepo;
 
-	//TODO: Instead of hardcoded ports, have the UI send them
-	const std::set<int> _tunnelablePorts{ {80, 443} };
+	std::shared_ptr<PacketFilter> _packetFilter;
+	std::shared_ptr<LiveViewInterceptor> _liveViewInterceptor;
 
-	bool _stopApplication = false;
-	HANDLE _applicationThread;
-	std::thread _serverThread;
-	std::shared_ptr<BS::thread_pool> _pool;
-
+	std::shared_ptr<Config> _config;
+	
 	JobQueue _jobQueue;
+
+	std::shared_ptr<BS::thread_pool> _pool;
+	std::thread _serverThread;
+	HANDLE _applicationThread;
+	bool _stopApplication = false;
 
 	void initHooks();
 	bool initClient(std::string spyServerPipeName);
 	void initServer(std::string spyServerPipeName);
 	void run();
 	void processIncomingMessages();
+	void pingUi();
 };
 
 void Application::sendToUI(Util::IMessageDerived auto&& message)
 {
-	if (_namedPipeClient != nullptr)
-		_namedPipeClient->send(std::make_unique<std::remove_reference_t<decltype(message)>>(message));
+	if (_namedPipeDispatcher != nullptr)
+		_namedPipeDispatcher->send(std::make_unique<std::remove_reference_t<decltype(message)>>(message));
 }

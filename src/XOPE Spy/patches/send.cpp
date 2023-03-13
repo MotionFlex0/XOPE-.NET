@@ -6,27 +6,21 @@ int WSAAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
     Application& app = Application::getInstance();
     
     Packet packet(buf, buf + len);
-    PacketFilter::ReplaceState replaceState = app.getPacketFilter().findAndReplace(FilterableFunction::SEND, s, packet);
+    PacketFilter::ReplaceState replaceState = app.getPacketFilter()->findAndReplace(FilterableFunction::SEND, s, packet);
     bool modified = replaceState == PacketFilter::ReplaceState::MODIFIED_PACKET;
     bool dropPacket = replaceState == PacketFilter::ReplaceState::DROP_PACKET;
     
     int bytesSent{ 0 };
-    if (app.shouldSocketClose(s))
+    if (app.getOpenSocketsRepo()->isSocketTunneled(s) && !app.getOpenSocketsRepo()->wasSocketIdSentToSink(s))
     {
-        bytesSent = SOCKET_ERROR;
-        WSASetLastError(WSAECONNRESET);
+        int32_t s32 = s & 0xFFFFFFFF;
+        app.getHookManager()->get_ofunction<send>()(s, (char*)&s32, 4, NULL);
+        app.getOpenSocketsRepo()->emitSocketIdSentToSink(s);
     }
-    else
-    {
-        if (app.isSocketTunneled(s) && !app.wasSocketIdSentToSink(s))
-        {
-            int32_t s32 = s & 0xFFFFFFFF;
-            app.getHookManager()->get_ofunction<send>()(s, (char*)&s32, 4, NULL);
-            app.emitSocketIdSentToSink(s);
-        }
 
-        if (!dropPacket)
-            bytesSent = app.getHookManager()->get_ofunction<send>()(s, (char*)packet.data(), static_cast<int>(packet.size()), flags);
+    if (!dropPacket)
+    {
+        bytesSent = app.getHookManager()->get_ofunction<send>()(s, (char*)packet.data(), static_cast<int>(packet.size()), flags);
     }
 
     dispatcher::HookedFunctionCallPacketMessage hfcm;
@@ -35,7 +29,7 @@ int WSAAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
     hfcm.packetLen = len;
     hfcm.modified = modified;
     hfcm.ret = bytesSent;
-    hfcm.tunneled = app.isSocketTunneled(s);
+    hfcm.tunneled = app.getOpenSocketsRepo()->isSocketTunneled(s);
     hfcm.dropPacket = dropPacket;
 
     if (bytesSent == SOCKET_ERROR)
@@ -46,7 +40,7 @@ int WSAAPI Functions::Hooked_Send(SOCKET s, const char* buf, int len, int flags)
     app.sendToUI(std::move(hfcm));
 
     if (hfcm.ret == SOCKET_ERROR && hfcm.lastError != WSAEWOULDBLOCK)
-        app.removeSocketFromSet(s);
+        app.getOpenSocketsRepo()->remove(s);
 
     if (!dropPacket && (!modified || bytesSent < 1))
         return bytesSent;

@@ -7,7 +7,10 @@ SOCKET WSAAPI Functions::Hooked_WSASocketA(int af, int type, int protocol, LPWSA
     SOCKET ret = app.getHookManager()->get_ofunction<WSASocketA>()(af, type, protocol, lpProtocolInfo, g, dwFlags);
     
     if (ret != INVALID_SOCKET)
-        app.setSocketIpVersion(ret, af);
+    {
+        app.getOpenSocketsRepo()->add(ret);
+        app.getOpenSocketsRepo()->setSocketIpVersion(ret, af);
+    }
 
     return ret;
 }

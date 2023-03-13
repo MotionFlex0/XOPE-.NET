@@ -9,7 +9,7 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
     hookCallMessage.functionName = HookedFunction::WSASEND;
     hookCallMessage.socket = s;
     hookCallMessage.bufferCount = dwBufferCount;
-    hookCallMessage.tunneled = app.isSocketTunneled(s);
+    hookCallMessage.tunneled = app.getOpenSocketsRepo()->isSocketTunneled(s);
     
     // Required for the lifetime of WSASend(...)
     int updatedBufferCount{ 0 };
@@ -18,7 +18,7 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
     for (DWORD i = 0; i < dwBufferCount; i++)
     {
         Packet packet(lpBuffers[i].buf, lpBuffers[i].buf + lpBuffers[i].len);
-        PacketFilter::ReplaceState replaceState = app.getPacketFilter().findAndReplace(FilterableFunction::WSASEND, s, packet);
+        PacketFilter::ReplaceState replaceState = app.getPacketFilter()->findAndReplace(FilterableFunction::WSASEND, s, packet);
 
         hookCallMessage.buffers.push_back(
         {
@@ -46,24 +46,16 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
         updatedBufferCount++;
     }
 
-    if (app.shouldSocketClose(s))
+    if (app.getOpenSocketsRepo()->isSocketTunneled(s) && !app.getOpenSocketsRepo()->wasSocketIdSentToSink(s))
     {
-        hookCallMessage.ret = SOCKET_ERROR;
-        WSASetLastError(WSAECONNRESET);
+        int32_t s32 = s & 0xFFFFFFFF;
+        app.getHookManager()->get_ofunction<send>()(s, (char*)&s32, sizeof(s32), NULL);
+        app.getOpenSocketsRepo()->emitSocketIdSentToSink(s);
     }
-    else
-    {
-        if (app.isSocketTunneled(s) && !app.wasSocketIdSentToSink(s))
-        {
-            int32_t s32 = s & 0xFFFFFFFF;
-            app.getHookManager()->get_ofunction<send>()(s, (char*)&s32, sizeof(s32), NULL);
-            app.emitSocketIdSentToSink(s);
-        }
 
-        // updatedBuffers.size() is not necessarily equal to updatedBufferCount as some packets may have been dropped
-        hookCallMessage.ret = app.getHookManager()->get_ofunction<WSASend>()(s, updatedBuffers.data(), updatedBufferCount, 
-            lpNumberOfBytesSent, dwFlags, lpOverlapped, lpCompletionRoutine);
-    }
+    // updatedBuffers.size() is not necessarily equal to updatedBufferCount as some packets may have been dropped
+    hookCallMessage.ret = app.getHookManager()->get_ofunction<WSASend>()(s, updatedBuffers.data(), updatedBufferCount, 
+        lpNumberOfBytesSent, dwFlags, lpOverlapped, lpCompletionRoutine);
 
     if (hookCallMessage.ret == 0)
     {
@@ -90,7 +82,7 @@ int WSAAPI Functions::Hooked_WSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffe
     app.sendToUI(std::move(hookCallMessage));
 
     if (hookCallMessage.ret == SOCKET_ERROR && hookCallMessage.lastError != WSAEWOULDBLOCK)
-        app.removeSocketFromSet(s);
+        app.getOpenSocketsRepo()->remove(s);
 
     return hookCallMessage.ret;
 }

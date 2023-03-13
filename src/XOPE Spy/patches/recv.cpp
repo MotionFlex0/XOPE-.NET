@@ -12,9 +12,9 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
     // BUG: Currently, it is only possible to inject packets after "recv" has return at least once
     //      when using a blocking socket. This will not be an issue for non-blocking sockets using 
     //      "select", as the readibility of the socket has been spoofed when a packet needs to be injecetd.         
-    if (app.recvPacketsToInjectCount(s) > 0)
+    if (app.getOpenSocketsRepo()->recvPacketsToInjectCount(s) > 0)
     {
-        packet = *app.getNextRecvPacketToInject(s);
+        packet = *app.getOpenSocketsRepo()->getNextRecvPacketToInject(s);
         size_t bytesToCopy = min(packet.size(), len);
         std::copy_n(packet.begin(), bytesToCopy, buf);
         bytesRead = static_cast<int>(bytesToCopy);
@@ -27,7 +27,7 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
             if (bytesRead > 0)
             {
                 packet.assign(buf, buf + bytesRead);
-                replaceState = app.getPacketFilter().findAndReplace(FilterableFunction::RECV, s, packet);
+                replaceState = app.getPacketFilter()->findAndReplace(FilterableFunction::RECV, s, packet);
                 if (replaceState == PacketFilter::ReplaceState::DROP_PACKET) // If the packet has been dropped, then continue loop
                 {
                     dispatcher::HookedFunctionCallPacketMessage hfcm;
@@ -35,7 +35,7 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
                     hfcm.socket = s;
                     hfcm.packetLen = bytesRead;
                     hfcm.ret = bytesRead;
-                    hfcm.tunneled = app.isSocketTunneled(s);
+                    hfcm.tunneled = app.getOpenSocketsRepo()->isSocketTunneled(s);
                     hfcm.packetDataB64 = std::move(packet);
                     hfcm.modified = false;
                     hfcm.dropPacket = true;
@@ -54,7 +54,7 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
     hfcm.socket = s;
     hfcm.packetLen = bytesRead;
     hfcm.ret = bytesRead;
-    hfcm.tunneled = app.isSocketTunneled(s);
+    hfcm.tunneled = app.getOpenSocketsRepo()->isSocketTunneled(s);
 
     if (bytesRead < 1)
     {
@@ -62,7 +62,7 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
         {
             hfcm.lastError = WSAGetLastError();
             if (hfcm.lastError != WSAEWOULDBLOCK)
-                app.removeSocketFromSet(s);
+                app.getOpenSocketsRepo()->remove(s);
         }
         app.sendToUI(std::move(hfcm));
 
