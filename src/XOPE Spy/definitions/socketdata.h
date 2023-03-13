@@ -8,10 +8,8 @@
 
 struct SocketData
 {
-	bool closeSocketGracefully = false;
-	bool isBlocking = false;
+	std::optional<bool> isBlocking = std::nullopt;
+	std::optional<int> ipVersion = std::nullopt; //AF_INET;
 	bool isTunneled = false;
-	std::queue<Packet> recvPacketsToInject;
-	int ipVersion = AF_INET;
 	bool socketIdSentToSink = true;
 };
