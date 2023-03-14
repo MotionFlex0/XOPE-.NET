@@ -18,6 +18,7 @@ namespace XOPE_UI
 {
     // TODO: Refactor!
     // TODO: Add a filter for the Log/Log dialog, allowing for more granular control of messages
+    // TODO: Make this a one-use class for each time the Spy is injected
     public class SpyManager
     {
         public event EventHandler<Packet> NewPacket;
@@ -38,7 +39,7 @@ namespace XOPE_UI
         CancellationTokenSource _cancellationTokenSource = null;
         Task _spyThread = null;
 
-        Dictionary<Guid, IMessageWithResponse> _jobs; // This contains Messages that are expecting a response
+        Dictionary<Guid, MessageWithResponseImpl> _jobs; // This contains Messages that are expecting a response
 
         Process _attachedProcess = null;
 
@@ -47,7 +48,7 @@ namespace XOPE_UI
             SpyData = new SpyData();
             IsTunneling = false;
             MessageReceiver = new NamedPipeReceiver();
-            _jobs = new Dictionary<Guid, IMessageWithResponse>();
+            _jobs = new Dictionary<Guid, MessageWithResponseImpl>();
         }
 
         ~SpyManager()
