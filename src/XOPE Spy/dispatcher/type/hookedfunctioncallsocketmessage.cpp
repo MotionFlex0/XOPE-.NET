@@ -7,12 +7,6 @@ namespace dispatcher
 	{ 
 	};
 
-	void HookedFunctionCallSocketMessage::serializeToJson(json& j)
-	{
-		IMessage::serializeToJson(j);
-		to_json(j, *this);
-	}
-
 	void HookedFunctionCallSocketMessage::populateWithSockaddr(const sockaddr_storage* sockaddr)
 	{
 		int oldWsaErrorCode = WSAGetLastError();
@@ -84,5 +78,11 @@ namespace dispatcher
 			j["tunneling"] = hfcm.tunneling;
 
 		}
+	}
+
+	void HookedFunctionCallSocketMessage::serializeToJson(json& j)
+	{
+		IMessage::serializeToJson(j);
+		to_json(j, *this);
 	}
 };
