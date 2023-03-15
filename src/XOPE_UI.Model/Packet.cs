@@ -11,7 +11,7 @@ namespace XOPE_UI.Model
 {
     public class Packet
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; } = Guid.NewGuid();
         public int Socket { get; set; }
         public byte[] Data { get; set; }
         public int Length { get; set; }

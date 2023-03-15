@@ -13,6 +13,7 @@ using XOPE_UI.Model;
 using XOPE_UI.Spy;
 using XOPE_UI.Spy.DispatcherMessageType;
 using XOPE_UI.Spy.Type;
+using XOPE_UI.View;
 
 namespace XOPE_UI
 {
@@ -43,6 +44,8 @@ namespace XOPE_UI
 
         Process _attachedProcess = null;
 
+        LiveViewTab _liveViewTab = null;
+
         public SpyManager()
         {
             SpyData = new SpyData();
@@ -54,6 +57,11 @@ namespace XOPE_UI
         ~SpyManager()
         {
             Shutdown();
+        }
+
+        public void AttachLiveViewTab(LiveViewTab liveViewTab)
+        {
+            _liveViewTab = liveViewTab;
         }
 
         public void AttachedToProcess(Process process)
@@ -316,7 +324,6 @@ namespace XOPE_UI
                             byte[] data = Packet.ConvertB64CompressedToByteArray(json.Value<String>("packetDataB64"));
                             Packet packet = new Packet
                             {
-                                Id = Guid.NewGuid(),
                                 Type = hookedFuncType,
                                 Data = data,
                                 Length = data.Length,
@@ -367,7 +374,6 @@ namespace XOPE_UI
 
                                 Packet packet = new Packet
                                 {
-                                    Id = Guid.NewGuid(),
                                     Type = hookedFuncType,
                                     Data = data,
                                     Length = data.Length,
@@ -382,6 +388,22 @@ namespace XOPE_UI
                         }
                     }
                 }
+            }
+            else if (messageType == UiMessageType.INTERCEPTOR_REQUEST)
+            {
+                Guid jobId = json.Value<Guid>("jobId");
+                HookedFuncType functionName = json.Value<HookedFuncType>("functionName");
+                int socket = json.Value<int>("socket");
+                byte[] data = Packet.ConvertB64CompressedToByteArray(json.Value<String>("packetDataB64"));
+
+                _liveViewTab.AddPacketToLiveViewQueue(jobId, new Packet()
+                {
+                    Type = functionName,
+                    Data = data,
+                    Length = data.Length,
+                    Socket = socket,
+                    UnderlyingEvent = json
+                });
             }
             else if (messageType == UiMessageType.JOB_RESPONSE_SUCCESS || 
                 messageType == UiMessageType.JOB_RESPONSE_ERROR)
