@@ -1,10 +1,9 @@
 #pragma once
-#include "../definitions/definitions.h"
-#include "../packet/type.h"
 
 #include <unordered_map>
-#include <Windows.h>
 
+#include "../definitions/definitions.h"
+#include "../packet/type.h"
 
 class PacketFilter
 {
