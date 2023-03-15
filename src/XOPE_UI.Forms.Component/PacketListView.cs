@@ -244,5 +244,12 @@ namespace XOPE_UI.View.Component
             e.Item = _listViewItemStore[e.ItemIndex];
 
         }
+
+        private void replayDoubleClickToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListViewItem selectedItem = GetFirstSelectedCaptureItem();
+            if (selectedItem != null)
+                ItemDoubleClicked?.Invoke(this, selectedItem.Tag as Packet);
+        }
     }
 }
