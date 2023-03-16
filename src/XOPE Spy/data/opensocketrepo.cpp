@@ -77,7 +77,7 @@ void OpenSocketsRepo::setSocketIpVersion(SOCKET socket, int ipVersion)
 
 std::optional<int> OpenSocketsRepo::getSocketIpVersion(SOCKET socket)
 {
-	if (_socketsData.contains(socket))
+	if (!_socketsData.contains(socket))
 		return std::nullopt;
 
 	return _socketsData[socket].ipVersion;
