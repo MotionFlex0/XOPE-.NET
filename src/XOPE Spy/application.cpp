@@ -169,9 +169,9 @@ void Application::processIncomingMessages()
 {
     while (auto incomingMessage = _namedPipeReceiver->getIncomingMessage())
     {
-        SpyMessageType type = (*incomingMessage).type;
-        json jsonMessage = (*incomingMessage).rawJsonData;
-
+        SpyMessageType type = incomingMessage->type;
+        json jsonMessage = incomingMessage->rawJsonData;
+        
         if (type == SpyMessageType::PING)
         {
             sendToUI(
@@ -297,6 +297,10 @@ void Application::processIncomingMessages()
         {
             _config->toggleTunnellingEnabled(jsonMessage["IsTunnelingEnabled"].get<bool>());
         }
+        else if (type == SpyMessageType::TOGGLE_INTERCEPTOR)
+        {
+            _config->toggleInterceptorEnabled(jsonMessage["IsInterceptorEnabled"].get<bool>());
+        }
         else if (type == SpyMessageType::ADD_PACKET_FITLER || 
             type == SpyMessageType::MODIFY_PACKET_FILTER)
         {
@@ -381,7 +385,6 @@ void Application::processIncomingMessages()
         if (_stopApplication)
             break;
     }
-
 }
 
 void Application::initHooks()

@@ -8,9 +8,12 @@
 #include <set>
 #include <time.h>
 
+#include "config.h"
+#include "data/opensocketrepo.h"
 #include "definitions/socketdata.h"
 #include "hook/hookmgr.hpp"
 #include "dispatcher/namedpipedispatcher.h"
+#include "job/jobresponse.h"
 #include "packet/type.h"
 #include "patches/functions.h"
 #include "receiver/incomingmessage.h"
@@ -19,8 +22,6 @@
 #include "service/packetfilter.h"
 #include "utils/guid.h"
 #include "utils/util.h"
-#include "config.h"
-#include "data/opensocketrepo.h"
 
 class Application
 {
@@ -47,6 +48,7 @@ public:
 	
 	std::shared_ptr<const Config> getConfig();
 
+	std::shared_ptr<JobResponse> sendToUI(Util::IMessageWithResponseDerived auto&& message);
 	void sendToUI(Util::IMessageDerived auto&& message);
 private:
 	Application();
@@ -79,6 +81,15 @@ private:
 	void processIncomingMessages();
 	void pingUi();
 };
+
+std::shared_ptr<JobResponse> Application::sendToUI(Util::IMessageWithResponseDerived auto&& message)
+{
+	std::shared_ptr<JobResponse> jobResponse = _jobQueue.push(message.jobId);
+
+	if (_namedPipeDispatcher != nullptr)
+		_namedPipeDispatcher->send(std::make_unique<std::remove_reference_t<decltype(message)>>(message));
+	return jobResponse;
+}
 
 void Application::sendToUI(Util::IMessageDerived auto&& message)
 {
