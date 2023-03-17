@@ -9,4 +9,8 @@ struct IMessageWithResponse : IMessage
 {
 	IMessageWithResponse(UiMessageType m);
 	Guid jobId;
+
+	virtual void serializeToJson(json& j);
+
+	friend void to_json(json& j, IMessageWithResponse& mes);
 };

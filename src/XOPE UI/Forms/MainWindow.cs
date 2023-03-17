@@ -76,7 +76,7 @@ namespace XOPE_UI
 
             _viewTabHandler = new ViewTabHandler(viewTab);
             _viewTabHandler.AddView(captureViewButton, captureViewTabPage);
-            _viewTabHandler.AddView(liveViewButton, liveViewTabPage);
+            _viewTabHandler.AddView(interceptorViewButton, interceptorViewTabPage);
             _viewTabHandler.AddView(replayViewButton, replayViewTabPage);
             _viewTabHandler.AddView(filterViewButton, filterViewTabPage);
 
@@ -88,6 +88,14 @@ namespace XOPE_UI
             _spyManager = new SpyManager();
             filterViewTab.AttachSpyManager(_spyManager);
             filterViewTab.AttachSettings(_settings);
+
+            // TODO: Improve this. Maybe have the interceptor and spymanager refer to a common object.
+            _spyManager.AttachLiveViewTab(interceptorViewTab);
+            interceptorViewTab.AttachSpyManager(_spyManager);
+            interceptorViewTab.WaitingForAction += (sender, e) =>
+                _viewTabHandler.ShowAlertForViewTab(interceptorViewTabPage);
+            interceptorViewTab.InterceptorCleared += (sender, e) =>
+                _viewTabHandler.RemoveAlertForViewTab(interceptorViewTabPage);
 
             _spyManager.NewPacket += (object sender, Packet e) =>
             {
@@ -199,8 +207,6 @@ namespace XOPE_UI
 
                     Console.WriteLine($"Injecting into [{selectedProcess.Id}] - {selectedProcess.ProcessName}.exe...");
 
-                    _spyManager.RunAsync($"{Config.Spy.ReceiverPipeNamePrefix}{selectedProcess.Id}");
-
                     bool res = CreateRemoteThread.InjectSpy(selectedProcess.Handle);
 
                     if (res)
@@ -208,10 +214,14 @@ namespace XOPE_UI
                         _attachedProcess = selectedProcess;
 
                         SetUiToAttachedState();
+
+                        _spyManager.RunAsync($"{Config.Spy.ReceiverPipeNamePrefix}{selectedProcess.Id}");
+
                         _attachedProcess.EnableRaisingEvents = true;
                         _attachedProcess.Exited += attachedProcess_Exited;
                         _spyManager.AttachedToProcess(_attachedProcess);
                         _environment.NotifyProcessAttached(_attachedProcess);
+
 
                         // Auto-inject other dlls | TODO: temporary solution
                         ObjectCache objectCache = MemoryCache.Default;
@@ -240,6 +250,8 @@ namespace XOPE_UI
         {
             if (!_spyManager.IsAttached)
                 return;
+
+            interceptorViewTab.ForwardAllPacket();
 
             _spyManager.Shutdown();
             // This gives the Spy enough time to properly shutdown and dispose of its running threads (temp fix)
@@ -286,6 +298,7 @@ namespace XOPE_UI
                 detachToolStripMenuItem.Enabled = true;
                 recordToolStripButton.Enabled = true;
                 filterViewTab.Enabled = true;
+                this.interceptToolStripButton.Enabled = false; // CHANGE TO TRUE WHEN TESTING
             }));
         }
 
@@ -305,6 +318,8 @@ namespace XOPE_UI
                 this.stopRecToolStripButton.Enabled = false;
                 this.filterViewTab.Enabled = false;
                 this.httpTunnelingModeToolStripMenuItem.Checked = false;
+                this.interceptToolStripButton.Enabled = false;
+                this.interceptToolStripButton.Checked = false;
             }));
         }
 
@@ -424,6 +439,23 @@ namespace XOPE_UI
             t.Text = t.Text.Remove(t.Text.IndexOf(" ["));
             Console.WriteLine(t.Text);
             recordToolStripButton.Tag = null;
+        }
+
+        private void interceptToolStripButton_Click(object sender, EventArgs e)
+        {
+            bool isIntercepting = interceptToolStripButton.Checked;
+
+            if (isIntercepting)
+            {
+                interceptorViewTab.ForwardAllPacket();
+                _spyManager.MessageDispatcher.Send(new ToggleInterceptor { IsInterceptorEnabled = false });
+                interceptToolStripButton.Checked = false;
+            }
+            else
+            {
+                _spyManager.MessageDispatcher.Send(new ToggleInterceptor { IsInterceptorEnabled = true });
+                interceptToolStripButton.Checked = true;
+            }
         }
 
         private void connectionsListToolStripMenuItem_Click(object sender, EventArgs e)

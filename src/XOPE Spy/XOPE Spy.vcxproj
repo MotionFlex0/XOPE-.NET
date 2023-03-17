@@ -190,6 +190,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application.cpp" />
+    <ClCompile Include="config.cpp" />
+    <ClCompile Include="data\opensocketrepo.cpp" />
     <ClCompile Include="dispatcher\type\addpacketfilterresponse.cpp" />
     <ClCompile Include="dispatcher\type\connectedsuccessmessage.cpp" />
     <ClCompile Include="dispatcher\type\errormessage.cpp" />
@@ -203,12 +205,15 @@
     <ClCompile Include="dispatcher\type\impl\imessagewithresponse.cpp" />
     <ClCompile Include="dispatcher\type\infomessage.cpp" />
     <ClCompile Include="dispatcher\type\issocketwritableresponse.cpp" />
+    <ClCompile Include="dispatcher\type\interceptorrequest.cpp" />
+    <ClCompile Include="dispatcher\type\pingmessage.cpp" />
     <ClCompile Include="dispatcher\type\pongmessageresponse.cpp" />
     <ClCompile Include="dispatcher\type\socketinforesponse.cpp" />
     <ClCompile Include="dispatcher\type\wsarecvfunctioncallmessage.cpp" />
     <ClCompile Include="dispatcher\type\wsasendfunctioncallmessage.cpp" />
     <ClCompile Include="exports.cpp" />
     <ClCompile Include="job\jobqueue.cpp" />
+    <ClCompile Include="job\jobresponse.cpp" />
     <ClCompile Include="service\packetfilter.cpp" />
     <ClCompile Include="patches\close.cpp" />
     <ClCompile Include="patches\connect.cpp" />
@@ -229,12 +234,15 @@
     <ClCompile Include="service\liveviewinterceptor.cpp" />
     <ClCompile Include="utils\assert.cpp" />
     <ClCompile Include="utils\base64.cpp" />
+    <ClCompile Include="utils\concurrent_unordered_map.cpp" />
     <ClCompile Include="utils\guid.cpp" />
     <ClCompile Include="utils\memory.cpp" />
     <ClCompile Include="utils\packetjsonwrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="data\opensocketrepo.h" />
     <ClInclude Include="definitions\definitions.h" />
     <ClInclude Include="definitions\socketdata.h" />
     <ClInclude Include="dispatcher\type\impl\imessage.h" />
@@ -243,6 +251,7 @@
     <ClInclude Include="dispatcher\uimessagetype.h" />
     <ClInclude Include="job\jobmessagetype.h" />
     <ClInclude Include="job\jobqueue.h" />
+    <ClInclude Include="job\jobresponse.h" />
     <ClInclude Include="patches\functions.h" />
     <ClInclude Include="receiver\incomingmessage.h" />
     <ClInclude Include="service\packetfilter.h" />
@@ -257,6 +266,7 @@
     <ClInclude Include="service\liveviewinterceptor.h" />
     <ClInclude Include="utils\assert.h" />
     <ClInclude Include="utils\base64.h" />
+    <ClInclude Include="utils\concurrent_unordered_map.h" />
     <ClInclude Include="utils\definition.hpp" />
     <ClInclude Include="utils\guid.h" />
     <ClInclude Include="utils\memory.h" />

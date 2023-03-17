@@ -88,6 +88,12 @@
     <Filter Include="Source Files\service">
       <UniqueIdentifier>{e200b2a3-6545-42e2-bc01-6ecb24888afa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\data">
+      <UniqueIdentifier>{9e16b971-071c-44dc-9abd-81d2058246a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\data">
+      <UniqueIdentifier>{9c8ce4f2-5471-4823-956f-4ed5db32f82c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -219,6 +225,24 @@
     <ClCompile Include="service\liveviewinterceptor.cpp">
       <Filter>Source Files\service</Filter>
     </ClCompile>
+    <ClCompile Include="config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="data\opensocketrepo.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\concurrent_unordered_map.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\pingmessage.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="dispatcher\type\interceptorrequest.cpp">
+      <Filter>Source Files\dispatcher\type</Filter>
+    </ClCompile>
+    <ClCompile Include="job\jobresponse.cpp">
+      <Filter>Source Files\job</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dispatcher\namedpipedispatcher.h">
@@ -304,6 +328,18 @@
     </ClInclude>
     <ClInclude Include="service\liveviewinterceptor.h">
       <Filter>Header Files\service</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="data\opensocketrepo.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\concurrent_unordered_map.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="job\jobresponse.h">
+      <Filter>Header Files\job</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

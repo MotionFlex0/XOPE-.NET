@@ -109,6 +109,7 @@ namespace dispatcher
 		bool modified = false;
 		bool tunneled = false;
 		bool dropPacket = false;
+		bool intercepted = false;
 		int lastError = -1;
 
 		void serializeToJson(json& j) override;
@@ -156,6 +157,30 @@ namespace dispatcher
 		bool timedOut = false;
 		bool error = false;
 		int lastError = -1;
+
+		void serializeToJson(json& j) override;
+	};
+
+	struct InterceptorRequest : IMessageWithResponse
+	{
+		InterceptorRequest(
+			HookedFunction functionName,
+			SOCKET socket,
+			PacketDataJsonWrapper packetDataB64
+		);
+
+		HookedFunction functionName;
+		SOCKET socket;
+		PacketDataJsonWrapper packetDataB64;
+
+		void serializeToJson(json& j) override;
+	};
+
+	struct PingMessage : IMessage
+	{
+		PingMessage();
+
+		std::string data = "PING!";
 
 		void serializeToJson(json& j) override;
 	};
