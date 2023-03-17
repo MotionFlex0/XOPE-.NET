@@ -1,6 +1,6 @@
 ﻿namespace XOPE_UI.View
 {
-    partial class LiveViewTab
+    partial class InterceptorViewTab
     {
         /// <summary> 
         /// Required designer variable.
@@ -32,11 +32,13 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.dropPacketButton = new System.Windows.Forms.Button();
             this.hexEditorPlaceholder = new System.Windows.Forms.Label();
+            this.jobIdLabel = new System.Windows.Forms.Label();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // forwardButton
             // 
+            this.forwardButton.Enabled = false;
             this.forwardButton.Location = new System.Drawing.Point(3, 3);
             this.forwardButton.Name = "forwardButton";
             this.forwardButton.Size = new System.Drawing.Size(75, 23);
@@ -47,6 +49,7 @@
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.flowLayoutPanel1.Controls.Add(this.forwardButton);
             this.flowLayoutPanel1.Controls.Add(this.dropPacketButton);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(327, 3);
@@ -56,6 +59,7 @@
             // 
             // dropPacketButton
             // 
+            this.dropPacketButton.Enabled = false;
             this.dropPacketButton.Location = new System.Drawing.Point(84, 3);
             this.dropPacketButton.Name = "dropPacketButton";
             this.dropPacketButton.Size = new System.Drawing.Size(88, 23);
@@ -72,19 +76,31 @@
             this.hexEditorPlaceholder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.hexEditorPlaceholder.Location = new System.Drawing.Point(3, 37);
             this.hexEditorPlaceholder.Name = "hexEditorPlaceholder";
-            this.hexEditorPlaceholder.Size = new System.Drawing.Size(869, 397);
+            this.hexEditorPlaceholder.Size = new System.Drawing.Size(869, 429);
             this.hexEditorPlaceholder.TabIndex = 22;
             this.hexEditorPlaceholder.Text = "WpfHexaEditor.HexEditor\r\n### DO NOT REMOVE ###";
             this.hexEditorPlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // LiveViewTab
+            // jobIdLabel
+            // 
+            this.jobIdLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.jobIdLabel.Location = new System.Drawing.Point(3, 466);
+            this.jobIdLabel.Name = "jobIdLabel";
+            this.jobIdLabel.Size = new System.Drawing.Size(869, 19);
+            this.jobIdLabel.TabIndex = 23;
+            this.jobIdLabel.Text = "~";
+            this.jobIdLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // InterceptorViewTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.jobIdLabel);
             this.Controls.Add(this.hexEditorPlaceholder);
             this.Controls.Add(this.flowLayoutPanel1);
-            this.Name = "LiveViewTab";
-            this.Size = new System.Drawing.Size(875, 443);
+            this.Name = "InterceptorViewTab";
+            this.Size = new System.Drawing.Size(875, 488);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -96,5 +112,6 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button dropPacketButton;
         private System.Windows.Forms.Label hexEditorPlaceholder;
+        private System.Windows.Forms.Label jobIdLabel;
     }
 }
