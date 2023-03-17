@@ -10,7 +10,7 @@ NamedPipeReceiver::NamedPipeReceiver(std::string pipeName)
 	}
 }
 
-bool NamedPipeReceiver::isPipeBroken()
+bool NamedPipeReceiver::isPipeBroken() const
 {
 	return _pipeBroken;
 }
@@ -29,7 +29,7 @@ void NamedPipeReceiver::run()
 	_pipeServerThreadId = GetCurrentThread();
 
 	// BUG: If ConnectNamedPipe does not receive a connection from a client, it will block indefinitely
-	//	 which will prevent the Spy from properly shutting down.
+	//	 which will prevent the Spy from properly shutting down. Use overlapped socket to prevent this.
 	BOOL connected = ConnectNamedPipe(_pipe, NULL);
 	if (!connected)
 	{

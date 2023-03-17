@@ -1,7 +1,9 @@
 #pragma once
 
+
 #include <exception>
 #include <stdio.h>
+
 #include <Windows.h>
 
 #if _DEBUG

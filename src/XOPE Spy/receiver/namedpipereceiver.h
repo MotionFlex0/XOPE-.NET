@@ -15,7 +15,7 @@ class NamedPipeReceiver : IReceiver
 public:
 	NamedPipeReceiver(std::string pipeName);
 
-	bool isPipeBroken();
+	bool isPipeBroken() const;
 	void run();
 	void shutdownServer();
 
@@ -30,6 +30,6 @@ private:
 
 	std::mutex _lock;
 	std::queue<IncomingMessage> _incomingMessages;
-	HANDLE _pipeServerThreadId;
+	HANDLE _pipeServerThreadId = NULL;
 
 };

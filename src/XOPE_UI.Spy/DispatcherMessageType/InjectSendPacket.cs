@@ -8,6 +8,7 @@ namespace XOPE_UI.Spy.DispatcherMessageType
     {
         public byte[] Data { get; set; }
         public int SocketId { get; set; }
+        // Length : Set by ToJson
 
         public InjectSendPacket()
         {

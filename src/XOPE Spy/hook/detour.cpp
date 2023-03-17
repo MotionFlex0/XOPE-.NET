@@ -150,7 +150,7 @@ void* Detour64::patch()
 
 	/*
 	* Copies bytes to patch to trampoline and fixes instruction which rely on 
-	*	relative disp positioning. (e.g. MOV RAX [EIP+40FC])
+	*	relative disp positioning. (e.g. MOV RAX [RIP+40FC])
 	*/
 	int offset = 0;
 	for (int i = 0; i < instCount; i++)

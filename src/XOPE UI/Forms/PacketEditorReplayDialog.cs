@@ -10,6 +10,8 @@ namespace XOPE_UI.View
 {
     public partial class PacketEditorReplayDialog : Form
     {
+        const int DELAY_TIMER_RESOLUTION = 100;
+
         public byte[] Data { get; set; } = null;
         public bool Editible { get; set; } = false;
         public int SocketId { get; set; } = 0;
@@ -133,7 +135,7 @@ namespace XOPE_UI.View
                 if (s != null && s is Timer) ((Timer)s).Dispose();
                 _replayTimer = null;
 
-                IMessage message = packetTypeComboBox.SelectedIndex == 0 ?
+                MessageImpl message = packetTypeComboBox.SelectedIndex == 0 ?
                     new InjectSendPacket { Data = data, SocketId = socketId } :
                     new InjectRecvPacket { Data = data, SocketId = socketId };
 
@@ -147,7 +149,7 @@ namespace XOPE_UI.View
                 replayProgressLabel.Text = $"{waitTimer/100:F2}s";
                 _replayTimer = new Timer();
                 _replayTimer.Tick += func;
-                _replayTimer.Interval = 100;
+                _replayTimer.Interval = DELAY_TIMER_RESOLUTION;
                 _replayTimer.Start();
                 preventUiInteraction(true);
             }
@@ -164,6 +166,7 @@ namespace XOPE_UI.View
             delayTimerTextBox.Enabled = !isReplaying;
             _hexEditor.IsEnabled = !isReplaying;
             socketSelectorButton.Enabled = !isReplaying;
+            packetTypeComboBox.Enabled = !isReplaying;
         }
 
         private void addToListButton_Click(object sender, EventArgs e)

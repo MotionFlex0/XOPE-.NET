@@ -2,7 +2,6 @@
 #include <winsock2.h>
 #include <windows.h>
 
-
 namespace Functions {
 	int WSAAPI Hooked_Connect(SOCKET s, const sockaddr* name, int namelen);
 	int WSAAPI Hooked_Send(SOCKET s, const char* buf, int len, int flags);

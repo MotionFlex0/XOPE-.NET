@@ -1,9 +1,7 @@
 #pragma once
 #include <optional>
 #include <queue>
-#include <WinSock2.h>
-#include <WS2tcpip.h>
-#include <Windows.h>
+#include "../definitions/definitions.h"
 #include "../packet/type.h"
 
 struct SocketData

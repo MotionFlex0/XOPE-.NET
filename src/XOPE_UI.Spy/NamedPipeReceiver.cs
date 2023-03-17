@@ -75,7 +75,7 @@ namespace XOPE_UI.Spy
         {
             _cancellationTokenSource.Cancel();
             setNoConnectionState();
-            _currentReceiverTask.Wait(2500);
+            _currentReceiverTask.Wait(3500);
             _currentReceiverTask = null;
         }
 

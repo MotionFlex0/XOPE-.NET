@@ -3,7 +3,6 @@
 #include "../../../nlohmann/json.hpp"
 #include "../../uimessagetype.h"
 
-// Not sure how I feel about this being here. Maybe only add this to the neccessary source files instead
 using nlohmann::json;
 
 struct IMessage

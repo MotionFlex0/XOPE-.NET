@@ -44,7 +44,7 @@ namespace XOPE_UI
 
         Process _attachedProcess = null;
 
-        LiveViewTab _liveViewTab = null;
+        InterceptorViewTab _liveViewTab = null;
 
         public SpyManager()
         {
@@ -59,7 +59,7 @@ namespace XOPE_UI
             Shutdown();
         }
 
-        public void AttachLiveViewTab(LiveViewTab liveViewTab)
+        public void AttachLiveViewTab(InterceptorViewTab liveViewTab)
         {
             _liveViewTab = liveViewTab;
         }
@@ -391,8 +391,8 @@ namespace XOPE_UI
             }
             else if (messageType == UiMessageType.INTERCEPTOR_REQUEST)
             {
-                Guid jobId = json.Value<Guid>("jobId");
-                HookedFuncType functionName = json.Value<HookedFuncType>("functionName");
+                Guid jobId = Guid.Parse(json.Value<string>("jobId"));
+                HookedFuncType functionName = (HookedFuncType)json.Value<int>("functionName");
                 int socket = json.Value<int>("socket");
                 byte[] data = Packet.ConvertB64CompressedToByteArray(json.Value<String>("packetDataB64"));
 

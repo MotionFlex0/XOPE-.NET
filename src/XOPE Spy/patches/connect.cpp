@@ -16,11 +16,7 @@ int WSAAPI Functions::Hooked_Connect(SOCKET s, const sockaddr* name, int namelen
 
     int port{ 0 };
     if (sockaddrStorage->ss_family == AF_INET)
-    {
         port = ntohs(reinterpret_cast<const sockaddr_in*>(sockaddrStorage)->sin_port);
-        if (!app.getOpenSocketsRepo()->contains(s))
-            app.getOpenSocketsRepo()->add(s);
-    }
     else if (sockaddrStorage->ss_family == AF_INET6)
         port = ntohs(reinterpret_cast<const sockaddr_in6*>(sockaddrStorage)->sin6_port);
 

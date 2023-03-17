@@ -11,9 +11,9 @@
 
 #include "type/impl/imessage.h"
 #include "../nlohmann/json.hpp"
-#include "../utils/assert.h"
-#include "../utils/util.h"
 #include "../job/jobqueue.h"
+#include "../utils/util.h"
+#include "../utils/assert.h"
 
 class NamedPipeDispatcher
 {

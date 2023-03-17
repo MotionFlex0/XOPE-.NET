@@ -6,15 +6,14 @@ using System.Drawing;
 using System.IO;
 using System.Management;
 using System.Runtime.Caching;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Automation.Text;
 using System.Windows.Forms;
 using XOPE_UI.Native;
 using XOPE_UI.View.Component;
 
 namespace XOPE_UI.View
 {
+    // BUG: For some unknown reason, the refresh time has gone from ~30ms to ~110ms
     public partial class ProcessDialog : Form
     {
         public Process SelectedProcess { get; private set; }
@@ -269,10 +268,9 @@ namespace XOPE_UI.View
             this.processListTotalLabel.Text = $"{processesListCount}/{totalProcessCount}";
         }
 
+        // Get command-line arguments on sepearate thread due to delay of >100ms
         private async Task UpdateCommandlineTooltips()
         {
-            // Get command-line arguments on sepearate thread due to delay of >100ms
-
             Guid listToUpdate = _currentListId;
             using (var mos = 
                 await Task.Run(() => new ManagementObjectSearcher($"SELECT CommandLine, ProcessId FROM Win32_Process")))

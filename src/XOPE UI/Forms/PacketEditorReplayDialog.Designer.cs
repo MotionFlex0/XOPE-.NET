@@ -49,7 +49,7 @@ namespace XOPE_UI.View
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 21);
+            this.label1.Location = new System.Drawing.Point(16, 20);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 15);
@@ -96,12 +96,13 @@ namespace XOPE_UI.View
             // 
             // delayTimerTextBox
             // 
+            this.delayTimerTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.delayTimerTextBox.Increment = new decimal(new int[] {
             10,
             0,
             0,
             0});
-            this.delayTimerTextBox.Location = new System.Drawing.Point(288, 16);
+            this.delayTimerTextBox.Location = new System.Drawing.Point(356, 16);
             this.delayTimerTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.delayTimerTextBox.Maximum = new decimal(new int[] {
             100000,
@@ -114,8 +115,9 @@ namespace XOPE_UI.View
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(228, 21);
+            this.label2.Location = new System.Drawing.Point(304, 20);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(52, 15);
@@ -124,7 +126,7 @@ namespace XOPE_UI.View
             // 
             // socketIdTextBox
             // 
-            this.socketIdTextBox.Location = new System.Drawing.Point(75, 16);
+            this.socketIdTextBox.Location = new System.Drawing.Point(69, 16);
             this.socketIdTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.socketIdTextBox.Maximum = new decimal(new int[] {
             65535,
@@ -137,8 +139,9 @@ namespace XOPE_UI.View
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(361, 21);
+            this.label3.Location = new System.Drawing.Point(426, 20);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(23, 15);
@@ -170,7 +173,7 @@ namespace XOPE_UI.View
             // 
             // socketSelectorButton
             // 
-            this.socketSelectorButton.Location = new System.Drawing.Point(174, 16);
+            this.socketSelectorButton.Location = new System.Drawing.Point(163, 16);
             this.socketSelectorButton.Name = "socketSelectorButton";
             this.socketSelectorButton.Size = new System.Drawing.Size(30, 23);
             this.socketSelectorButton.TabIndex = 22;
@@ -209,18 +212,18 @@ namespace XOPE_UI.View
             this.ClientSize = new System.Drawing.Size(765, 408);
             this.Controls.Add(this.packetTypeComboBox);
             this.Controls.Add(this.instructionLabel);
-            this.Controls.Add(this.socketSelectorButton);
             this.Controls.Add(this.replayProgressLabel);
             this.Controls.Add(this.hexEditorPlaceholder);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.socketIdTextBox);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.delayTimerTextBox);
             this.Controls.Add(this.stopButton);
             this.Controls.Add(this.replayButton);
             this.Controls.Add(this.addToListButton);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.closeButton);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.socketSelectorButton);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "PacketEditorReplayDialog";
             this.Text = "Packet Replay";

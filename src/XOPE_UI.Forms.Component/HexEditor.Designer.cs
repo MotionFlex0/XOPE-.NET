@@ -102,6 +102,7 @@ namespace XOPE_UI.View.Component
             this.Column13,
             this.Column14,
             this.Column15});
+            this.byteGridView.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.byteGridView.Location = new System.Drawing.Point(0, 0);
             this.byteGridView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.byteGridView.Name = "byteGridView";
@@ -281,6 +282,7 @@ namespace XOPE_UI.View.Component
             this.dataGridViewTextBoxColumn14,
             this.dataGridViewTextBoxColumn15,
             this.dataGridViewTextBoxColumn16});
+            this.textGridView.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.textGridView.Location = new System.Drawing.Point(2, 0);
             this.textGridView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textGridView.Name = "textGridView";

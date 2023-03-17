@@ -39,7 +39,7 @@ void NamedPipeDispatcher::flushOutBuffer()
     else
         _pool.lock()->parallelize_loop(messages.size(), serializer).wait();
 
-    for (auto&& out : serializedMessages)
+    for (auto& out : serializedMessages)
     {
         DWORD bytesWritten { 0 };
         BOOL res = WriteFile(_pipe, out->data.get(), out->length, &bytesWritten, NULL);
