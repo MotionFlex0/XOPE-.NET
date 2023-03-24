@@ -13,6 +13,8 @@ public:
 
 	void completeJob(Guid guid, const IncomingMessage& im);
 
+	void finishAllJobs();
+	
 private:
 	ConcurrentUnorderedMap<Guid, std::shared_ptr<JobResponse>> _jobs;
 };
