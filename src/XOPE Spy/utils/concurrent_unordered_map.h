@@ -20,12 +20,18 @@ public:
 	bool tryUpdateValueFunc(K key, std::function<void(T&)> func);
 
 	// throws exception if key does not exist
-	const T& operator[](K key);
+	const T& operator[](K key) const;
 
-	bool contains(K key);
+	bool contains(K key) const;
 
 	void clear();
+
+	int count() const;
+
+	const auto begin() const;
+	const auto end() const;
 private:
+	//TODO: Maybe add another map with v being std::mutex to allow for per-entry locking instead of using _mutex
 	std::unordered_map<K, T> _internalMap;
 	std::mutex _mutex;
 };
@@ -88,16 +94,16 @@ inline bool ConcurrentUnorderedMap<K, T>::tryUpdateValueFunc(K key, std::functio
 }
 
 template<class K, class T>
-inline const T& ConcurrentUnorderedMap<K, T>::operator[](K key)
+inline const T& ConcurrentUnorderedMap<K, T>::operator[](K key) const
 {
 	if (!contains(key))
 		throw std::out_of_range("[ConcurrentUnorderedMap] key does not exist");
 
-	return _internalMap[key];
+	return _internalMap.at(key);
 }
 
 template<class K, class T>
-inline bool ConcurrentUnorderedMap<K, T>::contains(K key)
+inline bool ConcurrentUnorderedMap<K, T>::contains(K key) const
 {
 	return _internalMap.contains(key);
 }
@@ -106,4 +112,22 @@ template<class K, class T>
 inline void ConcurrentUnorderedMap<K, T>::clear()
 {
 	_internalMap.clear();
+}
+
+template<class K, class T>
+inline int ConcurrentUnorderedMap<K, T>::count() const
+{
+	return _internalMap.size();
+}
+
+template<class K, class T>
+inline const auto ConcurrentUnorderedMap<K, T>::begin() const
+{
+	return _internalMap.begin();
+}
+
+template<class K, class T>
+inline const auto ConcurrentUnorderedMap<K, T>::end() const
+{
+	return _internalMap.end();
 }
