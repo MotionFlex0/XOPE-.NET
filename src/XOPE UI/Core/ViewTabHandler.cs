@@ -9,7 +9,7 @@ namespace XOPE_UI.Core
 {
     public class ViewTabHandler
     {
-        const byte ANIM_ALPHA_CHANGE_BY = 50;
+        const byte ANIM_ALPHA_CHANGE_BY = 30;
         public Color AlertColour { get; set; } = Color.Orange;
 
         TabControl _tabControl;
@@ -84,10 +84,19 @@ namespace XOPE_UI.Core
 
             item.AlertAnimTimer.Stop();
             item.AlertAnimTimer.Dispose();
-
-            item.Button.BackColor = SystemColors.Control;
-
             item.AlertAnimTimer = null;
+
+            UpdateHighlightedTabButton();
+        }
+
+        private void UpdateHighlightedTabButton()
+        {
+            foreach (KeyValuePair<Guid, ViewTabHandlerItem> entry in _viewTabs)
+            {
+                entry.Value.Button.BackColor = entry.Value.TabPage == _tabControl.SelectedTab ?
+                    entry.Value.Button.BackColor = System.Drawing.SystemColors.MenuHighlight
+                    : System.Drawing.SystemColors.Control;
+            }
         }
 
         private void Btn_Click(object sender, EventArgs e)
@@ -99,12 +108,7 @@ namespace XOPE_UI.Core
 
         private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            foreach (KeyValuePair<Guid, ViewTabHandlerItem> entry in _viewTabs)
-            {
-                entry.Value.Button.BackColor = entry.Value.TabPage == _tabControl.SelectedTab ?
-                    entry.Value.Button.BackColor = System.Drawing.SystemColors.MenuHighlight 
-                    : System.Drawing.SystemColors.Control;
-            }
+            UpdateHighlightedTabButton();
         }
 
         class ViewTabHandlerItem
