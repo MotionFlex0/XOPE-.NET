@@ -1,4 +1,5 @@
 #include "../../definitions/definitions.h"
+#include "../../utils/stringconverter.h"
 
 namespace dispatcher
 {
@@ -7,42 +8,37 @@ namespace dispatcher
 	{ 
 	};
 
-	void HookedFunctionCallSocketMessage::populateWithSockaddr(const sockaddr_storage* sockaddr)
+	void HookedFunctionCallSocketMessage::populateWithSockaddr(SOCKET s, const sockaddr_storage* destSaStor)
 	{
 		int oldWsaErrorCode = WSAGetLastError();
 
-		addrFamily = sockaddr->ss_family;
+		this->addrFamily = destSaStor->ss_family;
 
-		if (sockaddr->ss_family == AF_INET)
+		if (destSaStor->ss_family == AF_INET)
 		{
-			const sockaddr_in* sa = reinterpret_cast<const sockaddr_in*>(sockaddr);
+			const sockaddr_in* destSin = reinterpret_cast<const sockaddr_in*>(destSaStor);
 
-			char addr[INET_ADDRSTRLEN];
-			int addrSize = sizeof(addr);
-			int sinSize = sizeof(sockaddr_in);
+			sockaddr_in sourceSin;
+			int sourceSinSize = sizeof(sourceSin);
+			getsockname(s, (sockaddr*)&sourceSin, &sourceSinSize);
 
-			WSAAddressToStringA((LPSOCKADDR)sa, sinSize, NULL, addr, (LPDWORD)&addrSize);
-			std::replace(addr, addr + sizeof(addr), ':', '\x00');
-			this->addr = addr;
-			port = ntohs(sa->sin_port);
+			this->sourceAddr = StringConverter::IpAddressV4ToString(&sourceSin);
+			this->sourcePort = ntohs(sourceSin.sin_port);
+			this->destAddr = StringConverter::IpAddressV4ToString(destSin);
+			this->destPort = ntohs(destSin->sin_port);
 		}
-		else if (sockaddr->ss_family == AF_INET6)
+		else if (destSaStor->ss_family == AF_INET6)
 		{
-			const sockaddr_in6* sa = reinterpret_cast<const sockaddr_in6*>(sockaddr);
+			const sockaddr_in6* destSin = reinterpret_cast<const sockaddr_in6*>(destSaStor);
 
-			char addr[INET6_ADDRSTRLEN];
-			int addrSize = sizeof(addr);
-			int sinSize = sizeof(sockaddr_in6);
+			sockaddr_in6 sourceSin;
+			int sourceSinSize = sizeof(sourceSin);
+			getsockname(s, (sockaddr*)&sourceSin, &sourceSinSize);
 
-			WSAAddressToStringA((LPSOCKADDR)sa, sinSize, NULL, addr, (LPDWORD)&addrSize);
-
-			std::string address{ addr };
-			auto colonPos = address.find_last_of(':');
-			if (colonPos != std::string::npos)
-				address.erase(colonPos);
-
-			this->addr = address;
-			port = ntohs(sa->sin6_port);
+			this->sourceAddr = StringConverter::IpAddressV6ToString(&sourceSin);
+			this->sourcePort = ntohs(sourceSin.sin6_port);
+			this->destAddr = StringConverter::IpAddressV6ToString(destSin);
+			this->destPort = ntohs(destSin->sin6_port);
 		}
 		WSASetLastError(oldWsaErrorCode);
 
@@ -57,8 +53,8 @@ namespace dispatcher
 			ret:int
 			lastError:int,
 			protocol:int, //TODO: currently not implemented. need to call getsockopt(..) to get the type
-			port:int,
-			addr:scr/byte,
+			sourcePort:int,
+			sourceAddr:scr/byte,
 			addrType:int,
 			tunneling:bool
 		}*/
@@ -73,8 +69,8 @@ namespace dispatcher
 		{
 			j["protocol"] = -1;
 			j["addrFamily"] = hfcm.addrFamily;
-			j["addr"] = hfcm.addr;
-			j["port"] = hfcm.port;
+			j["addr"] = hfcm.sourceAddr;
+			j["port"] = hfcm.sourcePort;
 			j["tunneling"] = hfcm.tunneling;
 
 		}

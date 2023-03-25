@@ -243,6 +243,9 @@
     <ClCompile Include="job\jobresponse.cpp">
       <Filter>Source Files\job</Filter>
     </ClCompile>
+    <ClCompile Include="utils\stringconverter.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dispatcher\namedpipedispatcher.h">
@@ -340,6 +343,9 @@
     </ClInclude>
     <ClInclude Include="job\jobresponse.h">
       <Filter>Header Files\job</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\stringconverter.h">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

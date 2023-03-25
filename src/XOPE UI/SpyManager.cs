@@ -165,16 +165,18 @@ namespace XOPE_UI
 
             if (messageType == UiMessageType.HOOKED_FUNCTION_CALL)
             {
-                HookedFuncType hookedFuncType = (HookedFuncType)json.Value<Int32>("functionName");
+                HookedFuncType hookedFuncType = (HookedFuncType)json.Value<int>("functionName");
                 if (hookedFuncType == HookedFuncType.CONNECT || hookedFuncType == HookedFuncType.WSACONNECT)
                 {
-                    int socket = json.Value<Int32>("socket");
+                    int socket = json.Value<int>("socket");
                     Connection connection = new Connection(
                         socket,
-                        json.Value<Int32>("protocol"),
-                        json.Value<Int32>("addrFamily"),
-                        json.Value<string>("addr"),
-                        json.Value<Int32>("port"),
+                        json.Value<int>("protocol"),
+                        json.Value<int>("addrFamily"),
+                        json.Value<string>("sourceAddr"),
+                        json.Value<int>("sourcePort"),
+                        json.Value<string>("destAddr"),
+                        json.Value<int>("destPort"),
                         Connection.Status.ESTABLISHED,
                         hookedFuncType == HookedFuncType.CONNECT ?
                             Connection.WinsockVersion.Version_1 :
@@ -286,8 +288,10 @@ namespace XOPE_UI
                         {
                             if (resp.Type == UiMessageType.JOB_RESPONSE_SUCCESS)
                             {
-                                connection.IP = resp.Json.Value<string>("addr");
-                                connection.Port = resp.Json.Value<int>("port");
+                                connection.SourceAddress = resp.Json.Value<string>("sourceAddr");
+                                connection.SourcePort = resp.Json.Value<int>("sourcePort");
+                                connection.DestAddress = resp.Json.Value<string>("destAddr");
+                                connection.DestPort = resp.Json.Value<int>("destPort");
                                 connection.IPFamily = (AddressFamily)resp.Json.Value<Int32>("addrFamily");
                                 connection.Protocol = resp.Json.Value<int>("protocol");
                                 connection.SocketStatus = Connection.Status.ESTABLISHED;
@@ -331,6 +335,7 @@ namespace XOPE_UI
                                 Modified = json.Value<bool>("modified"),
                                 Tunneled = json.Value<bool>("tunneled"),
                                 DropPacket = json.Value<bool>("dropPacket"),
+                                Intercepted = json.Value<bool>("intercepted"),
                                 UnderlyingEvent = json
                             };
 
@@ -381,6 +386,7 @@ namespace XOPE_UI
                                     Modified = buffers[i].Value<bool>("modified"),
                                     Tunneled = json.Value<bool>("tunneled"),
                                     DropPacket = buffers[i].Value<bool>("dropPacket"),
+                                    //Intercepted = json.Value<bool>("intercepted"),
                                     UnderlyingEvent = json
                                 };
                                 NewPacket?.Invoke(this, packet);

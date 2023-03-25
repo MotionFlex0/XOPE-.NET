@@ -14,15 +14,15 @@ int WSAAPI Functions::Hooked_WSAConnect(SOCKET s, const sockaddr* name, int name
     dispatcher::HookedFunctionCallSocketMessage hfcm;
     hfcm.functionName = HookedFunction::WSACONNECT;
     hfcm.socket = s;
-    hfcm.populateWithSockaddr(sockaddrStorage);
+    hfcm.populateWithSockaddr(s, sockaddrStorage);
 
-    int port{ 0 };
+    int sourcePort{ 0 };
     if (sockaddrStorage->ss_family == AF_INET)
-        port = ntohs(reinterpret_cast<const sockaddr_in*>(sockaddrStorage)->sin_port);
+        sourcePort = ntohs(reinterpret_cast<const sockaddr_in*>(sockaddrStorage)->sin_port);
     else if (sockaddrStorage->ss_family == AF_INET6)
-        port = ntohs(reinterpret_cast<const sockaddr_in6*>(sockaddrStorage)->sin6_port);
+        sourcePort = ntohs(reinterpret_cast<const sockaddr_in6*>(sockaddrStorage)->sin6_port);
 
-    if (app.getConfig()->isTunnellingEnabled() && app.getConfig()->isPortTunnelable(port))
+    if (app.getConfig()->isTunnellingEnabled() && app.getConfig()->isPortTunnelable(sourcePort))
     {
         app.getOpenSocketsRepo()->markSocketAsTunnelled(s);
 

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XOPE_UI.Model
 {
@@ -16,8 +11,10 @@ namespace XOPE_UI.Model
         public int SocketId { get; private set; }
         public int Protocol { get; set; } //TODO: once implemented, change type to ProtocolType
         public AddressFamily IPFamily { get; set; }
-        public string IP { get; set; } // original type: IPAddress
-        public int Port { get; set; }
+        public string SourceAddress { get; set; } // original type: IPAddress
+        public int SourcePort { get; set; }
+        public string DestAddress { get; set; } // original type: IPAddress
+        public int DestPort { get; set; }
         public WinsockVersion Version { get; set; }
         public bool IsCurrentlyTunneling { get; set; } = false;
         public Status SocketStatus
@@ -36,20 +33,22 @@ namespace XOPE_UI.Model
             SocketId = id;
             Protocol = (int)ProtocolType.Tcp;
             IPFamily = AddressFamily.InterNetwork;
-            IP = "0.0.0.0";
-            Port = 0;
+            DestAddress = "0.0.0.0";
+            DestPort = 0;
             SocketStatus = Status.REQUESTING_INFO;
             LastStatusChangeTime = DateTime.Now;
             Version = WinsockVersion.Version_1;
         }
 
-        public Connection(int id, int protocol, int addrFamily, string ip, int port, Status status, WinsockVersion version)
+        public Connection(int id, int protocol, int addrFamily, string sourceAddr, int sourcePort, string destAddr, int destPort, Status status, WinsockVersion version)
         {
             SocketId = id;
             Protocol = protocol;
             IPFamily = (AddressFamily)addrFamily;
-            IP = ip;
-            Port = port;
+            SourceAddress = sourceAddr;
+            SourcePort = sourcePort;
+            DestAddress = destAddr;
+            DestPort = destPort;
             SocketStatus = status;
             LastStatusChangeTime = DateTime.Now;
             Version = version;
@@ -65,6 +64,16 @@ namespace XOPE_UI.Model
         public override int GetHashCode()
         {
             return this.SocketId;
+        }
+
+        public string ConvertSourceToString()
+        {
+            return $"{SourceAddress}:{SourcePort}";
+        }
+
+        public string ConvertDestToString()
+        {
+            return $"{DestAddress}:{DestPort}";
         }
 
         public enum Status

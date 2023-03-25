@@ -10,9 +10,9 @@ void Config::toggleTunnellingEnabled(bool enable)
 	_isTunnelingEnabled = enable;
 }
 
-bool Config::isPortTunnelable(int sourcePort) const
+bool Config::isPortTunnelable(int destPort) const
 {
-	return _tunnelablePorts.contains(sourcePort);
+	return _tunnelablePorts.contains(destPort);
 }
 
 bool Config::isInterceptorEnabled() const

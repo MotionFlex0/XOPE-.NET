@@ -22,6 +22,7 @@
 #include "service/packetfilter.h"
 #include "utils/guid.h"
 #include "utils/util.h"
+#include "utils/stringconverter.h"
 
 class Application
 {

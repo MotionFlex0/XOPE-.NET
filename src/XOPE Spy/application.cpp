@@ -56,7 +56,9 @@ void Application::start()
 void Application::shutdown()
 {
     // This block is only entered if shutdown() is called from outside of this class (e.g. DllMain with DLL_PROCESS_DETACH)
-    
+
+    _jobQueue.finishAllJobs();
+
     _pool->pause();
     _pool->wait_for_tasks();
     _pool.reset();
@@ -219,45 +221,43 @@ void Application::processIncomingMessages()
             std::string jobId = jsonMessage["JobId"].get<std::string>();
             SOCKET socket = jsonMessage["SocketId"].get<SOCKET>();
 
-            sockaddr_storage sin;
-            int sinSize = sizeof(sin);
-            if (getpeername(socket, (sockaddr*)&sin, &sinSize) == 0 
-                && (sin.ss_family == AF_INET || sin.ss_family == AF_INET6))
+            sockaddr_storage destSaStor;
+            int destSaStorSize = sizeof(destSaStor);
+            if (getpeername(socket, (sockaddr*)&destSaStor, &destSaStorSize) == 0
+                && (destSaStor.ss_family == AF_INET || destSaStor.ss_family == AF_INET6))
             {
-                if (sin.ss_family == AF_INET)
+                if (destSaStor.ss_family == AF_INET)
                 {
-                    sockaddr_in* sa = reinterpret_cast<sockaddr_in*>(&sin);
-                    int port = ntohs(sa->sin_port);
+                    sockaddr_in* destSin = reinterpret_cast<sockaddr_in*>(&destSaStor);
 
-                    char addr[INET_ADDRSTRLEN];
-                    int addrSize = sizeof(addr);
-                    int sinSize = sizeof(sockaddr_in);
-
-                    WSAAddressToStringA((LPSOCKADDR)sa, sinSize, NULL, addr, (LPDWORD)&addrSize);
-                    std::replace(addr, addr + sizeof(addr), ':', '\x00');
+                    sockaddr_in sourceSin;
+                    int sourceSinSize = sizeof(sourceSin);
+                    getsockname(socket, (sockaddr*)&sourceSin, &sourceSinSize);
 
                     sendToUI(
-                        dispatcher::SocketInfoResponse(jobId, addr, port, sa->sin_family, -1)
+                        dispatcher::SocketInfoResponse(
+                            jobId, 
+                            StringConverter::IpAddressV4ToString(&sourceSin), ntohs(sourceSin.sin_port),
+                            StringConverter::IpAddressV4ToString(destSin), ntohs(destSin->sin_port),
+                            destSin->sin_family, -1
+                        )
                     );
                 }
-                else if (sin.ss_family == AF_INET6)
+                else if (destSaStor.ss_family == AF_INET6)
                 {
-                    sockaddr_in6* sa = reinterpret_cast<sockaddr_in6*>(&sin);
-                    int port = ntohs(sa->sin6_port);
+                    sockaddr_in6* destSin = reinterpret_cast<sockaddr_in6*>(&destSaStor);
 
-                    char addr[INET6_ADDRSTRLEN];
-                    int addrSize = sizeof(addr);
-                    int sinSize = sizeof(sockaddr_in6);
-
-                    WSAAddressToStringA((LPSOCKADDR)sa, sinSize, NULL, addr, (LPDWORD)&addrSize);
-
-                    std::string formattedAddr{ addr };
-                    auto colonPos = formattedAddr.find_last_of(':');
-                    if (colonPos != std::string::npos)
-                        formattedAddr.erase(colonPos);
+                    sockaddr_in6 sourceSin;
+                    int sourceSinSize = sizeof(sourceSin);
+                    getsockname(socket, (sockaddr*)&sourceSin, &sourceSinSize);
 
                     sendToUI(
-                        dispatcher::SocketInfoResponse(jobId, formattedAddr, port, sa->sin6_family, -1)
+                        dispatcher::SocketInfoResponse(
+                            jobId, 
+                            StringConverter::IpAddressV6ToString(&sourceSin), ntohs(sourceSin.sin6_port),
+                            StringConverter::IpAddressV6ToString(destSin), ntohs(destSin->sin6_port),
+                            destSin->sin6_family, -1
+                        )
                     );
                 }
                 else
@@ -267,7 +267,7 @@ void Application::processIncomingMessages()
             }
             else
             {
-                sendToUI(dispatcher::ErrorMessageResponse(jobId, "unknown socket family ("+ std::to_string(sin.ss_family) +
+                sendToUI(dispatcher::ErrorMessageResponse(jobId, "unknown socket family ("+ std::to_string(destSaStor.ss_family) +
                     ") for socket " + std::to_string(socket)));
             }
         }
@@ -373,8 +373,14 @@ void Application::processIncomingMessages()
             _packetFilter->remove(filterId);
 
             sendToUI(dispatcher::GenericPacketFilterResponse(
-                jsonMessage["JobId"].get<std::string>()
+                jsonMessage["JobId"].get<Guid>()
             ));
+        }
+        else if (type == SpyMessageType::JOB_RESPONSE_SUCCESS ||
+            type == SpyMessageType::JOB_RESPONSE_ERROR)
+        {
+            const Guid jobId = jsonMessage["JobId"].get<Guid>();
+            _jobQueue.completeJob(jobId, *incomingMessage);
         }
         else if (type == SpyMessageType::SHUTDOWN_RECV_THREAD)
         {

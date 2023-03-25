@@ -6,7 +6,7 @@ class Config
 public:
 	bool isTunnellingEnabled() const;
 	void toggleTunnellingEnabled(bool enable);
-	bool isPortTunnelable(int sourcePort) const;
+	bool isPortTunnelable(int destPort) const;
 
 	bool isInterceptorEnabled() const;
 	void toggleInterceptorEnabled(bool enable);

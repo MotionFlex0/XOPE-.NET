@@ -37,8 +37,8 @@ namespace XOPE_UI.View
 
                 ListViewItem item = new ListViewItem(c.SocketId.ToString());
                 item.SubItems.Add(c.IPFamily == AddressFamily.InterNetwork ? "IPv4" : "IPv6");
-                item.SubItems.Add(c.IP.ToString());
-                item.SubItems.Add(c.Port.ToString());
+                item.SubItems.Add(c.DestAddress.ToString());
+                item.SubItems.Add(c.DestPort.ToString());
                 item.SubItems.Add(c.SocketStatus.ToString());
                 item.Tag = c.SocketId;
                 connectionListView.Items.Add(item);

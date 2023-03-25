@@ -238,6 +238,7 @@
     <ClCompile Include="utils\guid.cpp" />
     <ClCompile Include="utils\memory.cpp" />
     <ClCompile Include="utils\packetjsonwrapper.cpp" />
+    <ClCompile Include="utils\stringconverter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -271,6 +272,7 @@
     <ClInclude Include="utils\guid.h" />
     <ClInclude Include="utils\memory.h" />
     <ClInclude Include="utils\packetjsonwrapper.h" />
+    <ClInclude Include="utils\stringconverter.h" />
     <ClInclude Include="utils\util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

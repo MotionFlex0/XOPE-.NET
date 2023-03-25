@@ -2,12 +2,21 @@
 
 namespace dispatcher
 {
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SocketInfoResponse, jobId, addr, port, addrFamily, protocol);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SocketInfoResponse, jobId, sourceAddr, sourcePort, destAddr, destPort, addrFamily, protocol);
 
-	SocketInfoResponse::SocketInfoResponse(Guid jobId, std::string addr, int port, int addrFamily, int protocol) : 
-		IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId),
-		addr(addr),
-		port(port),
+	SocketInfoResponse::SocketInfoResponse(
+		Guid jobId, 
+		std::string sourceAddr, 
+		int sourcePort, 
+		std::string destAddr, 
+		int destPort, 
+		int addrFamily, 
+		int protocol
+	) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId),
+		sourceAddr(sourceAddr),
+		sourcePort(sourcePort),
+		destAddr(destAddr),
+		destPort(destPort),
 		addrFamily(addrFamily),
 		protocol(protocol) 
 	{ 

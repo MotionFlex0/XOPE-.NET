@@ -126,12 +126,14 @@ namespace dispatcher
 		bool tunneling = false;
 
 		uint16_t addrFamily = -1;
-		std::string addr = "";
-		uint16_t port = -1;
+		std::string sourceAddr = "";
+		uint16_t sourcePort = -1;
+		std::string destAddr = "";
+		uint16_t destPort = -1;
 
 		void serializeToJson(json& j) override;
 
-		void populateWithSockaddr(const sockaddr_storage* sockaddr);
+		void populateWithSockaddr(SOCKET socket, const sockaddr_storage* destSaStor);
 	};
 
 	struct InfoMessage : IMessage
@@ -196,10 +198,12 @@ namespace dispatcher
 
 	struct SocketInfoResponse : IMessageResponse
 	{
-		SocketInfoResponse(Guid jobId, std::string addr, int port, int addrFamily, int protocol);
+		SocketInfoResponse(Guid jobId, std::string sourceAddr, int sourcePort, std::string destAddr, int destPort,	int addrFamily, int protocol);
 
-		std::string addr;
-		int port;
+		std::string sourceAddr;
+		int sourcePort;
+		std::string destAddr;
+		int destPort;
 		int addrFamily;
 		int protocol;
 

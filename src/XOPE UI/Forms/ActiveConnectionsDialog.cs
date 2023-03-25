@@ -46,8 +46,8 @@ namespace XOPE_UI.View
             if (item != null)
             {
                 item.SubItems["ip_family"].Text = c.IPFamily == AddressFamily.InterNetwork ? "IPv4" : "IPv6";
-                item.SubItems["ip_address"].Text = c.IP.ToString();
-                item.SubItems["port"].Text = c.Port.ToString();
+                item.SubItems["ip_address"].Text = c.DestAddress.ToString();
+                item.SubItems["port"].Text = c.DestPort.ToString();
                 item.SubItems["status"].Text = c.SocketStatus.ToString();
             }
             else
@@ -55,8 +55,8 @@ namespace XOPE_UI.View
                 item = new ListViewItem(c.SocketId.ToString());
                 
                 item.SubItems.Add(c.IPFamily == AddressFamily.InterNetwork ? "IPv4" : "IPv6");
-                item.SubItems.Add(c.IP.ToString());
-                item.SubItems.Add(c.Port.ToString());
+                item.SubItems.Add(c.DestAddress.ToString());
+                item.SubItems.Add(c.DestPort.ToString());
                 item.SubItems.Add(c.SocketStatus.ToString());
 
                 // Even though connectionListView.Columns[i].Name is set in the designer, the string is empty at run-time.

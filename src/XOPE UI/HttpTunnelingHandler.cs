@@ -62,12 +62,12 @@ namespace XOPE_UI
 
             try
             {
-                if (connection.Port == 80)
+                if (connection.DestPort == 80)
                     tunnelClient.Connect(TunnelIP, TunnelPort80);
-                else if (connection.Port == 443)
+                else if (connection.DestPort == 443)
                     tunnelClient.Connect(TunnelIP, TunnelPort443);
                 else
-                    throw new ArgumentException($"Connection to {connection.IP}:{connection.Port} was marked as tunnelable but " +
+                    throw new ArgumentException($"Connection to {connection.DestAddress}:{connection.DestPort} was marked as tunnelable but " +
                         $"the connection is not on port 80 or 443.");
             }
             catch (Exception ex)
