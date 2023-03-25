@@ -37,9 +37,9 @@
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
             this.packetItemContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.underlyingEventToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replayDoubleClickToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.underlyingEventToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packetItemContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -62,7 +62,7 @@
             this.captureListView.Margin = new System.Windows.Forms.Padding(0);
             this.captureListView.MultiSelect = false;
             this.captureListView.Name = "captureListView";
-            this.captureListView.Size = new System.Drawing.Size(779, 316);
+            this.captureListView.Size = new System.Drawing.Size(840, 316);
             this.captureListView.TabIndex = 1;
             this.captureListView.UseCompatibleStateImageBehavior = false;
             this.captureListView.View = System.Windows.Forms.View.Details;
@@ -99,6 +99,7 @@
             // columnHeader6
             // 
             this.columnHeader6.Text = "Modified";
+            this.columnHeader6.Width = 120;
             // 
             // packetItemContextMenuStrip
             // 
@@ -107,14 +108,7 @@
             this.toolStripSeparator1,
             this.underlyingEventToolStripMenuItem});
             this.packetItemContextMenuStrip.Name = "packetItemContextMenuStrip";
-            this.packetItemContextMenuStrip.Size = new System.Drawing.Size(188, 76);
-            // 
-            // underlyingEventToolStripMenuItem
-            // 
-            this.underlyingEventToolStripMenuItem.Name = "underlyingEventToolStripMenuItem";
-            this.underlyingEventToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.underlyingEventToolStripMenuItem.Text = "Underlying Event";
-            this.underlyingEventToolStripMenuItem.Click += new System.EventHandler(this.underlyingEventToolStripMenuItem_Click);
+            this.packetItemContextMenuStrip.Size = new System.Drawing.Size(188, 54);
             // 
             // replayDoubleClickToolStripMenuItem
             // 
@@ -128,6 +122,13 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(184, 6);
             // 
+            // underlyingEventToolStripMenuItem
+            // 
+            this.underlyingEventToolStripMenuItem.Name = "underlyingEventToolStripMenuItem";
+            this.underlyingEventToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.underlyingEventToolStripMenuItem.Text = "Underlying Event";
+            this.underlyingEventToolStripMenuItem.Click += new System.EventHandler(this.underlyingEventToolStripMenuItem_Click);
+            // 
             // PacketListView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -135,7 +136,7 @@
             this.Controls.Add(this.captureListView);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "PacketListView";
-            this.Size = new System.Drawing.Size(779, 316);
+            this.Size = new System.Drawing.Size(840, 316);
             this.packetItemContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 

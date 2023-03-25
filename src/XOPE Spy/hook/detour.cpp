@@ -299,8 +299,8 @@ int Detour64::calculateBytesToPatch(csh csHandle)
 	size_t instCount = cs_disasm(csHandle, m_targetFunc, 0x40, (uint64_t)m_targetFunc, 0, &inst);
 	x_assert(instCount > 0, "cs_disasm failed to disassemble code in Detour64::calculateBytesToPatch");
 
-	int requiredBytes = 0;
-	for (int i = 0; i < instCount && requiredBytes < MINIMUM_PATCH_SIZE_X64; i++)
+	size_t requiredBytes = 0;
+	for (size_t i = 0; i < instCount && requiredBytes < MINIMUM_PATCH_SIZE_X64; i++)
 		requiredBytes += (&(inst[i]))->size;
 
 	cs_free(inst, instCount);
