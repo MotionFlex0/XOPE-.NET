@@ -20,5 +20,6 @@ enum class SpyMessageType
 	DELETE_PACKET_FILTER,
 	JOB_RESPONSE_SUCCESS,
 	JOB_RESPONSE_ERROR,
+	JOB_RESPONSE_DEFAULT, // This happens when the Job does not receive a response (e.g. UI has closed)
 	SHUTDOWN_RECV_THREAD
 };
