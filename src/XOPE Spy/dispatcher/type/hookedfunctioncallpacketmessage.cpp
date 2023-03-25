@@ -10,6 +10,7 @@ namespace dispatcher
 		modified,
 		tunneled,
 		dropPacket,
+		intercepted,
 		lastError);
 
 	HookedFunctionCallPacketMessage::HookedFunctionCallPacketMessage() : IMessage(UiMessageType::HOOKED_FUNCTION_CALL) { };

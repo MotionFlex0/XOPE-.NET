@@ -4,6 +4,9 @@ using XOPE_UI.Model;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
+using System.Collections;
 
 namespace XOPE_UI.View.Component
 {
@@ -116,12 +119,24 @@ namespace XOPE_UI.View.Component
             listViewItem.SubItems.Add(data.Length.ToString());
             listViewItem.SubItems.Add(formattedPacket);
             listViewItem.SubItems.Add(socketId.ToString());
-            if (modified)
-                listViewItem.SubItems.Add("modified");
-            else if (tunneled)
-                listViewItem.SubItems.Add("tunneled");
-            else if (packet.DropPacket)
-                listViewItem.SubItems.Add("dropped");
+
+            List<KeyValuePair<string, int>> packetFlags = new List<KeyValuePair<string, int>>();
+            if (packet.Intercepted) packetFlags.Add(new("intercepted", 5));
+            if (modified) packetFlags.Add(new("modified", 3));
+            if(tunneled) packetFlags.Add(new("tunneled", 4));
+            if (packet.DropPacket) packetFlags.Add(new("dropped", 4));
+
+            if (packetFlags.Count == 1)
+            {
+                listViewItem.SubItems.Add(packetFlags[0].Key);
+            }
+            else if (packetFlags.Count> 1)
+            {
+                List<string> flagsToJoin = new List<string>();
+                foreach (var kv in packetFlags)
+                    flagsToJoin.Add(kv.Key.Substring(0, kv.Value));
+                listViewItem.SubItems.Add(String.Join("/", flagsToJoin));
+            }
             else
                 listViewItem.SubItems.Add("");
 

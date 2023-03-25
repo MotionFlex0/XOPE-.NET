@@ -19,6 +19,7 @@ namespace XOPE_UI.Model
         public bool Modified { get; set; } = false;
         public bool Tunneled { get; set; } = false;
         public bool DropPacket { get; set; } = false;
+        public bool Intercepted { get; set; } = false;
         public JObject UnderlyingEvent { get; set; }
 
         public static byte[] ConvertB64CompressedToByteArray(string b64String)

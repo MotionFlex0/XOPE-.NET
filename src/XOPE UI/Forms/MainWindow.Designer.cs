@@ -149,7 +149,7 @@
             // 
             this.loadFiltersToolStripMenuItem.Enabled = false;
             this.loadFiltersToolStripMenuItem.Name = "loadFiltersToolStripMenuItem";
-            this.loadFiltersToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadFiltersToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.loadFiltersToolStripMenuItem.Text = "Load Filters";
             this.loadFiltersToolStripMenuItem.Click += new System.EventHandler(this.loadFiltersToolStripMenuItem_Click);
             // 
@@ -157,19 +157,19 @@
             // 
             this.saveFiltersToolStripMenuItem.Enabled = false;
             this.saveFiltersToolStripMenuItem.Name = "saveFiltersToolStripMenuItem";
-            this.saveFiltersToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveFiltersToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.saveFiltersToolStripMenuItem.Text = "Save Filters";
             this.saveFiltersToolStripMenuItem.Click += new System.EventHandler(this.saveFiltersToolStripMenuItem_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(160, 6);
             // 
             // logToolStripMenuItem
             // 
             this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-            this.logToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.logToolStripMenuItem.Text = "Log";
             this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
             // 
@@ -177,19 +177,19 @@
             // 
             this.restartAsAdminToolStripMenuItem.Image = global::XOPE_UI.Properties.Resources.windows_admin_icon;
             this.restartAsAdminToolStripMenuItem.Name = "restartAsAdminToolStripMenuItem";
-            this.restartAsAdminToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.restartAsAdminToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.restartAsAdminToolStripMenuItem.Text = "Restart as Admin";
             this.restartAsAdminToolStripMenuItem.Click += new System.EventHandler(this.restartAsAdminToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(160, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             // 
             // editToolStripMenuItem
@@ -330,19 +330,19 @@
             // runScriptToolStripMenuItem
             // 
             this.runScriptToolStripMenuItem.Name = "runScriptToolStripMenuItem";
-            this.runScriptToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.runScriptToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.runScriptToolStripMenuItem.Text = "Run Script";
             this.runScriptToolStripMenuItem.Click += new System.EventHandler(this.runScriptToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(151, 6);
             // 
             // scriptManagerToolStripMenuItem
             // 
             this.scriptManagerToolStripMenuItem.Name = "scriptManagerToolStripMenuItem";
-            this.scriptManagerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.scriptManagerToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.scriptManagerToolStripMenuItem.Text = "Script Manager";
             this.scriptManagerToolStripMenuItem.Click += new System.EventHandler(this.scriptManagerToolStripMenuItem_Click);
             // 
@@ -452,6 +452,7 @@
             // 
             // interceptToolStripButton
             // 
+            this.interceptToolStripButton.BackColor = System.Drawing.SystemColors.Control;
             this.interceptToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.interceptToolStripButton.Enabled = false;
             this.interceptToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("interceptToolStripButton.Image")));
@@ -538,7 +539,6 @@
             // interceptorViewButton
             // 
             this.interceptorViewButton.BackColor = System.Drawing.SystemColors.Control;
-            this.interceptorViewButton.Enabled = false;
             this.interceptorViewButton.FlatAppearance.BorderSize = 0;
             this.interceptorViewButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.interceptorViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -664,7 +664,7 @@
             this.hexPreviewPanel.Location = new System.Drawing.Point(5, 1);
             this.hexPreviewPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hexPreviewPanel.Name = "hexPreviewPanel";
-            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 120);
+            this.hexPreviewPanel.Size = new System.Drawing.Size(869, 116);
             this.hexPreviewPanel.TabIndex = 6;
             // 
             // packetCaptureHexPreview
@@ -679,7 +679,7 @@
             this.packetCaptureHexPreview.Name = "packetCaptureHexPreview";
             this.packetCaptureHexPreview.SelectionBackColor = System.Drawing.Color.Blue;
             this.packetCaptureHexPreview.SelectionForeColor = System.Drawing.Color.White;
-            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 75);
+            this.packetCaptureHexPreview.Size = new System.Drawing.Size(864, 71);
             this.packetCaptureHexPreview.TabIndex = 0;
             // 
             // interceptorViewTabPage

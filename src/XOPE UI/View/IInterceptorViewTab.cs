@@ -11,7 +11,7 @@ namespace XOPE_UI.View
         public bool PacketInEditor { get; }
 
         //void AddPacketToLiveViewQueue(Guid jobId, Packet packet);
-        void UpdateEditor(Guid jobId, byte[] bytes);
+        void UpdateEditor(Guid jobId, Packet packet);
         void MoveToNextPacket();
     }
 }

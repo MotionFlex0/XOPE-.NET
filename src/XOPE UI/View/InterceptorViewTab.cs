@@ -22,9 +22,7 @@ namespace XOPE_UI.View
 
         InterceptorViewTabPresenter _presenter;
 
-        MemoryStream _packetStream;
-
-        SpyManager _spyManager;
+        MemoryStream _packetStream = null;
 
         ConcurrentQueue<KeyValuePair<Guid, Packet>> _liveViewQueue;
 
@@ -37,6 +35,8 @@ namespace XOPE_UI.View
             get => jobIdLabel.Text; 
             private set => jobIdLabel.Text = value; 
         }
+
+        SpyManager _spyManager;
 
         public InterceptorViewTab()
         {
@@ -74,7 +74,7 @@ namespace XOPE_UI.View
                 return;
             }
             
-            ((IInterceptorViewTab)this).UpdateEditor(jobId, packet.Data);
+            _presenter.UpdateEditor(jobId, packet);
         }
 
         public void ForwardAllPacket()
@@ -82,34 +82,52 @@ namespace XOPE_UI.View
             _presenter.ForwardAllPackets();
         }
 
-        void IInterceptorViewTab.UpdateEditor(Guid jobId, byte[] packet)
-        {
-            JobId = jobId.ToString();
-            _packetStream = new MemoryStream(packet);
-            _packetStream.Write(packet, 0, packet.Length);
-            _hexEditor.Stream = _packetStream;
-            WaitingForAction?.Invoke(this, new EventArgs());
-        }
-
         void IInterceptorViewTab.MoveToNextPacket()
         {
             if (QueueCount < 1)
+            {
+                if (_packetStream != null)
+                    ClearEditor();
                 return;
+            }
 
             ClearEditor();
             _liveViewQueue.TryDequeue(out var nextPacket);
-            ((IInterceptorViewTab)this).UpdateEditor(nextPacket.Key, nextPacket.Value.Data);
+            _presenter.UpdateEditor(nextPacket.Key, nextPacket.Value);
+        }
+
+        void IInterceptorViewTab.UpdateEditor(Guid jobId, Packet packet)
+        {
+            this.Invoke(() =>
+            {
+                _packetStream = new MemoryStream(packet.Data);
+                _packetStream.Write(packet.Data, 0, packet.Length);
+                _hexEditor.Stream = _packetStream;
+                JobId = jobId.ToString();
+                packetTypeLabel.Text = packet.Type.ToString();
+                if (_spyManager.SpyData.Connections.ContainsKey(packet.Socket))
+                    ipAddrLabel.Text = $"---> {_spyManager.SpyData.Connections[packet.Socket].ConvertDestToString()}";
+
+                forwardButton.Enabled = true;
+                dropPacketButton.Enabled = true;
+                WaitingForAction?.Invoke(this, new EventArgs());
+            });
         }
 
         private void ClearEditor()
         {
-            _hexEditor.DeleteBytesAtPosition(0);
-            _hexEditor.Stream = null;
-            _packetStream = null;
-            forwardButton.Enabled = false;
-            dropPacketButton.Enabled = false;
-            jobIdLabel.Text = "~";
-            InterceptorCleared?.Invoke(this, new EventArgs());
+            this.Invoke(() =>
+            {
+                _hexEditor.DeleteBytesAtPosition(0);
+                _hexEditor.Stream = null;
+                _packetStream = null;
+                JobId = "~";
+                packetTypeLabel.Text = "~";
+                ipAddrLabel.Text = "~";
+                forwardButton.Enabled = false;
+                dropPacketButton.Enabled = false;
+                InterceptorCleared?.Invoke(this, new EventArgs());
+            });
         }
 
         private void forwardButton_Click(object sender, EventArgs e)

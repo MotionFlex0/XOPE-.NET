@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Security.Cryptography;
 using System.Windows.Media.Animation;
+using XOPE_UI.Model;
 using XOPE_UI.Spy.DispatcherMessageType.JobResponse;
 using XOPE_UI.View;
 
@@ -24,20 +26,23 @@ namespace XOPE_UI.Presenter
             _view = view;
         }
 
+        public void UpdateEditor(Guid jobId, Packet packet)
+        {
+            _view.UpdateEditor(jobId, packet);
+        }
+
         public void ForwardButtonClicked()
         {
             _spyManager.MessageDispatcher.Send(new InterceptorForwardPacketResponse(Guid.Parse(_view.JobId), _view.BytesInEditor));
 
-            if (_view.QueueCount > 0)
-                _view.MoveToNextPacket();
+            _view.MoveToNextPacket();
         }
 
         public void DropPacketButtonClicked()
         {
             _spyManager.MessageDispatcher.Send(new InterceptorDropPacketResponse(Guid.Parse(_view.JobId)));
 
-            if (_view.QueueCount > 0)
-                _view.MoveToNextPacket();
+            _view.MoveToNextPacket();
         }
 
         public void ForwardAllPackets()

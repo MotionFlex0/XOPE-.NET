@@ -33,6 +33,8 @@
             this.dropPacketButton = new System.Windows.Forms.Button();
             this.hexEditorPlaceholder = new System.Windows.Forms.Label();
             this.jobIdLabel = new System.Windows.Forms.Label();
+            this.packetTypeLabel = new System.Windows.Forms.Label();
+            this.ipAddrLabel = new System.Windows.Forms.Label();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -76,7 +78,7 @@
             this.hexEditorPlaceholder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.hexEditorPlaceholder.Location = new System.Drawing.Point(3, 37);
             this.hexEditorPlaceholder.Name = "hexEditorPlaceholder";
-            this.hexEditorPlaceholder.Size = new System.Drawing.Size(869, 429);
+            this.hexEditorPlaceholder.Size = new System.Drawing.Size(869, 433);
             this.hexEditorPlaceholder.TabIndex = 22;
             this.hexEditorPlaceholder.Text = "WpfHexaEditor.HexEditor\r\n### DO NOT REMOVE ###";
             this.hexEditorPlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -85,22 +87,46 @@
             // 
             this.jobIdLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.jobIdLabel.Location = new System.Drawing.Point(3, 466);
+            this.jobIdLabel.Location = new System.Drawing.Point(3, 470);
             this.jobIdLabel.Name = "jobIdLabel";
             this.jobIdLabel.Size = new System.Drawing.Size(869, 19);
             this.jobIdLabel.TabIndex = 23;
             this.jobIdLabel.Text = "~";
             this.jobIdLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // packetTypeLabel
+            // 
+            this.packetTypeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.packetTypeLabel.Location = new System.Drawing.Point(3, 489);
+            this.packetTypeLabel.Name = "packetTypeLabel";
+            this.packetTypeLabel.Size = new System.Drawing.Size(869, 19);
+            this.packetTypeLabel.TabIndex = 24;
+            this.packetTypeLabel.Text = "~";
+            this.packetTypeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // ipAddrLabel
+            // 
+            this.ipAddrLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ipAddrLabel.Location = new System.Drawing.Point(3, 508);
+            this.ipAddrLabel.Name = "ipAddrLabel";
+            this.ipAddrLabel.Size = new System.Drawing.Size(869, 19);
+            this.ipAddrLabel.TabIndex = 25;
+            this.ipAddrLabel.Text = "~";
+            this.ipAddrLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // InterceptorViewTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.ipAddrLabel);
+            this.Controls.Add(this.packetTypeLabel);
             this.Controls.Add(this.jobIdLabel);
             this.Controls.Add(this.hexEditorPlaceholder);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "InterceptorViewTab";
-            this.Size = new System.Drawing.Size(875, 488);
+            this.Size = new System.Drawing.Size(875, 527);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -113,5 +139,7 @@
         private System.Windows.Forms.Button dropPacketButton;
         private System.Windows.Forms.Label hexEditorPlaceholder;
         private System.Windows.Forms.Label jobIdLabel;
+        private System.Windows.Forms.Label packetTypeLabel;
+        private System.Windows.Forms.Label ipAddrLabel;
     }
 }

@@ -15,10 +15,9 @@ using XOPE_UI.View.Component;
 using System.Threading.Tasks;
 using System.Threading;
 using XOPE_UI.Settings;
-using Newtonsoft.Json;
 using System.Runtime.Caching;
 using System.Collections.Generic;
-using System.IO;
+using System.Drawing;
 
 namespace XOPE_UI
 {
@@ -44,6 +43,8 @@ namespace XOPE_UI
 
         System.Windows.Forms.Timer _resizeTimer = new System.Windows.Forms.Timer();
         bool _isResizing = false;
+
+        bool _isIntercepting = false;
 
         public MainWindow(IUserSettings settings)
         {
@@ -298,7 +299,7 @@ namespace XOPE_UI
                 detachToolStripMenuItem.Enabled = true;
                 recordToolStripButton.Enabled = true;
                 filterViewTab.Enabled = true;
-                this.interceptToolStripButton.Enabled = false; // CHANGE TO TRUE WHEN TESTING
+                this.interceptToolStripButton.Enabled = true; 
             }));
         }
 
@@ -319,7 +320,8 @@ namespace XOPE_UI
                 this.filterViewTab.Enabled = false;
                 this.httpTunnelingModeToolStripMenuItem.Checked = false;
                 this.interceptToolStripButton.Enabled = false;
-                this.interceptToolStripButton.Checked = false;
+                this.interceptToolStripButton.BackColor = SystemColors.Control;
+                _isIntercepting = false;
             }));
         }
 
@@ -443,18 +445,18 @@ namespace XOPE_UI
 
         private void interceptToolStripButton_Click(object sender, EventArgs e)
         {
-            bool isIntercepting = interceptToolStripButton.Checked;
-
-            if (isIntercepting)
+            if (_isIntercepting)
             {
                 interceptorViewTab.ForwardAllPacket();
                 _spyManager.MessageDispatcher.Send(new ToggleInterceptor { IsInterceptorEnabled = false });
-                interceptToolStripButton.Checked = false;
+                interceptToolStripButton.BackColor = SystemColors.Control;
+                _isIntercepting = false;
             }
             else
             {
                 _spyManager.MessageDispatcher.Send(new ToggleInterceptor { IsInterceptorEnabled = true });
-                interceptToolStripButton.Checked = true;
+                interceptToolStripButton.BackColor = Color.Orange;
+                _isIntercepting = true;
             }
         }
 
