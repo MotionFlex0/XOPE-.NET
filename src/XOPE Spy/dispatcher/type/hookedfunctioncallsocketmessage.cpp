@@ -12,33 +12,39 @@ namespace dispatcher
 	{
 		int oldWsaErrorCode = WSAGetLastError();
 
+		// TODO: Will not work as connect has yet to be called
+		sockaddr_storage sourceSaStor;
+		int sourceSaStorSize = sizeof(sourceSaStor);
+		int sourceRet = getsockname(s, (sockaddr*)&sourceSaStor, &sourceSaStorSize);
+		int error = WSAGetLastError();
+
 		this->addrFamily = destSaStor->ss_family;
 
 		if (destSaStor->ss_family == AF_INET)
 		{
 			const sockaddr_in* destSin = reinterpret_cast<const sockaddr_in*>(destSaStor);
+			sockaddr_in* sourceSin = reinterpret_cast<sockaddr_in*>(&sourceSaStor);
 
-			sockaddr_in sourceSin;
-			int sourceSinSize = sizeof(sourceSin);
-			getsockname(s, (sockaddr*)&sourceSin, &sourceSinSize);
-
-			this->sourceAddr = StringConverter::IpAddressV4ToString(&sourceSin);
-			this->sourcePort = ntohs(sourceSin.sin_port);
-			this->destAddr = StringConverter::IpAddressV4ToString(destSin);
-			this->destPort = ntohs(destSin->sin_port);
+			if (sourceRet == 0)
+			{
+				this->sourceAddr = StringConverter::IpAddressV4ToString(sourceSin);
+				this->sourcePort = ntohs(sourceSin->sin_port);
+				this->destAddr = StringConverter::IpAddressV4ToString(destSin);
+				this->destPort = ntohs(destSin->sin_port);
+			}
 		}
 		else if (destSaStor->ss_family == AF_INET6)
 		{
 			const sockaddr_in6* destSin = reinterpret_cast<const sockaddr_in6*>(destSaStor);
+			sockaddr_in6* sourceSin = reinterpret_cast<sockaddr_in6*>(&sourceSaStor);
 
-			sockaddr_in6 sourceSin;
-			int sourceSinSize = sizeof(sourceSin);
-			getsockname(s, (sockaddr*)&sourceSin, &sourceSinSize);
-
-			this->sourceAddr = StringConverter::IpAddressV6ToString(&sourceSin);
-			this->sourcePort = ntohs(sourceSin.sin6_port);
-			this->destAddr = StringConverter::IpAddressV6ToString(destSin);
-			this->destPort = ntohs(destSin->sin6_port);
+			if (sourceRet == 0)
+			{
+				this->sourceAddr = StringConverter::IpAddressV6ToString(sourceSin);
+				this->sourcePort = ntohs(sourceSin->sin6_port);
+				this->destAddr = StringConverter::IpAddressV6ToString(destSin);
+				this->destPort = ntohs(destSin->sin6_port);
+			}
 		}
 		WSASetLastError(oldWsaErrorCode);
 
@@ -54,7 +60,9 @@ namespace dispatcher
 			lastError:int,
 			protocol:int, //TODO: currently not implemented. need to call getsockopt(..) to get the type
 			sourcePort:int,
-			sourceAddr:scr/byte,
+			sourceAddr:string,
+			destPort:int,
+			destAddr:strung,
 			addrType:int,
 			tunneling:bool
 		}*/
@@ -69,10 +77,11 @@ namespace dispatcher
 		{
 			j["protocol"] = -1;
 			j["addrFamily"] = hfcm.addrFamily;
-			j["addr"] = hfcm.sourceAddr;
-			j["port"] = hfcm.sourcePort;
+			j["sourceAddr"] = hfcm.sourceAddr;
+			j["sourcePort"] = hfcm.sourcePort;			
+			j["destAddr"] = hfcm.destAddr;
+			j["destPort"] = hfcm.destPort;
 			j["tunneling"] = hfcm.tunneling;
-
 		}
 	}
 

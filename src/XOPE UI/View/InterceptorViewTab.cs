@@ -106,7 +106,11 @@ namespace XOPE_UI.View
                 JobId = jobId.ToString();
                 packetTypeLabel.Text = packet.Type.ToString();
                 if (_spyManager.SpyData.Connections.ContainsKey(packet.Socket))
-                    ipAddrLabel.Text = $"---> {_spyManager.SpyData.Connections[packet.Socket].ConvertDestToString()}";
+                {
+                    Connection conn = _spyManager.SpyData.Connections[packet.Socket];
+                    string sourceIp = conn.SourceAddress != null ? conn.ConvertSourceToString() : "";
+                    ipAddrLabel.Text = $"{sourceIp} ---> {conn.ConvertDestToString()}";
+                }
 
                 forwardButton.Enabled = true;
                 dropPacketButton.Enabled = true;

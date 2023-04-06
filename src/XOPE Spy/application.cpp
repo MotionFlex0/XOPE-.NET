@@ -218,7 +218,7 @@ void Application::processIncomingMessages()
         }
         else if (type == SpyMessageType::REQUEST_SOCKET_INFO)
         {
-            std::string jobId = jsonMessage["JobId"].get<std::string>();
+            Guid jobId = jsonMessage["JobId"].get<Guid>();
             SOCKET socket = jsonMessage["SocketId"].get<SOCKET>();
 
             sockaddr_storage destSaStor;
@@ -226,18 +226,19 @@ void Application::processIncomingMessages()
             if (getpeername(socket, (sockaddr*)&destSaStor, &destSaStorSize) == 0
                 && (destSaStor.ss_family == AF_INET || destSaStor.ss_family == AF_INET6))
             {
+                sockaddr_storage sourceSaStor;
+                int sourceSaStorSize = sizeof(sourceSaStor);
+                int sourceRet = getsockname(socket, (sockaddr*)&sourceSaStor, &sourceSaStorSize);
+
                 if (destSaStor.ss_family == AF_INET)
                 {
                     sockaddr_in* destSin = reinterpret_cast<sockaddr_in*>(&destSaStor);
-
-                    sockaddr_in sourceSin;
-                    int sourceSinSize = sizeof(sourceSin);
-                    getsockname(socket, (sockaddr*)&sourceSin, &sourceSinSize);
+                    sockaddr_in* sourceSin = reinterpret_cast<sockaddr_in*>(&sourceSaStor);
 
                     sendToUI(
                         dispatcher::SocketInfoResponse(
                             jobId, 
-                            StringConverter::IpAddressV4ToString(&sourceSin), ntohs(sourceSin.sin_port),
+                            StringConverter::IpAddressV4ToString(sourceSin), ntohs(sourceSin->sin_port),
                             StringConverter::IpAddressV4ToString(destSin), ntohs(destSin->sin_port),
                             destSin->sin_family, -1
                         )
@@ -246,15 +247,12 @@ void Application::processIncomingMessages()
                 else if (destSaStor.ss_family == AF_INET6)
                 {
                     sockaddr_in6* destSin = reinterpret_cast<sockaddr_in6*>(&destSaStor);
-
-                    sockaddr_in6 sourceSin;
-                    int sourceSinSize = sizeof(sourceSin);
-                    getsockname(socket, (sockaddr*)&sourceSin, &sourceSinSize);
+                    sockaddr_in6* sourceSin = reinterpret_cast<sockaddr_in6*>(&sourceSaStor);
 
                     sendToUI(
                         dispatcher::SocketInfoResponse(
                             jobId, 
-                            StringConverter::IpAddressV6ToString(&sourceSin), ntohs(sourceSin.sin6_port),
+                            StringConverter::IpAddressV6ToString(sourceSin), ntohs(sourceSin->sin6_port),
                             StringConverter::IpAddressV6ToString(destSin), ntohs(destSin->sin6_port),
                             destSin->sin6_family, -1
                         )

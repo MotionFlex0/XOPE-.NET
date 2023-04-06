@@ -12,7 +12,6 @@ int WSAAPI Functions::Hooked_Connect(SOCKET s, const sockaddr* name, int namelen
     dispatcher::HookedFunctionCallSocketMessage hfcm;
     hfcm.functionName = HookedFunction::CONNECT;
     hfcm.socket = s;
-    hfcm.populateWithSockaddr(s, sockaddrStorage);
 
     int sourcePort{ 0 };
     if (sockaddrStorage->ss_family == AF_INET)
@@ -57,6 +56,7 @@ int WSAAPI Functions::Hooked_Connect(SOCKET s, const sockaddr* name, int namelen
     if (hfcm.ret == SOCKET_ERROR)
         hfcm.lastError = WSAGetLastError();
 
+    hfcm.populateWithSockaddr(s, sockaddrStorage);
     app.sendToUI(std::move(hfcm));
 
     return hfcm.ret;
