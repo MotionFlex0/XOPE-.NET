@@ -8,6 +8,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using XOPE_UI.Model;
 using XOPE_UI.Spy.Type;
 

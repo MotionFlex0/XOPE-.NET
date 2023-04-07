@@ -2,7 +2,7 @@
 
 namespace dispatcher
 {
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PongMessageResponse, jobId, data);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PongMessageResponse, data);
 
 	PongMessageResponse::PongMessageResponse(Guid jobId) : IMessageResponse(UiMessageType::JOB_RESPONSE_SUCCESS, jobId) { }
 

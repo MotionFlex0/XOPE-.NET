@@ -2,7 +2,7 @@
 
 namespace dispatcher
 {
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ErrorMessageResponse, jobId, errorMessage);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ErrorMessageResponse, errorMessage);
 
 	ErrorMessageResponse::ErrorMessageResponse(Guid jobId, std::string errMsg)
 		: IMessageResponse(UiMessageType::JOB_RESPONSE_ERROR, jobId), errorMessage(errMsg) { }

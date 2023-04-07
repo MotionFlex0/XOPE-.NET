@@ -102,10 +102,10 @@ NamedPipeDispatcher::OutMessage_P NamedPipeDispatcher::serializeMessage(std::uni
 
     // Move compressed data to a final buffer
     int len = static_cast<int>(compressedBufSize);
-    auto buffer = std::make_unique<uint8_t[]>(len);
+    std::unique_ptr<uint8_t[]> buffer = std::make_unique<uint8_t[]>(len);
     memcpy(buffer.get(), compressedBuf.data(), len);
 
-    auto outMessage = std::make_unique<OutMessage>();
+    OutMessage_P outMessage = std::make_unique<OutMessage>();
     outMessage->data = std::move(buffer);
     outMessage->length = len;
 

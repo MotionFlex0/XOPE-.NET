@@ -115,6 +115,7 @@ namespace dispatcher
 		void serializeToJson(json& j) override;
 	};
 	
+	// BUG: Seems like a stack overflow occurs in thsi function 
 	struct HookedFunctionCallSocketMessage : IMessage
 	{
 		HookedFunctionCallSocketMessage();
@@ -134,6 +135,7 @@ namespace dispatcher
 		void serializeToJson(json& j) override;
 
 		void populateWithSockaddr(SOCKET socket, const sockaddr_storage* destSaStor);
+
 	};
 
 	struct InfoMessage : IMessage

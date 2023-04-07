@@ -14,6 +14,7 @@
 #include "../job/jobqueue.h"
 #include "../utils/util.h"
 #include "../utils/assert.h"
+#include "../utils/stringconverter.h"
 
 class NamedPipeDispatcher
 {

@@ -2,8 +2,7 @@
 
 namespace dispatcher
 {
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GenericPacketFilterResponse,
-		jobId);
+	// NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GenericPacketFilterResponse, types....);
 
 	GenericPacketFilterResponse::GenericPacketFilterResponse(
 		Guid jobId

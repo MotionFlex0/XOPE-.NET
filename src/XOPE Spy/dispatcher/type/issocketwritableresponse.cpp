@@ -3,7 +3,7 @@
 namespace dispatcher
 {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(IsSocketWritableResponse,
-		jobId, writable, timedOut, error, lastError);
+		writable, timedOut, error, lastError);
 
 	IsSocketWritableResponse::IsSocketWritableResponse(
 		Guid jobId,

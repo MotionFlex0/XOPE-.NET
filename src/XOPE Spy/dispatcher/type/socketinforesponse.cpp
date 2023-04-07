@@ -3,7 +3,7 @@
 namespace dispatcher
 {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SocketInfoResponse, 
-		jobId, sourceAddr, sourcePort, destAddr, destPort, addrFamily, protocol);
+		sourceAddr, sourcePort, destAddr, destPort, addrFamily, protocol);
 
 	SocketInfoResponse::SocketInfoResponse(
 		Guid jobId, 

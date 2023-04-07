@@ -32,7 +32,7 @@ namespace XOPE_UI.View
 
             socketInfo.OnResponse += (object s, IncomingMessage response) =>
             {
-                MessageBox.Show(this, $"Response:\n\n{response.Json}");
+                this.Invoke(() => MessageBox.Show(this, $"Response:\n\n{response.Json}"));
             };
 
             messageDispatcher.Send(socketInfo);
