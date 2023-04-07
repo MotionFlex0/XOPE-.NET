@@ -25,3 +25,19 @@ std::string StringConverter::IpAddressV6ToString(const sockaddr_in6* sin)
         formattedAddr.erase(colonPos);
     return formattedAddr;
 }
+
+std::string StringConverter::ByteArrayToString(const uint8_t* byteArray, int length, char delimiter)
+{
+    std::stringstream ss;
+    ss << std::setfill('0');
+
+    for (int i = 0; i < length; i++)
+    {
+        int c = byteArray[i];
+        ss << std::setw(2) << std::uppercase << std::hex << c;
+        if (i < length - 1)
+            ss << delimiter;
+    }
+
+    return ss.str();
+}
