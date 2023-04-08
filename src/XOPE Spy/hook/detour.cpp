@@ -95,7 +95,7 @@ int Detour32::calculateBytesToPatch()
 	x_assert(instCount > 0, "cs_disasm failed to disassemble code in Detour32::calculateBytesToPatch");
 
 	int requiredBytes = 0;
-	for (int i = 0; i < instCount && requiredBytes < MINIMUM_PATCH_SIZE_X64; i++)
+	for (int i = 0; i < instCount && requiredBytes < MINIMUM_PATCH_SIZE_X86; i++)
 		requiredBytes += (&(inst[i]))->size;
 	return requiredBytes;
 }
