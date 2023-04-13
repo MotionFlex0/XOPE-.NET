@@ -40,7 +40,7 @@
             // closeButton
             // 
             this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeButton.Location = new System.Drawing.Point(363, 412);
+            this.closeButton.Location = new System.Drawing.Point(383, 412);
             this.closeButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(88, 27);
@@ -67,7 +67,7 @@
             this.connectionListView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.connectionListView.MultiSelect = false;
             this.connectionListView.Name = "connectionListView";
-            this.connectionListView.Size = new System.Drawing.Size(436, 391);
+            this.connectionListView.Size = new System.Drawing.Size(456, 391);
             this.connectionListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.connectionListView.TabIndex = 1;
             this.connectionListView.UseCompatibleStateImageBehavior = false;
@@ -105,7 +105,7 @@
             // refreshButton
             // 
             this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.refreshButton.Location = new System.Drawing.Point(268, 412);
+            this.refreshButton.Location = new System.Drawing.Point(288, 412);
             this.refreshButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(88, 27);
@@ -126,57 +126,57 @@
             this.toolStripSeparator2,
             this.closeConnectionToolStripMenuItem});
             this.connectionContextMenu.Name = "connectionContextMenu";
-            this.connectionContextMenu.Size = new System.Drawing.Size(181, 170);
+            this.connectionContextMenu.Size = new System.Drawing.Size(169, 148);
             // 
             // dNSLookupToolStripMenuItem
             // 
             this.dNSLookupToolStripMenuItem.Name = "dNSLookupToolStripMenuItem";
-            this.dNSLookupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dNSLookupToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.dNSLookupToolStripMenuItem.Text = "DNS Lookup";
             this.dNSLookupToolStripMenuItem.Click += new System.EventHandler(this.dNSLookupToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(165, 6);
             // 
             // copyIPToolStripMenuItem
             // 
             this.copyIPToolStripMenuItem.Name = "copyIPToolStripMenuItem";
-            this.copyIPToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copyIPToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.copyIPToolStripMenuItem.Text = "Copy IP";
             this.copyIPToolStripMenuItem.Click += new System.EventHandler(this.copyIPToolStripMenuItem_Click);
             // 
             // copyIPPortToolStripMenuItem
             // 
             this.copyIPPortToolStripMenuItem.Name = "copyIPPortToolStripMenuItem";
-            this.copyIPPortToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copyIPPortToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.copyIPPortToolStripMenuItem.Text = "Copy IP:Port";
             this.copyIPPortToolStripMenuItem.Click += new System.EventHandler(this.copyIPPortToolStripMenuItem_Click);
             // 
             // copyPortToolStripMenuItem
             // 
             this.copyPortToolStripMenuItem.Name = "copyPortToolStripMenuItem";
-            this.copyPortToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copyPortToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.copyPortToolStripMenuItem.Text = "Copy Port";
             this.copyPortToolStripMenuItem.Click += new System.EventHandler(this.copyPortToolStripMenuItem_Click);
             // 
             // copySocketIdToolStripMenuItem
             // 
             this.copySocketIdToolStripMenuItem.Name = "copySocketIdToolStripMenuItem";
-            this.copySocketIdToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copySocketIdToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.copySocketIdToolStripMenuItem.Text = "Copy Socket Id";
             this.copySocketIdToolStripMenuItem.Click += new System.EventHandler(this.copySocketIdToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(165, 6);
             // 
             // closeConnectionToolStripMenuItem
             // 
             this.closeConnectionToolStripMenuItem.Name = "closeConnectionToolStripMenuItem";
-            this.closeConnectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeConnectionToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.closeConnectionToolStripMenuItem.Text = "Close Connection";
             this.closeConnectionToolStripMenuItem.Click += new System.EventHandler(this.closeConnectionToolStripMenuItem_Click);
             // 
@@ -184,7 +184,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(464, 452);
+            this.ClientSize = new System.Drawing.Size(484, 452);
             this.Controls.Add(this.refreshButton);
             this.Controls.Add(this.connectionListView);
             this.Controls.Add(this.closeButton);
