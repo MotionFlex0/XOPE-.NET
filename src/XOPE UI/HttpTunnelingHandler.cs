@@ -266,7 +266,7 @@ namespace XOPE_UI
             catch (ObjectDisposedException) { }
             catch (IOException e) 
             { 
-                Console.WriteLine($"IOException thrown by Tunnel on socket {socketData.Connection.SocketId}. Message: {e.Message}"); 
+                //Console.WriteLine($"IOException thrown by Tunnel on socket {socketData.Connection.SocketId}. Message: {e.Message}"); 
             }
 
             socketData.MarkTunnelAsDone();
