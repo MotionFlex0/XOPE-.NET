@@ -129,7 +129,6 @@ namespace XOPE_UI.Spy
                     }
                     Console.WriteLine("Closing receiver...");
                 }
-                catch (ObjectDisposedException) { }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Receiver error. Aborting receiver! Message: {ex.Message}");
