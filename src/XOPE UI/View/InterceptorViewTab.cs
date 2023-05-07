@@ -109,7 +109,11 @@ namespace XOPE_UI.View
                 {
                     Connection conn = _spyManager.SpyData.Connections[packet.Socket];
                     string sourceIp = conn.SourceAddress != null ? conn.ConvertSourceToString() : "";
-                    ipAddrLabel.Text = $"{sourceIp} ---> {conn.ConvertDestToString()}";
+
+                    if (packet.Type == HookedFuncType.SEND || packet.Type == HookedFuncType.WSASEND)
+                        ipAddrLabel.Text = $"{sourceIp} ---> {conn.ConvertDestToString()}";
+                    else if (packet.Type == HookedFuncType.RECV || packet.Type == HookedFuncType.WSARECV)
+                        ipAddrLabel.Text = $"{conn.ConvertDestToString()} ---> {sourceIp}";
                 }
 
                 forwardButton.Enabled = true;
