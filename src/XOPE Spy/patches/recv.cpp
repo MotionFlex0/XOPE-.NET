@@ -1,5 +1,6 @@
 #include "functions.h"
 #include "../application.h"
+#include "../job/jobmessagetype.h"
 
 int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
 {
@@ -8,6 +9,9 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
     Packet packet;
     int bytesRead { 0 };
     PacketFilter::ReplaceState replaceState;
+    bool modified = false;
+    bool dropPacket = false;
+    bool intercepted = false;
 
     // BUG: Currently, it is only possible to inject packets after "recv" has return at least once
     //      when using a blocking socket. This will not be an issue for non-blocking sockets using 
@@ -28,7 +32,37 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
             {
                 packet.assign(buf, buf + bytesRead);
                 replaceState = app.getPacketFilter()->findAndReplace(FilterableFunction::RECV, s, packet);
-                if (replaceState == PacketFilter::ReplaceState::DROP_PACKET) // If the packet has been dropped, then continue loop
+                modified = replaceState == PacketFilter::ReplaceState::MODIFIED_PACKET;
+                dropPacket = replaceState == PacketFilter::ReplaceState::DROP_PACKET;
+
+                if (!dropPacket && app.getConfig()->isInterceptorEnabled())
+                {
+                    IncomingMessage im = app
+                        .sendToUI(dispatcher::InterceptorRequest(HookedFunction::RECV, s, packet))
+                        ->wait();
+
+                    if (im.type == SpyMessageType::JOB_RESPONSE_SUCCESS)
+                    {
+                        auto jobType = im.rawJsonData["JobResponseType"].get<SpyJobResponseType>();
+                        if (jobType == SpyJobResponseType::INTERCEPTOR_FORWARD_PACKET)
+                        {
+                            std::string data = base64_decode(im.rawJsonData["Data"].get<std::string>());
+
+                            if (data.length() == im.rawJsonData["Length"].get<int>())
+                            {
+                                packet.assign(data.begin(), data.end());
+                                modified = true;
+                            }
+                        }
+                        else if (jobType == SpyJobResponseType::INTERCEPTOR_DROP_PACKET)
+                        {
+                            dropPacket = true;
+                        }
+                        intercepted = true;
+                    }
+                }
+
+                if (dropPacket) // If the packet has been dropped, then continue loop
                 {
                     dispatcher::HookedFunctionCallPacketMessage hfcm;
                     hfcm.functionName = HookedFunction::RECV;
@@ -40,6 +74,7 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
                     hfcm.modified = false;
                     hfcm.dropPacket = true;
                     app.sendToUI(std::move(hfcm));
+                    continue;
                 }
                 else
                 {
@@ -70,11 +105,11 @@ int WSAAPI Functions::Hooked_Recv(SOCKET s, char* buf, int len, int flags)
     }
     
     hfcm.packetDataB64 = { buf, bytesRead };
-    hfcm.modified = replaceState == PacketFilter::ReplaceState::MODIFIED_PACKET;
-    hfcm.dropPacket = replaceState == PacketFilter::ReplaceState::DROP_PACKET;
+    hfcm.modified = modified;
+    hfcm.dropPacket = dropPacket;
     app.sendToUI(std::move(hfcm));
 
-    if (replaceState == PacketFilter::ReplaceState::MODIFIED_PACKET)
+    if (modified)
     {
         size_t newBytesRead = min(packet.size(), static_cast<size_t>(len));
         memcpy(buf, packet.data(), newBytesRead);

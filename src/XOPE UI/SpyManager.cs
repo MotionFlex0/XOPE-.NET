@@ -149,7 +149,7 @@ namespace XOPE_UI
                     MessageDispatcher.ShutdownAndWait();
                 }
 
-                if (MessageReceiver.IsConnected)
+                if (MessageReceiver.IsConnectingOrConnected)
                     MessageReceiver.ShutdownAndWait();
 
             }, _cancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.LongRunning, TaskScheduler.Default);

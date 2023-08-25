@@ -282,16 +282,6 @@ namespace XOPE_UI
             });
         }
 
-        //private void CloseAndRemoveTunneledConnection(SocketData tc)
-        //{
-        //    if (!_tunneledConns.ContainsKey(tc.Connection.SocketId))
-        //        return;
-
-        //    tc.TokenSource.Cancel();
-
-        //    RemoveTunneledConnection(tc.Connection);
-        //}
-
         private void RemoveTunneledConnection(int socketId)
         {
             if (_tunneledConns.ContainsKey(socketId))
